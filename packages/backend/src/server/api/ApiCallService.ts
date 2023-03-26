@@ -63,7 +63,10 @@ export class ApiCallService implements OnApplicationShutdown {
 			? request.query
 			: request.body;
 
-		const token = body?.['i'];
+		let token = body?.['i'];
+		if (request.headers.authorization?.startsWith('Bearer ')) {
+			token = request.headers.authorization.slice(7);
+		}
 		if (token != null && typeof token !== 'string') {
 			reply.code(400);
 			return;
