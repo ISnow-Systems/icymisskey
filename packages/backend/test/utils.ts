@@ -78,7 +78,7 @@ const request = async (path: string, params: any, me?: any): Promise<{ body: any
 	};
 };
 
-const relativeFetch = async (path: string, init?: RequestInit | undefined) => {
+export const relativeFetch = async (path: string, init?: RequestInit | undefined) => {
 	return await fetch(new URL(path, `http://127.0.0.1:${port}/`).toString(), init);
 };
 
@@ -313,11 +313,11 @@ export const waitFire = async (user: any, channel: string, trgr: () => any, cond
 	});
 };
 
-export type SimpleGetResponse = { 
-	status: number, 
-	body: any | JSDOM | null, 
-	type: string | null, 
-	location: string | null 
+export type SimpleGetResponse = {
+	status: number,
+	body: any | JSDOM | null,
+	type: string | null,
+	location: string | null
 };
 export const simpleGet = async (path: string, accept = '*/*', cookie: any = undefined): Promise<SimpleGetResponse> => {
 	const res = await relativeFetch(path, {
@@ -336,9 +336,9 @@ export const simpleGet = async (path: string, accept = '*/*', cookie: any = unde
 		'text/html; charset=utf-8',
 	];
 
-	const body = 
-		jsonTypes.includes(res.headers.get('content-type') ?? '')	? await res.json() : 
-		htmlTypes.includes(res.headers.get('content-type') ?? '')	? new JSDOM(await res.text()) : 
+	const body =
+		jsonTypes.includes(res.headers.get('content-type') ?? '')	? await res.json() :
+		htmlTypes.includes(res.headers.get('content-type') ?? '')	? new JSDOM(await res.text()) :
 		null;
 
 	return {
