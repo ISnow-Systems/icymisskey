@@ -993,6 +993,7 @@ noteIdOrUrl: "ノートIDまたはURL"
 accountMigration: "アカウントの引っ越し"
 accountMoved: "このユーザーは新しいアカウントに引っ越しました："
 forceShowAds: "常に広告を表示する"
+addMemo: "メモを追加"
 
 _accountMigration:
   moveTo: "このアカウントを新しいアカウントに引っ越す"
@@ -1943,6 +1944,7 @@ _deck:
     channel: "チャンネル"
     mentions: "あなた宛て"
     direct: "ダイレクト"
+    roleTimeline: "ロールタイムライン"
 
 _dialog:
   charactersExceeded: "最大文字数を超えています！ 現在 {current} / 制限 {max}"
