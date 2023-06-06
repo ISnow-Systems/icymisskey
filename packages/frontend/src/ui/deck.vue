@@ -306,6 +306,7 @@ async function deleteProfile() {
 	display: flex;
 	overflow-x: auto;
 	overflow-y: clip;
+	overscroll-behavior: contain;
 	background: var(--deckBg);
 
 	&.center {
@@ -330,11 +331,7 @@ async function deleteProfile() {
 	flex-shrink: 0;
 	padding-top: var(--columnGap);
 	padding-bottom: var(--columnGap);
-	padding-right: var(--columnGap);
-
-	&:first-of-type {
-		padding-left: var(--columnGap);
-	}
+	padding-left: var(--columnGap);
 
 	> .column:not(:last-of-type) {
 		margin-bottom: var(--columnGap);
