@@ -1,6 +1,6 @@
 {
 	"name": "misskey",
-	"version": "13.13.1-icy(13.13.1.0)",
+	"version": "13.13.1-icy(13.13.1.1)",
 	"codename": "sorbet",
 	"repository": {
 		"type": "git",
