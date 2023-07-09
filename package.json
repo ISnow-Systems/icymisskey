@@ -2,7 +2,7 @@
 	"name": "misskey",
 	"version": "13.14.0-icy(13.13.99.2)",
 	"codename": "sorbet",
-0	"repository": {
+	"repository": {
 		"type": "git",
 		"url": "https://github.com/misskey-dev/misskey.git"
 	},
