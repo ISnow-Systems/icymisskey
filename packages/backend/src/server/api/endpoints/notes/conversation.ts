@@ -1,11 +1,16 @@
+/*
+ * SPDX-FileCopyrightText: syuilo and other misskey contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 import { Inject, Injectable } from '@nestjs/common';
-import type { Note } from '@/models/entities/Note.js';
+import type { MiNote } from '@/models/entities/Note.js';
 import type { NotesRepository } from '@/models/index.js';
 import { Endpoint } from '@/server/api/endpoint-base.js';
 import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
 import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../error.js';
 import { GetterService } from '@/server/api/GetterService.js';
+import { ApiError } from '../../error.js';
 
 export const meta = {
 	tags: ['notes'],
@@ -57,7 +62,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				throw err;
 			});
 
-			const conversation: Note[] = [];
+			const conversation: MiNote[] = [];
 			let i = 0;
 
 			const get = async (id: any) => {

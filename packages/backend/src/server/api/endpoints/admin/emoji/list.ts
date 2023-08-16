@@ -1,7 +1,12 @@
+/*
+ * SPDX-FileCopyrightText: syuilo and other misskey contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 import { Inject, Injectable } from '@nestjs/common';
 import { Endpoint } from '@/server/api/endpoint-base.js';
 import type { EmojisRepository } from '@/models/index.js';
-import type { Emoji } from '@/models/entities/Emoji.js';
+import type { MiEmoji } from '@/models/entities/Emoji.js';
 import { QueryService } from '@/core/QueryService.js';
 import { DI } from '@/di-symbols.js';
 import { EmojiEntityService } from '@/core/entities/EmojiEntityService.js';
@@ -80,7 +85,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			const q = this.queryService.makePaginationQuery(this.emojisRepository.createQueryBuilder('emoji'), ps.sinceId, ps.untilId)
 				.andWhere('emoji.host IS NULL');
 
-			let emojis: Emoji[];
+			let emojis: MiEmoji[];
 
 			if (ps.query) {
 				//q.andWhere('emoji.name ILIKE :q', { q: `%${ sqlLikeEscape(ps.query) }%` });
@@ -91,7 +96,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 				if (queryarry) {
 					emojis = emojis.filter(emoji =>
-						queryarry.includes(`:${emoji.name}:`)
+						queryarry.includes(`:${emoji.name}:`),
 					);
 				} else {
 					emojis = emojis.filter(emoji =>

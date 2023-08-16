@@ -1,15 +1,21 @@
+/*
+ * SPDX-FileCopyrightText: syuilo and other misskey contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 import { URL } from 'node:url';
 import { Inject, Injectable } from '@nestjs/common';
 import chalk from 'chalk';
 import { IsNull } from 'typeorm';
 import { DI } from '@/di-symbols.js';
 import type { UsersRepository } from '@/models/index.js';
-import type { LocalUser, RemoteUser } from '@/models/entities/User.js';
+import type { MiLocalUser, MiRemoteUser } from '@/models/entities/User.js';
 import type { Config } from '@/config.js';
 import type Logger from '@/logger.js';
 import { UtilityService } from '@/core/UtilityService.js';
-import { WebfingerService } from '@/core/WebfingerService.js';
+import { ILink, WebfingerService } from '@/core/WebfingerService.js';
 import { RemoteLoggerService } from '@/core/RemoteLoggerService.js';
+import { ApDbResolverService } from '@/core/activitypub/ApDbResolverService.js';
 import { ApPersonService } from '@/core/activitypub/models/ApPersonService.js';
 import { bindThis } from '@/decorators.js';
 
@@ -27,13 +33,14 @@ export class RemoteUserResolveService {
 		private utilityService: UtilityService,
 		private webfingerService: WebfingerService,
 		private remoteLoggerService: RemoteLoggerService,
+		private apDbResolverService: ApDbResolverService,
 		private apPersonService: ApPersonService,
 	) {
 		this.logger = this.remoteLoggerService.logger.createSubLogger('resolve-user');
 	}
 
 	@bindThis
-	public async resolveUser(username: string, host: string | null): Promise<LocalUser | RemoteUser> {
+	public async resolveUser(username: string, host: string | null): Promise<MiLocalUser | MiRemoteUser> {
 		const usernameLower = username.toLowerCase();
 
 		if (host == null) {
@@ -44,7 +51,7 @@ export class RemoteUserResolveService {
 				} else {
 					return u;
 				}
-			}) as LocalUser;
+			}) as MiLocalUser;
 		}
 
 		host = this.utilityService.toPuny(host);
@@ -57,15 +64,31 @@ export class RemoteUserResolveService {
 				} else {
 					return u;
 				}
-			}) as LocalUser;
+			}) as MiLocalUser;
 		}
 
-		const user = await this.usersRepository.findOneBy({ usernameLower, host }) as RemoteUser | null;
+		const user = await this.usersRepository.findOneBy({ usernameLower, host }) as MiRemoteUser | null;
 
 		const acctLower = `${usernameLower}@${host}`;
 
 		if (user == null) {
 			const self = await this.resolveSelf(acctLower);
+
+			if (self.href.startsWith(this.config.url)) {
+				const local = this.apDbResolverService.parseUri(self.href);
+				if (local.local && local.type === 'users') {
+					// the LR points to local
+					return (await this.apDbResolverService
+						.getUserFromApId(self.href)
+						.then((u) => {
+							if (u == null) {
+								throw new Error('local user not found');
+							} else {
+								return u;
+							}
+						})) as MiLocalUser;
+				}
+			}
 
 			this.logger.succ(`return new remote user: ${chalk.magenta(acctLower)}`);
 			return await this.apPersonService.createPerson(self.href);
@@ -109,7 +132,7 @@ export class RemoteUserResolveService {
 				if (u == null) {
 					throw new Error('user not found');
 				} else {
-					return u as LocalUser | RemoteUser;
+					return u as MiLocalUser | MiRemoteUser;
 				}
 			});
 		}
@@ -119,7 +142,7 @@ export class RemoteUserResolveService {
 	}
 
 	@bindThis
-	private async resolveSelf(acctLower: string) {
+	private async resolveSelf(acctLower: string): Promise<ILink> {
 		this.logger.info(`WebFinger for ${chalk.yellow(acctLower)}`);
 		const finger = await this.webfingerService.webfinger(acctLower).catch(err => {
 			this.logger.error(`Failed to WebFinger for ${chalk.yellow(acctLower)}: ${ err.statusCode ?? err.message }`);

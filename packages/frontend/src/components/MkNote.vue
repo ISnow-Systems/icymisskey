@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: syuilo and other misskey contributors
+SPDX-License-Identifier: AGPL-3.0-only
+-->
+
 <template>
 <div
 	v-if="!muted"
@@ -165,6 +170,7 @@ import { getNoteSummary } from '@/scripts/get-note-summary';
 import { MenuItem } from '@/types/menu';
 import MkRippleEffect from '@/components/MkRippleEffect.vue';
 import { showMovedDialog } from '@/scripts/show-moved-dialog';
+import { shouldCollapsed } from '@/scripts/collapsed';
 
 const props = defineProps<{
 	note: misskey.entities.Note;
@@ -204,17 +210,7 @@ let appearNote = $computed(() => isRenote ? note.renote as misskey.entities.Note
 const isMyRenote = $i && ($i.id === note.userId);
 const showContent = ref(false);
 const urls = appearNote.text ? extractUrlFromMfm(mfm.parse(appearNote.text)) : null;
-const isLong = (appearNote.cw == null && appearNote.text != null && (
-	(appearNote.text.includes('$[x2')) ||
-	(appearNote.text.includes('$[x3')) ||
-	(appearNote.text.includes('$[x4')) ||
-	(appearNote.text.includes('$[scale')) ||
-	(appearNote.text.includes('$[position')) ||
-	(appearNote.text.split('\n').length > 9) ||
-	(appearNote.text.length > 500) ||
-	(appearNote.files.length >= 5) ||
-	(urls && urls.length >= 4)
-));
+const isLong = shouldCollapsed(appearNote);
 const collapsed = ref(appearNote.cw == null && isLong);
 const isDeleted = ref(false);
 const muted = ref(checkWordMute(appearNote, $i, defaultStore.state.mutedWords));
@@ -350,6 +346,7 @@ function reply(viaKeyboard = false): void {
 	pleaseLogin();
 	os.post({
 		reply: appearNote,
+		channel: appearNote.channel,
 		animation: !viaKeyboard,
 	}, () => {
 		focus();
@@ -411,14 +408,16 @@ function onContextmenu(ev: MouseEvent): void {
 		ev.preventDefault();
 		react();
 	} else {
-		os.contextMenu(getNoteMenu({ note: note, translating, translation, menuButton, isDeleted, currentClip: currentClip?.value }), ev).then(focus);
+		const { menu, cleanup } = getNoteMenu({ note: note, translating, translation, menuButton, isDeleted, currentClip: currentClip?.value });
+		os.contextMenu(menu, ev).then(focus).finally(cleanup);
 	}
 }
 
 function menu(viaKeyboard = false): void {
-	os.popupMenu(getNoteMenu({ note: note, translating, translation, menuButton, isDeleted, currentClip: currentClip?.value }), menuButton.value, {
+	const { menu, cleanup } = getNoteMenu({ note: note, translating, translation, menuButton, isDeleted, currentClip: currentClip?.value });
+	os.popupMenu(menu, menuButton.value, {
 		viaKeyboard,
-	}).then(focus);
+	}).then(focus).finally(cleanup);
 }
 
 async function clip() {
@@ -767,6 +766,7 @@ function showReactions(): void {
 	padding: 16px;
 	border: dashed 1px var(--renote);
 	border-radius: 8px;
+	overflow: clip;
 }
 
 .channel {

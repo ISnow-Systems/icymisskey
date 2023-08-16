@@ -1,9 +1,14 @@
+/*
+ * SPDX-FileCopyrightText: syuilo and other misskey contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 import { randomUUID } from 'node:crypto';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Inject, Injectable } from '@nestjs/common';
 import { createBullBoard } from '@bull-board/api';
-import { BullAdapter } from '@bull-board/api/bullAdapter.js';
+import { BullMQAdapter } from '@bull-board/api/bullMQAdapter.js';
 import { FastifyAdapter } from '@bull-board/fastify';
 import ms from 'ms';
 import sharp from 'sharp';
@@ -26,7 +31,7 @@ import { PageEntityService } from '@/core/entities/PageEntityService.js';
 import { GalleryPostEntityService } from '@/core/entities/GalleryPostEntityService.js';
 import { ClipEntityService } from '@/core/entities/ClipEntityService.js';
 import { ChannelEntityService } from '@/core/entities/ChannelEntityService.js';
-import type { ChannelsRepository, ClipsRepository, FlashsRepository, GalleryPostsRepository, Meta, NotesRepository, PagesRepository, UserProfilesRepository, UsersRepository } from '@/models/index.js';
+import type { ChannelsRepository, ClipsRepository, FlashsRepository, GalleryPostsRepository, MiMeta, NotesRepository, PagesRepository, UserProfilesRepository, UsersRepository } from '@/models/index.js';
 import type Logger from '@/logger.js';
 import { deepClone } from '@/misc/clone.js';
 import { bindThis } from '@/decorators.js';
@@ -118,7 +123,7 @@ export class ClientServerService {
 	}
 
 	@bindThis
-	private generateCommonPugData(meta: Meta) {
+	private generateCommonPugData(meta: MiMeta) {
 		return {
 			instanceName: meta.name ?? 'Misskey',
 			icon: meta.iconUrl,
@@ -168,7 +173,7 @@ export class ClientServerService {
 				this.dbQueue,
 				this.objectStorageQueue,
 				this.webhookDeliverQueue,
-			].map(q => new BullAdapter(q)),
+			].map(q => new BullMQAdapter(q)),
 			serverAdapter,
 		});
 
@@ -677,7 +682,7 @@ export class ClientServerService {
 
 		fastify.setErrorHandler(async (error, request, reply) => {
 			const errId = randomUUID();
-			this.clientLoggerService.logger.error(`Internal error occured in ${request.routerPath}: ${error.message}`, {
+			this.clientLoggerService.logger.error(`Internal error occurred in ${request.routerPath}: ${error.message}`, {
 				path: request.routerPath,
 				params: request.params,
 				query: request.query,

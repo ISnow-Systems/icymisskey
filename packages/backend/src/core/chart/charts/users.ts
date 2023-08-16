@@ -1,6 +1,11 @@
+/*
+ * SPDX-FileCopyrightText: syuilo and other misskey contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 import { Injectable, Inject } from '@nestjs/common';
 import { Not, IsNull, DataSource } from 'typeorm';
-import type { User } from '@/models/entities/User.js';
+import type { MiUser } from '@/models/entities/User.js';
 import { AppLockService } from '@/core/AppLockService.js';
 import { DI } from '@/di-symbols.js';
 import { UserEntityService } from '@/core/entities/UserEntityService.js';
@@ -48,7 +53,7 @@ export default class UsersChart extends Chart<typeof schema> {
 	}
 
 	@bindThis
-	public async update(user: { id: User['id'], host: User['host'] }, isAdditional: boolean): Promise<void> {
+	public async update(user: { id: MiUser['id'], host: MiUser['host'] }, isAdditional: boolean): Promise<void> {
 		const prefix = this.userEntityService.isLocalUser(user) ? 'local' : 'remote';
 
 		await this.commit({
