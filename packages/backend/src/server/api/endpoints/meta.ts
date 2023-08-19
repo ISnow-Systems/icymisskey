@@ -44,7 +44,7 @@ export const meta = {
 				type: 'string',
 				optional: false, nullable: false,
 				format: 'url',
-				example: 'https://misskey.example.com',
+				example: 'https://icymisskey.example.com',
 			},
 			description: {
 				type: 'string',
@@ -65,12 +65,12 @@ export const meta = {
 			repositoryUrl: {
 				type: 'string',
 				optional: false, nullable: false,
-				default: 'https://github.com/misskey-dev/misskey',
+				default: 'https://github.com/ISnow-Systems/icymisskey',
 			},
 			feedbackUrl: {
 				type: 'string',
 				optional: false, nullable: false,
-				default: 'https://github.com/misskey-dev/misskey/issues/new',
+				default: 'https://github.com/ISnow-Systems/icymisskey/issues/new',
 			},
 			defaultDarkTheme: {
 				type: 'string',
