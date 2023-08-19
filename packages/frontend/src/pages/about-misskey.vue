@@ -12,8 +12,8 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<div v-panel class="about">
 					<div ref="containerEl" class="container" :class="{ playing: easterEggEngine != null }">
 						<img src="/client-assets/about-icon.png" alt="" class="icon" draggable="false" @load="iconLoaded" @click="gravity"/>
-						<div class="misskey">Misskey</div>
-						<div class="version">v{{ version }}</div>
+						<div class="misskey">IcyMisskey</div>
+						<div class="version">Version: {{ version }}</div>
 						<span v-for="emoji in easterEggEmojis" :key="emoji.id" class="emoji" :data-physics-x="emoji.left" :data-physics-y="emoji.top" :class="{ _physics_circle_: !emoji.emoji.startsWith(':') }">
 							<MkCustomEmoji v-if="emoji.emoji[0] === ':'" class="emoji" :name="emoji.emoji" :normal="true" :noStyle="true"/>
 							<MkEmoji v-else class="emoji" :emoji="emoji.emoji" :normal="true" :noStyle="true"/>
@@ -29,9 +29,28 @@ SPDX-License-Identifier: AGPL-3.0-only
 				</div>
 				<FormSection>
 					<div class="_formLinks">
+						<FormLink to="https://github.com/ISnow-Systems/icymisskey" external>
+							<template #icon><i class="ti ti-code"></i></template>
+							{{ i18n.ts._aboutMisskey.source }}(IcyMisskey)
+							<template #suffix>GitHub</template>
+						</FormLink>
+						<FormLink to="https://kori.fanbox.cc/" external>
+							<template #icon><i class="ti ti-pig-money"></i></template>
+							{{ i18n.ts._aboutMisskey.donate }}(Subscription)
+							<template #suffix>pixivFANBOX</template>
+						</FormLink>
+						<FormLink to="https://www.buymeacoffee.com/kori16syusetu" external>
+							<template #icon><i class="ti ti-pig-money"></i></template>
+							{{ i18n.ts._aboutMisskey.donate }}(OneTime)
+							<template #suffix>Buy Me a Coffee</template>
+						</FormLink>
+					</div>
+				</FormSection>
+				<FormSection>
+					<div class="_formLinks">
 						<FormLink to="https://github.com/misskey-dev/misskey" external>
 							<template #icon><i class="ti ti-code"></i></template>
-							{{ i18n.ts._aboutMisskey.source }}
+							{{ i18n.ts._aboutMisskey.source }}(Original)
 							<template #suffix>GitHub</template>
 						</FormLink>
 						<FormLink to="https://crowdin.com/project/misskey" external>
@@ -41,7 +60,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 						</FormLink>
 						<FormLink to="https://www.patreon.com/syuilo" external>
 							<template #icon><i class="ti ti-pig-money"></i></template>
-							{{ i18n.ts._aboutMisskey.donate }}
+							{{ i18n.ts._aboutMisskey.donate }}(Original)
 							<template #suffix>Patreon</template>
 						</FormLink>
 					</div>
