@@ -6,7 +6,7 @@
 		"type": "git",
 		"url": "https://github.com/ISnow-Systems/icymisskey.git"
 	},
-	"packageManager": "pnpm@8.7.5",
+	"packageManager": "pnpm@8.8.0",
 	"workspaces": [
 		"packages/frontend",
 		"packages/backend",
