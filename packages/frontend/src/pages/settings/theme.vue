@@ -65,8 +65,22 @@ SPDX-License-Identifier: AGPL-3.0-only
 		</div>
 	</FormSection>
 
-	<MkButton v-if="wallpaper == null" @click="setWallpaper">{{ i18n.ts.setWallpaper }}</MkButton>
-	<MkButton v-else @click="wallpaper = null">{{ i18n.ts.removeWallpaper }}</MkButton>
+	<div>
+		<MkButton @click="setWallpaper">{{ wallpaper == null ? i18n.ts.setWallpaper : "壁紙を変更" }}</MkButton>
+		<MkButton v-if="!(wallpaper == null)" @click="wallpaper = null">{{ i18n.ts.removeWallpaper }}</MkButton>
+
+		<MkSelect v-model="wallpaperMode" large class="select">
+			<template #label>壁紙の表示方法</label>
+			<template #prefix><i class="ti ti-crop"></i></label>
+			<option value="cover">ページの幅に合わせる</option>
+			<option value="contain">ページのサイズに合わせる</option>
+			<option value="zoom">拡大して表示</option>
+			<option value="grid">並べて表示</option>
+			<option value="center">中央に表示</option>
+		</MkSelect>
+
+		<MkButton @click="applyAndReload">適用して再読み込み</MkButton>
+	</div>
 </div>
 </template>
 
@@ -127,6 +141,7 @@ const lightThemeId = computed({
 const darkMode = computed(defaultStore.makeGetterSetter('darkMode'));
 const syncDeviceDarkMode = computed(ColdDeviceStorage.makeGetterSetter('syncDeviceDarkMode'));
 const wallpaper = ref(miLocalStorage.getItem('wallpaper'));
+const wallpaperMode = ref(miLocalStorage.getItem('wallpaperMode'));
 const themesCount = installedThemes.value.length;
 
 watch(syncDeviceDarkMode, () => {
@@ -141,7 +156,10 @@ watch(wallpaper, () => {
 	} else {
 		miLocalStorage.setItem('wallpaper', wallpaper.value);
 	}
-	location.reload();
+});
+
+watch(wallpaperMode, () => {
+	miLocalStorage.setItem('wallpaperMode', wallpaperMode.value);
 });
 
 onActivated(() => {
@@ -158,6 +176,10 @@ function setWallpaper(event) {
 	selectFile(event.currentTarget ?? event.target, null).then(file => {
 		wallpaper.value = file.url;
 	});
+}
+
+function reloadToApplySetting() {
+	location.reload();
 }
 
 const headerActions = $computed(() => []);

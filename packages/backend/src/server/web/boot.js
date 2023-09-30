@@ -138,9 +138,50 @@
 	}
 
 	const wallpaper = localStorage.getItem('wallpaper');
+	const wallpaperMode = localStorage.getItem('wallpaperMode');
 	if (wallpaper) {
 		document.documentElement.style.backgroundImage = `url(${wallpaper})`;
+		document.documentElement.style.backgroundAttachment = 'fixed';
+		if (wallpaperMode) {
+			switch (wallpaperMode) {
+				case 'contain':
+					document.documentElement.style.backgroundPosition = 'center';
+					document.documentElement.style.backgroundRepeat = 'no-repeat';
+					document.documentElement.style.backgroundSize = 'contain';
+					break;
+
+				case 'zoom':
+					document.documentElement.style.backgroundPosition = 'center';
+					document.documentElement.style.backgroundRepeat = 'no-repeat';
+					document.documentElement.style.backgroundSize = '100% 100%';
+					break;
+
+				case 'grid':
+					document.documentElement.style.backgroundPosition = 'top left';
+					document.documentElement.style.backgroundRepeat = 'repeat';
+					document.documentElement.style.backgroundSize = 'auto';
+					break;
+
+				case 'center':
+					document.documentElement.style.backgroundPosition = 'center';
+					document.documentElement.style.backgroundRepeat = 'no-repeat';
+					document.documentElement.style.backgroundSize = 'auto';
+					break;
+
+				case 'cover':
+				default:
+					document.documentElement.style.backgroundPosition = 'center';
+					document.documentElement.style.backgroundRepeat = 'no-repeat';
+					document.documentElement.style.backgroundSize = 'cover';
+					break;
+			}
+		} else {
+			document.documentElement.style.backgroundPosition = 'center';
+			document.documentElement.style.backgroundRepeat = 'no-repeat';
+			document.documentElement.style.backgroundSize = 'cover';
+		}
 	}
+
 
 	const customCss = localStorage.getItem('customCss');
 	if (customCss && customCss.length > 0) {
