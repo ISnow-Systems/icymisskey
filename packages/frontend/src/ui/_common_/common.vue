@@ -49,13 +49,13 @@ import { defineAsyncComponent, ref } from 'vue';
 import * as Misskey from 'misskey-js';
 import { swInject } from './sw-inject';
 import XNotification from './notification.vue';
-import { popups, pendingApiRequestsCount } from '@/os';
-import { uploads } from '@/scripts/upload';
-import * as sound from '@/scripts/sound';
-import { $i } from '@/account';
-import { useStream } from '@/stream';
-import { i18n } from '@/i18n';
-import { defaultStore } from '@/store';
+import { popups, pendingApiRequestsCount } from '@/os.js';
+import { uploads } from '@/scripts/upload.js';
+import * as sound from '@/scripts/sound.js';
+import { $i } from '@/account.js';
+import { useStream } from '@/stream.js';
+import { i18n } from '@/i18n.js';
+import { defaultStore } from '@/store.js';
 import { globalEvents } from '@/events';
 
 const XStreamIndicator = defineAsyncComponent(() => import('./stream-indicator.vue'));
@@ -65,9 +65,7 @@ const dev = _DEV_;
 
 let notifications = $ref<Misskey.entities.Notification[]>([]);
 
-function onNotification(notification: Misskey.entities.Notification, isClient: boolean = false) {
-	if ($i.mutingNotificationTypes.includes(notification.type)) return;
-
+function onNotification(notification: Misskey.entities.Notification, isClient = false) {
 	if (document.visibilityState === 'visible') {
 		if (!isClient) {
 			useStream().send('readNotification');

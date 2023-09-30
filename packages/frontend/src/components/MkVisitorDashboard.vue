@@ -59,11 +59,11 @@ import XSignupDialog from '@/components/MkSignupDialog.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkTimeline from '@/components/MkTimeline.vue';
 import MkInfo from '@/components/MkInfo.vue';
-import { instanceName } from '@/config';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
-import { instance } from '@/instance';
-import number from '@/filters/number';
+import { instanceName } from '@/config.js';
+import * as os from '@/os.js';
+import { i18n } from '@/i18n.js';
+import { instance } from '@/instance.js';
+import number from '@/filters/number.js';
 import MkNumber from '@/components/MkNumber.vue';
 import XActiveUsersChart from '@/components/MkVisitorDashboard.ActiveUsersChart.vue';
 
@@ -114,8 +114,7 @@ function showMenu(ev) {
 }
 
 function exploreOtherServers() {
-	// TODO: 言語をよしなに
-	window.open('https://join.misskey.page/ja-JP/instances', '_blank');
+	window.open('https://join.misskey.page/instances', '_blank');
 }
 </script>
 

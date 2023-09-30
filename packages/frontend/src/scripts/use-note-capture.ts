@@ -5,8 +5,8 @@
 
 import { onUnmounted, Ref } from 'vue';
 import * as Misskey from 'misskey-js';
-import { useStream } from '@/stream';
-import { $i } from '@/account';
+import { useStream } from '@/stream.js';
+import { $i } from '@/account.js';
 
 export function useNoteCapture(props: {
 	rootEl: Ref<HTMLElement>;
@@ -68,6 +68,13 @@ export function useNoteCapture(props: {
 				};
 
 				note.value.poll.choices = choices;
+				break;
+			}
+
+			case 'updated': {
+				note.value.updatedAt = new Date().toISOString();
+				note.value.cw = body.cw;
+				note.value.text = body.text;
 				break;
 			}
 

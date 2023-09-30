@@ -5,18 +5,18 @@
 
 import { defineAsyncComponent, Ref } from 'vue';
 import * as Misskey from 'misskey-js';
-import { claimAchievement } from './achievements';
-import { $i } from '@/account';
-import { i18n } from '@/i18n';
-import { instance } from '@/instance';
-import * as os from '@/os';
-import copyToClipboard from '@/scripts/copy-to-clipboard';
-import { url } from '@/config';
-import { defaultStore, noteActions } from '@/store';
-import { miLocalStorage } from '@/local-storage';
-import { getUserMenu } from '@/scripts/get-user-menu';
-import { clipsCache } from '@/cache';
-import { MenuItem } from '@/types/menu';
+import { claimAchievement } from './achievements.js';
+import { $i } from '@/account.js';
+import { i18n } from '@/i18n.js';
+import { instance } from '@/instance.js';
+import * as os from '@/os.js';
+import copyToClipboard from '@/scripts/copy-to-clipboard.js';
+import { url } from '@/config.js';
+import { defaultStore, noteActions } from '@/store.js';
+import { miLocalStorage } from '@/local-storage.js';
+import { getUserMenu } from '@/scripts/get-user-menu.js';
+import { clipsCache } from '@/cache.js';
+import { MenuItem } from '@/types/menu.js';
 
 export async function getNoteClipMenu(props: {
 	note: Misskey.entities.Note;
@@ -172,6 +172,10 @@ export function getNoteMenu(props: {
 		});
 	}
 
+	function edit(): void {
+		os.post({ initialNote: appearNote, renote: appearNote.renote, reply: appearNote.reply, channel: appearNote.channel, updateMode: true });
+	}
+
 	function toggleFavorite(favorite: boolean): void {
 		claimAchievement('noteFavorited1');
 		os.apiWithDialog(favorite ? 'notes/favorites/create' : 'notes/favorites/delete', {
@@ -284,7 +288,7 @@ export function getNoteMenu(props: {
 				text: i18n.ts.share,
 				action: share,
 			},
-			instance.translatorAvailable ? {
+			$i && $i.policies.canUseTranslator && instance.translatorAvailable ? {
 				icon: 'ti ti-language-hiragana',
 				text: i18n.ts.translate,
 				action: translate,
@@ -352,6 +356,11 @@ export function getNoteMenu(props: {
 			),
 			...(appearNote.userId === $i.id || $i.isModerator || $i.isAdmin ? [
 				null,
+				appearNote.userId === $i.id && $i.policies.canEditNote ? {
+					icon: 'ti ti-edit',
+					text: i18n.ts.edit,
+					action: edit,
+				} : undefined,
 				appearNote.userId === $i.id ? {
 					icon: 'ti ti-edit',
 					text: i18n.ts.deleteAndEdit,
@@ -368,8 +377,8 @@ export function getNoteMenu(props: {
 			.filter(x => x !== undefined);
 	} else {
 		menu = [{
-			icon: 'ti ti-external-link',
-			text: i18n.ts.detailed,
+			icon: 'ti ti-info-circle',
+			text: i18n.ts.details,
 			action: openDetail,
 		}, {
 			icon: 'ti ti-copy',

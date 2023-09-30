@@ -107,23 +107,23 @@ import MkNoteSimple from '@/components/MkNoteSimple.vue';
 import MkNotePreview from '@/components/MkNotePreview.vue';
 import XPostFormAttaches from '@/components/MkPostFormAttaches.vue';
 import MkPollEditor from '@/components/MkPollEditor.vue';
-import { host, url } from '@/config';
-import { erase, unique } from '@/scripts/array';
-import { extractMentions } from '@/scripts/extract-mentions';
-import { formatTimeString } from '@/scripts/format-time-string';
-import { Autocomplete } from '@/scripts/autocomplete';
-import * as os from '@/os';
-import { selectFiles } from '@/scripts/select-file';
-import { defaultStore, notePostInterruptors, postFormActions } from '@/store';
+import { host, url } from '@/config.js';
+import { erase, unique } from '@/scripts/array.js';
+import { extractMentions } from '@/scripts/extract-mentions.js';
+import { formatTimeString } from '@/scripts/format-time-string.js';
+import { Autocomplete } from '@/scripts/autocomplete.js';
+import * as os from '@/os.js';
+import { selectFiles } from '@/scripts/select-file.js';
+import { defaultStore, notePostInterruptors, postFormActions } from '@/store.js';
 import MkInfo from '@/components/MkInfo.vue';
-import { i18n } from '@/i18n';
-import { instance } from '@/instance';
-import { $i, notesCount, incNotesCount, getAccounts, openAccountMenu as openAccountMenu_ } from '@/account';
-import { uploadFile } from '@/scripts/upload';
-import { deepClone } from '@/scripts/clone';
+import { i18n } from '@/i18n.js';
+import { instance } from '@/instance.js';
+import { $i, notesCount, incNotesCount, getAccounts, openAccountMenu as openAccountMenu_ } from '@/account.js';
+import { uploadFile } from '@/scripts/upload.js';
+import { deepClone } from '@/scripts/clone.js';
 import MkRippleEffect from '@/components/MkRippleEffect.vue';
-import { miLocalStorage } from '@/local-storage';
-import { claimAchievement } from '@/scripts/achievements';
+import { miLocalStorage } from '@/local-storage.js';
+import { claimAchievement } from '@/scripts/achievements.js';
 
 const modal = inject('modal');
 
@@ -143,6 +143,7 @@ const props = withDefaults(defineProps<{
 	fixed?: boolean;
 	autofocus?: boolean;
 	freezeAfterPosted?: boolean;
+	updateMode?: boolean;
 }>(), {
 	initialVisibleUsers: () => [],
 	autofocus: true,
@@ -698,17 +699,18 @@ async function post(ev?: MouseEvent) {
 	}
 
 	let postData = {
-		text: text === '' ? undefined : text,
+		text: text === '' ? null : text,
 		fileIds: files.length > 0 ? files.map(f => f.id) : undefined,
 		replyId: props.reply ? props.reply.id : undefined,
 		renoteId: props.renote ? props.renote.id : quoteId ? quoteId : undefined,
 		channelId: props.channel ? props.channel.id : undefined,
 		poll: poll,
-		cw: useCw ? cw ?? '' : undefined,
+		cw: useCw ? cw ?? '' : null,
 		localOnly: localOnly,
 		visibility: visibility,
 		visibleUserIds: visibility === 'specified' ? visibleUsers.map(u => u.id) : undefined,
 		reactionAcceptance,
+		noteId: props.updateMode ? props.initialNote?.id : undefined,
 	};
 
 	if (withHashtags && hashtags && hashtags.trim() !== '') {
@@ -731,7 +733,7 @@ async function post(ev?: MouseEvent) {
 	}
 
 	posting = true;
-	os.api('notes/create', postData, token).then(() => {
+	os.api(props.updateMode ? 'notes/update' : 'notes/create', postData, token).then(() => {
 		if (props.freezeAfterPosted) {
 			posted = true;
 		} else {
@@ -819,8 +821,10 @@ function showActions(ev) {
 		action: () => {
 			action.handler({
 				text: text,
+				cw: cw,
 			}, (key, value) => {
 				if (key === 'text') { text = value; }
+				if (key === 'cw') { useCw = value !== null; cw = value; }
 			});
 		},
 	})), ev.currentTarget ?? ev.target);
