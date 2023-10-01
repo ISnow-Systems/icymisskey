@@ -176,6 +176,7 @@
 					break;
 			}
 		} else {
+			localStorage.setItem('wallpaperMode', 'cover');
 			document.documentElement.style.backgroundPosition = 'center';
 			document.documentElement.style.backgroundRepeat = 'no-repeat';
 			document.documentElement.style.backgroundSize = 'cover';

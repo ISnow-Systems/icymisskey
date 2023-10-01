@@ -66,8 +66,11 @@ SPDX-License-Identifier: AGPL-3.0-only
 	</FormSection>
 
 	<div>
-		<MkButton @click="setWallpaper">{{ wallpaper == null ? i18n.ts.setWallpaper : "壁紙を変更" }}</MkButton>
-		<MkButton v-if="!(wallpaper == null)" @click="wallpaper = null">{{ i18n.ts.removeWallpaper }}</MkButton>
+		<div class="_buttons">
+			<MkButton @click="setWallpaper">{{ wallpaper == null ? i18n.ts.setWallpaper : "壁紙を変更" }}</MkButton>
+			<MkButton v-if="!(wallpaper == null)" @click="wallpaper = null">{{ i18n.ts.removeWallpaper }}</MkButton>
+			<MkButton @click="reloadToApplySetting">適用して再読み込み</MkButton>
+		</div>
 
 		<MkSelect v-model="wallpaperMode" large class="select">
 			<template #label>壁紙の表示方法</template>
@@ -78,8 +81,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<option value="grid">並べて表示</option>
 			<option value="center">中央に表示</option>
 		</MkSelect>
-
-		<MkButton @click="applyAndReload">適用して再読み込み</MkButton>
 	</div>
 </div>
 </template>
