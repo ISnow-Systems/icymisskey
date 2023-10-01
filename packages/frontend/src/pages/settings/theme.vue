@@ -70,8 +70,8 @@ SPDX-License-Identifier: AGPL-3.0-only
 		<MkButton v-if="!(wallpaper == null)" @click="wallpaper = null">{{ i18n.ts.removeWallpaper }}</MkButton>
 
 		<MkSelect v-model="wallpaperMode" large class="select">
-			<template #label>壁紙の表示方法</label>
-			<template #prefix><i class="ti ti-crop"></i></label>
+			<template #label>壁紙の表示方法</template>
+			<template #prefix><i class="ti ti-crop"></i></template>
 			<option value="cover">ページの幅に合わせる</option>
 			<option value="contain">ページのサイズに合わせる</option>
 			<option value="zoom">拡大して表示</option>
