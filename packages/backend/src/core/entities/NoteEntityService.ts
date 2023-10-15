@@ -5,11 +5,9 @@
 
 import { Inject, Injectable } from '@nestjs/common';
 import { In } from 'typeorm';
-import * as mfm from 'mfm-js';
 import { ModuleRef } from '@nestjs/core';
 import { DI } from '@/di-symbols.js';
 import type { Packed } from '@/misc/json-schema.js';
-import { nyaize } from '@/misc/nyaize.js';
 import { awaitAll } from '@/misc/prelude/await-all.js';
 import type { MiUser } from '@/models/User.js';
 import type { MiNote } from '@/models/Note.js';
@@ -17,6 +15,8 @@ import type { MiNoteReaction } from '@/models/NoteReaction.js';
 import type { UsersRepository, NotesRepository, FollowingsRepository, PollsRepository, PollVotesRepository, NoteReactionsRepository, ChannelsRepository } from '@/models/_.js';
 import { bindThis } from '@/decorators.js';
 import { isNotNull } from '@/misc/is-not-null.js';
+import { DebounceLoader } from '@/misc/loader.js';
+import { IdService } from '@/core/IdService.js';
 import type { OnModuleInit } from '@nestjs/common';
 import type { CustomEmojiService } from '../CustomEmojiService.js';
 import type { ReactionService } from '../ReactionService.js';
@@ -29,6 +29,8 @@ export class NoteEntityService implements OnModuleInit {
 	private driveFileEntityService: DriveFileEntityService;
 	private customEmojiService: CustomEmojiService;
 	private reactionService: ReactionService;
+	private idService: IdService;
+	private noteLoader = new DebounceLoader(this.findNoteOrFail);
 
 	constructor(
 		private moduleRef: ModuleRef,
@@ -66,6 +68,7 @@ export class NoteEntityService implements OnModuleInit {
 		this.driveFileEntityService = this.moduleRef.get('DriveFileEntityService');
 		this.customEmojiService = this.moduleRef.get('CustomEmojiService');
 		this.reactionService = this.moduleRef.get('ReactionService');
+		this.idService = this.moduleRef.get('IdService');
 	}
 
 	@bindThis
@@ -98,13 +101,13 @@ export class NoteEntityService implements OnModuleInit {
 			} else if (meId === packedNote.userId) {
 				hide = false;
 			} else if (packedNote.reply && (meId === packedNote.reply.userId)) {
-			// 自分の投稿に対するリプライ
+				// 自分の投稿に対するリプライ
 				hide = false;
 			} else if (packedNote.mentions && packedNote.mentions.some(id => meId === id)) {
-			// 自分へのメンション
+				// 自分へのメンション
 				hide = false;
 			} else {
-			// フォロワーかどうか
+				// フォロワーかどうか
 				const isFollowing = await this.followingsRepository.exist({
 					where: {
 						followeeId: packedNote.userId,
@@ -167,11 +170,11 @@ export class NoteEntityService implements OnModuleInit {
 	}
 
 	@bindThis
-	private async populateMyReaction(note: MiNote, meId: MiUser['id'], _hint_?: {
+	public async populateMyReaction(noteId: MiNote['id'], meId: MiUser['id'], _hint_?: {
 		myReactions: Map<MiNote['id'], MiNoteReaction | null>;
 	}) {
 		if (_hint_?.myReactions) {
-			const reaction = _hint_.myReactions.get(note.id);
+			const reaction = _hint_.myReactions.get(noteId);
 			if (reaction) {
 				return this.reactionService.convertLegacyReaction(reaction.reaction);
 			} else if (reaction === null) {
@@ -180,14 +183,14 @@ export class NoteEntityService implements OnModuleInit {
 		// 実装上抜けがあるだけかもしれないので、「ヒントに含まれてなかったら(=undefinedなら)return」のようにはしない
 		}
 
-		// パフォーマンスのためノートが作成されてから1秒以上経っていない場合はリアクションを取得しない
-		if (note.createdAt.getTime() + 1000 > Date.now()) {
+		// パフォーマンスのためノートが作成されてから2秒以上経っていない場合はリアクションを取得しない
+		if (this.idService.parse(noteId).date.getTime() + 2000 > Date.now()) {
 			return undefined;
 		}
 
 		const reaction = await this.noteReactionsRepository.findOneBy({
 			userId: meId,
-			noteId: note.id,
+			noteId: noteId,
 		});
 
 		if (reaction) {
@@ -285,7 +288,7 @@ export class NoteEntityService implements OnModuleInit {
 		}, options);
 
 		const meId = me ? me.id : null;
-		const note = typeof src === 'object' ? src : await this.notesRepository.findOneOrFail({ where: { id: src }, relations: ['user'] });
+		const note = typeof src === 'object' ? src : await this.noteLoader.load(src);
 		const host = note.userHost;
 
 		let text = note.text;
@@ -308,7 +311,6 @@ export class NoteEntityService implements OnModuleInit {
 		const packed: Packed<'Note'> = await awaitAll({
 			id: note.id,
 			createdAt: note.createdAt.toISOString(),
-			updatedAt: note.updatedAt ? note.updatedAt.toISOString() : undefined,
 			userId: note.userId,
 			user: this.userEntityService.pack(note.user ?? note.userId, me, {
 				detail: false,
@@ -356,29 +358,10 @@ export class NoteEntityService implements OnModuleInit {
 				poll: note.hasPoll ? this.populatePoll(note, meId) : undefined,
 
 				...(meId ? {
-					myReaction: this.populateMyReaction(note, meId, options?._hint_),
+					myReaction: this.populateMyReaction(note.id, meId, options?._hint_),
 				} : {}),
 			} : {}),
 		});
-
-		if (packed.user.isCat && packed.text) {
-			const tokens = packed.text ? mfm.parse(packed.text) : [];
-			function nyaizeNode(node: mfm.MfmNode) {
-				if (node.type === 'quote') return;
-				if (node.type === 'text') {
-					node.props.text = nyaize(node.props.text);
-				}
-				if (node.children) {
-					for (const child of node.children) {
-						nyaizeNode(child);
-					}
-				}
-			}
-			for (const node of tokens) {
-				nyaizeNode(node);
-			}
-			packed.text = mfm.toString(tokens);
-		}
 
 		if (!opts.skipHide) {
 			await this.hideNote(packed, meId);
@@ -402,8 +385,8 @@ export class NoteEntityService implements OnModuleInit {
 		const myReactionsMap = new Map<MiNote['id'], MiNoteReaction | null>();
 		if (meId) {
 			const renoteIds = notes.filter(n => n.renoteId != null).map(n => n.renoteId!);
-			// パフォーマンスのためノートが作成されてから1秒以上経っていない場合はリアクションを取得しない
-			const targets = [...notes.filter(n => n.createdAt.getTime() + 1000 < Date.now()).map(n => n.id), ...renoteIds];
+			// パフォーマンスのためノートが作成されてから2秒以上経っていない場合はリアクションを取得しない
+			const targets = [...notes.filter(n => n.createdAt.getTime() + 2000 < Date.now()).map(n => n.id), ...renoteIds];
 			const myReactions = await this.noteReactionsRepository.findBy({
 				userId: meId,
 				noteId: In(targets),
@@ -453,17 +436,10 @@ export class NoteEntityService implements OnModuleInit {
 	}
 
 	@bindThis
-	public async countSameRenotes(userId: string, renoteId: string, excludeNoteId: string | undefined): Promise<number> {
-		// 指定したユーザーの指定したノートのリノートがいくつあるか数える
-		const query = this.notesRepository.createQueryBuilder('note')
-			.where('note.userId = :userId', { userId })
-			.andWhere('note.renoteId = :renoteId', { renoteId });
-
-		// 指定した投稿を除く
-		if (excludeNoteId) {
-			query.andWhere('note.id != :excludeNoteId', { excludeNoteId });
-		}
-
-		return await query.getCount();
+	private findNoteOrFail(id: string): Promise<MiNote> {
+		return this.notesRepository.findOneOrFail({
+			where: { id },
+			relations: ['user'],
+		});
 	}
 }
