@@ -65,6 +65,7 @@ export class SignupApiService {
 				'hcaptcha-response'?: string;
 				'g-recaptcha-response'?: string;
 				'turnstile-response'?: string;
+				'm-captcha-response'?: string;
 			}
 		}>,
 		reply: FastifyReply,
@@ -78,6 +79,12 @@ export class SignupApiService {
 		if (process.env.NODE_ENV !== 'test') {
 			if (instance.enableHcaptcha && instance.hcaptchaSecretKey) {
 				await this.captchaService.verifyHcaptcha(instance.hcaptchaSecretKey, body['hcaptcha-response']).catch(err => {
+					throw new FastifyReplyError(400, err);
+				});
+			}
+
+			if (instance.enableMcaptcha && instance.mcaptchaSecretKey && instance.mcaptchaSitekey && instance.mcaptchaInstanceUrl) {
+				await this.captchaService.verifyMcaptcha(instance.mcaptchaSecretKey, instance.mcaptchaSitekey, instance.mcaptchaInstanceUrl, body['m-captcha-response']).catch(err => {
 					throw new FastifyReplyError(400, err);
 				});
 			}
@@ -126,7 +133,7 @@ export class SignupApiService {
 				code: invitationCode,
 			});
 
-			if (ticket == null) {
+			if (ticket == null || ticket.usedById != null) {
 				reply.code(400);
 				return;
 			}
@@ -136,7 +143,20 @@ export class SignupApiService {
 				return;
 			}
 
-			if (ticket.usedAt) {
+			// メアド認証が有効の場合
+			if (instance.emailRequiredForSignup) {
+				// メアド認証済みならエラー
+				if (ticket.usedBy) {
+					reply.code(400);
+					return;
+				}
+
+				// 認証しておらず、メール送信から30分以内ならエラー
+				if (ticket.usedAt && ticket.usedAt.getTime() + (1000 * 60 * 30) > Date.now()) {
+					reply.code(400);
+					return;
+				}
+			} else if (ticket.usedAt) {
 				reply.code(400);
 				return;
 			}
@@ -164,8 +184,7 @@ export class SignupApiService {
 			const hash = await bcrypt.hash(password, salt);
 
 			const pendingUser = await this.userPendingsRepository.insert({
-				id: this.idService.genId(),
-				createdAt: new Date(),
+				id: this.idService.gen(),
 				code,
 				email: emailAddress!,
 				username: username,
@@ -194,7 +213,7 @@ export class SignupApiService {
 				});
 
 				const res = await this.userEntityService.pack(account, account, {
-					detail: true,
+					schema: 'MeDetailed',
 					includeSecrets: true,
 				});
 
@@ -224,6 +243,10 @@ export class SignupApiService {
 
 		try {
 			const pendingUser = await this.userPendingsRepository.findOneByOrFail({ code });
+
+			if (this.idService.parse(pendingUser.id).date.getTime() + (1000 * 60 * 30) < Date.now()) {
+				throw new FastifyReplyError(400, 'EXPIRED');
+			}
 
 			const { account, secret } = await this.signupService.signup({
 				username: pendingUser.username,

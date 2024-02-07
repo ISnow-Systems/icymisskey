@@ -86,6 +86,9 @@ export const ACHIEVEMENT_TYPES = [
 	'cookieClicked',
 	'brainDiver',
 	'smashTestNotificationButton',
+	'tutorialCompleted',
+	'bubbleGameExplodingHead',
+	'bubbleGameDoubleExplodingHead',
 ] as const;
 
 @Injectable()

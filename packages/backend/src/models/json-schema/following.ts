@@ -22,20 +22,20 @@ export const packedFollowingSchema = {
 			optional: false, nullable: false,
 			format: 'id',
 		},
-		followee: {
-			type: 'object',
-			optional: true, nullable: false,
-			ref: 'UserDetailed',
-		},
 		followerId: {
 			type: 'string',
 			optional: false, nullable: false,
 			format: 'id',
 		},
+		followee: {
+			type: 'object',
+			optional: true, nullable: false,
+			ref: 'UserDetailedNotMe',
+		},
 		follower: {
 			type: 'object',
 			optional: true, nullable: false,
-			ref: 'UserDetailed',
+			ref: 'UserDetailedNotMe',
 		},
 	},
 } as const;

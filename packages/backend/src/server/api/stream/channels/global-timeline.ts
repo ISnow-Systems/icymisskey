@@ -12,12 +12,12 @@ import { MetaService } from '@/core/MetaService.js';
 import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
 import { bindThis } from '@/decorators.js';
 import { RoleService } from '@/core/RoleService.js';
-import Channel from '../channel.js';
+import Channel, { type MiChannelService } from '../channel.js';
 
 class GlobalTimelineChannel extends Channel {
 	public readonly chName = 'globalTimeline';
 	public static shouldShare = false;
-	public static requireCredential = false;
+	public static requireCredential = false as const;
 	private withRenotes: boolean;
 	private withFiles: boolean;
 
@@ -72,8 +72,10 @@ class GlobalTimelineChannel extends Channel {
 		if (note.renote && !note.text && isUserRelated(note, this.userIdsWhoMeMutingRenotes)) return;
 
 		if (this.user && note.renoteId && !note.text) {
-			const myRenoteReaction = await this.noteEntityService.populateMyReaction(note.renoteId, this.user.id);
-			note.renote!.myReaction = myRenoteReaction;
+			if (note.renote && Object.keys(note.renote.reactions).length > 0) {
+				const myRenoteReaction = await this.noteEntityService.populateMyReaction(note.renote, this.user.id);
+				note.renote.myReaction = myRenoteReaction;
+			}
 		}
 
 		this.connection.cacheNote(note);
@@ -89,9 +91,10 @@ class GlobalTimelineChannel extends Channel {
 }
 
 @Injectable()
-export class GlobalTimelineChannelService {
+export class GlobalTimelineChannelService implements MiChannelService<false> {
 	public readonly shouldShare = GlobalTimelineChannel.shouldShare;
 	public readonly requireCredential = GlobalTimelineChannel.requireCredential;
+	public readonly kind = GlobalTimelineChannel.kind;
 
 	constructor(
 		private metaService: MetaService,

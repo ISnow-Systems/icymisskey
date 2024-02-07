@@ -40,7 +40,7 @@ export class QueryService {
 	) {
 	}
 
-	public makePaginationQuery<T extends ObjectLiteral>(q: SelectQueryBuilder<T>, sinceId?: string, untilId?: string, sinceDate?: number, untilDate?: number): SelectQueryBuilder<T> {
+	public makePaginationQuery<T extends ObjectLiteral>(q: SelectQueryBuilder<T>, sinceId?: string | null, untilId?: string | null, sinceDate?: number | null, untilDate?: number | null): SelectQueryBuilder<T> {
 		if (sinceId && untilId) {
 			q.andWhere(`${q.alias}.id > :sinceId`, { sinceId: sinceId });
 			q.andWhere(`${q.alias}.id < :untilId`, { untilId: untilId });
@@ -52,14 +52,14 @@ export class QueryService {
 			q.andWhere(`${q.alias}.id < :untilId`, { untilId: untilId });
 			q.orderBy(`${q.alias}.id`, 'DESC');
 		} else if (sinceDate && untilDate) {
-			q.andWhere(`${q.alias}.id > :sinceId`, { sinceId: this.idService.genId(new Date(sinceDate)) });
-			q.andWhere(`${q.alias}.id < :untilId`, { untilId: this.idService.genId(new Date(untilDate)) });
+			q.andWhere(`${q.alias}.id > :sinceId`, { sinceId: this.idService.gen(sinceDate) });
+			q.andWhere(`${q.alias}.id < :untilId`, { untilId: this.idService.gen(untilDate) });
 			q.orderBy(`${q.alias}.id`, 'DESC');
 		} else if (sinceDate) {
-			q.andWhere(`${q.alias}.id > :sinceId`, { sinceId: this.idService.genId(new Date(sinceDate)) });
+			q.andWhere(`${q.alias}.id > :sinceId`, { sinceId: this.idService.gen(sinceDate) });
 			q.orderBy(`${q.alias}.id`, 'ASC');
 		} else if (untilDate) {
-			q.andWhere(`${q.alias}.id < :untilId`, { untilId: this.idService.genId(new Date(untilDate)) });
+			q.andWhere(`${q.alias}.id < :untilId`, { untilId: this.idService.gen(untilDate) });
 			q.orderBy(`${q.alias}.id`, 'DESC');
 		} else {
 			q.orderBy(`${q.alias}.id`, 'DESC');
@@ -212,8 +212,8 @@ export class QueryService {
 				// または 自分自身
 					.orWhere('note.userId = :meId')
 				// または 自分宛て
-					.orWhere(':meId = ANY(note.visibleUserIds)')
-					.orWhere(':meId = ANY(note.mentions)')
+					.orWhere(':meIdAsList <@ note.visibleUserIds')
+					.orWhere(':meIdAsList <@ note.mentions')
 					.orWhere(new Brackets(qb => {
 						qb
 						// または フォロワー宛ての投稿であり、
@@ -228,7 +228,7 @@ export class QueryService {
 					}));
 			}));
 
-			q.setParameters({ meId: me.id });
+			q.setParameters({ meId: me.id, meIdAsList: [me.id] });
 		}
 	}
 

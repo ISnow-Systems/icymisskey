@@ -10,6 +10,7 @@ import { MiAnnouncement } from '@/models/Announcement.js';
 import { MiAnnouncementRead } from '@/models/AnnouncementRead.js';
 import { MiAntenna } from '@/models/Antenna.js';
 import { MiApp } from '@/models/App.js';
+import { MiAvatarDecoration } from '@/models/AvatarDecoration.js';
 import { MiAuthSession } from '@/models/AuthSession.js';
 import { MiBlocking } from '@/models/Blocking.js';
 import { MiChannelFollowing } from '@/models/ChannelFollowing.js';
@@ -67,6 +68,9 @@ import { MiRoleAssignment } from '@/models/RoleAssignment.js';
 import { MiFlash } from '@/models/Flash.js';
 import { MiFlashLike } from '@/models/FlashLike.js';
 import { MiUserListFavorite } from '@/models/UserListFavorite.js';
+import { MiBubbleGameRecord } from '@/models/BubbleGameRecord.js';
+import { MiReversiGame } from '@/models/ReversiGame.js';
+
 import type { Repository } from 'typeorm';
 
 export {
@@ -77,6 +81,7 @@ export {
 	MiAnnouncementRead,
 	MiAntenna,
 	MiApp,
+	MiAvatarDecoration,
 	MiAuthSession,
 	MiBlocking,
 	MiChannelFollowing,
@@ -134,6 +139,8 @@ export {
 	MiFlash,
 	MiFlashLike,
 	MiUserMemo,
+	MiBubbleGameRecord,
+	MiReversiGame,
 };
 
 export type AbuseUserReportsRepository = Repository<MiAbuseUserReport>;
@@ -143,6 +150,7 @@ export type AnnouncementsRepository = Repository<MiAnnouncement>;
 export type AnnouncementReadsRepository = Repository<MiAnnouncementRead>;
 export type AntennasRepository = Repository<MiAntenna>;
 export type AppsRepository = Repository<MiApp>;
+export type AvatarDecorationsRepository = Repository<MiAvatarDecoration>;
 export type AuthSessionsRepository = Repository<MiAuthSession>;
 export type BlockingsRepository = Repository<MiBlocking>;
 export type ChannelFollowingsRepository = Repository<MiChannelFollowing>;
@@ -200,3 +208,5 @@ export type RoleAssignmentsRepository = Repository<MiRoleAssignment>;
 export type FlashsRepository = Repository<MiFlash>;
 export type FlashLikesRepository = Repository<MiFlashLike>;
 export type UserMemoRepository = Repository<MiUserMemo>;
+export type BubbleGameRecordsRepository = Repository<MiBubbleGameRecord>;
+export type ReversiGamesRepository = Repository<MiReversiGame>;

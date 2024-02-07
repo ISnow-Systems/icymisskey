@@ -14,6 +14,7 @@ import { IdService } from '@/core/IdService.js';
 import { GlobalEventService } from '@/core/GlobalEventService.js';
 import type { NoteUnreadsRepository, MutingsRepository, NoteThreadMutingsRepository } from '@/models/_.js';
 import { bindThis } from '@/decorators.js';
+import { trackPromise } from '@/misc/promise-tracker.js';
 
 @Injectable()
 export class NoteReadService implements OnApplicationShutdown {
@@ -57,7 +58,7 @@ export class NoteReadService implements OnApplicationShutdown {
 		if (isThreadMuted) return;
 
 		const unread = {
-			id: this.idService.genId(),
+			id: this.idService.gen(),
 			noteId: note.id,
 			userId: userId,
 			isSpecified: params.isSpecified,
@@ -107,7 +108,7 @@ export class NoteReadService implements OnApplicationShutdown {
 
 			// TODO: ↓まとめてクエリしたい
 
-			this.noteUnreadsRepository.countBy({
+			trackPromise(this.noteUnreadsRepository.countBy({
 				userId: userId,
 				isMentioned: true,
 			}).then(mentionsCount => {
@@ -115,9 +116,9 @@ export class NoteReadService implements OnApplicationShutdown {
 					// 全て既読になったイベントを発行
 					this.globalEventService.publishMainStream(userId, 'readAllUnreadMentions');
 				}
-			});
+			}));
 
-			this.noteUnreadsRepository.countBy({
+			trackPromise(this.noteUnreadsRepository.countBy({
 				userId: userId,
 				isSpecified: true,
 			}).then(specifiedCount => {
@@ -125,7 +126,7 @@ export class NoteReadService implements OnApplicationShutdown {
 					// 全て既読になったイベントを発行
 					this.globalEventService.publishMainStream(userId, 'readAllUnreadSpecifiedNotes');
 				}
-			});
+			}));
 		}
 	}
 

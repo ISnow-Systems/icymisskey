@@ -11,17 +11,9 @@ import { MiChannel } from './Channel.js';
 import type { MiDriveFile } from './DriveFile.js';
 
 @Entity('note')
-@Index('IDX_NOTE_TAGS', { synchronize: false })
-@Index('IDX_NOTE_MENTIONS', { synchronize: false })
-@Index('IDX_NOTE_VISIBLE_USER_IDS', { synchronize: false })
 export class MiNote {
 	@PrimaryColumn(id())
 	public id: string;
-
-	@Column('timestamp with time zone', {
-		comment: 'The created date of the Note.',
-	})
-	public createdAt: Date;
 
 	@Index()
 	@Column({
@@ -138,7 +130,7 @@ export class MiNote {
 	})
 	public url: string | null;
 
-	@Index()
+	@Index('IDX_NOTE_FILE_IDS', { synchronize: false })
 	@Column({
 		...id(),
 		array: true, default: '{}',
@@ -150,14 +142,14 @@ export class MiNote {
 	})
 	public attachedFileTypes: string[];
 
-	@Index()
+	@Index('IDX_NOTE_VISIBLE_USER_IDS', { synchronize: false })
 	@Column({
 		...id(),
 		array: true, default: '{}',
 	})
 	public visibleUserIds: MiUser['id'][];
 
-	@Index()
+	@Index('IDX_NOTE_MENTIONS', { synchronize: false })
 	@Column({
 		...id(),
 		array: true, default: '{}',
@@ -170,11 +162,16 @@ export class MiNote {
 	public mentionedRemoteUsers: string;
 
 	@Column('varchar', {
+		length: 1024, array: true, default: '{}',
+	})
+	public reactionAndUserPairCache: string[];
+
+	@Column('varchar', {
 		length: 128, array: true, default: '{}',
 	})
 	public emojis: string[];
 
-	@Index()
+	@Index('IDX_NOTE_TAGS', { synchronize: false })
 	@Column('varchar', {
 		length: 128, array: true, default: '{}',
 	})
