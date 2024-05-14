@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: syuilo and other misskey contributors
+SPDX-FileCopyrightText: syuilo and misskey-project
 SPDX-License-Identifier: AGPL-3.0-only
 -->
 
@@ -80,11 +80,9 @@ function copy() {
 .codePlaceholderRoot {
 	display: block;
 	width: 100%;
-	background: none;
 	border: none;
 	outline: none;
   font: inherit;
-  color: inherit;
 	cursor: pointer;
 
 	box-sizing: border-box;

@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: syuilo and other misskey contributors
+SPDX-FileCopyrightText: syuilo and misskey-project
 SPDX-License-Identifier: AGPL-3.0-only
 -->
 
@@ -106,8 +106,8 @@ onMounted(() => {
 	}
 
 	const rect = props.source.getBoundingClientRect();
-	const x = ((rect.left + (props.source.offsetWidth / 2)) - (300 / 2)) + window.pageXOffset;
-	const y = rect.top + props.source.offsetHeight + window.pageYOffset;
+	const x = ((rect.left + (props.source.offsetWidth / 2)) - (300 / 2)) + window.scrollX;
+	const y = rect.top + props.source.offsetHeight + window.scrollY;
 
 	top.value = y;
 	left.value = x;

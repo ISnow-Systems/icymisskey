@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: syuilo and other misskey contributors
+ * SPDX-FileCopyrightText: syuilo and misskey-project
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
@@ -93,7 +93,7 @@ export function genOpenapiSpec(config: Config, includeSelfRef = false) {
 		const hasBody = (schema.type === 'object' && schema.properties && Object.keys(schema.properties).length >= 1);
 
 		const info = {
-			operationId: endpoint.name,
+			operationId: endpoint.name.replaceAll('/', '___'), // NOTE: スラッシュは使えない
 			summary: endpoint.name,
 			description: desc,
 			externalDocs: {

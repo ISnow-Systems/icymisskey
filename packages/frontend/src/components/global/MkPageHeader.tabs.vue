@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: syuilo and other misskey contributors
+SPDX-FileCopyrightText: syuilo and misskey-project
 SPDX-License-Identifier: AGPL-3.0-only
 -->
 
@@ -38,7 +38,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 <script lang="ts">
 export type Tab = {
 	key: string;
-	title: string;
 	onClick?: (ev: MouseEvent) => void;
 } & (
 	| {

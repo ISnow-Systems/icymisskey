@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: syuilo and other misskey contributors
+SPDX-FileCopyrightText: syuilo and misskey-project
 SPDX-License-Identifier: AGPL-3.0-only
 -->
 
@@ -15,7 +15,7 @@ import * as Misskey from 'misskey-js';
 import MkModal from '@/components/MkModal.vue';
 import MkPostForm from '@/components/MkPostForm.vue';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
 	reply?: Misskey.entities.Note;
 	renote?: Misskey.entities.Note;
 	channel?: any; // TODO
@@ -31,7 +31,9 @@ const props = defineProps<{
 	instant?: boolean;
 	fixed?: boolean;
 	autofocus?: boolean;
-}>();
+}>(), {
+	initialLocalOnly: undefined,
+});
 
 const emit = defineEmits<{
 	(ev: 'closed'): void;
