@@ -48,16 +48,16 @@
 	},
 	"dependencies": {
 		"cssnano": "^7.0.6",
+		"esbuild": "^0.25.0",
 		"execa": "^9.5.2",
 		"fast-glob": "^3.3.3",
+		"glob": "^11.0.1",
 		"ignore-walk": "^7.0.0",
 		"js-yaml": "^4.1.0",
 		"postcss": "^8.5.2",
 		"tar": "^7.4.3",
-		"terser": "^5.38.1",
-		"typescript": "^5.7.3",
-		"esbuild": "^0.25.0",
-		"glob": "^11.0.1"
+		"terser": "^5.38.2",
+		"typescript": "^5.7.3"
 	},
 	"devDependencies": {
 		"@misskey-dev/eslint-plugin": "^2.1.0",
@@ -66,7 +66,7 @@
 		"@typescript-eslint/parser": "^8.24.0",
 		"cross-env": "^7.0.3",
 		"cypress": "^14.0.2",
-		"eslint": "^9.20.0",
+		"eslint": "^9.20.1",
 		"globals": "^15.14.0",
 		"ncp": "^2.0.0",
 		"start-server-and-test": "^2.0.10"
