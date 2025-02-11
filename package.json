@@ -1,6 +1,6 @@
 {
 	"name": "icymisskey",
-	"version": "2025.2.0-icy(2025.02.10.00)",
+	"version": "2025.2.0-icy-next(2025.02.10.00)",
 	"codename": "sorbet",
 	"repository": {
 		"type": "git",
