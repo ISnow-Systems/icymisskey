@@ -365,8 +365,8 @@ importers:
         specifier: ^1.21.4
         version: 1.21.4
       redis-lock:
-        specifier: npm:@isnow-systems/redis-lock@^0.1.0
-        version: '@isnow-systems/redis-lock@0.1.1'
+        specifier: npm:@isnow-systems/redis-lock@^0.1.2
+        version: '@isnow-systems/redis-lock@0.1.2'
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -2609,8 +2609,8 @@ packages:
       '@tensorflow/tfjs': ^4.22.0
       buffer: ^6.0.3
 
-  '@isnow-systems/redis-lock@0.1.1':
-    resolution: {integrity: sha512-DFmGVXltgYjPQ9sjYn5hhpbGbOsspXT20+b6QvxFN4EgBOZnq23ERwots9jOtp7mZVcBTippNCYLjyQNM1j8hA==}
+  '@isnow-systems/redis-lock@0.1.2':
+    resolution: {integrity: sha512-eifO2ILxKk/tsQ99AXc4BWMsjx12yHkTreelE8l4ZVDZ2DTj+WBmA9yR6SQ7O5c2gHDA0Pqja79vGOhvc7G/ZA==}
 
   '@istanbuljs/load-nyc-config@1.1.0':
     resolution: {integrity: sha512-VjeHSlIzpv/NyD3N0YuHfXOPDIixcA1q2ZV98wsMqcYlPmv2n3Yb2lYP9XMElnaFVXg5A7YLTeLu6V84uQDjmQ==}
@@ -12207,7 +12207,7 @@ snapshots:
       '@tensorflow/tfjs': 4.22.0(encoding@0.1.13)(seedrandom@3.0.5)
       buffer: 6.0.3
 
-  '@isnow-systems/redis-lock@0.1.1': {}
+  '@isnow-systems/redis-lock@0.1.2': {}
 
   '@istanbuljs/load-nyc-config@1.1.0':
     dependencies:
