@@ -317,8 +317,8 @@ importers:
         specifier: ^6.10.0
         version: 6.10.0
       nsfwjs:
-        specifier: npm:@isnow-systems/nsfwjs@^4.2.2
-        version: '@isnow-systems/nsfwjs@4.2.2(@tensorflow/tfjs@4.22.0(encoding@0.1.13)(seedrandom@3.0.5))(buffer@6.0.3)'
+        specifier: npm:@isnow-systems/nsfwjs@^4.2.3
+        version: '@isnow-systems/nsfwjs@4.2.3(@tensorflow/tfjs@4.22.0(encoding@0.1.13)(seedrandom@3.0.5))(buffer@6.0.3)'
       oauth:
         specifier: ^0.10.0
         version: 0.10.0
@@ -2603,8 +2603,8 @@ packages:
     resolution: {integrity: sha512-wgm9Ehl2jpeqP3zw/7mo3kRHFp5MEDhqAdwy1fTGkHAwnkGOVsgpvQhL8B5n1qlb01jV3n/bI0ZfZp5lWA1k4w==}
     engines: {node: '>=18.0.0'}
 
-  '@isnow-systems/nsfwjs@4.2.2':
-    resolution: {integrity: sha512-HdfZnz1MJU1hDlHBsemOIl8pBVD3gNTrv6bw5JGXHGnyP4SQ8ehMjGsXPLNoeUVNNJ5csovn7dD7IT5n6lO21g==}
+  '@isnow-systems/nsfwjs@4.2.3':
+    resolution: {integrity: sha512-UVJSf4WVKQgOslLHc/0Wob8c9XUx2vZnhc/1tTtSlxckH2KJqL5+WQIxW8+z61VxFKNuT39xoReVIxzDHBC1jg==}
     peerDependencies:
       '@tensorflow/tfjs': ^4.22.0
       buffer: ^6.0.3
@@ -12203,7 +12203,7 @@ snapshots:
     dependencies:
       minipass: 7.1.2
 
-  '@isnow-systems/nsfwjs@4.2.2(@tensorflow/tfjs@4.22.0(encoding@0.1.13)(seedrandom@3.0.5))(buffer@6.0.3)':
+  '@isnow-systems/nsfwjs@4.2.3(@tensorflow/tfjs@4.22.0(encoding@0.1.13)(seedrandom@3.0.5))(buffer@6.0.3)':
     dependencies:
       '@tensorflow/tfjs': 4.22.0(encoding@0.1.13)(seedrandom@3.0.5)
       buffer: 6.0.3
