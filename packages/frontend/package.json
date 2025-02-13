@@ -38,7 +38,7 @@
 		"chartjs-plugin-zoom": "^2.2.0",
 		"chromatic": "^11.25.2",
 		"compare-versions": "^6.1.1",
-		"cropperjs": "^1.6.2",
+		"cropperjs": "^2.0.0-rc.2",
 		"date-fns": "^4.1.0",
 		"estree-walker": "^3.0.3",
 		"eventemitter3": "^5.0.1",
