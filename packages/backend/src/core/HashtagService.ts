@@ -3,31 +3,29 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import * as Redis from 'ioredis';
-import { DI } from '@/di-symbols.js';
-import type { MiUser } from '@/models/User.js';
-import { normalizeForSearch } from '@/misc/normalize-for-search.js';
-import { IdService } from '@/core/IdService.js';
-import type { MiHashtag } from '@/models/Hashtag.js';
-import type { HashtagsRepository, MiMeta } from '@/models/_.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { bindThis } from '@/decorators.js';
-import { FeaturedService } from '@/core/FeaturedService.js';
-import { UtilityService } from '@/core/UtilityService.js';
+import {DI} from '@/di-symbols.js';
+import type {MiUser} from '@/models/User.js';
+import {normalizeForSearch} from '@/misc/normalize-for-search.js';
+import {IdService} from '@/core/IdService.js';
+import type {MiHashtag} from '@/models/Hashtag.js';
+import type {HashtagsRepository, MiMeta} from '@/models/_.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {bindThis} from '@/decorators.js';
+import {FeaturedService} from '@/core/FeaturedService.js';
+import {UtilityService} from '@/core/UtilityService.js';
 
 @Injectable()
 export class HashtagService {
 	constructor(
 		@Inject(DI.meta)
 		private meta: MiMeta,
-
 		@Inject(DI.redis)
 		private redisClient: Redis.Redis, // TODO: 専用のRedisサーバーを設定できるようにする
 
 		@Inject(DI.hashtagsRepository)
 		private hashtagsRepository: HashtagsRepository,
-
 		private userEntityService: UserEntityService,
 		private featuredService: FeaturedService,
 		private idService: IdService,
@@ -60,19 +58,19 @@ export class HashtagService {
 		// TODO: サンプリング
 		this.updateHashtagsRanking(tag, user.id);
 
-		const index = await this.hashtagsRepository.findOneBy({ name: tag });
+		const index = await this.hashtagsRepository.findOneBy({name: tag});
 
 		if (index == null && !inc) return;
 
 		if (index != null) {
 			const q = this.hashtagsRepository.createQueryBuilder('tag').update()
-				.where('name = :name', { name: tag });
+				.where('name = :name', {name: tag});
 
 			const set = {} as any;
 
 			if (isUserAttached) {
 				if (inc) {
-				// 自分が初めてこのタグを使ったなら
+					// 自分が初めてこのタグを使ったなら
 					if (!index.attachedUserIds.some(id => id === user.id)) {
 						set.attachedUserIds = () => `array_append("attachedUserIds", '${user.id}')`;
 						set.attachedUsersCount = () => '"attachedUsersCount" + 1';

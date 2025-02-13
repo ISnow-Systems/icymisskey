@@ -4,40 +4,40 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkModal ref="modal" v-slot="{ type, maxHeight }" :preferType="preferedModalType" :anchor="anchor" :transparentBg="true" :src="src" @click="modal?.close()" @closed="emit('closed')" @esc="modal?.close()">
-	<div class="szkkfdyq _popup _shadow" :class="{ asDrawer: type === 'drawer' }" :style="{ maxHeight: maxHeight ? maxHeight + 'px' : '' }">
-		<div class="main">
-			<template v-for="item in items" :key="item.text">
-				<button v-if="item.action" v-click-anime class="_button item" @click="$event => { item.action($event); close(); }">
-					<i class="icon" :class="item.icon"></i>
-					<div class="text">{{ item.text }}</div>
-					<span v-if="item.indicate && item.indicateValue" class="_indicateCounter indicatorWithValue">{{ item.indicateValue }}</span>
-					<span v-else-if="item.indicate" class="indicator _blink"><i class="_indicatorCircle"></i></span>
-				</button>
-				<MkA v-else v-click-anime :to="item.to" class="item" @click.passive="close()">
-					<i class="icon" :class="item.icon"></i>
-					<div class="text">{{ item.text }}</div>
-					<span v-if="item.indicate && item.indicateValue" class="_indicateCounter indicatorWithValue">{{ item.indicateValue }}</span>
-					<span v-else-if="item.indicate" class="indicator _blink"><i class="_indicatorCircle"></i></span>
-				</MkA>
-			</template>
+	<MkModal ref="modal" v-slot="{ type, maxHeight }" :anchor="anchor" :preferType="preferedModalType" :src="src" :transparentBg="true" @click="modal?.close()" @closed="emit('closed')" @esc="modal?.close()">
+		<div :class="{ asDrawer: type === 'drawer' }" :style="{ maxHeight: maxHeight ? maxHeight + 'px' : '' }" class="szkkfdyq _popup _shadow">
+			<div class="main">
+				<template v-for="item in items" :key="item.text">
+					<button v-if="item.action" v-click-anime class="_button item" @click="$event => { item.action($event); close(); }">
+						<i :class="item.icon" class="icon"></i>
+						<div class="text">{{ item.text }}</div>
+						<span v-if="item.indicate && item.indicateValue" class="_indicateCounter indicatorWithValue">{{ item.indicateValue }}</span>
+						<span v-else-if="item.indicate" class="indicator _blink"><i class="_indicatorCircle"></i></span>
+					</button>
+					<MkA v-else v-click-anime :to="item.to" class="item" @click.passive="close()">
+						<i :class="item.icon" class="icon"></i>
+						<div class="text">{{ item.text }}</div>
+						<span v-if="item.indicate && item.indicateValue" class="_indicateCounter indicatorWithValue">{{ item.indicateValue }}</span>
+						<span v-else-if="item.indicate" class="indicator _blink"><i class="_indicatorCircle"></i></span>
+					</MkA>
+				</template>
+			</div>
 		</div>
-	</div>
-</MkModal>
+	</MkModal>
 </template>
 
 <script lang="ts" setup>
-import { shallowRef } from 'vue';
+import {shallowRef} from 'vue';
 import MkModal from '@/components/MkModal.vue';
-import { navbarItemDef } from '@/navbar.js';
-import { defaultStore } from '@/store.js';
-import { deviceKind } from '@/scripts/device-kind.js';
+import {navbarItemDef} from '@/navbar.js';
+import {defaultStore} from '@/store.js';
+import {deviceKind} from '@/scripts/device-kind.js';
 
 const props = withDefaults(defineProps<{
 	src?: HTMLElement;
 	anchor?: { x: string; y: string; };
 }>(), {
-	anchor: () => ({ x: 'right', y: 'center' }),
+	anchor: () => ({x: 'right', y: 'center'}),
 });
 
 const emit = defineEmits<{
@@ -46,7 +46,7 @@ const emit = defineEmits<{
 
 const preferedModalType = (deviceKind === 'desktop' && props.src != null) ? 'popup' :
 	deviceKind === 'smartphone' ? 'drawer' :
-	'dialog';
+		'dialog';
 
 const modal = shallowRef<InstanceType<typeof MkModal>>();
 

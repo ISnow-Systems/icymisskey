@@ -4,10 +4,10 @@
  */
 
 import * as fs from 'node:fs';
-import { unified } from 'unified';
+import {unified} from 'unified';
 import remarkParse from 'remark-parse';
-import { Heading, List, Node } from 'mdast';
-import { toString } from 'mdast-util-to-string';
+import {Heading, List, Node} from 'mdast';
+import {toString} from 'mdast-util-to-string';
 
 export class Release {
 	public readonly releaseName: string;
@@ -38,7 +38,7 @@ function isList(node: Node): node is List {
 }
 
 export function parseChangeLog(path: string): Release[] {
-	const input = fs.readFileSync(path, { encoding: 'utf8' });
+	const input = fs.readFileSync(path, {encoding: 'utf8'});
 	const processor = unified().use(remarkParse);
 
 	const releases: Release[] = [];

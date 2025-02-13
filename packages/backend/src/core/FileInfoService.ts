@@ -5,22 +5,22 @@
 
 import * as fs from 'node:fs';
 import * as crypto from 'node:crypto';
-import { join } from 'node:path';
+import {join} from 'node:path';
 import * as stream from 'node:stream/promises';
-import { Injectable } from '@nestjs/common';
-import { FSWatcher } from 'chokidar';
+import {Injectable} from '@nestjs/common';
+import {FSWatcher} from 'chokidar';
 import * as fileType from 'file-type';
 import FFmpeg from 'fluent-ffmpeg';
 import isSvg from 'is-svg';
 import probeImageSize from 'probe-image-size';
-import { sharpBmp } from '@misskey-dev/sharp-read-bmp';
+import {sharpBmp} from '@misskey-dev/sharp-read-bmp';
 import * as blurhash from 'blurhash';
-import { createTempDir } from '@/misc/create-temp.js';
-import { AiService } from '@/core/AiService.js';
-import { LoggerService } from '@/core/LoggerService.js';
+import {createTempDir} from '@/misc/create-temp.js';
+import {AiService} from '@/core/AiService.js';
+import {LoggerService} from '@/core/LoggerService.js';
 import type Logger from '@/logger.js';
-import { bindThis } from '@/decorators.js';
-import type { PredictionType } from 'nsfwjs';
+import {bindThis} from '@/decorators.js';
+import type {PredictionType} from 'nsfwjs';
 
 export type FileInfo = {
 	size: number;
@@ -166,6 +166,93 @@ export class FileInfoService {
 	}
 
 	@bindThis
+	public fixMime(mime: string | fileType.MimeType): string {
+		// see https://github.com/misskey-dev/misskey/pull/10686
+		if (mime === 'audio/x-flac') {
+			return 'audio/flac';
+		}
+		if (mime === 'audio/vnd.wave') {
+			return 'audio/wav';
+		}
+
+		return mime;
+	}
+
+	/**
+	 * Detect MIME Type and extension
+	 */
+	@bindThis
+	public async detectType(path: string): Promise<{
+		mime: string;
+		ext: string | null;
+	}> {
+		// Check 0 byte
+		const fileSize = await this.getFileSize(path);
+		if (fileSize === 0) {
+			return TYPE_OCTET_STREAM;
+		}
+
+		const type = await fileType.fileTypeFromFile(path);
+
+		if (type) {
+			// XMLはSVGかもしれない
+			if (type.mime === 'application/xml' && await this.checkSvg(path)) {
+				return TYPE_SVG;
+			}
+
+			if ((type.mime.startsWith('video') || type.mime === 'application/ogg') && !(await this.hasVideoTrackOnVideoFile(path))) {
+				const newMime = `audio/${type.mime.split('/')[1]}`;
+				if (newMime === 'audio/mp4') {
+					return {
+						mime: 'audio/mp4',
+						ext: 'm4a',
+					};
+				}
+				return {
+					mime: newMime,
+					ext: type.ext,
+				};
+			}
+
+			return {
+				mime: this.fixMime(type.mime),
+				ext: type.ext,
+			};
+		}
+
+		// 種類が不明でもSVGかもしれない
+		if (await this.checkSvg(path)) {
+			return TYPE_SVG;
+		}
+
+		// それでも種類が不明なら application/octet-stream にする
+		return TYPE_OCTET_STREAM;
+	}
+
+	/**
+	 * Check the file is SVG or not
+	 */
+	@bindThis
+	public async checkSvg(path: string): Promise<boolean> {
+		try {
+			const size = await this.getFileSize(path);
+			if (size > 1 * 1024 * 1024) return false;
+			const buffer = await fs.promises.readFile(path);
+			return isSvg(buffer.toString());
+		} catch {
+			return false;
+		}
+	}
+
+	/**
+	 * Get file size
+	 */
+	@bindThis
+	public async getFileSize(path: string): Promise<number> {
+		return (await fs.promises.stat(path)).size;
+	}
+
+	@bindThis
 	private async detectSensitivity(source: string, mime: string, sensitiveThreshold: number, sensitiveThresholdForPorn: number, analyzeVideo: boolean): Promise<[sensitive: boolean, porn: boolean]> {
 		let sensitive = false;
 		let porn = false;
@@ -265,7 +352,7 @@ export class FileInfoService {
 		return [sensitive, porn];
 	}
 
-	private async *asyncIterateFrames(cwd: string, command: FFmpeg.FfmpegCommand): AsyncGenerator<string, void> {
+	private async* asyncIterateFrames(cwd: string, command: FFmpeg.FfmpegCommand): AsyncGenerator<string, void> {
 		const watcher = new FSWatcher({
 			cwd,
 			disableGlobbing: true,
@@ -309,19 +396,6 @@ export class FileInfoService {
 		return fs.promises.access(path).then(() => true, () => false);
 	}
 
-	@bindThis
-	public fixMime(mime: string | fileType.MimeType): string {
-		// see https://github.com/misskey-dev/misskey/pull/10686
-		if (mime === 'audio/x-flac') {
-			return 'audio/flac';
-		}
-		if (mime === 'audio/vnd.wave') {
-			return 'audio/wav';
-		}
-
-		return mime;
-	}
-
 	/**
 	 * ビデオファイルにビデオトラックがあるかどうかチェック
 	 * （ない場合：m4a, webmなど）
@@ -351,80 +425,6 @@ export class FileInfoService {
 	}
 
 	/**
-	 * Detect MIME Type and extension
-	 */
-	@bindThis
-	public async detectType(path: string): Promise<{
-		mime: string;
-		ext: string | null;
-	}> {
-	// Check 0 byte
-		const fileSize = await this.getFileSize(path);
-		if (fileSize === 0) {
-			return TYPE_OCTET_STREAM;
-		}
-
-		const type = await fileType.fileTypeFromFile(path);
-
-		if (type) {
-		// XMLはSVGかもしれない
-			if (type.mime === 'application/xml' && await this.checkSvg(path)) {
-				return TYPE_SVG;
-			}
-
-			if ((type.mime.startsWith('video') || type.mime === 'application/ogg') && !(await this.hasVideoTrackOnVideoFile(path))) {
-				const newMime = `audio/${type.mime.split('/')[1]}`;
-				if (newMime === 'audio/mp4') {
-					return {
-						mime: 'audio/mp4',
-						ext: 'm4a',
-					};
-				}
-				return {
-					mime: newMime,
-					ext: type.ext,
-				};
-			}
-
-			return {
-				mime: this.fixMime(type.mime),
-				ext: type.ext,
-			};
-		}
-
-		// 種類が不明でもSVGかもしれない
-		if (await this.checkSvg(path)) {
-			return TYPE_SVG;
-		}
-
-		// それでも種類が不明なら application/octet-stream にする
-		return TYPE_OCTET_STREAM;
-	}
-
-	/**
-	 * Check the file is SVG or not
-	 */
-	@bindThis
-	public async checkSvg(path: string): Promise<boolean> {
-		try {
-			const size = await this.getFileSize(path);
-			if (size > 1 * 1024 * 1024) return false;
-			const buffer = await fs.promises.readFile(path);
-			return isSvg(buffer.toString());
-		} catch {
-			return false;
-		}
-	}
-
-	/**
-	 * Get file size
-	 */
-	@bindThis
-	public async getFileSize(path: string): Promise<number> {
-		return (await fs.promises.stat(path)).size;
-	}
-
-	/**
 	 * Calculate MD5 hash
 	 */
 	@bindThis
@@ -439,12 +439,12 @@ export class FileInfoService {
 	 */
 	@bindThis
 	private async detectImageSize(path: string): Promise<{
-	width: number;
-	height: number;
-	wUnits: string;
-	hUnits: string;
-	orientation?: number;
-}> {
+		width: number;
+		height: number;
+		wUnits: string;
+		hUnits: string;
+		orientation?: number;
+	}> {
 		const readable = fs.createReadStream(path);
 		const imageSize = await probeImageSize(readable);
 		readable.destroy();
@@ -460,7 +460,7 @@ export class FileInfoService {
 			(await sharpBmp(path, type))
 				.raw()
 				.ensureAlpha()
-				.resize(64, 64, { fit: 'inside' })
+				.resize(64, 64, {fit: 'inside'})
 				.toBuffer((err, buffer, info) => {
 					if (err) return reject(err);
 

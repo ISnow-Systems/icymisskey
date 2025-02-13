@@ -4,23 +4,23 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkA v-user-preview="canonical" :class="[$style.root, { [$style.isMe]: isMe }]" :to="url" :behavior="navigationBehavior">
-	<img :class="$style.icon" :src="avatarUrl" alt="">
-	<span>
+	<MkA v-user-preview="canonical" :behavior="navigationBehavior" :class="[$style.root, { [$style.isMe]: isMe }]" :to="url">
+		<img :class="$style.icon" :src="avatarUrl" alt="">
+		<span>
 		<span>@{{ username }}</span>
 		<span v-if="(host != localHost) || defaultStore.state.showFullAcct" :class="$style.host">@{{ toUnicode(host) }}</span>
 	</span>
-</MkA>
+	</MkA>
 </template>
 
 <script lang="ts" setup>
-import { toUnicode } from 'punycode.js';
-import { computed } from 'vue';
-import { host as localHost } from '@@/js/config.js';
-import { $i } from '@/account.js';
-import { defaultStore } from '@/store.js';
-import { getStaticImageUrl } from '@/scripts/media-proxy.js';
-import type { MkABehavior } from '@/components/global/MkA.vue';
+import {toUnicode} from 'punycode.js';
+import {computed} from 'vue';
+import {host as localHost} from '@@/js/config.js';
+import {$i} from '@/account.js';
+import {defaultStore} from '@/store.js';
+import {getStaticImageUrl} from '@/scripts/media-proxy.js';
+import type {MkABehavior} from '@/components/global/MkA.vue';
 
 const props = defineProps<{
 	username: string;

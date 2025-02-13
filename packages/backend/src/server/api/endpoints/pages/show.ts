@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { IsNull } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
-import type { UsersRepository, PagesRepository } from '@/models/_.js';
-import type { MiPage } from '@/models/Page.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { PageEntityService } from '@/core/entities/PageEntityService.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../error.js';
+import {IsNull} from 'typeorm';
+import {Inject, Injectable} from '@nestjs/common';
+import type {UsersRepository, PagesRepository} from '@/models/_.js';
+import type {MiPage} from '@/models/Page.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {PageEntityService} from '@/core/entities/PageEntityService.js';
+import {DI} from '@/di-symbols.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['pages'],
@@ -35,13 +35,13 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		pageId: { type: 'string', format: 'misskey:id' },
-		name: { type: 'string' },
-		username: { type: 'string' },
+		pageId: {type: 'string', format: 'misskey:id'},
+		name: {type: 'string'},
+		username: {type: 'string'},
 	},
 	anyOf: [
-		{ required: ['pageId'] },
-		{ required: ['name', 'username'] },
+		{required: ['pageId']},
+		{required: ['name', 'username']},
 	],
 } as const;
 
@@ -50,17 +50,15 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.pagesRepository)
 		private pagesRepository: PagesRepository,
-
 		private pageEntityService: PageEntityService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			let page: MiPage | null = null;
 
 			if (ps.pageId) {
-				page = await this.pagesRepository.findOneBy({ id: ps.pageId });
+				page = await this.pagesRepository.findOneBy({id: ps.pageId});
 			} else if (ps.name && ps.username) {
 				const author = await this.usersRepository.findOneBy({
 					host: IsNull(),

@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { AISCRIPT_VERSION } from '@syuilo/aiscript';
-import type { entities } from 'misskey-js'
-import { date, imageDataUrl, text } from "./fake-utils.js";
+import {AISCRIPT_VERSION} from '@syuilo/aiscript';
+import type {entities} from 'misskey-js'
+import {date, imageDataUrl, text} from "./fake-utils.js";
 
 export function abuseUserReport() {
 	return {
@@ -365,7 +365,7 @@ export function emoji(params?: {
 	license?: string,
 	isSensitive?: boolean,
 	localOnly?: boolean,
-	roleIdsThatCanBeUsedThisEmojiAsReaction?: {id:string, name:string}[],
+	roleIdsThatCanBeUsedThisEmojiAsReaction?: { id: string, name: string }[],
 	updatedAt?: string,
 }, seed?: string): entities.EmojiDetailedAdmin {
 	const _seed = seed ?? (params?.id ?? "DEFAULT_SEED");

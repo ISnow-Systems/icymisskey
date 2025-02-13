@@ -4,67 +4,69 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="800">
-		<div>
-			<Transition :name="defaultStore.state.animation ? 'fade' : ''" mode="out-in">
-				<div v-if="note">
-					<div v-if="showNext" class="_margin">
-						<MkNotes class="" :pagination="showNext === 'channel' ? nextChannelPagination : nextUserPagination" :noGap="true" :disableAutoLoad="true"/>
-					</div>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs"/>
+		</template>
+		<MkSpacer :contentMax="800">
+			<div>
+				<Transition :name="defaultStore.state.animation ? 'fade' : ''" mode="out-in">
+					<div v-if="note">
+						<div v-if="showNext" class="_margin">
+							<MkNotes :disableAutoLoad="true" :noGap="true" :pagination="showNext === 'channel' ? nextChannelPagination : nextUserPagination" class=""/>
+						</div>
 
-					<div class="_margin">
-						<div v-if="!showNext" class="_buttons" :class="$style.loadNext">
-							<MkButton v-if="note.channelId" rounded :class="$style.loadButton" @click="showNext = 'channel'"><i class="ti ti-chevron-up"></i> <i class="ti ti-device-tv"></i></MkButton>
-							<MkButton rounded :class="$style.loadButton" @click="showNext = 'user'"><i class="ti ti-chevron-up"></i> <i class="ti ti-user"></i></MkButton>
-						</div>
-						<div class="_margin _gaps_s">
-							<MkRemoteCaution v-if="note.user.host != null" :href="note.url ?? note.uri"/>
-							<MkNoteDetailed :key="note.id" v-model:note="note" :initialTab="initialTab" :class="$style.note"/>
-						</div>
-						<div v-if="clips && clips.length > 0" class="_margin">
-							<div style="font-weight: bold; padding: 12px;">{{ i18n.ts.clip }}</div>
-							<div class="_gaps">
-								<MkClipPreview v-for="item in clips" :key="item.id" :clip="item"/>
+						<div class="_margin">
+							<div v-if="!showNext" :class="$style.loadNext" class="_buttons">
+								<MkButton v-if="note.channelId" :class="$style.loadButton" rounded @click="showNext = 'channel'"><i class="ti ti-chevron-up"></i> <i class="ti ti-device-tv"></i></MkButton>
+								<MkButton :class="$style.loadButton" rounded @click="showNext = 'user'"><i class="ti ti-chevron-up"></i> <i class="ti ti-user"></i></MkButton>
+							</div>
+							<div class="_margin _gaps_s">
+								<MkRemoteCaution v-if="note.user.host != null" :href="note.url ?? note.uri"/>
+								<MkNoteDetailed :key="note.id" v-model:note="note" :class="$style.note" :initialTab="initialTab"/>
+							</div>
+							<div v-if="clips && clips.length > 0" class="_margin">
+								<div style="font-weight: bold; padding: 12px;">{{ i18n.ts.clip }}</div>
+								<div class="_gaps">
+									<MkClipPreview v-for="item in clips" :key="item.id" :clip="item"/>
+								</div>
+							</div>
+							<div v-if="!showPrev" :class="$style.loadPrev" class="_buttons">
+								<MkButton v-if="note.channelId" :class="$style.loadButton" rounded @click="showPrev = 'channel'"><i class="ti ti-chevron-down"></i> <i class="ti ti-device-tv"></i></MkButton>
+								<MkButton :class="$style.loadButton" rounded @click="showPrev = 'user'"><i class="ti ti-chevron-down"></i> <i class="ti ti-user"></i></MkButton>
 							</div>
 						</div>
-						<div v-if="!showPrev" class="_buttons" :class="$style.loadPrev">
-							<MkButton v-if="note.channelId" rounded :class="$style.loadButton" @click="showPrev = 'channel'"><i class="ti ti-chevron-down"></i> <i class="ti ti-device-tv"></i></MkButton>
-							<MkButton rounded :class="$style.loadButton" @click="showPrev = 'user'"><i class="ti ti-chevron-down"></i> <i class="ti ti-user"></i></MkButton>
+
+						<div v-if="showPrev" class="_margin">
+							<MkNotes :noGap="true" :pagination="showPrev === 'channel' ? prevChannelPagination : prevUserPagination" class=""/>
 						</div>
 					</div>
-
-					<div v-if="showPrev" class="_margin">
-						<MkNotes class="" :pagination="showPrev === 'channel' ? prevChannelPagination : prevUserPagination" :noGap="true"/>
-					</div>
-				</div>
-				<MkError v-else-if="error" @retry="fetchNote()"/>
-				<MkLoading v-else/>
-			</Transition>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+					<MkError v-else-if="error" @retry="fetchNote()"/>
+					<MkLoading v-else/>
+				</Transition>
+			</div>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { computed, watch, ref } from 'vue';
+import {computed, watch, ref} from 'vue';
 import * as Misskey from 'misskey-js';
-import { host } from '@@/js/config.js';
-import type { Paging } from '@/components/MkPagination.vue';
+import {host} from '@@/js/config.js';
+import type {Paging} from '@/components/MkPagination.vue';
 import MkNoteDetailed from '@/components/MkNoteDetailed.vue';
 import MkNotes from '@/components/MkNotes.vue';
 import MkRemoteCaution from '@/components/MkRemoteCaution.vue';
 import MkButton from '@/components/MkButton.vue';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
-import { i18n } from '@/i18n.js';
-import { dateString } from '@/filters/date.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
+import {i18n} from '@/i18n.js';
+import {dateString} from '@/filters/date.js';
 import MkClipPreview from '@/components/MkClipPreview.vue';
-import { defaultStore } from '@/store.js';
-import { pleaseLogin } from '@/scripts/please-login.js';
-import { serverContext, assertServerContext } from '@/server-context.js';
-import { $i } from '@/account.js';
+import {defaultStore} from '@/store.js';
+import {pleaseLogin} from '@/scripts/please-login.js';
+import {serverContext, assertServerContext} from '@/server-context.js';
+import {$i} from '@/account.js';
 
 // contextは非ログイン状態の情報しかないためログイン時は利用できない
 const CTX_NOTE = !$i && assertServerContext(serverContext, 'note') ? serverContext.note : null;
@@ -170,7 +172,7 @@ definePageMetadata(() => ({
 		avatar: note.value.user,
 		path: `/notes/${note.value.id}`,
 		share: {
-			title: i18n.tsx.noteOf({ user: note.value.user.name }),
+			title: i18n.tsx.noteOf({user: note.value.user.name}),
 			text: note.value.text,
 		},
 	} : {},
@@ -182,6 +184,7 @@ definePageMetadata(() => ({
 .fade-leave-active {
 	transition: opacity 0.125s ease;
 }
+
 .fade-enter-from,
 .fade-leave-to {
 	opacity: 0;

@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import type { UsersRepository, SigninsRepository, UserProfilesRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
-import { RoleService } from '@/core/RoleService.js';
-import { RoleEntityService } from '@/core/entities/RoleEntityService.js';
-import { IdService } from '@/core/IdService.js';
-import { notificationRecieveConfig } from '@/models/json-schema/user.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {UsersRepository, SigninsRepository, UserProfilesRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {DI} from '@/di-symbols.js';
+import {RoleService} from '@/core/RoleService.js';
+import {RoleEntityService} from '@/core/entities/RoleEntityService.js';
+import {IdService} from '@/core/IdService.js';
+import {notificationRecieveConfig} from '@/models/json-schema/user.js';
 
 export const meta = {
 	tags: ['admin'],
@@ -95,20 +95,20 @@ export const meta = {
 				type: 'object',
 				optional: false, nullable: false,
 				properties: {
-					note: { optional: true, ...notificationRecieveConfig },
-					follow: { optional: true, ...notificationRecieveConfig },
-					mention: { optional: true, ...notificationRecieveConfig },
-					reply: { optional: true, ...notificationRecieveConfig },
-					renote: { optional: true, ...notificationRecieveConfig },
-					quote: { optional: true, ...notificationRecieveConfig },
-					reaction: { optional: true, ...notificationRecieveConfig },
-					pollEnded: { optional: true, ...notificationRecieveConfig },
-					receiveFollowRequest: { optional: true, ...notificationRecieveConfig },
-					followRequestAccepted: { optional: true, ...notificationRecieveConfig },
-					roleAssigned: { optional: true, ...notificationRecieveConfig },
-					achievementEarned: { optional: true, ...notificationRecieveConfig },
-					app: { optional: true, ...notificationRecieveConfig },
-					test: { optional: true, ...notificationRecieveConfig },
+					note: {optional: true, ...notificationRecieveConfig},
+					follow: {optional: true, ...notificationRecieveConfig},
+					mention: {optional: true, ...notificationRecieveConfig},
+					reply: {optional: true, ...notificationRecieveConfig},
+					renote: {optional: true, ...notificationRecieveConfig},
+					quote: {optional: true, ...notificationRecieveConfig},
+					reaction: {optional: true, ...notificationRecieveConfig},
+					pollEnded: {optional: true, ...notificationRecieveConfig},
+					receiveFollowRequest: {optional: true, ...notificationRecieveConfig},
+					followRequestAccepted: {optional: true, ...notificationRecieveConfig},
+					roleAssigned: {optional: true, ...notificationRecieveConfig},
+					achievementEarned: {optional: true, ...notificationRecieveConfig},
+					app: {optional: true, ...notificationRecieveConfig},
+					test: {optional: true, ...notificationRecieveConfig},
 				},
 			},
 			isModerator: {
@@ -183,7 +183,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		userId: { type: 'string', format: 'misskey:id' },
+		userId: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['userId'],
 } as const;
@@ -193,21 +193,18 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
-
 		@Inject(DI.signinsRepository)
 		private signinsRepository: SigninsRepository,
-
 		private roleService: RoleService,
 		private roleEntityService: RoleEntityService,
 		private idService: IdService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			const [user, profile] = await Promise.all([
-				this.usersRepository.findOneBy({ id: ps.userId }),
-				this.userProfilesRepository.findOneBy({ userId: ps.userId }),
+				this.usersRepository.findOneBy({id: ps.userId}),
+				this.userProfilesRepository.findOneBy({userId: ps.userId}),
 			]);
 
 			if (user == null || profile == null) {
@@ -217,12 +214,12 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			const isModerator = await this.roleService.isModerator(user);
 			const isSilenced = !(await this.roleService.getUserPolicies(user.id)).canPublicNote;
 
-			const _me = await this.usersRepository.findOneByOrFail({ id: me.id });
+			const _me = await this.usersRepository.findOneByOrFail({id: me.id});
 			if (!await this.roleService.isAdministrator(_me) && await this.roleService.isAdministrator(user)) {
 				throw new Error('cannot show info of admin');
 			}
 
-			const signins = await this.signinsRepository.findBy({ userId: user.id });
+			const signins = await this.signinsRepository.findBy({userId: user.id});
 
 			const roleAssigns = await this.roleService.getUserAssigns(user.id);
 			const roles = await this.roleService.getUserRoles(user.id);

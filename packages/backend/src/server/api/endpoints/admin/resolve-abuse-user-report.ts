@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { AbuseUserReportsRepository } from '@/models/_.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '@/server/api/error.js';
-import { AbuseReportService } from '@/core/AbuseReportService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {AbuseUserReportsRepository} from '@/models/_.js';
+import {DI} from '@/di-symbols.js';
+import {ApiError} from '@/server/api/error.js';
+import {AbuseReportService} from '@/core/AbuseReportService.js';
 
 export const meta = {
 	tags: ['admin'],
@@ -31,8 +31,8 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		reportId: { type: 'string', format: 'misskey:id' },
-		resolvedAs: { type: 'string', enum: ['accept', 'reject', null], nullable: true },
+		reportId: {type: 'string', format: 'misskey:id'},
+		resolvedAs: {type: 'string', enum: ['accept', 'reject', null], nullable: true},
 	},
 	required: ['reportId'],
 } as const;
@@ -45,12 +45,12 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		private abuseReportService: AbuseReportService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const report = await this.abuseUserReportsRepository.findOneBy({ id: ps.reportId });
+			const report = await this.abuseUserReportsRepository.findOneBy({id: ps.reportId});
 			if (!report) {
 				throw new ApiError(meta.errors.noSuchAbuseReport);
 			}
 
-			await this.abuseReportService.resolve([{ reportId: report.id, resolvedAs: ps.resolvedAs ?? null }], me);
+			await this.abuseReportService.resolve([{reportId: report.id, resolvedAs: ps.resolvedAs ?? null}], me);
 		});
 	}
 }

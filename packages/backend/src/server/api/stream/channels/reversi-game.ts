@@ -3,27 +3,26 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import type { MiReversiGame } from '@/models/_.js';
-import { DI } from '@/di-symbols.js';
-import { bindThis } from '@/decorators.js';
-import { ReversiService } from '@/core/ReversiService.js';
-import { ReversiGameEntityService } from '@/core/entities/ReversiGameEntityService.js';
-import { isJsonObject } from '@/misc/json-value.js';
-import type { JsonObject, JsonValue } from '@/misc/json-value.js';
-import Channel, { type MiChannelService } from '../channel.js';
-import { reversiUpdateKeys } from 'misskey-js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {MiReversiGame} from '@/models/_.js';
+import {DI} from '@/di-symbols.js';
+import {bindThis} from '@/decorators.js';
+import {ReversiService} from '@/core/ReversiService.js';
+import {ReversiGameEntityService} from '@/core/entities/ReversiGameEntityService.js';
+import {isJsonObject} from '@/misc/json-value.js';
+import type {JsonObject, JsonValue} from '@/misc/json-value.js';
+import Channel, {type MiChannelService} from '../channel.js';
+import {reversiUpdateKeys} from 'misskey-js';
 
 class ReversiGameChannel extends Channel {
-	public readonly chName = 'reversiGame';
 	public static shouldShare = false;
 	public static requireCredential = false as const;
+	public readonly chName = 'reversiGame';
 	private gameId: MiReversiGame['id'] | null = null;
 
 	constructor(
 		private reversiService: ReversiService,
 		private reversiGameEntityService: ReversiGameEntityService,
-
 		id: string,
 		connection: Channel['connection'],
 	) {
@@ -61,8 +60,16 @@ class ReversiGameChannel extends Channel {
 				if (typeof body.id !== 'string') return;
 				this.putStone(body.pos, body.id);
 				break;
-			case 'claimTimeIsUp': this.claimTimeIsUp(); break;
+			case 'claimTimeIsUp':
+				this.claimTimeIsUp();
+				break;
 		}
+	}
+
+	@bindThis
+	public dispose() {
+		// Unsubscribe events
+		this.subscriber.off(`reversiGameStream:${this.gameId}`, this.send);
 	}
 
 	@bindThis
@@ -98,12 +105,6 @@ class ReversiGameChannel extends Channel {
 		if (this.user == null) return;
 
 		this.reversiService.checkTimeout(this.gameId!);
-	}
-
-	@bindThis
-	public dispose() {
-		// Unsubscribe events
-		this.subscriber.off(`reversiGameStream:${this.gameId}`, this.send);
 	}
 }
 

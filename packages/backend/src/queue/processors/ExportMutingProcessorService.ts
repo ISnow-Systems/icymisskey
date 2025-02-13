@@ -4,20 +4,20 @@
  */
 
 import * as fs from 'node:fs';
-import { Inject, Injectable } from '@nestjs/common';
-import { IsNull, MoreThan } from 'typeorm';
-import { format as dateFormat } from 'date-fns';
-import { DI } from '@/di-symbols.js';
-import type { MutingsRepository, UsersRepository, MiMuting } from '@/models/_.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {IsNull, MoreThan} from 'typeorm';
+import {format as dateFormat} from 'date-fns';
+import {DI} from '@/di-symbols.js';
+import type {MutingsRepository, UsersRepository, MiMuting} from '@/models/_.js';
 import type Logger from '@/logger.js';
-import { DriveService } from '@/core/DriveService.js';
-import { createTemp } from '@/misc/create-temp.js';
-import { UtilityService } from '@/core/UtilityService.js';
-import { NotificationService } from '@/core/NotificationService.js';
-import { bindThis } from '@/decorators.js';
-import { QueueLoggerService } from '../QueueLoggerService.js';
+import {DriveService} from '@/core/DriveService.js';
+import {createTemp} from '@/misc/create-temp.js';
+import {UtilityService} from '@/core/UtilityService.js';
+import {NotificationService} from '@/core/NotificationService.js';
+import {bindThis} from '@/decorators.js';
+import {QueueLoggerService} from '../QueueLoggerService.js';
 import type * as Bull from 'bullmq';
-import type { DbJobDataWithUser } from '../types.js';
+import type {DbJobDataWithUser} from '../types.js';
 
 @Injectable()
 export class ExportMutingProcessorService {
@@ -26,10 +26,8 @@ export class ExportMutingProcessorService {
 	constructor(
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.mutingsRepository)
 		private mutingsRepository: MutingsRepository,
-
 		private utilityService: UtilityService,
 		private driveService: DriveService,
 		private queueLoggerService: QueueLoggerService,
@@ -42,7 +40,7 @@ export class ExportMutingProcessorService {
 	public async process(job: Bull.Job<DbJobDataWithUser>): Promise<void> {
 		this.logger.info(`Exporting muting of ${job.data.user.id} ...`);
 
-		const user = await this.usersRepository.findOneBy({ id: job.data.user.id });
+		const user = await this.usersRepository.findOneBy({id: job.data.user.id});
 		if (user == null) {
 			return;
 		}
@@ -53,7 +51,7 @@ export class ExportMutingProcessorService {
 		this.logger.info(`Temp file is ${path}`);
 
 		try {
-			const stream = fs.createWriteStream(path, { flags: 'a' });
+			const stream = fs.createWriteStream(path, {flags: 'a'});
 
 			let exportedCount = 0;
 			let cursor: MiMuting['id'] | null = null;
@@ -63,7 +61,7 @@ export class ExportMutingProcessorService {
 					where: {
 						muterId: user.id,
 						expiresAt: IsNull(),
-						...(cursor ? { id: MoreThan(cursor) } : {}),
+						...(cursor ? {id: MoreThan(cursor)} : {}),
 					},
 					take: 100,
 					order: {
@@ -79,9 +77,10 @@ export class ExportMutingProcessorService {
 				cursor = mutes.at(-1)?.id ?? null;
 
 				for (const mute of mutes) {
-					const u = await this.usersRepository.findOneBy({ id: mute.muteeId });
+					const u = await this.usersRepository.findOneBy({id: mute.muteeId});
 					if (u == null) {
-						exportedCount++; continue;
+						exportedCount++;
+						continue;
 					}
 
 					const content = this.utilityService.getFullApAccount(u.username, u.host);
@@ -109,7 +108,7 @@ export class ExportMutingProcessorService {
 			this.logger.succ(`Exported to: ${path}`);
 
 			const fileName = 'mute-' + dateFormat(new Date(), 'yyyy-MM-dd-HH-mm-ss') + '.csv';
-			const driveFile = await this.driveService.addFile({ user, path, name: fileName, force: true, ext: 'csv' });
+			const driveFile = await this.driveService.addFile({user, path, name: fileName, force: true, ext: 'csv'});
 
 			this.logger.succ(`Exported to: ${driveFile.id}`);
 

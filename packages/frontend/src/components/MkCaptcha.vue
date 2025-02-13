@@ -4,30 +4,30 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div>
-	<span v-if="!available">Loading<MkEllipsis/></span>
-	<div v-if="props.provider == 'mcaptcha'">
-		<div id="mcaptcha__widget-container" class="m-captcha-style"></div>
-		<div ref="captchaEl"></div>
-	</div>
-	<div v-if="props.provider == 'testcaptcha'" style="background: #eee; border: solid 1px #888; padding: 8px; color: #000; max-width: 320px; display: flex; gap: 10px; align-items: center; box-shadow: 2px 2px 6px #0004; border-radius: 4px;">
-		<img src="/client-assets/testcaptcha.png" style="width: 60px; height: 60px; "/>
-		<div v-if="testcaptchaPassed">
-			<div style="color: green;">Test captcha passed!</div>
+	<div>
+		<span v-if="!available">Loading<MkEllipsis/></span>
+		<div v-if="props.provider == 'mcaptcha'">
+			<div id="mcaptcha__widget-container" class="m-captcha-style"></div>
+			<div ref="captchaEl"></div>
 		</div>
-		<div v-else>
-			<div style="font-size: 13px; margin-bottom: 4px;">Type "ai-chan-kawaii" to pass captcha</div>
-			<input v-model="testcaptchaInput" data-cy-testcaptcha-input/>
-			<button type="button" data-cy-testcaptcha-submit @click="testcaptchaSubmit">Submit</button>
+		<div v-if="props.provider == 'testcaptcha'" style="background: #eee; border: solid 1px #888; padding: 8px; color: #000; max-width: 320px; display: flex; gap: 10px; align-items: center; box-shadow: 2px 2px 6px #0004; border-radius: 4px;">
+			<img src="/client-assets/testcaptcha.png" style="width: 60px; height: 60px; "/>
+			<div v-if="testcaptchaPassed">
+				<div style="color: green;">Test captcha passed!</div>
+			</div>
+			<div v-else>
+				<div style="font-size: 13px; margin-bottom: 4px;">Type "ai-chan-kawaii" to pass captcha</div>
+				<input v-model="testcaptchaInput" data-cy-testcaptcha-input/>
+				<button data-cy-testcaptcha-submit type="button" @click="testcaptchaSubmit">Submit</button>
+			</div>
 		</div>
+		<div v-else ref="captchaEl"></div>
 	</div>
-	<div v-else ref="captchaEl"></div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { ref, shallowRef, computed, onMounted, onBeforeUnmount, watch, onUnmounted } from 'vue';
-import { defaultStore } from '@/store.js';
+import {ref, shallowRef, computed, onMounted, onBeforeUnmount, watch, onUnmounted} from 'vue';
+import {defaultStore} from '@/store.js';
 
 // APIs provided by Captcha services
 // see: https://docs.hcaptcha.com/configuration/#javascript-api
@@ -50,7 +50,8 @@ type CaptchaContainer = {
 };
 
 declare global {
-	interface Window extends CaptchaContainer { }
+	interface Window extends CaptchaContainer {
+	}
 }
 
 const props = defineProps<{
@@ -74,11 +75,16 @@ const testcaptchaPassed = ref(false);
 
 const variable = computed(() => {
 	switch (props.provider) {
-		case 'hcaptcha': return 'hcaptcha';
-		case 'recaptcha': return 'grecaptcha';
-		case 'turnstile': return 'turnstile';
-		case 'mcaptcha': return 'mcaptcha';
-		case 'testcaptcha': return 'testcaptcha';
+		case 'hcaptcha':
+			return 'hcaptcha';
+		case 'recaptcha':
+			return 'grecaptcha';
+		case 'turnstile':
+			return 'turnstile';
+		case 'mcaptcha':
+			return 'mcaptcha';
+		case 'testcaptcha':
+			return 'testcaptcha';
 	}
 });
 
@@ -86,11 +92,16 @@ const loaded = !!window[variable.value];
 
 const src = computed(() => {
 	switch (props.provider) {
-		case 'hcaptcha': return 'https://js.hcaptcha.com/1/api.js?render=explicit&recaptchacompat=off';
-		case 'recaptcha': return 'https://www.recaptcha.net/recaptcha/api.js?render=explicit';
-		case 'turnstile': return 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
-		case 'mcaptcha': return null;
-		case 'testcaptcha': return null;
+		case 'hcaptcha':
+			return 'https://js.hcaptcha.com/1/api.js?render=explicit&recaptchacompat=off';
+		case 'recaptcha':
+			return 'https://www.recaptcha.net/recaptcha/api.js?render=explicit';
+		case 'turnstile':
+			return 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+		case 'mcaptcha':
+			return null;
+		case 'testcaptcha':
+			return null;
 	}
 });
 
@@ -158,7 +169,7 @@ async function requestRender() {
 			'error-callback': () => callback(undefined),
 		});
 	} else if (props.provider === 'mcaptcha' && props.instanceUrl && props.sitekey) {
-		const { default: Widget } = await import('@mcaptcha/vanilla-glue');
+		const {default: Widget} = await import('@mcaptcha/vanilla-glue');
 		new Widget({
 			siteKey: {
 				instanceUrl: new URL(props.instanceUrl),

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { get } from 'idb-keyval';
+import {get} from 'idb-keyval';
 import * as Misskey from 'misskey-js';
 
 export async function getAccountFromId(id: string): Promise<Pick<Misskey.entities.SignupResponse, 'id' | 'token'> | undefined> {

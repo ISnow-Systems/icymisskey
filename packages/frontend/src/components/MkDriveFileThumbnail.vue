@@ -4,37 +4,37 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div
-	v-panel
-	:class="[$style.root, {
+	<div
+		v-panel
+		:class="[$style.root, {
 		[$style.sensitiveHighlight]: highlightWhenSensitive && file.isSensitive,
 		[$style.large]: large,
 	}]"
->
-	<ImgWithBlurhash
-		v-if="isThumbnailAvailable"
-		:hash="file.blurhash"
-		:src="file.thumbnailUrl"
-		:alt="file.name"
-		:title="file.name"
-		:cover="fit !== 'contain'"
-		:forceBlurhash="forceBlurhash"
-	/>
-	<i v-else-if="is === 'image'" class="ti ti-photo" :class="$style.icon"></i>
-	<i v-else-if="is === 'video'" class="ti ti-video" :class="$style.icon"></i>
-	<i v-else-if="is === 'audio' || is === 'midi'" class="ti ti-file-music" :class="$style.icon"></i>
-	<i v-else-if="is === 'csv'" class="ti ti-file-text" :class="$style.icon"></i>
-	<i v-else-if="is === 'pdf'" class="ti ti-file-text" :class="$style.icon"></i>
-	<i v-else-if="is === 'textfile'" class="ti ti-file-text" :class="$style.icon"></i>
-	<i v-else-if="is === 'archive'" class="ti ti-file-zip" :class="$style.icon"></i>
-	<i v-else class="ti ti-file" :class="$style.icon"></i>
+	>
+		<ImgWithBlurhash
+			v-if="isThumbnailAvailable"
+			:alt="file.name"
+			:cover="fit !== 'contain'"
+			:forceBlurhash="forceBlurhash"
+			:hash="file.blurhash"
+			:src="file.thumbnailUrl"
+			:title="file.name"
+		/>
+		<i v-else-if="is === 'image'" :class="$style.icon" class="ti ti-photo"></i>
+		<i v-else-if="is === 'video'" :class="$style.icon" class="ti ti-video"></i>
+		<i v-else-if="is === 'audio' || is === 'midi'" :class="$style.icon" class="ti ti-file-music"></i>
+		<i v-else-if="is === 'csv'" :class="$style.icon" class="ti ti-file-text"></i>
+		<i v-else-if="is === 'pdf'" :class="$style.icon" class="ti ti-file-text"></i>
+		<i v-else-if="is === 'textfile'" :class="$style.icon" class="ti ti-file-text"></i>
+		<i v-else-if="is === 'archive'" :class="$style.icon" class="ti ti-file-zip"></i>
+		<i v-else :class="$style.icon" class="ti ti-file"></i>
 
-	<i v-if="isThumbnailAvailable && is === 'video'" class="ti ti-video" :class="$style.iconSub"></i>
-</div>
+		<i v-if="isThumbnailAvailable && is === 'video'" :class="$style.iconSub" class="ti ti-video"></i>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+import {computed} from 'vue';
 import * as Misskey from 'misskey-js';
 import ImgWithBlurhash from '@/components/MkImgWithBlurhash.vue';
 

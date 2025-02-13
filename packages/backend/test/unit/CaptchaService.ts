@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { afterAll, beforeAll, beforeEach, describe, expect, jest } from '@jest/globals';
-import { Test, TestingModule } from '@nestjs/testing';
-import { Response } from 'node-fetch';
+import {afterAll, beforeAll, beforeEach, describe, expect, jest} from '@jest/globals';
+import {Test, TestingModule} from '@nestjs/testing';
+import {Response} from 'node-fetch';
 import {
 	CaptchaError,
 	CaptchaErrorCode,
@@ -13,11 +13,11 @@ import {
 	CaptchaSaveResult,
 	CaptchaService,
 } from '@/core/CaptchaService.js';
-import { GlobalModule } from '@/GlobalModule.js';
-import { HttpRequestService } from '@/core/HttpRequestService.js';
-import { MetaService } from '@/core/MetaService.js';
-import { MiMeta } from '@/models/Meta.js';
-import { LoggerService } from '@/core/LoggerService.js';
+import {GlobalModule} from '@/GlobalModule.js';
+import {HttpRequestService} from '@/core/HttpRequestService.js';
+import {MetaService} from '@/core/MetaService.js';
+import {MiMeta} from '@/models/Meta.js';
+import {LoggerService} from '@/core/LoggerService.js';
 
 describe('CaptchaService', () => {
 	let app: TestingModule;
@@ -34,7 +34,7 @@ describe('CaptchaService', () => {
 				CaptchaService,
 				LoggerService,
 				{
-					provide: HttpRequestService, useFactory: () => ({ send: jest.fn() }),
+					provide: HttpRequestService, useFactory: () => ({send: jest.fn()}),
 				},
 				{
 					provide: MetaService, useFactory: () => ({
@@ -99,7 +99,7 @@ describe('CaptchaService', () => {
 
 	describe('verifyRecaptcha', () => {
 		test('success', async () => {
-			successMock({ success: true });
+			successMock({success: true});
 			await service.verifyRecaptcha('secret', 'response');
 		});
 
@@ -113,14 +113,14 @@ describe('CaptchaService', () => {
 		});
 
 		test('verificationFailed', async () => {
-			failureVerificationMock({ success: false, 'error-codes': ['code01', 'code02'] });
+			failureVerificationMock({success: false, 'error-codes': ['code01', 'code02']});
 			await testCaptchaError(captchaErrorCodes.verificationFailed, () => service.verifyRecaptcha('secret', 'response'));
 		});
 	});
 
 	describe('verifyHcaptcha', () => {
 		test('success', async () => {
-			successMock({ success: true });
+			successMock({success: true});
 			await service.verifyHcaptcha('secret', 'response');
 		});
 
@@ -134,7 +134,7 @@ describe('CaptchaService', () => {
 		});
 
 		test('verificationFailed', async () => {
-			failureVerificationMock({ success: false, 'error-codes': ['code01', 'code02'] });
+			failureVerificationMock({success: false, 'error-codes': ['code01', 'code02']});
 			await testCaptchaError(captchaErrorCodes.verificationFailed, () => service.verifyHcaptcha('secret', 'response'));
 		});
 	});
@@ -143,7 +143,7 @@ describe('CaptchaService', () => {
 		const host = 'https://localhost';
 
 		test('success', async () => {
-			successMock({ valid: true });
+			successMock({valid: true});
 			await service.verifyMcaptcha('secret', 'sitekey', host, 'response');
 		});
 
@@ -157,14 +157,14 @@ describe('CaptchaService', () => {
 		});
 
 		test('verificationFailed', async () => {
-			failureVerificationMock({ valid: false });
+			failureVerificationMock({valid: false});
 			await testCaptchaError(captchaErrorCodes.verificationFailed, () => service.verifyMcaptcha('secret', 'sitekey', host, 'response'));
 		});
 	});
 
 	describe('verifyTurnstile', () => {
 		test('success', async () => {
-			successMock({ success: true });
+			successMock({success: true});
 			await service.verifyTurnstile('secret', 'response');
 		});
 
@@ -178,7 +178,7 @@ describe('CaptchaService', () => {
 		});
 
 		test('verificationFailed', async () => {
-			failureVerificationMock({ success: false, 'error-codes': ['code01', 'code02'] });
+			failureVerificationMock({success: false, 'error-codes': ['code01', 'code02']});
 			await testCaptchaError(captchaErrorCodes.verificationFailed, () => service.verifyTurnstile('secret', 'response'));
 		});
 	});
@@ -319,13 +319,13 @@ describe('CaptchaService', () => {
 
 		describe('[success] 検証に成功した時だけ保存できる＋他のプロバイダの設定値を誤って更新しない', () => {
 			beforeEach(() => {
-				successMock({ success: true, valid: true });
+				successMock({success: true, valid: true});
 			});
 
 			async function assertSuccess(promise: Promise<CaptchaSaveResult>, expectMeta: Partial<MiMeta>) {
 				await expect(promise)
 					.resolves
-					.toStrictEqual({ success: true });
+					.toStrictEqual({success: true});
 				const partialParams = metaService.update.mock.calls[0][0];
 				expect(partialParams).toStrictEqual(expectMeta);
 			}
@@ -560,7 +560,7 @@ describe('CaptchaService', () => {
 
 			describe('verificationFailed', () => {
 				beforeEach(() => {
-					failureVerificationMock({ success: false, valid: false, 'error-codes': ['code01', 'code02'] });
+					failureVerificationMock({success: false, valid: false, 'error-codes': ['code01', 'code02']});
 				});
 
 				test('hcaptcha', async () => {

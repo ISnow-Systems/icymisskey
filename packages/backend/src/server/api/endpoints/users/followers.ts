@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { IsNull } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
-import type { UsersRepository, FollowingsRepository, UserProfilesRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { QueryService } from '@/core/QueryService.js';
-import { FollowingEntityService } from '@/core/entities/FollowingEntityService.js';
-import { UtilityService } from '@/core/UtilityService.js';
-import { DI } from '@/di-symbols.js';
-import { RoleService } from '@/core/RoleService.js';
-import { ApiError } from '../../error.js';
+import {IsNull} from 'typeorm';
+import {Inject, Injectable} from '@nestjs/common';
+import type {UsersRepository, FollowingsRepository, UserProfilesRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {QueryService} from '@/core/QueryService.js';
+import {FollowingEntityService} from '@/core/entities/FollowingEntityService.js';
+import {UtilityService} from '@/core/UtilityService.js';
+import {DI} from '@/di-symbols.js';
+import {RoleService} from '@/core/RoleService.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['users'],
@@ -49,12 +49,12 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
+		sinceId: {type: 'string', format: 'misskey:id'},
+		untilId: {type: 'string', format: 'misskey:id'},
+		limit: {type: 'integer', minimum: 1, maximum: 100, default: 10},
 
-		userId: { type: 'string', format: 'misskey:id' },
-		username: { type: 'string' },
+		userId: {type: 'string', format: 'misskey:id'},
+		username: {type: 'string'},
 		host: {
 			type: 'string',
 			nullable: true,
@@ -62,8 +62,8 @@ export const paramDef = {
 		},
 	},
 	anyOf: [
-		{ required: ['userId'] },
-		{ required: ['username', 'host'] },
+		{required: ['userId']},
+		{required: ['username', 'host']},
 	],
 } as const;
 
@@ -72,13 +72,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
-
 		@Inject(DI.followingsRepository)
 		private followingsRepository: FollowingsRepository,
-
 		private utilityService: UtilityService,
 		private followingEntityService: FollowingEntityService,
 		private queryService: QueryService,
@@ -86,14 +83,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			const user = await this.usersRepository.findOneBy(ps.userId != null
-				? { id: ps.userId }
-				: { usernameLower: ps.username!.toLowerCase(), host: this.utilityService.toPunyNullable(ps.host) ?? IsNull() });
+				? {id: ps.userId}
+				: {usernameLower: ps.username!.toLowerCase(), host: this.utilityService.toPunyNullable(ps.host) ?? IsNull()});
 
 			if (user == null) {
 				throw new ApiError(meta.errors.noSuchUser);
 			}
 
-			const profile = await this.userProfilesRepository.findOneByOrFail({ userId: user.id });
+			const profile = await this.userProfilesRepository.findOneByOrFail({userId: user.id});
 
 			if (profile.followersVisibility !== 'public' && !await this.roleService.isModerator(me)) {
 				if (profile.followersVisibility === 'private') {
@@ -118,14 +115,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			}
 
 			const query = this.queryService.makePaginationQuery(this.followingsRepository.createQueryBuilder('following'), ps.sinceId, ps.untilId)
-				.andWhere('following.followeeId = :userId', { userId: user.id })
+				.andWhere('following.followeeId = :userId', {userId: user.id})
 				.innerJoinAndSelect('following.follower', 'follower');
 
 			const followings = await query
 				.limit(ps.limit)
 				.getMany();
 
-			return await this.followingEntityService.packMany(followings, me, { populateFollower: true });
+			return await this.followingEntityService.packMany(followings, me, {populateFollower: true});
 		});
 	}
 }

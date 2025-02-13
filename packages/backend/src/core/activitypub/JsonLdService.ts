@@ -4,13 +4,13 @@
  */
 
 import * as crypto from 'node:crypto';
-import { Injectable } from '@nestjs/common';
-import { HttpRequestService } from '@/core/HttpRequestService.js';
-import { bindThis } from '@/decorators.js';
-import { CONTEXT, PRELOADED_CONTEXTS } from './misc/contexts.js';
-import { validateContentTypeSetAsJsonLD } from './misc/validator.js';
-import type { JsonLdDocument } from 'jsonld';
-import type { JsonLd as JsonLdObject, RemoteDocument } from 'jsonld/jsonld-spec.js';
+import {Injectable} from '@nestjs/common';
+import {HttpRequestService} from '@/core/HttpRequestService.js';
+import {bindThis} from '@/decorators.js';
+import {CONTEXT, PRELOADED_CONTEXTS} from './misc/contexts.js';
+import {validateContentTypeSetAsJsonLD} from './misc/validator.js';
+import type {JsonLdDocument} from 'jsonld';
+import type {JsonLd as JsonLdObject, RemoteDocument} from 'jsonld/jsonld-spec.js';
 
 // RsaSignature2017 implementation is based on https://github.com/transmute-industries/RsaSignature2017
 
@@ -79,7 +79,7 @@ class JsonLd {
 		delete transformedOptions['signatureValue'];
 		const canonizedOptions = await this.normalize(transformedOptions);
 		const optionsHash = this.sha256(canonizedOptions.toString());
-		const transformedData = { ...data };
+		const transformedData = {...data};
 		delete transformedData['signature'];
 		const cannonidedData = await this.normalize(transformedData);
 		if (this.debug) console.debug(`cannonidedData: ${cannonidedData}`);
@@ -104,6 +104,13 @@ class JsonLd {
 		return (await import('jsonld')).default.normalize(data, {
 			documentLoader: customLoader,
 		});
+	}
+
+	@bindThis
+	public sha256(data: string): string {
+		const hash = crypto.createHash('sha256');
+		hash.update(data);
+		return hash.digest('hex');
 	}
 
 	@bindThis
@@ -155,13 +162,6 @@ class JsonLd {
 		});
 
 		return json as JsonLdObject;
-	}
-
-	@bindThis
-	public sha256(data: string): string {
-		const hash = crypto.createHash('sha256');
-		hash.update(data);
-		return hash.digest('hex');
 	}
 }
 

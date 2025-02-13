@@ -4,78 +4,80 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader/></template>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader/>
+		</template>
 
-	<MkSpacer :contentMax="800">
-		<div :class="$style.root">
-			<div class="_gaps_s">
-				<div :class="$style.editor" class="_panel">
-					<MkCodeEditor v-model="code" lang="aiscript"/>
-				</div>
-				<MkButton primary @click="run()"><i class="ti ti-player-play"></i></MkButton>
-			</div>
-
-			<MkContainer v-if="root && components.length > 1" :key="uiKey" :foldable="true">
-				<template #header>UI</template>
-				<div :class="$style.ui">
-					<MkAsUi :component="root" :components="components" size="small"/>
-				</div>
-			</MkContainer>
-
-			<MkContainer :foldable="true" class="">
-				<template #header>{{ i18n.ts.output }}</template>
-				<div :class="$style.logs">
-					<div v-for="log in logs" :key="log.id" class="log" :class="{ print: log.print }">{{ log.text }}</div>
-				</div>
-			</MkContainer>
-
-			<MkContainer :foldable="true" :expanded="false">
-				<template #header>{{ i18n.ts.uiInspector }}</template>
-				<div :class="$style.uiInspector">
-					<div v-for="c in components" :key="c.value.id" :class="{ [$style.uiInspectorUnShown]: !showns.has(c.value.id) }">
-						<div :class="$style.uiInspectorType">{{ c.value.type }}</div>
-						<div :class="$style.uiInspectorId">{{ c.value.id }}</div>
-						<button :class="$style.uiInspectorPropsToggle" @click="() => uiInspectorOpenedComponents.set(c, !uiInspectorOpenedComponents.get(c))">
-							<i v-if="uiInspectorOpenedComponents.get(c)" class="ti ti-chevron-up icon"></i>
-							<i v-else class="ti ti-chevron-down icon"></i>
-						</button>
-						<div v-if="uiInspectorOpenedComponents.get(c)">
-							<MkTextarea :modelValue="stringifyUiProps(c.value)" code readonly></MkTextarea>
-						</div>
+		<MkSpacer :contentMax="800">
+			<div :class="$style.root">
+				<div class="_gaps_s">
+					<div :class="$style.editor" class="_panel">
+						<MkCodeEditor v-model="code" lang="aiscript"/>
 					</div>
-					<div :class="$style.uiInspectorDescription">{{ i18n.ts.uiInspectorDescription }}</div>
+					<MkButton primary @click="run()"><i class="ti ti-player-play"></i></MkButton>
 				</div>
-			</MkContainer>
 
-			<div class="">
-				{{ i18n.ts.scratchpadDescription }}
+				<MkContainer v-if="root && components.length > 1" :key="uiKey" :foldable="true">
+					<template #header>UI</template>
+					<div :class="$style.ui">
+						<MkAsUi :component="root" :components="components" size="small"/>
+					</div>
+				</MkContainer>
+
+				<MkContainer :foldable="true" class="">
+					<template #header>{{ i18n.ts.output }}</template>
+					<div :class="$style.logs">
+						<div v-for="log in logs" :key="log.id" :class="{ print: log.print }" class="log">{{ log.text }}</div>
+					</div>
+				</MkContainer>
+
+				<MkContainer :expanded="false" :foldable="true">
+					<template #header>{{ i18n.ts.uiInspector }}</template>
+					<div :class="$style.uiInspector">
+						<div v-for="c in components" :key="c.value.id" :class="{ [$style.uiInspectorUnShown]: !showns.has(c.value.id) }">
+							<div :class="$style.uiInspectorType">{{ c.value.type }}</div>
+							<div :class="$style.uiInspectorId">{{ c.value.id }}</div>
+							<button :class="$style.uiInspectorPropsToggle" @click="() => uiInspectorOpenedComponents.set(c, !uiInspectorOpenedComponents.get(c))">
+								<i v-if="uiInspectorOpenedComponents.get(c)" class="ti ti-chevron-up icon"></i>
+								<i v-else class="ti ti-chevron-down icon"></i>
+							</button>
+							<div v-if="uiInspectorOpenedComponents.get(c)">
+								<MkTextarea :modelValue="stringifyUiProps(c.value)" code readonly></MkTextarea>
+							</div>
+						</div>
+						<div :class="$style.uiInspectorDescription">{{ i18n.ts.uiInspectorDescription }}</div>
+					</div>
+				</MkContainer>
+
+				<div class="">
+					{{ i18n.ts.scratchpadDescription }}
+				</div>
 			</div>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { onDeactivated, onUnmounted, ref, watch, computed } from 'vue';
-import type { Ref } from 'vue';
-import { Interpreter, Parser, utils } from '@syuilo/aiscript';
+import {onDeactivated, onUnmounted, ref, watch, computed} from 'vue';
+import type {Ref} from 'vue';
+import {Interpreter, Parser, utils} from '@syuilo/aiscript';
 import MkContainer from '@/components/MkContainer.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkTextarea from '@/components/MkTextarea.vue';
 import MkCodeEditor from '@/components/MkCodeEditor.vue';
-import { aiScriptReadline, createAiScriptEnv } from '@/scripts/aiscript/api.js';
+import {aiScriptReadline, createAiScriptEnv} from '@/scripts/aiscript/api.js';
 import * as os from '@/os.js';
-import { $i } from '@/account.js';
-import { i18n } from '@/i18n.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
-import { registerAsUiLib } from '@/scripts/aiscript/ui.js';
-import type { AsUiComponent } from '@/scripts/aiscript/ui.js';
+import {$i} from '@/account.js';
+import {i18n} from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
+import {registerAsUiLib} from '@/scripts/aiscript/ui.js';
+import type {AsUiComponent} from '@/scripts/aiscript/ui.js';
 import MkAsUi from '@/components/MkAsUi.vue';
-import { miLocalStorage } from '@/local-storage.js';
-import { claimAchievement } from '@/scripts/achievements.js';
+import {miLocalStorage} from '@/local-storage.js';
+import {claimAchievement} from '@/scripts/achievements.js';
 
-import type { AsUiRoot } from '@/scripts/aiscript/ui.js';
+import type {AsUiRoot} from '@/scripts/aiscript/ui.js';
 
 const parser = new Parser();
 let aiscript: Interpreter;
@@ -101,7 +103,7 @@ watch(code, () => {
 
 function stringifyUiProps(uiProps) {
 	return JSON.stringify(
-		{ ...uiProps, type: undefined, id: undefined },
+		{...uiProps, type: undefined, id: undefined},
 		(k, v) => typeof v === 'function' ? '<function>' : v,
 		2
 	);
@@ -142,12 +144,15 @@ async function run() {
 		},
 		log: (type, params) => {
 			switch (type) {
-				case 'end': logs.value.push({
-					id: Math.random(),
-					text: utils.valToString(params.val, true),
-					print: false,
-				}); break;
-				default: break;
+				case 'end':
+					logs.value.push({
+						id: Math.random(),
+						text: utils.valToString(params.val, true),
+						print: false,
+					});
+					break;
+				default:
+					break;
 			}
 		},
 	});

@@ -1,9 +1,9 @@
 // Original: https://github.com/rollup/plugins/tree/8835dd2aed92f408d7dc72d7cc25a9728e16face/packages/json
 
 import JSON5 from 'json5';
-import { Plugin } from 'rollup';
-import { createFilter, dataToEsm } from '@rollup/pluginutils';
-import { RollupJsonOptions } from '@rollup/plugin-json';
+import {Plugin} from 'rollup';
+import {createFilter, dataToEsm} from '@rollup/pluginutils';
+import {RollupJsonOptions} from '@rollup/plugin-json';
 
 // json5 extends SyntaxError with additional fields (without subclassing)
 // https://github.com/json5/json5/blob/de344f0619bda1465a6e25c76f1c0c3dda8108d9/lib/parse.js#L1111-L1112
@@ -32,15 +32,15 @@ export default function json5(options: RollupJsonOptions = {}): Plugin {
 						namedExports: options.namedExports,
 						indent,
 					}),
-					map: { mappings: '' },
+					map: {mappings: ''},
 				};
 			} catch (err) {
 				if (!(err instanceof SyntaxError)) {
 					throw err;
 				}
 				const message = 'Could not parse JSON5 file';
-				const { lineNumber, columnNumber } = err as Json5SyntaxError;
-				this.warn({ message, id, loc: { line: lineNumber, column: columnNumber } });
+				const {lineNumber, columnNumber} = err as Json5SyntaxError;
+				this.warn({message, id, loc: {line: lineNumber, column: columnNumber}});
 				return null;
 			}
 		},

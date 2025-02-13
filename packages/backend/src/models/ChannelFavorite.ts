@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne } from 'typeorm';
-import { id } from './util/id.js';
-import { MiUser } from './User.js';
-import { MiChannel } from './Channel.js';
+import {PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne} from 'typeorm';
+import {id} from './util/id.js';
+import {MiUser} from './User.js';
+import {MiChannel} from './Channel.js';
 
 @Entity('channel_favorite')
-@Index(['userId', 'channelId'], { unique: true })
+@Index(['userId', 'channelId'], {unique: true})
 export class MiChannelFavorite {
 	@PrimaryColumn(id())
 	public id: string;

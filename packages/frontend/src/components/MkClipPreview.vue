@@ -4,29 +4,34 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkA :to="`/clips/${clip.id}`" :class="$style.link">
-	<div :class="$style.root" class="_panel _gaps_s">
-		<b>{{ clip.name }}</b>
-		<div :class="$style.description">
-			<div v-if="clip.description"><Mfm :text="clip.description" :plain="true" :nowrap="true"/></div>
-			<div v-if="clip.lastClippedAt">{{ i18n.ts.updatedAt }}: <MkTime :time="clip.lastClippedAt" mode="detail"/></div>
-			<div v-if="clip.notesCount != null">{{ i18n.ts.notesCount }}: {{ number(clip.notesCount) }} / {{ $i?.policies.noteEachClipsLimit }} ({{ i18n.tsx.remainingN({ n: remaining }) }})</div>
-		</div>
-		<template v-if="!props.noUserInfo">
-			<div :class="$style.divider"></div>
-			<div>
-				<MkAvatar :user="clip.user" :class="$style.userAvatar" indicator link preview/> <MkUserName :user="clip.user" :nowrap="false"/>
+	<MkA :class="$style.link" :to="`/clips/${clip.id}`">
+		<div :class="$style.root" class="_panel _gaps_s">
+			<b>{{ clip.name }}</b>
+			<div :class="$style.description">
+				<div v-if="clip.description">
+					<Mfm :nowrap="true" :plain="true" :text="clip.description"/>
+				</div>
+				<div v-if="clip.lastClippedAt">{{ i18n.ts.updatedAt }}:
+					<MkTime :time="clip.lastClippedAt" mode="detail"/>
+				</div>
+				<div v-if="clip.notesCount != null">{{ i18n.ts.notesCount }}: {{ number(clip.notesCount) }} / {{ $i?.policies.noteEachClipsLimit }} ({{ i18n.tsx.remainingN({n: remaining}) }})</div>
 			</div>
-		</template>
-	</div>
-</MkA>
+			<template v-if="!props.noUserInfo">
+				<div :class="$style.divider"></div>
+				<div>
+					<MkAvatar :class="$style.userAvatar" :user="clip.user" indicator link preview/>
+					<MkUserName :nowrap="false" :user="clip.user"/>
+				</div>
+			</template>
+		</div>
+	</MkA>
 </template>
 
 <script lang="ts" setup>
 import * as Misskey from 'misskey-js';
-import { computed } from 'vue';
-import { i18n } from '@/i18n.js';
-import { $i } from '@/account.js';
+import {computed} from 'vue';
+import {i18n} from '@/i18n.js';
+import {$i} from '@/account.js';
 import number from '@/filters/number.js';
 
 const props = withDefaults(defineProps<{

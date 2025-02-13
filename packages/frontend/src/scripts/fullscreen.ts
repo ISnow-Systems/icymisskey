@@ -22,7 +22,7 @@ type ExitFullscreenProps = {
 	readonly videoEl: VideoEl;
 };
 
-export const requestFullscreen = ({ videoEl, playerEl, options }: RequestFullscreenProps) => {
+export const requestFullscreen = ({videoEl, playerEl, options}: RequestFullscreenProps) => {
 	if (playerEl.requestFullscreen != null) {
 		playerEl.requestFullscreen(options ?? undefined);
 		return;
@@ -33,7 +33,7 @@ export const requestFullscreen = ({ videoEl, playerEl, options }: RequestFullscr
 	}
 };
 
-export const exitFullscreen = ({ videoEl }: ExitFullscreenProps) => {
+export const exitFullscreen = ({videoEl}: ExitFullscreenProps) => {
 	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	if (document.exitFullscreen != null) {
 		document.exitFullscreen();

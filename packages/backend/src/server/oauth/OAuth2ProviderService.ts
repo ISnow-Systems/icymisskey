@@ -4,36 +4,36 @@
  */
 
 import dns from 'node:dns/promises';
-import { fileURLToPath } from 'node:url';
-import { Inject, Injectable } from '@nestjs/common';
-import { JSDOM } from 'jsdom';
+import {fileURLToPath} from 'node:url';
+import {Inject, Injectable} from '@nestjs/common';
+import {JSDOM} from 'jsdom';
 import httpLinkHeader from 'http-link-header';
 import ipaddr from 'ipaddr.js';
-import oauth2orize, { type OAuth2, AuthorizationError, ValidateFunctionArity2, OAuth2Req, MiddlewareRequest } from 'oauth2orize';
+import oauth2orize, {type OAuth2, AuthorizationError, ValidateFunctionArity2, OAuth2Req, MiddlewareRequest} from 'oauth2orize';
 import oauth2Pkce from 'oauth2orize-pkce';
 import fastifyCors from '@fastify/cors';
 import fastifyView from '@fastify/view';
 import pug from 'pug';
 import bodyParser from 'body-parser';
 import fastifyExpress from '@fastify/express';
-import { verifyChallenge } from 'pkce-challenge';
-import { mf2 } from 'microformats-parser';
-import { permissions as kinds } from 'misskey-js';
-import { secureRndstr } from '@/misc/secure-rndstr.js';
-import { HttpRequestService } from '@/core/HttpRequestService.js';
-import type { Config } from '@/config.js';
-import { DI } from '@/di-symbols.js';
-import { bindThis } from '@/decorators.js';
-import type { AccessTokensRepository, UsersRepository } from '@/models/_.js';
-import { IdService } from '@/core/IdService.js';
-import { CacheService } from '@/core/CacheService.js';
-import type { MiLocalUser } from '@/models/User.js';
-import { MemoryKVCache } from '@/misc/cache.js';
-import { LoggerService } from '@/core/LoggerService.js';
+import {verifyChallenge} from 'pkce-challenge';
+import {mf2} from 'microformats-parser';
+import {permissions as kinds} from 'misskey-js';
+import {secureRndstr} from '@/misc/secure-rndstr.js';
+import {HttpRequestService} from '@/core/HttpRequestService.js';
+import type {Config} from '@/config.js';
+import {DI} from '@/di-symbols.js';
+import {bindThis} from '@/decorators.js';
+import type {AccessTokensRepository, UsersRepository} from '@/models/_.js';
+import {IdService} from '@/core/IdService.js';
+import {CacheService} from '@/core/CacheService.js';
+import type {MiLocalUser} from '@/models/User.js';
+import {MemoryKVCache} from '@/misc/cache.js';
+import {LoggerService} from '@/core/LoggerService.js';
 import Logger from '@/logger.js';
-import { StatusError } from '@/misc/status-error.js';
-import type { ServerResponse } from 'node:http';
-import type { FastifyInstance } from 'fastify';
+import {StatusError} from '@/misc/status-error.js';
+import type {ServerResponse} from 'node:http';
+import type {FastifyInstance} from 'fastify';
 
 // TODO: Consider migrating to @node-oauth/oauth2-server once
 // https://github.com/node-oauth/node-oauth2-server/issues/180 is figured out.
@@ -47,7 +47,9 @@ function validateClientId(raw: string): URL {
 	const url = ((): URL => {
 		try {
 			return new URL(raw);
-		} catch { throw new AuthorizationError('client_id must be a valid URL', 'invalid_request'); }
+		} catch {
+			throw new AuthorizationError('client_id must be a valid URL', 'invalid_request');
+		}
 	})();
 
 	// "Client identifier URLs MUST have either an https or http scheme"
@@ -125,7 +127,7 @@ async function discoverClientInformation(logger: Logger, httpRequestService: Htt
 
 		let name = id;
 		if (text) {
-			const microformats = mf2(text, { baseUrl: res.url });
+			const microformats = mf2(text, {baseUrl: res.url});
 			const nameProperty = microformats.items.find(item => item.type?.includes('h-app') && item.properties.url.includes(id))?.properties.name[0];
 			if (typeof nameProperty === 'string') {
 				name = nameProperty;
@@ -139,7 +141,7 @@ async function discoverClientInformation(logger: Logger, httpRequestService: Htt
 		};
 	} catch (err) {
 		console.error(err);
-		logger.error('Error while fetching client information', { err });
+		logger.error('Error while fetching client information', {err});
 		if (err instanceof StatusError) {
 			throw new AuthorizationError('Failed to fetch client information', 'invalid_request');
 		} else {
@@ -200,7 +202,7 @@ class OAuth2Store {
 	#cache = new MemoryKVCache<OAuth2>(1000 * 60 * 5); // expires after 5min
 
 	load(req: OAuth2DecisionRequest, cb: (err: Error | null, txn?: OAuth2) => void): void {
-		const { transaction_id } = req.body;
+		const {transaction_id} = req.body;
 		if (!transaction_id) {
 			cb(new AuthorizationError('Missing transaction ID', 'invalid_request'));
 			return;
@@ -272,7 +274,7 @@ export class OAuth2ProviderService {
 					throw new AuthorizationError('No user', 'invalid_request');
 				}
 				const user = await this.cacheService.localUserByNativeTokenCache.fetch(token,
-					() => this.usersRepository.findOneBy({ token }) as Promise<MiLocalUser | null>);
+					() => this.usersRepository.findOneBy({token}) as Promise<MiLocalUser | null>);
 				if (!user) {
 					throw new AuthorizationError('No such user', 'invalid_request');
 				}
@@ -307,7 +309,7 @@ export class OAuth2ProviderService {
 					grantCodeCache.delete(code);
 					granted.revoked = true;
 					if (granted.grantedToken) {
-						await accessTokensRepository.delete({ token: granted.grantedToken });
+						await accessTokensRepository.delete({token: granted.grantedToken});
 					}
 					return;
 				}
@@ -337,14 +339,14 @@ export class OAuth2ProviderService {
 
 				if (granted.revoked) {
 					this.#logger.info('Canceling the token as the authorization code was revoked in parallel during the process.');
-					await accessTokensRepository.delete({ token: accessToken });
+					await accessTokensRepository.delete({token: accessToken});
 					return;
 				}
 
 				granted.grantedToken = accessToken;
 				this.#logger.info(`Generated access token for ${granted.clientId} for user ${granted.userId}, with scope: [${granted.scopes}]`);
 
-				return [accessToken, undefined, { scope: granted.scopes.join(' ') }];
+				return [accessToken, undefined, {scope: granted.scopes.join(' ')}];
 			})().then(args => done(null, ...args ?? []), err => done(err));
 		}));
 	}
@@ -382,11 +384,12 @@ export class OAuth2ProviderService {
 				scope: oauth2.req.scope.join(' '),
 			});
 		});
-		fastify.post('/decision', async () => { });
+		fastify.post('/decision', async () => {
+		});
 
 		fastify.register(fastifyView, {
 			root: fileURLToPath(new URL('../web/views', import.meta.url)),
-			engine: { pug },
+			engine: {pug},
 			defaultContext: {
 				version: this.config.version,
 				config: this.config,
@@ -399,7 +402,7 @@ export class OAuth2ProviderService {
 				// This should return client/redirectURI AND the error, or
 				// the handler can't send error to the redirection URI
 
-				const { codeChallenge, codeChallengeMethod, clientID, redirectURI, scope } = areq as OAuthParsedRequest;
+				const {codeChallenge, codeChallengeMethod, clientID, redirectURI, scope} = areq as OAuthParsedRequest;
 
 				this.#logger.info(`Validating authorization parameters, with client_id: ${clientID}, redirect_uri: ${redirectURI}, scope: ${scope}`);
 
@@ -454,9 +457,9 @@ export class OAuth2ProviderService {
 		}));
 		fastify.use('/authorize', this.#server.errorHandler());
 
-		fastify.use('/decision', bodyParser.urlencoded({ extended: false }));
+		fastify.use('/decision', bodyParser.urlencoded({extended: false}));
 		fastify.use('/decision', this.#server.decision((req, done) => {
-			const { body } = req as OAuth2DecisionRequest;
+			const {body} = req as OAuth2DecisionRequest;
 			this.#logger.info(`Received the decision. Cancel: ${!!body.cancel}`);
 			req.user = body.login_token;
 			done(null, undefined);
@@ -481,12 +484,13 @@ export class OAuth2ProviderService {
 	@bindThis
 	public async createTokenServer(fastify: FastifyInstance): Promise<void> {
 		fastify.register(fastifyCors);
-		fastify.post('', async () => { });
+		fastify.post('', async () => {
+		});
 
 		await fastify.register(fastifyExpress);
 		// Clients may use JSON or urlencoded
-		fastify.use('', bodyParser.urlencoded({ extended: false }));
-		fastify.use('', bodyParser.json({ strict: true }));
+		fastify.use('', bodyParser.urlencoded({extended: false}));
+		fastify.use('', bodyParser.json({strict: true}));
 		fastify.use('', this.#server.token());
 		fastify.use('', this.#server.errorHandler());
 	}

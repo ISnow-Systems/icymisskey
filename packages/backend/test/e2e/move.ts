@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { INestApplicationContext } from '@nestjs/common';
+import {INestApplicationContext} from '@nestjs/common';
 
 process.env.NODE_ENV = 'test';
 
-import { setTimeout } from 'node:timers/promises';
+import {setTimeout} from 'node:timers/promises';
 import * as assert from 'assert';
-import { loadConfig } from '@/config.js';
-import { MiRepository, MiUser, UsersRepository, miRepository } from '@/models/_.js';
-import { secureRndstr } from '@/misc/secure-rndstr.js';
-import { jobQueue } from '@/boot/common.js';
-import { api, castAsError, initTestDb, signup, successfulApiCall, uploadFile } from '../utils.js';
+import {loadConfig} from '@/config.js';
+import {MiRepository, MiUser, UsersRepository, miRepository} from '@/models/_.js';
+import {secureRndstr} from '@/misc/secure-rndstr.js';
+import {jobQueue} from '@/boot/common.js';
+import {api, castAsError, initTestDb, signup, successfulApiCall, uploadFile} from '../utils.js';
 import type * as misskey from 'misskey-js';
 
 describe('Account Move', () => {
@@ -36,13 +36,13 @@ describe('Account Move', () => {
 		const config = loadConfig();
 		url = new URL(config.url);
 		const connection = await initTestDb(false);
-		root = await signup({ username: 'root' });
-		alice = await signup({ username: 'alice' });
-		bob = await signup({ username: 'bob' });
-		carol = await signup({ username: 'carol' });
-		dave = await signup({ username: 'dave' });
-		eve = await signup({ username: 'eve' });
-		frank = await signup({ username: 'frank' });
+		root = await signup({username: 'root'});
+		alice = await signup({username: 'alice'});
+		bob = await signup({username: 'bob'});
+		carol = await signup({username: 'carol'});
+		dave = await signup({username: 'dave'});
+		eve = await signup({username: 'eve'});
+		frank = await signup({username: 'frank'});
 		Users = connection.getRepository(MiUser).extend(miRepository as MiRepository<MiUser>);
 	}, 1000 * 60 * 2);
 
@@ -52,7 +52,7 @@ describe('Account Move', () => {
 
 	describe('Create Alias', () => {
 		afterEach(async () => {
-			await Users.update(bob.id, { alsoKnownAs: null });
+			await Users.update(bob.id, {alsoKnownAs: null});
 		}, 1000 * 10);
 
 		test('Able to create an alias', async () => {
@@ -60,7 +60,7 @@ describe('Account Move', () => {
 				alsoKnownAs: [`@alice@${url.hostname}`],
 			}, bob);
 
-			const newBob = await Users.findOneByOrFail({ id: bob.id });
+			const newBob = await Users.findOneByOrFail({id: bob.id});
 			assert.strictEqual(newBob.alsoKnownAs?.length, 1);
 			assert.strictEqual(newBob.alsoKnownAs[0], `${url.origin}/users/${alice.id}`);
 			assert.strictEqual(res.body.alsoKnownAs?.length, 1);
@@ -72,7 +72,7 @@ describe('Account Move', () => {
 				alsoKnownAs: ['@alice'],
 			}, bob);
 
-			const newBob = await Users.findOneByOrFail({ id: bob.id });
+			const newBob = await Users.findOneByOrFail({id: bob.id});
 			assert.strictEqual(newBob.alsoKnownAs?.length, 1);
 			assert.strictEqual(newBob.alsoKnownAs[0], `${url.origin}/users/${alice.id}`);
 		});
@@ -82,7 +82,7 @@ describe('Account Move', () => {
 				alsoKnownAs: ['alice'],
 			}, bob);
 
-			const newBob = await Users.findOneByOrFail({ id: bob.id });
+			const newBob = await Users.findOneByOrFail({id: bob.id});
 			assert.strictEqual(newBob.alsoKnownAs?.length, 1);
 			assert.strictEqual(newBob.alsoKnownAs[0], `${url.origin}/users/${alice.id}`);
 		});
@@ -140,7 +140,7 @@ describe('Account Move', () => {
 				alsoKnownAs: [`@alice@${url.hostname}`, `@carol@${url.hostname}`],
 			}, bob);
 
-			const newBob = await Users.findOneByOrFail({ id: bob.id });
+			const newBob = await Users.findOneByOrFail({id: bob.id});
 			assert.strictEqual(newBob.alsoKnownAs?.length, 2);
 			assert.strictEqual(newBob.alsoKnownAs[0], `${url.origin}/users/${alice.id}`);
 			assert.strictEqual(newBob.alsoKnownAs[1], `${url.origin}/users/${carol.id}`);
@@ -154,7 +154,7 @@ describe('Account Move', () => {
 				alsoKnownAs: [`@carol@${url.hostname}`, `@dave@${url.hostname}`],
 			}, bob);
 
-			const newBob = await Users.findOneByOrFail({ id: bob.id });
+			const newBob = await Users.findOneByOrFail({id: bob.id});
 			assert.strictEqual(newBob.alsoKnownAs?.length, 2);
 			assert.strictEqual(newBob.alsoKnownAs[0], `${url.origin}/users/${carol.id}`);
 			assert.strictEqual(newBob.alsoKnownAs[1], `${url.origin}/users/${dave.id}`);
@@ -363,9 +363,9 @@ describe('Account Move', () => {
 			await api('following/create', {
 				userId: alice.id,
 			}, eve);
-			const newAlice = await Users.findOneByOrFail({ id: alice.id });
-			const newCarol = await Users.findOneByOrFail({ id: carol.id });
-			let newEve = await Users.findOneByOrFail({ id: eve.id });
+			const newAlice = await Users.findOneByOrFail({id: alice.id});
+			const newCarol = await Users.findOneByOrFail({id: carol.id});
+			let newEve = await Users.findOneByOrFail({id: eve.id});
 			assert.strictEqual(newAlice.movedToUri, `${url.origin}/users/${bob.id}`);
 			assert.strictEqual(newAlice.followingCount, 0);
 			assert.strictEqual(newAlice.followersCount, 0);
@@ -376,7 +376,7 @@ describe('Account Move', () => {
 			await api('following/delete', {
 				userId: alice.id,
 			}, eve);
-			newEve = await Users.findOneByOrFail({ id: eve.id });
+			newEve = await Users.findOneByOrFail({id: eve.id});
 			assert.strictEqual(newEve.followingCount, 1);
 			assert.strictEqual(newEve.followersCount, 1);
 		});

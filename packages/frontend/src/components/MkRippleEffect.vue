@@ -4,65 +4,65 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="$style.root" :style="{ zIndex, top: `${y - 64}px`, left: `${x - 64}px` }">
-	<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
-		<circle fill="none" cx="64" cy="64" style="stroke: var(--MI_THEME-accent);">
-			<animate
-				attributeName="r"
-				begin="0s" dur="0.5s"
-				values="4; 32"
-				calcMode="spline"
-				keyTimes="0; 1"
-				keySplines="0.165, 0.84, 0.44, 1"
-				repeatCount="1"
-			/>
-			<animate
-				attributeName="stroke-width"
-				begin="0s" dur="0.5s"
-				values="16; 0"
-				calcMode="spline"
-				keyTimes="0; 1"
-				keySplines="0.3, 0.61, 0.355, 1"
-				repeatCount="1"
-			/>
-		</circle>
-		<g fill="none" fill-rule="evenodd">
-			<circle v-for="(particle, i) in particles" :key="i" :fill="particle.color" style="stroke: var(--MI_THEME-accent);">
+	<div :class="$style.root" :style="{ zIndex, top: `${y - 64}px`, left: `${x - 64}px` }">
+		<svg height="128" viewBox="0 0 128 128" width="128" xmlns="http://www.w3.org/2000/svg">
+			<circle cx="64" cy="64" fill="none" style="stroke: var(--MI_THEME-accent);">
 				<animate
 					attributeName="r"
-					begin="0s" dur="0.8s"
-					:values="`${particle.size}; 0`"
-					calcMode="spline"
-					keyTimes="0; 1"
+					begin="0s" calcMode="spline"
+					dur="0.5s"
 					keySplines="0.165, 0.84, 0.44, 1"
+					keyTimes="0; 1"
 					repeatCount="1"
+					values="4; 32"
 				/>
 				<animate
-					attributeName="cx"
-					begin="0s" dur="0.8s"
-					:values="`${particle.xA}; ${particle.xB}`"
-					calcMode="spline"
-					keyTimes="0; 1"
+					attributeName="stroke-width"
+					begin="0s" calcMode="spline"
+					dur="0.5s"
 					keySplines="0.3, 0.61, 0.355, 1"
-					repeatCount="1"
-				/>
-				<animate
-					attributeName="cy"
-					begin="0s" dur="0.8s"
-					:values="`${particle.yA}; ${particle.yB}`"
-					calcMode="spline"
 					keyTimes="0; 1"
-					keySplines="0.3, 0.61, 0.355, 1"
 					repeatCount="1"
+					values="16; 0"
 				/>
 			</circle>
-		</g>
-	</svg>
-</div>
+			<g fill="none" fill-rule="evenodd">
+				<circle v-for="(particle, i) in particles" :key="i" :fill="particle.color" style="stroke: var(--MI_THEME-accent);">
+					<animate
+						:values="`${particle.size}; 0`"
+						attributeName="r" begin="0s"
+						calcMode="spline"
+						dur="0.8s"
+						keySplines="0.165, 0.84, 0.44, 1"
+						keyTimes="0; 1"
+						repeatCount="1"
+					/>
+					<animate
+						:values="`${particle.xA}; ${particle.xB}`"
+						attributeName="cx" begin="0s"
+						calcMode="spline"
+						dur="0.8s"
+						keySplines="0.3, 0.61, 0.355, 1"
+						keyTimes="0; 1"
+						repeatCount="1"
+					/>
+					<animate
+						:values="`${particle.yA}; ${particle.yB}`"
+						attributeName="cy" begin="0s"
+						calcMode="spline"
+						dur="0.8s"
+						keySplines="0.3, 0.61, 0.355, 1"
+						keyTimes="0; 1"
+						repeatCount="1"
+					/>
+				</circle>
+			</g>
+		</svg>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
+import {onMounted} from 'vue';
 import * as os from '@/os.js';
 
 const props = withDefaults(defineProps<{

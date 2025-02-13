@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { nextTick, ref, defineAsyncComponent } from 'vue';
-import type { Ref } from 'vue';
+import {nextTick, ref, defineAsyncComponent} from 'vue';
+import type {Ref} from 'vue';
 import getCaretCoordinates from 'textarea-caret';
-import { toASCII } from 'punycode.js';
-import { popup } from '@/os.js';
+import {toASCII} from 'punycode.js';
+import {popup} from '@/os.js';
 
 export type SuggestionType = 'user' | 'hashtag' | 'emoji' | 'mfmTag' | 'mfmParam';
 
@@ -23,18 +23,6 @@ export class Autocomplete {
 	private textRef: Ref<string | number | null>;
 	private opening: boolean;
 	private onlyType: SuggestionType[];
-
-	private get text(): string {
-		// Use raw .value to get the latest value
-		// (Because v-model does not update while composition)
-		return this.textarea.value;
-	}
-
-	private set text(text: string) {
-		// Use ref value to notify other watchers
-		// (Because .value setter never fires input/change events)
-		this.textRef.value = text;
-	}
 
 	/**
 	 * 対象のテキストエリアを与えてインスタンスを初期化します。
@@ -53,6 +41,18 @@ export class Autocomplete {
 		this.onlyType = onlyType ?? ['user', 'hashtag', 'emoji', 'mfmTag', 'mfmParam'];
 
 		this.attach();
+	}
+
+	private get text(): string {
+		// Use raw .value to get the latest value
+		// (Because v-model does not update while composition)
+		return this.textarea.value;
+	}
+
+	private set text(text: string) {
+		// Use ref value to notify other watchers
+		// (Because .value setter never fires input/change events)
+		this.textRef.value = text;
 	}
 
 	/**
@@ -186,7 +186,7 @@ export class Autocomplete {
 			const _y = ref(y);
 			const _q = ref(q);
 
-			const { dispose } = await popup(defineAsyncComponent(() => import('@/components/MkAutocomplete.vue')), {
+			const {dispose} = await popup(defineAsyncComponent(() => import('@/components/MkAutocomplete.vue')), {
 				textarea: this.textarea,
 				close: this.close,
 				type: type,
@@ -225,7 +225,7 @@ export class Autocomplete {
 	/**
 	 * オートコンプリートする
 	 */
-	private complete({ type, value }) {
+	private complete({type, value}) {
 		this.close();
 
 		const caret = this.textarea.selectionStart;

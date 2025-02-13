@@ -3,20 +3,20 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { afterEach, assert, describe, test } from 'vitest';
-import { cleanup, render, type RenderResult } from '@testing-library/vue';
+import {afterEach, assert, describe, test} from 'vitest';
+import {cleanup, render, type RenderResult} from '@testing-library/vue';
 import './init';
 import * as Misskey from 'misskey-js';
-import { directives } from '@/directives/index.js';
-import { components } from '@/components/index.js';
+import {directives} from '@/directives/index.js';
+import {components} from '@/components/index.js';
 import XHome from '@/pages/user/home.vue';
 import 'intersection-observer';
 
 describe('XHome', () => {
 	const renderHome = (user: Partial<Misskey.entities.UserDetailed>): RenderResult => {
 		return render(XHome, {
-			props: { user, disableNotes: true },
-			global: { directives, components },
+			props: {user, disableNotes: true},
+			global: {directives, components},
 		});
 	};
 

@@ -4,73 +4,75 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer v-if="file" :contentMax="600" :marginMin="16" :marginMax="32">
-		<div v-if="tab === 'overview'" class="cxqhhsmd _gaps_m">
-			<a class="thumbnail" :href="file.url" target="_blank">
-				<MkDriveFileThumbnail class="thumbnail" :file="file" fit="contain"/>
-			</a>
-			<div>
-				<MkKeyValue :copy="file.type" oneline style="margin: 1em 0;">
-					<template #key>MIME Type</template>
-					<template #value><span class="_monospace">{{ file.type }}</span></template>
-				</MkKeyValue>
-				<MkKeyValue oneline style="margin: 1em 0;">
-					<template #key>Size</template>
-					<template #value><span class="_monospace">{{ bytes(file.size) }}</span></template>
-				</MkKeyValue>
-				<MkKeyValue :copy="file.id" oneline style="margin: 1em 0;">
-					<template #key>ID</template>
-					<template #value><span class="_monospace">{{ file.id }}</span></template>
-				</MkKeyValue>
-				<MkKeyValue :copy="file.md5" oneline style="margin: 1em 0;">
-					<template #key>MD5</template>
-					<template #value><span class="_monospace">{{ file.md5 }}</span></template>
-				</MkKeyValue>
-				<MkKeyValue oneline style="margin: 1em 0;">
-					<template #key>{{ i18n.ts.createdAt }}</template>
-					<template #value><span class="_monospace"><MkTime :time="file.createdAt" mode="detail" style="display: block;"/></span></template>
-				</MkKeyValue>
-			</div>
-			<MkA v-if="file.user" class="user" :to="`/admin/user/${file.user.id}`">
-				<MkUserCardMini :user="file.user"/>
-			</MkA>
-			<div>
-				<MkSwitch v-model="isSensitive" @update:modelValue="toggleIsSensitive">{{ i18n.ts.sensitive }}</MkSwitch>
-			</div>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/>
+		</template>
+		<MkSpacer v-if="file" :contentMax="600" :marginMax="32" :marginMin="16">
+			<div v-if="tab === 'overview'" class="cxqhhsmd _gaps_m">
+				<a :href="file.url" class="thumbnail" target="_blank">
+					<MkDriveFileThumbnail :file="file" class="thumbnail" fit="contain"/>
+				</a>
+				<div>
+					<MkKeyValue :copy="file.type" oneline style="margin: 1em 0;">
+						<template #key>MIME Type</template>
+						<template #value><span class="_monospace">{{ file.type }}</span></template>
+					</MkKeyValue>
+					<MkKeyValue oneline style="margin: 1em 0;">
+						<template #key>Size</template>
+						<template #value><span class="_monospace">{{ bytes(file.size) }}</span></template>
+					</MkKeyValue>
+					<MkKeyValue :copy="file.id" oneline style="margin: 1em 0;">
+						<template #key>ID</template>
+						<template #value><span class="_monospace">{{ file.id }}</span></template>
+					</MkKeyValue>
+					<MkKeyValue :copy="file.md5" oneline style="margin: 1em 0;">
+						<template #key>MD5</template>
+						<template #value><span class="_monospace">{{ file.md5 }}</span></template>
+					</MkKeyValue>
+					<MkKeyValue oneline style="margin: 1em 0;">
+						<template #key>{{ i18n.ts.createdAt }}</template>
+						<template #value><span class="_monospace"><MkTime :time="file.createdAt" mode="detail" style="display: block;"/></span></template>
+					</MkKeyValue>
+				</div>
+				<MkA v-if="file.user" :to="`/admin/user/${file.user.id}`" class="user">
+					<MkUserCardMini :user="file.user"/>
+				</MkA>
+				<div>
+					<MkSwitch v-model="isSensitive" @update:modelValue="toggleIsSensitive">{{ i18n.ts.sensitive }}</MkSwitch>
+				</div>
 
-			<div>
-				<MkButton danger @click="del"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
+				<div>
+					<MkButton danger @click="del"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
+				</div>
 			</div>
-		</div>
-		<div v-else-if="tab === 'notes' && info" class="_gaps_m">
-			<XNotes :fileId="fileId"/>
-		</div>
-		<div v-else-if="tab === 'ip' && info" class="_gaps_m">
-			<MkInfo v-if="!iAmAdmin" warn>{{ i18n.ts.requireAdminForView }}</MkInfo>
-			<MkKeyValue v-if="info.requestIp" class="_monospace" :copy="info.requestIp" oneline>
-				<template #key>IP</template>
-				<template #value>{{ info.requestIp }}</template>
-			</MkKeyValue>
-			<FormSection v-if="info.requestHeaders">
-				<template #label>Headers</template>
-				<MkKeyValue v-for="(v, k) in info.requestHeaders" :key="k" class="_monospace">
-					<template #key>{{ k }}</template>
-					<template #value>{{ v }}</template>
+			<div v-else-if="tab === 'notes' && info" class="_gaps_m">
+				<XNotes :fileId="fileId"/>
+			</div>
+			<div v-else-if="tab === 'ip' && info" class="_gaps_m">
+				<MkInfo v-if="!iAmAdmin" warn>{{ i18n.ts.requireAdminForView }}</MkInfo>
+				<MkKeyValue v-if="info.requestIp" :copy="info.requestIp" class="_monospace" oneline>
+					<template #key>IP</template>
+					<template #value>{{ info.requestIp }}</template>
 				</MkKeyValue>
-			</FormSection>
-		</div>
-		<div v-else-if="tab === 'raw'" class="_gaps_m">
-			<MkObjectView v-if="info" tall :value="info">
-			</MkObjectView>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+				<FormSection v-if="info.requestHeaders">
+					<template #label>Headers</template>
+					<MkKeyValue v-for="(v, k) in info.requestHeaders" :key="k" class="_monospace">
+						<template #key>{{ k }}</template>
+						<template #value>{{ v }}</template>
+					</MkKeyValue>
+				</FormSection>
+			</div>
+			<div v-else-if="tab === 'raw'" class="_gaps_m">
+				<MkObjectView v-if="info" :value="info" tall>
+				</MkObjectView>
+			</div>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, ref } from 'vue';
+import {computed, defineAsyncComponent, ref} from 'vue';
 import * as Misskey from 'misskey-js';
 import MkButton from '@/components/MkButton.vue';
 import MkSwitch from '@/components/MkSwitch.vue';
@@ -82,10 +84,10 @@ import MkUserCardMini from '@/components/MkUserCardMini.vue';
 import MkInfo from '@/components/MkInfo.vue';
 import bytes from '@/filters/bytes.js';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { i18n } from '@/i18n.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
-import { iAmAdmin, iAmModerator } from '@/account.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {i18n} from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
+import {iAmAdmin, iAmModerator} from '@/account.js';
 
 const tab = ref('overview');
 const file = ref<Misskey.entities.DriveFile | null>(null);
@@ -98,17 +100,17 @@ const props = defineProps<{
 }>();
 
 async function fetch() {
-	file.value = await misskeyApi('drive/files/show', { fileId: props.fileId });
-	info.value = await misskeyApi('admin/drive/show-file', { fileId: props.fileId });
+	file.value = await misskeyApi('drive/files/show', {fileId: props.fileId});
+	info.value = await misskeyApi('admin/drive/show-file', {fileId: props.fileId});
 	isSensitive.value = file.value.isSensitive;
 }
 
 fetch();
 
 async function del() {
-	const { canceled } = await os.confirm({
+	const {canceled} = await os.confirm({
 		type: 'warning',
-		text: i18n.tsx.removeAreYouSure({ x: file.value.name }),
+		text: i18n.tsx.removeAreYouSure({x: file.value.name}),
 	});
 	if (canceled) return;
 
@@ -118,7 +120,7 @@ async function del() {
 }
 
 async function toggleIsSensitive(v) {
-	await misskeyApi('drive/files/update', { fileId: props.fileId, isSensitive: v });
+	await misskeyApi('drive/files/update', {fileId: props.fileId, isSensitive: v});
 	isSensitive.value = v;
 }
 

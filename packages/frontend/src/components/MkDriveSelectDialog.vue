@@ -4,32 +4,32 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkModalWindow
-	ref="dialog"
-	:width="800"
-	:height="500"
-	:withOkButton="true"
-	:okButtonDisabled="(type === 'file') && (selected.length === 0)"
-	@click="cancel()"
-	@close="cancel()"
-	@ok="ok()"
-	@closed="emit('closed')"
->
-	<template #header>
-		{{ multiple ? ((type === 'file') ? i18n.ts.selectFiles : i18n.ts.selectFolders) : ((type === 'file') ? i18n.ts.selectFile : i18n.ts.selectFolder) }}
-		<span v-if="selected.length > 0" style="margin-left: 8px; opacity: 0.5;">({{ number(selected.length) }})</span>
-	</template>
-	<XDrive :multiple="multiple" :select="type" @changeSelection="onChangeSelection" @selected="ok()"/>
-</MkModalWindow>
+	<MkModalWindow
+		ref="dialog"
+		:height="500"
+		:okButtonDisabled="(type === 'file') && (selected.length === 0)"
+		:width="800"
+		:withOkButton="true"
+		@click="cancel()"
+		@close="cancel()"
+		@closed="emit('closed')"
+		@ok="ok()"
+	>
+		<template #header>
+			{{ multiple ? ((type === 'file') ? i18n.ts.selectFiles : i18n.ts.selectFolders) : ((type === 'file') ? i18n.ts.selectFile : i18n.ts.selectFolder) }}
+			<span v-if="selected.length > 0" style="margin-left: 8px; opacity: 0.5;">({{ number(selected.length) }})</span>
+		</template>
+		<XDrive :multiple="multiple" :select="type" @changeSelection="onChangeSelection" @selected="ok()"/>
+	</MkModalWindow>
 </template>
 
 <script lang="ts" setup>
-import { ref, shallowRef } from 'vue';
+import {ref, shallowRef} from 'vue';
 import * as Misskey from 'misskey-js';
 import XDrive from '@/components/MkDrive.vue';
 import MkModalWindow from '@/components/MkModalWindow.vue';
 import number from '@/filters/number.js';
-import { i18n } from '@/i18n.js';
+import {i18n} from '@/i18n.js';
 
 withDefaults(defineProps<{
 	type?: 'file' | 'folder';

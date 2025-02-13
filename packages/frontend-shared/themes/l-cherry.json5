@@ -1,11 +1,8 @@
 {
 	id: 'ac168876-f737-4074-a3fc-a370c732ef48',
-
 	name: 'Mi Cherry Light',
 	author: 'syuilo',
-
 	base: 'light',
-
 	props: {
 		accent: 'rgb(219, 96, 114)',
 		bg: 'rgb(254, 248, 249)',

@@ -4,34 +4,34 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<svg viewBox="0 0 21 7">
-	<rect
-		v-for="record in activity" class="day"
-		width="1" height="1"
-		:x="record.x" :y="record.date.weekday"
-		rx="1" ry="1"
-		fill="transparent"
-	>
-		<title>{{ record.date.year }}/{{ record.date.month + 1 }}/{{ record.date.day }}</title>
-	</rect>
-	<rect
-		v-for="record in activity" class="day"
-		:width="record.v" :height="record.v"
-		:x="record.x + ((1 - record.v) / 2)" :y="record.date.weekday + ((1 - record.v) / 2)"
-		rx="1" ry="1"
-		:fill="record.color"
-		style="pointer-events: none;"
-	/>
-	<rect
-		class="today"
-		width="1" height="1"
-		:x="activity[0].x" :y="activity[0].date.weekday"
-		rx="1" ry="1"
-		fill="none"
-		stroke-width="0.1"
-		stroke="#f73520"
-	/>
-</svg>
+	<svg viewBox="0 0 21 7">
+		<rect
+			v-for="record in activity" :x="record.x"
+			:y="record.date.weekday" class="day"
+			fill="transparent" height="1"
+			rx="1" ry="1"
+			width="1"
+		>
+			<title>{{ record.date.year }}/{{ record.date.month + 1 }}/{{ record.date.day }}</title>
+		</rect>
+		<rect
+			v-for="record in activity" :fill="record.color"
+			:height="record.v" :width="record.v"
+			:x="record.x + ((1 - record.v) / 2)" :y="record.date.weekday + ((1 - record.v) / 2)"
+			class="day" rx="1"
+			ry="1"
+			style="pointer-events: none;"
+		/>
+		<rect
+			:x="activity[0].x"
+			:y="activity[0].date.weekday" class="today"
+			fill="none" height="1"
+			rx="1" ry="1"
+			stroke="#f73520"
+			stroke-width="0.1"
+			width="1"
+		/>
+	</svg>
 </template>
 
 <script lang="ts" setup>

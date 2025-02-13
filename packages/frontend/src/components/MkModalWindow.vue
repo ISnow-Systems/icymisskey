@@ -4,25 +4,25 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkModal ref="modal" :preferType="'dialog'" @click="onBgClick" @closed="emit('closed')" @esc="emit('esc')">
-	<div ref="rootEl" :class="$style.root" :style="{ width: `${width}px`, height: `min(${height}px, 100%)` }">
-		<div ref="headerEl" :class="$style.header">
-			<button v-if="withOkButton && withCloseButton" :class="$style.headerButton" class="_button" @click="emit('close')"><i class="ti ti-x"></i></button>
-			<span :class="$style.title">
+	<MkModal ref="modal" :preferType="'dialog'" @click="onBgClick" @closed="emit('closed')" @esc="emit('esc')">
+		<div ref="rootEl" :class="$style.root" :style="{ width: `${width}px`, height: `min(${height}px, 100%)` }">
+			<div ref="headerEl" :class="$style.header">
+				<button v-if="withOkButton && withCloseButton" :class="$style.headerButton" class="_button" @click="emit('close')"><i class="ti ti-x"></i></button>
+				<span :class="$style.title">
 				<slot name="header"></slot>
 			</span>
-			<button v-if="!withOkButton && withCloseButton" :class="$style.headerButton" class="_button" data-cy-modal-window-close @click="emit('close')"><i class="ti ti-x"></i></button>
-			<button v-if="withOkButton" :class="$style.headerButton" class="_button" :disabled="okButtonDisabled" @click="emit('ok')"><i class="ti ti-check"></i></button>
+				<button v-if="!withOkButton && withCloseButton" :class="$style.headerButton" class="_button" data-cy-modal-window-close @click="emit('close')"><i class="ti ti-x"></i></button>
+				<button v-if="withOkButton" :class="$style.headerButton" :disabled="okButtonDisabled" class="_button" @click="emit('ok')"><i class="ti ti-check"></i></button>
+			</div>
+			<div :class="$style.body">
+				<slot :height="bodyHeight" :width="bodyWidth"></slot>
+			</div>
 		</div>
-		<div :class="$style.body">
-			<slot :width="bodyWidth" :height="bodyHeight"></slot>
-		</div>
-	</div>
-</MkModal>
+	</MkModal>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, shallowRef, ref } from 'vue';
+import {onMounted, onUnmounted, shallowRef, ref} from 'vue';
 import MkModal from './MkModal.vue';
 
 const props = withDefaults(defineProps<{

@@ -4,13 +4,13 @@
  */
 
 import ms from 'ms';
-import { Not } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
-import type { PagesRepository, DriveFilesRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../error.js';
-import { pageNameSchema } from '@/models/Page.js';
+import {Not} from 'typeorm';
+import {Inject, Injectable} from '@nestjs/common';
+import type {PagesRepository, DriveFilesRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {DI} from '@/di-symbols.js';
+import {ApiError} from '../../error.js';
+import {pageNameSchema} from '@/models/Page.js';
 
 export const meta = {
 	tags: ['pages'],
@@ -53,21 +53,25 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		pageId: { type: 'string', format: 'misskey:id' },
-		title: { type: 'string' },
-		name: { ...pageNameSchema, minLength: 1 },
-		summary: { type: 'string', nullable: true },
-		content: { type: 'array', items: {
-			type: 'object', additionalProperties: true,
-		} },
-		variables: { type: 'array', items: {
-			type: 'object', additionalProperties: true,
-		} },
-		script: { type: 'string' },
-		eyeCatchingImageId: { type: 'string', format: 'misskey:id', nullable: true },
-		font: { type: 'string', enum: ['serif', 'sans-serif'] },
-		alignCenter: { type: 'boolean' },
-		hideTitleWhenPinned: { type: 'boolean' },
+		pageId: {type: 'string', format: 'misskey:id'},
+		title: {type: 'string'},
+		name: {...pageNameSchema, minLength: 1},
+		summary: {type: 'string', nullable: true},
+		content: {
+			type: 'array', items: {
+				type: 'object', additionalProperties: true,
+			}
+		},
+		variables: {
+			type: 'array', items: {
+				type: 'object', additionalProperties: true,
+			}
+		},
+		script: {type: 'string'},
+		eyeCatchingImageId: {type: 'string', format: 'misskey:id', nullable: true},
+		font: {type: 'string', enum: ['serif', 'sans-serif']},
+		alignCenter: {type: 'boolean'},
+		hideTitleWhenPinned: {type: 'boolean'},
 	},
 	required: ['pageId'],
 } as const;
@@ -77,12 +81,11 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.pagesRepository)
 		private pagesRepository: PagesRepository,
-
 		@Inject(DI.driveFilesRepository)
 		private driveFilesRepository: DriveFilesRepository,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const page = await this.pagesRepository.findOneBy({ id: ps.pageId });
+			const page = await this.pagesRepository.findOneBy({id: ps.pageId});
 			if (page == null) {
 				throw new ApiError(meta.errors.noSuchPage);
 			}

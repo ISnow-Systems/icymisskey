@@ -3,27 +3,25 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { In } from 'typeorm';
-import { DI } from '@/di-symbols.js';
-import { bindThis } from '@/decorators.js';
-import type { AbuseUserReportsRepository, MiAbuseUserReport, MiUser, UsersRepository } from '@/models/_.js';
-import { AbuseReportNotificationService } from '@/core/AbuseReportNotificationService.js';
-import { QueueService } from '@/core/QueueService.js';
-import { InstanceActorService } from '@/core/InstanceActorService.js';
-import { ApRendererService } from '@/core/activitypub/ApRendererService.js';
-import { ModerationLogService } from '@/core/ModerationLogService.js';
-import { IdService } from './IdService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {In} from 'typeorm';
+import {DI} from '@/di-symbols.js';
+import {bindThis} from '@/decorators.js';
+import type {AbuseUserReportsRepository, MiAbuseUserReport, MiUser, UsersRepository} from '@/models/_.js';
+import {AbuseReportNotificationService} from '@/core/AbuseReportNotificationService.js';
+import {QueueService} from '@/core/QueueService.js';
+import {InstanceActorService} from '@/core/InstanceActorService.js';
+import {ApRendererService} from '@/core/activitypub/ApRendererService.js';
+import {ModerationLogService} from '@/core/ModerationLogService.js';
+import {IdService} from './IdService.js';
 
 @Injectable()
 export class AbuseReportService {
 	constructor(
 		@Inject(DI.abuseUserReportsRepository)
 		private abuseUserReportsRepository: AbuseUserReportsRepository,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		private idService: IdService,
 		private abuseReportNotificationService: AbuseReportNotificationService,
 		private queueService: QueueService,
@@ -113,7 +111,7 @@ export class AbuseReportService {
 				});
 		}
 
-		return this.abuseUserReportsRepository.findBy({ id: In(reports.map(it => it.id)) })
+		return this.abuseUserReportsRepository.findBy({id: In(reports.map(it => it.id))})
 			.then(reports => this.abuseReportNotificationService.notifySystemWebhook(reports, 'abuseReportResolved'));
 	}
 
@@ -122,7 +120,7 @@ export class AbuseReportService {
 		reportId: MiAbuseUserReport['id'],
 		moderator: MiUser,
 	) {
-		const report = await this.abuseUserReportsRepository.findOneByOrFail({ id: reportId });
+		const report = await this.abuseUserReportsRepository.findOneByOrFail({id: reportId});
 
 		if (report.targetUserHost == null) {
 			throw new Error('The target user host is null.');
@@ -137,7 +135,7 @@ export class AbuseReportService {
 		});
 
 		const actor = await this.instanceActorService.getInstanceActor();
-		const targetUser = await this.usersRepository.findOneByOrFail({ id: report.targetUserId });
+		const targetUser = await this.usersRepository.findOneByOrFail({id: report.targetUserId});
 
 		const flag = this.apRendererService.renderFlag(actor, targetUser.uri!, report.comment);
 		const contextAssignedFlag = this.apRendererService.addContext(flag);
@@ -158,7 +156,7 @@ export class AbuseReportService {
 		},
 		moderator: MiUser,
 	) {
-		const report = await this.abuseUserReportsRepository.findOneByOrFail({ id: reportId });
+		const report = await this.abuseUserReportsRepository.findOneByOrFail({id: reportId});
 
 		await this.abuseUserReportsRepository.update(report.id, {
 			moderationNote: params.moderationNote,

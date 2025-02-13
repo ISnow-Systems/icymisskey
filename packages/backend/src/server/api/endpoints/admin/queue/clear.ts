@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { ModerationLogService } from '@/core/ModerationLogService.js';
-import { QueueService } from '@/core/QueueService.js';
+import {Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {ModerationLogService} from '@/core/ModerationLogService.js';
+import {QueueService} from '@/core/QueueService.js';
 
 export const meta = {
 	tags: ['admin'],

@@ -15,5 +15,5 @@ export function parseUlid(id: string): { date: Date; } {
 	for (let i = 0; i < 10; i++) {
 		time = time * 32 + CHARS.indexOf(timestamp[i]);
 	}
-	return { date: new Date(time) };
+	return {date: new Date(time)};
 }

@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { ref } from 'vue';
+import {ref} from 'vue';
 
 export class Cache<T> {
-	private cachedAt: number | null = null;
 	public value = ref<T | undefined>();
+	private cachedAt: number | null = null;
 	private lifetime: number;
 	private fetcher: () => Promise<T>;
 
@@ -19,16 +19,6 @@ export class Cache<T> {
 	public set(value: T): void {
 		this.cachedAt = Date.now();
 		this.value.value = value;
-	}
-
-	private get(): T | undefined {
-		if (this.cachedAt == null) return undefined;
-		if ((Date.now() - this.cachedAt) > this.lifetime) {
-			this.value.value = undefined;
-			this.cachedAt = null;
-			return undefined;
-		}
-		return this.value.value;
 	}
 
 	public delete() {
@@ -49,5 +39,15 @@ export class Cache<T> {
 		const value = await this.fetcher();
 		this.set(value);
 		return value;
+	}
+
+	private get(): T | undefined {
+		if (this.cachedAt == null) return undefined;
+		if ((Date.now() - this.cachedAt) > this.lifetime) {
+			this.value.value = undefined;
+			this.cachedAt = null;
+			return undefined;
+		}
+		return this.value.value;
 	}
 }

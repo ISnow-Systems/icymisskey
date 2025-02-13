@@ -5,11 +5,11 @@
 
 import * as assert from 'assert';
 import * as mfm from 'mfm-js';
-import { Test } from '@nestjs/testing';
+import {Test} from '@nestjs/testing';
 
-import { CoreModule } from '@/core/CoreModule.js';
-import { MfmService } from '@/core/MfmService.js';
-import { GlobalModule } from '@/GlobalModule.js';
+import {CoreModule} from '@/core/CoreModule.js';
+import {MfmService} from '@/core/MfmService.js';
+import {GlobalModule} from '@/GlobalModule.js';
 
 describe('MfmService', () => {
 	let mfmService: MfmService;

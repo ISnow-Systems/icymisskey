@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import type { DriveFilesRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DriveFileEntityService } from '@/core/entities/DriveFileEntityService.js';
-import { DI } from '@/di-symbols.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {DriveFilesRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {DriveFileEntityService} from '@/core/entities/DriveFileEntityService.js';
+import {DI} from '@/di-symbols.js';
 
 export const meta = {
 	tags: ['drive'],
@@ -32,7 +32,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		md5: { type: 'string' },
+		md5: {type: 'string'},
 	},
 	required: ['md5'],
 } as const;
@@ -42,7 +42,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.driveFilesRepository)
 		private driveFilesRepository: DriveFilesRepository,
-
 		private driveFileEntityService: DriveFileEntityService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
@@ -51,7 +50,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				userId: me.id,
 			});
 
-			return await this.driveFileEntityService.packMany(files, { self: true });
+			return await this.driveFileEntityService.packMany(files, {self: true});
 		});
 	}
 }

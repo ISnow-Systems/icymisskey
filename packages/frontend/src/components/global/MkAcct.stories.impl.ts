@@ -4,9 +4,10 @@
  */
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import type { StoryObj } from '@storybook/vue3';
-import { userDetailed } from '../../../.storybook/fakes.js';
+import type {StoryObj} from '@storybook/vue3';
+import {userDetailed} from '../../../.storybook/fakes.js';
 import MkAcct from './MkAcct.vue';
+
 export const Default = {
 	render(args) {
 		return {

@@ -3,21 +3,21 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable, OnApplicationShutdown } from '@nestjs/common';
+import {Inject, Injectable, OnApplicationShutdown} from '@nestjs/common';
 import * as Redis from 'ioredis';
-import { In, IsNull } from 'typeorm';
-import { EmojiEntityService } from '@/core/entities/EmojiEntityService.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { IdService } from '@/core/IdService.js';
-import { ModerationLogService } from '@/core/ModerationLogService.js';
-import { UtilityService } from '@/core/UtilityService.js';
-import { bindThis } from '@/decorators.js';
-import { DI } from '@/di-symbols.js';
-import { MemoryKVCache, RedisSingleCache } from '@/misc/cache.js';
-import { sqlLikeEscape } from '@/misc/sql-like-escape.js';
-import type { EmojisRepository, MiRole, MiUser } from '@/models/_.js';
-import type { MiEmoji } from '@/models/Emoji.js';
-import type { Serialized } from '@/types.js';
+import {In, IsNull} from 'typeorm';
+import {EmojiEntityService} from '@/core/entities/EmojiEntityService.js';
+import {GlobalEventService} from '@/core/GlobalEventService.js';
+import {IdService} from '@/core/IdService.js';
+import {ModerationLogService} from '@/core/ModerationLogService.js';
+import {UtilityService} from '@/core/UtilityService.js';
+import {bindThis} from '@/decorators.js';
+import {DI} from '@/di-symbols.js';
+import {MemoryKVCache, RedisSingleCache} from '@/misc/cache.js';
+import {sqlLikeEscape} from '@/misc/sql-like-escape.js';
+import type {EmojisRepository, MiRole, MiUser} from '@/models/_.js';
+import type {MiEmoji} from '@/models/Emoji.js';
+import type {Serialized} from '@/types.js';
 
 const parseEmojiStrRegexp = /^([-\w]+)(?:@([\w.-]+))?$/;
 
@@ -59,8 +59,8 @@ export type FetchEmojisSortKeys = typeof fetchEmojisSortKeys[number];
 
 @Injectable()
 export class CustomEmojiService implements OnApplicationShutdown {
-	private emojisCache: MemoryKVCache<MiEmoji | null>;
 	public localEmojisCache: RedisSingleCache<Map<string, MiEmoji>>;
+	private emojisCache: MemoryKVCache<MiEmoji | null>;
 
 	constructor(
 		@Inject(DI.redis)
@@ -78,7 +78,7 @@ export class CustomEmojiService implements OnApplicationShutdown {
 		this.localEmojisCache = new RedisSingleCache<Map<string, MiEmoji>>(this.redisClient, 'localEmojis', {
 			lifetime: 1000 * 60 * 30, // 30m
 			memoryCacheLifetime: 1000 * 60 * 3, // 3m
-			fetcher: () => this.emojisRepository.find({ where: { host: IsNull() } }).then(emojis => new Map(emojis.map(emoji => [emoji.name, emoji]))),
+			fetcher: () => this.emojisRepository.find({where: {host: IsNull()}}).then(emojis => new Map(emojis.map(emoji => [emoji.name, emoji]))),
 			toRedisConverter: (value) => JSON.stringify(Array.from(value.values())),
 			fromRedisConverter: (value) => {
 				return new Map(JSON.parse(value).map((x: Serialized<MiEmoji>) => [x.name, {
@@ -201,7 +201,7 @@ export class CustomEmojiService implements OnApplicationShutdown {
 		}
 
 		if (moderator) {
-			const updated = await this.emojisRepository.findOneByOrFail({ id: id });
+			const updated = await this.emojisRepository.findOneByOrFail({id: id});
 			this.moderationLogService.log(moderator, 'updateCustomEmoji', {
 				emojiId: emoji.id,
 				before: emoji,
@@ -301,7 +301,7 @@ export class CustomEmojiService implements OnApplicationShutdown {
 
 	@bindThis
 	public async delete(id: MiEmoji['id'], moderator?: MiUser) {
-		const emoji = await this.emojisRepository.findOneByOrFail({ id: id });
+		const emoji = await this.emojisRepository.findOneByOrFail({id: id});
 
 		await this.emojisRepository.delete(emoji.id);
 
@@ -344,29 +344,16 @@ export class CustomEmojiService implements OnApplicationShutdown {
 	}
 
 	@bindThis
-	private normalizeHost(src: string | undefined, noteUserHost: string | null): string | null {
-		// クエリに使うホスト
-		let host = src === '.' ? null	// .はローカルホスト (ここがマッチするのはリアクションのみ)
-			: src === undefined ? noteUserHost	// ノートなどでホスト省略表記の場合はローカルホスト (ここがリアクションにマッチすることはない)
-			: this.utilityService.isSelfHost(src) ? null	// 自ホスト指定
-			: (src || noteUserHost);	// 指定されたホスト || ノートなどの所有者のホスト (こっちがリアクションにマッチすることはない)
-
-		host = this.utilityService.toPunyNullable(host);
-
-		return host;
-	}
-
-	@bindThis
 	public parseEmojiStr(emojiName: string, noteUserHost: string | null) {
 		const match = emojiName.match(parseEmojiStrRegexp);
-		if (!match) return { name: null, host: null };
+		if (!match) return {name: null, host: null};
 
 		const name = match[1];
 
 		// ホスト正規化
 		const host = this.utilityService.toPunyNullable(this.normalizeHost(match[2], noteUserHost));
 
-		return { name, host };
+		return {name, host};
 	}
 
 	/**
@@ -377,7 +364,7 @@ export class CustomEmojiService implements OnApplicationShutdown {
 	 */
 	@bindThis
 	public async populateEmoji(emojiName: string, noteUserHost: string | null): Promise<string | null> {
-		const { name, host } = this.parseEmojiStr(emojiName, noteUserHost);
+		const {name, host} = this.parseEmojiStr(emojiName, noteUserHost);
 		if (name == null) return null;
 		if (host == null) return null;
 
@@ -438,17 +425,17 @@ export class CustomEmojiService implements OnApplicationShutdown {
 	 */
 	@bindThis
 	public checkDuplicate(name: string): Promise<boolean> {
-		return this.emojisRepository.exists({ where: { name, host: IsNull() } });
+		return this.emojisRepository.exists({where: {name, host: IsNull()}});
 	}
 
 	@bindThis
 	public getEmojiById(id: string): Promise<MiEmoji | null> {
-		return this.emojisRepository.findOneBy({ id });
+		return this.emojisRepository.findOneBy({id});
 	}
 
 	@bindThis
 	public getEmojiByName(name: string): Promise<MiEmoji | null> {
-		return this.emojisRepository.findOneBy({ name, host: IsNull() });
+		return this.emojisRepository.findOneBy({name, host: IsNull()});
 	}
 
 	@bindThis
@@ -488,14 +475,14 @@ export class CustomEmojiService implements OnApplicationShutdown {
 			const q = params.query;
 			if (q.updatedAtFrom) {
 				// noIndexScan
-				builder.andWhere('CAST(emoji.updatedAt AS DATE) >= :updateAtFrom', { updateAtFrom: q.updatedAtFrom });
+				builder.andWhere('CAST(emoji.updatedAt AS DATE) >= :updateAtFrom', {updateAtFrom: q.updatedAtFrom});
 			}
 			if (q.updatedAtTo) {
 				// noIndexScan
-				builder.andWhere('CAST(emoji.updatedAt AS DATE) <= :updateAtTo', { updateAtTo: q.updatedAtTo });
+				builder.andWhere('CAST(emoji.updatedAt AS DATE) <= :updateAtTo', {updateAtTo: q.updatedAtTo});
 			}
 			if (q.name) {
-				builder.andWhere('emoji.name ~~ ANY(ARRAY[:...name])', { name: multipleWordsToQuery(q.name) });
+				builder.andWhere('emoji.name ~~ ANY(ARRAY[:...name])', {name: multipleWordsToQuery(q.name)});
 			}
 
 			switch (true) {
@@ -506,7 +493,7 @@ export class CustomEmojiService implements OnApplicationShutdown {
 				case q.hostType === 'remote': {
 					if (q.host) {
 						// noIndexScan
-						builder.andWhere('emoji.host ~~ ANY(ARRAY[:...host])', { host: multipleWordsToQuery(q.host) });
+						builder.andWhere('emoji.host ~~ ANY(ARRAY[:...host])', {host: multipleWordsToQuery(q.host)});
 					} else {
 						builder.andWhere('emoji.host IS NOT NULL');
 					}
@@ -516,15 +503,15 @@ export class CustomEmojiService implements OnApplicationShutdown {
 
 			if (q.uri) {
 				// noIndexScan
-				builder.andWhere('emoji.uri ~~ ANY(ARRAY[:...uri])', { uri: multipleWordsToQuery(q.uri) });
+				builder.andWhere('emoji.uri ~~ ANY(ARRAY[:...uri])', {uri: multipleWordsToQuery(q.uri)});
 			}
 			if (q.publicUrl) {
 				// noIndexScan
-				builder.andWhere('emoji.publicUrl ~~ ANY(ARRAY[:...publicUrl])', { publicUrl: multipleWordsToQuery(q.publicUrl) });
+				builder.andWhere('emoji.publicUrl ~~ ANY(ARRAY[:...publicUrl])', {publicUrl: multipleWordsToQuery(q.publicUrl)});
 			}
 			if (q.type) {
 				// noIndexScan
-				builder.andWhere('emoji.type ~~ ANY(ARRAY[:...type])', { type: multipleWordsToQuery(q.type) });
+				builder.andWhere('emoji.type ~~ ANY(ARRAY[:...type])', {type: multipleWordsToQuery(q.type)});
 			}
 			if (q.aliases) {
 				// noIndexScan
@@ -538,35 +525,35 @@ export class CustomEmojiService implements OnApplicationShutdown {
 						'aliasTable',
 					)
 					.where('"emoji"."id" = "aliasTable"."id"')
-					.andWhere('"aliasTable"."alias" ~~ ANY(ARRAY[:...aliases])', { aliases: multipleWordsToQuery(q.aliases) });
+					.andWhere('"aliasTable"."alias" ~~ ANY(ARRAY[:...aliases])', {aliases: multipleWordsToQuery(q.aliases)});
 
 				builder.andWhere(`(${subQueryBuilder.getQuery()}) > 0`);
 			}
 			if (q.category) {
-				builder.andWhere('emoji.category ~~ ANY(ARRAY[:...category])', { category: multipleWordsToQuery(q.category) });
+				builder.andWhere('emoji.category ~~ ANY(ARRAY[:...category])', {category: multipleWordsToQuery(q.category)});
 			}
 			if (q.license) {
 				// noIndexScan
-				builder.andWhere('emoji.license ~~ ANY(ARRAY[:...license])', { license: multipleWordsToQuery(q.license) });
+				builder.andWhere('emoji.license ~~ ANY(ARRAY[:...license])', {license: multipleWordsToQuery(q.license)});
 			}
 			if (q.isSensitive != null) {
 				// noIndexScan
-				builder.andWhere('emoji.isSensitive = :isSensitive', { isSensitive: q.isSensitive });
+				builder.andWhere('emoji.isSensitive = :isSensitive', {isSensitive: q.isSensitive});
 			}
 			if (q.localOnly != null) {
 				// noIndexScan
-				builder.andWhere('emoji.localOnly = :localOnly', { localOnly: q.localOnly });
+				builder.andWhere('emoji.localOnly = :localOnly', {localOnly: q.localOnly});
 			}
 			if (q.roleIds && q.roleIds.length > 0) {
-				builder.andWhere('emoji.roleIdsThatCanBeUsedThisEmojiAsReaction && ARRAY[:...roleIds]::VARCHAR[]', { roleIds: q.roleIds });
+				builder.andWhere('emoji.roleIdsThatCanBeUsedThisEmojiAsReaction && ARRAY[:...roleIds]::VARCHAR[]', {roleIds: q.roleIds});
 			}
 		}
 
 		if (params?.sinceId) {
-			builder.andWhere('emoji.id > :sinceId', { sinceId: params.sinceId });
+			builder.andWhere('emoji.id > :sinceId', {sinceId: params.sinceId});
 		}
 		if (params?.untilId) {
-			builder.andWhere('emoji.id < :untilId', { untilId: params.untilId });
+			builder.andWhere('emoji.id < :untilId', {untilId: params.untilId});
 		}
 
 		if (opts?.sortKeys && opts.sortKeys.length > 0) {
@@ -604,5 +591,18 @@ export class CustomEmojiService implements OnApplicationShutdown {
 	@bindThis
 	public onApplicationShutdown(signal?: string | undefined): void {
 		this.dispose();
+	}
+
+	@bindThis
+	private normalizeHost(src: string | undefined, noteUserHost: string | null): string | null {
+		// クエリに使うホスト
+		let host = src === '.' ? null	// .はローカルホスト (ここがマッチするのはリアクションのみ)
+			: src === undefined ? noteUserHost	// ノートなどでホスト省略表記の場合はローカルホスト (ここがリアクションにマッチすることはない)
+				: this.utilityService.isSelfHost(src) ? null	// 自ホスト指定
+					: (src || noteUserHost);	// 指定されたホスト || ノートなどの所有者のホスト (こっちがリアクションにマッチすることはない)
+
+		host = this.utilityService.toPunyNullable(host);
+
+		return host;
 	}
 }

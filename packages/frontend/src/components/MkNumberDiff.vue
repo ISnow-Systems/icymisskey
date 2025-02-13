@@ -4,13 +4,13 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<span class="ceaaebcd" :class="{ [$style.isPlus]: isPlus, [$style.isMinus]: isMinus, [$style.isZero]: isZero }">
+<span :class="{ [$style.isPlus]: isPlus, [$style.isMinus]: isMinus, [$style.isZero]: isZero }" class="ceaaebcd">
 	<slot name="before"></slot>{{ isPlus ? '+' : '' }}{{ number(value) }}<slot name="after"></slot>
 </span>
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+import {computed} from 'vue';
 import number from '@/filters/number.js';
 
 const props = defineProps<{

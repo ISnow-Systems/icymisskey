@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import type { DriveFilesRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
-import { RoleService } from '@/core/RoleService.js';
-import { DriveService } from '@/core/DriveService.js';
-import { ApiError } from '../../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {DriveFilesRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {DI} from '@/di-symbols.js';
+import {RoleService} from '@/core/RoleService.js';
+import {DriveService} from '@/core/DriveService.js';
+import {ApiError} from '../../../error.js';
 
 export const meta = {
 	tags: ['drive'],
@@ -61,11 +61,11 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		fileId: { type: 'string', format: 'misskey:id' },
-		folderId: { type: 'string', format: 'misskey:id', nullable: true },
-		name: { type: 'string' },
-		isSensitive: { type: 'boolean' },
-		comment: { type: 'string', nullable: true, maxLength: 512 },
+		fileId: {type: 'string', format: 'misskey:id'},
+		folderId: {type: 'string', format: 'misskey:id', nullable: true},
+		name: {type: 'string'},
+		isSensitive: {type: 'boolean'},
+		comment: {type: 'string', nullable: true, maxLength: 512},
 	},
 	required: ['fileId'],
 } as const;
@@ -75,12 +75,11 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.driveFilesRepository)
 		private driveFilesRepository: DriveFilesRepository,
-
 		private driveService: DriveService,
 		private roleService: RoleService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const file = await this.driveFilesRepository.findOneBy({ id: ps.fileId });
+			const file = await this.driveFilesRepository.findOneBy({id: ps.fileId});
 			if (file == null) {
 				throw new ApiError(meta.errors.noSuchFile);
 			}

@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import type { } from '@/models/Blocking.js';
-import type { MiSignin } from '@/models/Signin.js';
-import { bindThis } from '@/decorators.js';
-import { IdService } from '@/core/IdService.js';
+import {Injectable} from '@nestjs/common';
+import type {} from '@/models/Blocking.js';
+import type {MiSignin} from '@/models/Signin.js';
+import {bindThis} from '@/decorators.js';
+import {IdService} from '@/core/IdService.js';
 
 @Injectable()
 export class SigninEntityService {

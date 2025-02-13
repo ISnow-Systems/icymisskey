@@ -6,8 +6,8 @@
 process.env.NODE_ENV = 'test';
 
 import * as assert from 'assert';
-import { setTimeout } from 'node:timers/promises';
-import { api, post, signup, waitFire } from '../utils.js';
+import {setTimeout} from 'node:timers/promises';
+import {api, post, signup, waitFire} from '../utils.js';
 import type * as misskey from 'misskey-js';
 
 describe('Renote Mute', () => {
@@ -17,9 +17,9 @@ describe('Renote Mute', () => {
 	let carol: misskey.entities.SignupResponse;
 
 	beforeAll(async () => {
-		alice = await signup({ username: 'alice' });
-		bob = await signup({ username: 'bob' });
-		carol = await signup({ username: 'carol' });
+		alice = await signup({username: 'alice'});
+		bob = await signup({username: 'bob'});
+		carol = await signup({username: 'carol'});
 	}, 1000 * 60 * 2);
 
 	test('ミュート作成', async () => {
@@ -31,9 +31,9 @@ describe('Renote Mute', () => {
 	});
 
 	test('タイムラインにリノートミュートしているユーザーのリノートが含まれない', async () => {
-		const bobNote = await post(bob, { text: 'hi' });
-		const carolRenote = await post(carol, { renoteId: bobNote.id });
-		const carolNote = await post(carol, { text: 'hi' });
+		const bobNote = await post(bob, {text: 'hi'});
+		const carolRenote = await post(carol, {renoteId: bobNote.id});
+		const carolNote = await post(carol, {text: 'hi'});
 
 		// redisに追加されるのを待つ
 		await setTimeout(100);
@@ -48,9 +48,9 @@ describe('Renote Mute', () => {
 	});
 
 	test('タイムラインにリノートミュートしているユーザーの引用が含まれる', async () => {
-		const bobNote = await post(bob, { text: 'hi' });
-		const carolRenote = await post(carol, { renoteId: bobNote.id, text: 'kore' });
-		const carolNote = await post(carol, { text: 'hi' });
+		const bobNote = await post(bob, {text: 'hi'});
+		const carolRenote = await post(carol, {renoteId: bobNote.id, text: 'kore'});
+		const carolNote = await post(carol, {text: 'hi'});
 
 		// redisに追加されるのを待つ
 		await setTimeout(100);
@@ -66,8 +66,8 @@ describe('Renote Mute', () => {
 
 	// #12956
 	test('タイムラインにリノートミュートしているユーザーの通常ノートのリノートが含まれる', async () => {
-		const carolNote = await post(carol, { text: 'hi' });
-		const bobRenote = await post(bob, { renoteId: carolNote.id });
+		const carolNote = await post(carol, {text: 'hi'});
+		const bobRenote = await post(bob, {renoteId: carolNote.id});
 
 		// redisに追加されるのを待つ
 		await setTimeout(100);
@@ -81,11 +81,11 @@ describe('Renote Mute', () => {
 	});
 
 	test('ストリームにリノートミュートしているユーザーのリノートが流れない', async () => {
-		const bobNote = await post(bob, { text: 'hi' });
+		const bobNote = await post(bob, {text: 'hi'});
 
 		const fired = await waitFire(
 			alice, 'localTimeline',
-			() => api('notes/create', { renoteId: bobNote.id }, carol),
+			() => api('notes/create', {renoteId: bobNote.id}, carol),
 			msg => msg.type === 'note' && msg.body.userId === carol.id,
 		);
 
@@ -93,11 +93,11 @@ describe('Renote Mute', () => {
 	});
 
 	test('ストリームにリノートミュートしているユーザーの引用が流れる', async () => {
-		const bobNote = await post(bob, { text: 'hi' });
+		const bobNote = await post(bob, {text: 'hi'});
 
 		const fired = await waitFire(
 			alice, 'localTimeline',
-			() => api('notes/create', { renoteId: bobNote.id, text: 'kore' }, carol),
+			() => api('notes/create', {renoteId: bobNote.id, text: 'kore'}, carol),
 			msg => msg.type === 'note' && msg.body.userId === carol.id,
 		);
 
@@ -106,11 +106,11 @@ describe('Renote Mute', () => {
 
 	// #12956
 	test('ストリームにリノートミュートしているユーザーの通常ノートのリノートが流れてくる', async () => {
-		const carolbNote = await post(carol, { text: 'hi' });
+		const carolbNote = await post(carol, {text: 'hi'});
 
 		const fired = await waitFire(
 			alice, 'localTimeline',
-			() => api('notes/create', { renoteId: carolbNote.id }, bob),
+			() => api('notes/create', {renoteId: carolbNote.id}, bob),
 			msg => msg.type === 'note' && msg.body.userId === bob.id,
 		);
 

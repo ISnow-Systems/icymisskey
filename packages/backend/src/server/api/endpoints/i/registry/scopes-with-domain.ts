@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { RegistryApiService } from '@/core/RegistryApiService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {RegistryApiService} from '@/core/RegistryApiService.js';
 
 export const meta = {
 	requireCredential: true,

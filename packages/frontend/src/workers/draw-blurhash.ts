@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { render } from 'buraha';
+import {render} from 'buraha';
 
 const canvas = new OffscreenCanvas(64, 64);
 
@@ -18,5 +18,5 @@ onmessage = (event) => {
 
 	render(event.data.hash, canvas);
 	const bitmap = canvas.transferToImageBitmap();
-	postMessage({ id: event.data.id, bitmap });
+	postMessage({id: event.data.id, bitmap});
 };

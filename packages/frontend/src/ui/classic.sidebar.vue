@@ -4,64 +4,65 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="npcljfve" :class="{ iconOnly }">
-	<button v-click-anime class="item _button account" @click="openAccountMenu">
-		<MkAvatar :user="$i" class="avatar"/><MkAcct class="text" :user="$i"/>
-	</button>
-	<div class="post" data-cy-open-post-form @click="os.post">
-		<MkButton class="button" gradate full rounded>
-			<i class="ti ti-pencil ti-fw"></i><span v-if="!iconOnly" class="text">{{ i18n.ts.note }}</span>
-		</MkButton>
-	</div>
-	<div class="divider"></div>
-	<MkA v-click-anime class="item index" activeClass="active" to="/" exact>
-		<i class="ti ti-home ti-fw"></i><span class="text">{{ i18n.ts.timeline }}</span>
-	</MkA>
-	<template v-for="item in menu">
-		<div v-if="item === '-'" class="divider"></div>
-		<component :is="navbarItemDef[item].to ? 'MkA' : 'button'" v-else-if="navbarItemDef[item] && (navbarItemDef[item].show !== false)" v-click-anime class="item _button" :class="item" activeClass="active" :to="navbarItemDef[item].to" v-on="navbarItemDef[item].action ? { click: navbarItemDef[item].action } : {}">
-			<i class="ti-fw" :class="navbarItemDef[item].icon"></i><span class="text">{{ navbarItemDef[item].title }}</span>
-			<span v-if="navbarItemDef[item].indicated" class="indicator _blink">
+	<div :class="{ iconOnly }" class="npcljfve">
+		<button v-click-anime class="item _button account" @click="openAccountMenu">
+			<MkAvatar :user="$i" class="avatar"/>
+			<MkAcct :user="$i" class="text"/>
+		</button>
+		<div class="post" data-cy-open-post-form @click="os.post">
+			<MkButton class="button" full gradate rounded>
+				<i class="ti ti-pencil ti-fw"></i><span v-if="!iconOnly" class="text">{{ i18n.ts.note }}</span>
+			</MkButton>
+		</div>
+		<div class="divider"></div>
+		<MkA v-click-anime activeClass="active" class="item index" exact to="/">
+			<i class="ti ti-home ti-fw"></i><span class="text">{{ i18n.ts.timeline }}</span>
+		</MkA>
+		<template v-for="item in menu">
+			<div v-if="item === '-'" class="divider"></div>
+			<component :is="navbarItemDef[item].to ? 'MkA' : 'button'" v-else-if="navbarItemDef[item] && (navbarItemDef[item].show !== false)" v-click-anime :class="item" :to="navbarItemDef[item].to" activeClass="active" class="item _button" v-on="navbarItemDef[item].action ? { click: navbarItemDef[item].action } : {}">
+				<i :class="navbarItemDef[item].icon" class="ti-fw"></i><span class="text">{{ navbarItemDef[item].title }}</span>
+				<span v-if="navbarItemDef[item].indicated" class="indicator _blink">
 				<span v-if="navbarItemDef[item].indicateValue" class="_indicateCounter itemIndicateValueIcon">{{ navbarItemDef[item].indicateValue }}</span>
 				<i v-else class="_indicatorCircle"></i>
 			</span>
-		</component>
-	</template>
-	<div class="divider"></div>
-	<MkA v-if="$i.isAdmin || $i.isModerator" v-click-anime class="item" activeClass="active" to="/admin" :behavior="settingsWindowed ? 'window' : null">
-		<i class="ti ti-dashboard ti-fw"></i><span class="text">{{ i18n.ts.controlPanel }}</span>
-	</MkA>
-	<button v-click-anime class="item _button" @click="more">
-		<i class="ti ti-dots ti-fw"></i><span class="text">{{ i18n.ts.more }}</span>
-		<span v-if="otherNavItemIndicated" class="indicator _blink"><i class="_indicatorCircle"></i></span>
-	</button>
-	<MkA v-click-anime class="item" activeClass="active" to="/settings" :behavior="settingsWindowed ? 'window' : null">
-		<i class="ti ti-settings ti-fw"></i><span class="text">{{ i18n.ts.settings }}</span>
-	</MkA>
-	<div class="divider"></div>
-	<div class="about">
-		<button v-click-anime class="item _button" @click="openInstanceMenu">
-			<img :src="instance.iconUrl ?? instance.faviconUrl ?? '/favicon.ico'" class="_ghost"/>
+			</component>
+		</template>
+		<div class="divider"></div>
+		<MkA v-if="$i.isAdmin || $i.isModerator" v-click-anime :behavior="settingsWindowed ? 'window' : null" activeClass="active" class="item" to="/admin">
+			<i class="ti ti-dashboard ti-fw"></i><span class="text">{{ i18n.ts.controlPanel }}</span>
+		</MkA>
+		<button v-click-anime class="item _button" @click="more">
+			<i class="ti ti-dots ti-fw"></i><span class="text">{{ i18n.ts.more }}</span>
+			<span v-if="otherNavItemIndicated" class="indicator _blink"><i class="_indicatorCircle"></i></span>
 		</button>
+		<MkA v-click-anime :behavior="settingsWindowed ? 'window' : null" activeClass="active" class="item" to="/settings">
+			<i class="ti ti-settings ti-fw"></i><span class="text">{{ i18n.ts.settings }}</span>
+		</MkA>
+		<div class="divider"></div>
+		<div class="about">
+			<button v-click-anime class="item _button" @click="openInstanceMenu">
+				<img :src="instance.iconUrl ?? instance.faviconUrl ?? '/favicon.ico'" class="_ghost"/>
+			</button>
+		</div>
+		<!--<MisskeyLogo class="misskey"/>-->
 	</div>
-	<!--<MisskeyLogo class="misskey"/>-->
-</div>
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, computed, watch, ref, shallowRef } from 'vue';
-import { openInstanceMenu } from './_common_/common.js';
+import {defineAsyncComponent, computed, watch, ref, shallowRef} from 'vue';
+import {openInstanceMenu} from './_common_/common.js';
 // import { host } from '@@/js/config.js';
 import * as os from '@/os.js';
-import { navbarItemDef } from '@/navbar.js';
-import { openAccountMenu as openAccountMenu_, $i } from '@/account.js';
+import {navbarItemDef} from '@/navbar.js';
+import {openAccountMenu as openAccountMenu_, $i} from '@/account.js';
 import MkButton from '@/components/MkButton.vue';
 // import { StickySidebar } from '@/scripts/sticky-sidebar.js';
 // import { mainRouter } from '@/router.js';
 //import MisskeyLogo from '@assets/client/misskey.svg';
-import { defaultStore } from '@/store.js';
-import { instance } from '@/instance.js';
-import { i18n } from '@/i18n.js';
+import {defaultStore} from '@/store.js';
+import {instance} from '@/instance.js';
+import {i18n} from '@/i18n.js';
 
 const WINDOW_THRESHOLD = 1400;
 
@@ -86,7 +87,7 @@ function calcViewState() {
 }
 
 function more(ev: MouseEvent) {
-	const { dispose } = os.popup(defineAsyncComponent(() => import('@/components/MkLaunchPad.vue')), {
+	const {dispose} = os.popup(defineAsyncComponent(() => import('@/components/MkLaunchPad.vue')), {
 		src: ev.currentTarget ?? ev.target,
 	}, {
 		closed: () => dispose(),

@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { reactive, watch } from 'vue';
-import { throttle } from 'throttle-debounce';
-import type { Form, GetFormResultType } from '@/scripts/form.js';
+import {reactive, watch} from 'vue';
+import {throttle} from 'throttle-debounce';
+import type {Form, GetFormResultType} from '@/scripts/form.js';
 import * as os from '@/os.js';
-import { deepClone } from '@/scripts/clone.js';
+import {deepClone} from '@/scripts/clone.js';
 
 export type Widget<P extends Record<string, unknown>> = {
 	id: string;
@@ -49,7 +49,7 @@ export const useWidgetPropsManager = <F extends Form & Record<string, { default:
 	};
 	watch(widgetProps, () => {
 		mergeProps();
-	}, { deep: true, immediate: true });
+	}, {deep: true, immediate: true});
 
 	const save = throttle(3000, () => {
 		emit('updateProps', widgetProps);
@@ -60,7 +60,7 @@ export const useWidgetPropsManager = <F extends Form & Record<string, { default:
 		for (const item of Object.keys(form)) {
 			form[item].default = widgetProps[item];
 		}
-		const { canceled, result } = await os.form(name, form);
+		const {canceled, result} = await os.form(name, form);
 		if (canceled) return;
 
 		for (const key of Object.keys(result)) {

@@ -4,38 +4,38 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<template #header>
-		<XHeader :actions="headerActions" :tabs="headerTabs"/>
-	</template>
+	<MkStickyContainer>
+		<template #header>
+			<XHeader :actions="headerActions" :tabs="headerTabs"/>
+		</template>
 
-	<MkSpacer :contentMax="900">
-		<div class="_gaps_m">
-			<MkButton primary @click="onCreateWebhookClicked">
-				<i class="ti ti-plus"></i> {{ i18n.ts._webhookSettings.createWebhook }}
-			</MkButton>
+		<MkSpacer :contentMax="900">
+			<div class="_gaps_m">
+				<MkButton primary @click="onCreateWebhookClicked">
+					<i class="ti ti-plus"></i> {{ i18n.ts._webhookSettings.createWebhook }}
+				</MkButton>
 
-			<FormSection>
-				<div class="_gaps">
-					<XItem v-for="item in webhooks" :key="item.id" :entity="item" @edit="onEditButtonClicked" @delete="onDeleteButtonClicked"/>
-				</div>
-			</FormSection>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+				<FormSection>
+					<div class="_gaps">
+						<XItem v-for="item in webhooks" :key="item.id" :entity="item" @delete="onDeleteButtonClicked" @edit="onEditButtonClicked"/>
+					</div>
+				</FormSection>
+			</div>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue';
-import { entities } from 'misskey-js';
+import {computed, onMounted, ref} from 'vue';
+import {entities} from 'misskey-js';
 import XItem from './system-webhook.item.vue';
 import FormSection from '@/components/form/section.vue';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
-import { i18n } from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
+import {i18n} from '@/i18n.js';
 import XHeader from '@/pages/admin/_header_.vue';
 import MkButton from '@/components/MkButton.vue';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { showSystemWebhookEditorDialog } from '@/components/MkSystemWebhookEditor.impl.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {showSystemWebhookEditorDialog} from '@/components/MkSystemWebhookEditor.impl.js';
 import * as os from '@/os.js';
 
 const webhooks = ref<entities.SystemWebhook[]>([]);
@@ -88,6 +88,6 @@ definePageMetadata(() => ({
 }));
 </script>
 
-<style module lang="scss">
+<style lang="scss" module>
 
 </style>

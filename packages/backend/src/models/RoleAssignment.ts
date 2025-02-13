@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne } from 'typeorm';
-import { id } from './util/id.js';
-import { MiRole } from './Role.js';
-import { MiUser } from './User.js';
+import {PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne} from 'typeorm';
+import {id} from './util/id.js';
+import {MiRole} from './Role.js';
+import {MiUser} from './User.js';
 
 @Entity('role_assignment')
-@Index(['userId', 'roleId'], { unique: true })
+@Index(['userId', 'roleId'], {unique: true})
 export class MiRoleAssignment {
 	@PrimaryColumn(id())
 	public id: string;

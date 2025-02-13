@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne } from 'typeorm';
-import { id } from './util/id.js';
-import { MiUser } from './User.js';
-import { MiClip } from './Clip.js';
+import {PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne} from 'typeorm';
+import {id} from './util/id.js';
+import {MiUser} from './User.js';
+import {MiClip} from './Clip.js';
 
 @Entity('clip_favorite')
-@Index(['userId', 'clipId'], { unique: true })
+@Index(['userId', 'clipId'], {unique: true})
 export class MiClipFavorite {
 	@PrimaryColumn(id())
 	public id: string;

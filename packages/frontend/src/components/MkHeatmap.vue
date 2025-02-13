@@ -4,23 +4,23 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div ref="rootEl">
-	<MkLoading v-if="fetching"/>
-	<div v-else>
-		<canvas ref="chartEl"></canvas>
+	<div ref="rootEl">
+		<MkLoading v-if="fetching"/>
+		<div v-else>
+			<canvas ref="chartEl"></canvas>
+		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, nextTick, watch, shallowRef, ref } from 'vue';
-import { Chart } from 'chart.js';
+import {onMounted, nextTick, watch, shallowRef, ref} from 'vue';
+import {Chart} from 'chart.js';
 import * as Misskey from 'misskey-js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { defaultStore } from '@/store.js';
-import { useChartTooltip } from '@/scripts/use-chart-tooltip.js';
-import { alpha } from '@/scripts/color.js';
-import { initChart } from '@/scripts/init-chart.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {defaultStore} from '@/store.js';
+import {useChartTooltip} from '@/scripts/use-chart-tooltip.js';
+import {alpha} from '@/scripts/color.js';
+import {initChart} from '@/scripts/init-chart.js';
 
 initChart();
 
@@ -41,7 +41,7 @@ const now = new Date();
 let chartInstance: Chart | null = null;
 const fetching = ref(true);
 
-const { handler: externalTooltipHandler } = useChartTooltip({
+const {handler: externalTooltipHandler} = useChartTooltip({
 	position: 'middle',
 });
 
@@ -81,24 +81,24 @@ async function renderChart() {
 	let values: number[] = [];
 
 	if (props.src === 'active-users') {
-		const raw = await misskeyApi('charts/active-users', { limit: chartLimit, span: 'day' });
+		const raw = await misskeyApi('charts/active-users', {limit: chartLimit, span: 'day'});
 		values = raw.readWrite;
 	} else if (props.src === 'notes') {
 		if (props.user) {
-			const raw = await misskeyApi('charts/user/notes', { userId: props.user.id, limit: chartLimit, span: 'day' });
+			const raw = await misskeyApi('charts/user/notes', {userId: props.user.id, limit: chartLimit, span: 'day'});
 			values = raw.inc;
 		} else {
-			const raw = await misskeyApi('charts/notes', { limit: chartLimit, span: 'day' });
+			const raw = await misskeyApi('charts/notes', {limit: chartLimit, span: 'day'});
 			values = raw.local.inc;
 		}
 	} else if (props.src === 'ap-requests-inbox-received') {
-		const raw = await misskeyApi('charts/ap-request', { limit: chartLimit, span: 'day' });
+		const raw = await misskeyApi('charts/ap-request', {limit: chartLimit, span: 'day'});
 		values = raw.inboxReceived;
 	} else if (props.src === 'ap-requests-deliver-succeeded') {
-		const raw = await misskeyApi('charts/ap-request', { limit: chartLimit, span: 'day' });
+		const raw = await misskeyApi('charts/ap-request', {limit: chartLimit, span: 'day'});
 		values = raw.deliverSucceeded;
 	} else if (props.src === 'ap-requests-deliver-failed') {
-		const raw = await misskeyApi('charts/ap-request', { limit: chartLimit, span: 'day' });
+		const raw = await misskeyApi('charts/ap-request', {limit: chartLimit, span: 'day'});
 		values = raw.deliverFailed;
 	}
 
@@ -142,9 +142,9 @@ async function renderChart() {
 					const a = c.chart.chartArea ?? {};
 					return (a.bottom - a.top) / 7 - marginEachCell;
 				},
-			/* @see <https://github.com/misskey-dev/misskey/pull/10365#discussion_r1155511107>
-			}] satisfies ChartData[],
-			 */
+				/* @see <https://github.com/misskey-dev/misskey/pull/10365#discussion_r1155511107>
+				}] satisfies ChartData[],
+				 */
 			}],
 		},
 		options: {

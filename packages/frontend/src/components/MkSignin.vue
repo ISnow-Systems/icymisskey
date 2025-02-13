@@ -4,81 +4,81 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="$style.signinRoot">
-	<Transition
-		mode="out-in"
-		:enterActiveClass="$style.transition_enterActive"
-		:leaveActiveClass="$style.transition_leaveActive"
-		:enterFromClass="$style.transition_enterFrom"
-		:leaveToClass="$style.transition_leaveTo"
+	<div :class="$style.signinRoot">
+		<Transition
+			:enterActiveClass="$style.transition_enterActive"
+			:enterFromClass="$style.transition_enterFrom"
+			:inert="waiting"
+			:leaveActiveClass="$style.transition_leaveActive"
+			:leaveToClass="$style.transition_leaveTo"
 
-		:inert="waiting"
-	>
-		<!-- 1. 外部サーバーへの転送・username入力・パスキー -->
-		<XInput
-			v-if="page === 'input'"
-			key="input"
-			:message="message"
-			:openOnRemote="openOnRemote"
+			mode="out-in"
+		>
+			<!-- 1. 外部サーバーへの転送・username入力・パスキー -->
+			<XInput
+				v-if="page === 'input'"
+				key="input"
+				:message="message"
+				:openOnRemote="openOnRemote"
 
-			@usernameSubmitted="onUsernameSubmitted"
-			@passkeyClick="onPasskeyLogin"
-		/>
+				@passkeyClick="onPasskeyLogin"
+				@usernameSubmitted="onUsernameSubmitted"
+			/>
 
-		<!-- 2. パスワード入力 -->
-		<XPassword
-			v-else-if="page === 'password'"
-			key="password"
-			ref="passwordPageEl"
+			<!-- 2. パスワード入力 -->
+			<XPassword
+				v-else-if="page === 'password'"
+				key="password"
+				ref="passwordPageEl"
 
-			:user="userInfo!"
-			:needCaptcha="needCaptcha"
+				:needCaptcha="needCaptcha"
+				:user="userInfo!"
 
-			@passwordSubmitted="onPasswordSubmitted"
-		/>
+				@passwordSubmitted="onPasswordSubmitted"
+			/>
 
-		<!-- 3. ワンタイムパスワード -->
-		<XTotp
-			v-else-if="page === 'totp'"
-			key="totp"
+			<!-- 3. ワンタイムパスワード -->
+			<XTotp
+				v-else-if="page === 'totp'"
+				key="totp"
 
-			@totpSubmitted="onTotpSubmitted"
-		/>
+				@totpSubmitted="onTotpSubmitted"
+			/>
 
-		<!-- 4. パスキー -->
-		<XPasskey
-			v-else-if="page === 'passkey'"
-			key="passkey"
+			<!-- 4. パスキー -->
+			<XPasskey
+				v-else-if="page === 'passkey'"
+				key="passkey"
 
-			:credentialRequest="credentialRequest!"
-			:isPerformingPasswordlessLogin="doingPasskeyFromInputPage"
+				:credentialRequest="credentialRequest!"
+				:isPerformingPasswordlessLogin="doingPasskeyFromInputPage"
 
-			@done="onPasskeyDone"
-			@useTotp="onUseTotp"
-		/>
-	</Transition>
-	<div v-if="waiting" :class="$style.waitingRoot">
-		<MkLoading/>
+				@done="onPasskeyDone"
+				@useTotp="onUseTotp"
+			/>
+		</Transition>
+		<div v-if="waiting" :class="$style.waitingRoot">
+			<MkLoading/>
+		</div>
 	</div>
-</div>
 </template>
 
-<script setup lang="ts">
-import { nextTick, onBeforeUnmount, ref, shallowRef, useTemplateRef } from 'vue';
+<script lang="ts" setup>
+import {nextTick, onBeforeUnmount, ref, shallowRef, useTemplateRef} from 'vue';
 import * as Misskey from 'misskey-js';
-import { supported as webAuthnSupported, parseRequestOptionsFromJSON } from '@github/webauthn-json/browser-ponyfill';
+import {supported as webAuthnSupported, parseRequestOptionsFromJSON} from '@github/webauthn-json/browser-ponyfill';
 
-import type { AuthenticationPublicKeyCredential } from '@github/webauthn-json/browser-ponyfill';
-import type { OpenOnRemoteOptions } from '@/scripts/please-login.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { showSuspendedDialog } from '@/scripts/show-suspended-dialog.js';
-import { login } from '@/account.js';
-import { i18n } from '@/i18n.js';
+import type {AuthenticationPublicKeyCredential} from '@github/webauthn-json/browser-ponyfill';
+import type {OpenOnRemoteOptions} from '@/scripts/please-login.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {showSuspendedDialog} from '@/scripts/show-suspended-dialog.js';
+import {login} from '@/account.js';
+import {i18n} from '@/i18n.js';
 import * as os from '@/os.js';
 
 import XInput from '@/components/MkSignin.input.vue';
 import XPassword from '@/components/MkSignin.password.vue';
-import type { PwResponse } from '@/components/MkSignin.password.vue';
+import type {PwResponse} from '@/components/MkSignin.password.vue';
 import XTotp from '@/components/MkSignin.totp.vue';
 import XPasskey from '@/components/MkSignin.passkey.vue';
 
@@ -155,6 +155,7 @@ function onPasskeyDone(credential: AuthenticationPublicKeyCredential): void {
 function onUseTotp(): void {
 	page.value = 'totp';
 }
+
 //#endregion
 
 async function onUsernameSubmitted(username: string) {
@@ -387,12 +388,14 @@ onBeforeUnmount(() => {
 <style lang="scss" module>
 .transition_enterActive,
 .transition_leaveActive {
-	transition: opacity 0.3s cubic-bezier(0,0,.35,1), transform 0.3s cubic-bezier(0,0,.35,1);
+	transition: opacity 0.3s cubic-bezier(0, 0, .35, 1), transform 0.3s cubic-bezier(0, 0, .35, 1);
 }
+
 .transition_enterFrom {
 	opacity: 0;
 	transform: translateX(50px);
 }
+
 .transition_leaveTo {
 	opacity: 0;
 	transform: translateX(-50px);

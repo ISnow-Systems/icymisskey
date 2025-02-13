@@ -4,52 +4,52 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkModal
-	ref="modal"
-	v-slot="{ type, maxHeight }"
-	:zPriority="'middle'"
-	:preferType="defaultStore.state.emojiPickerStyle"
-	:hasInteractionWithOtherFocusTrappedEls="true"
-	:transparentBg="true"
-	:manualShowing="manualShowing"
-	:src="src"
-	@click="modal?.close()"
-	@esc="modal?.close()"
-	@opening="opening"
-	@close="emit('close')"
-	@closed="emit('closed')"
->
-	<MkEmojiPicker
-		ref="picker"
-		class="_popup _shadow"
-		:class="{ [$style.drawer]: type === 'drawer' }"
-		:showPinned="showPinned"
-		:pinnedEmojis="pinnedEmojis"
-		:asReactionPicker="asReactionPicker"
-		:targetNote="targetNote"
-		:asDrawer="type === 'drawer'"
-		:max-height="maxHeight"
-		@chosen="chosen"
+	<MkModal
+		ref="modal"
+		v-slot="{ type, maxHeight }"
+		:hasInteractionWithOtherFocusTrappedEls="true"
+		:manualShowing="manualShowing"
+		:preferType="defaultStore.state.emojiPickerStyle"
+		:src="src"
+		:transparentBg="true"
+		:zPriority="'middle'"
+		@click="modal?.close()"
+		@close="emit('close')"
+		@closed="emit('closed')"
 		@esc="modal?.close()"
-	/>
-</MkModal>
+		@opening="opening"
+	>
+		<MkEmojiPicker
+			ref="picker"
+			:asDrawer="type === 'drawer'"
+			:asReactionPicker="asReactionPicker"
+			:class="{ [$style.drawer]: type === 'drawer' }"
+			:max-height="maxHeight"
+			:pinnedEmojis="pinnedEmojis"
+			:showPinned="showPinned"
+			:targetNote="targetNote"
+			class="_popup _shadow"
+			@chosen="chosen"
+			@esc="modal?.close()"
+		/>
+	</MkModal>
 </template>
 
 <script lang="ts" setup>
 import * as Misskey from 'misskey-js';
-import { shallowRef } from 'vue';
+import {shallowRef} from 'vue';
 import MkModal from '@/components/MkModal.vue';
 import MkEmojiPicker from '@/components/MkEmojiPicker.vue';
-import { defaultStore } from '@/store.js';
+import {defaultStore} from '@/store.js';
 
 const props = withDefaults(defineProps<{
 	manualShowing?: boolean | null;
 	src?: HTMLElement;
 	showPinned?: boolean;
-  pinnedEmojis?: string[],
+	pinnedEmojis?: string[],
 	asReactionPicker?: boolean;
 	targetNote?: Misskey.entities.Note;
-  choseAndClose?: boolean;
+	choseAndClose?: boolean;
 }>(), {
 	manualShowing: null,
 	showPinned: true,

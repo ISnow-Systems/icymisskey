@@ -4,23 +4,23 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<XColumn :menu="menu" :naked="true" :column="column" :isStacked="isStacked">
-	<template #header><i class="ti ti-apps" style="margin-right: 8px;"></i>{{ column.name || i18n.ts._deck._columns[props.column.type] }}</template>
+	<XColumn :column="column" :isStacked="isStacked" :menu="menu" :naked="true">
+		<template #header><i class="ti ti-apps" style="margin-right: 8px;"></i>{{ column.name || i18n.ts._deck._columns[props.column.type] }}</template>
 
-	<div :class="$style.root">
-		<div v-if="!(column.widgets && column.widgets.length > 0) && !edit" :class="$style.intro">{{ i18n.ts._deck.widgetsIntroduction }}</div>
-		<XWidgets :edit="edit" :widgets="column.widgets ?? []" @addWidget="addWidget" @removeWidget="removeWidget" @updateWidget="updateWidget" @updateWidgets="updateWidgets" @exit="edit = false"/>
-	</div>
-</XColumn>
+		<div :class="$style.root">
+			<div v-if="!(column.widgets && column.widgets.length > 0) && !edit" :class="$style.intro">{{ i18n.ts._deck.widgetsIntroduction }}</div>
+			<XWidgets :edit="edit" :widgets="column.widgets ?? []" @addWidget="addWidget" @exit="edit = false" @removeWidget="removeWidget" @updateWidget="updateWidget" @updateWidgets="updateWidgets"/>
+		</div>
+	</XColumn>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import {ref} from 'vue';
 import XColumn from './column.vue';
-import { addColumnWidget, removeColumnWidget, setColumnWidgets, updateColumnWidget } from './deck-store.js';
-import type { Column } from './deck-store.js';
+import {addColumnWidget, removeColumnWidget, setColumnWidgets, updateColumnWidget} from './deck-store.js';
+import type {Column} from './deck-store.js';
 import XWidgets from '@/components/MkWidgets.vue';
-import { i18n } from '@/i18n.js';
+import {i18n} from '@/i18n.js';
 
 const props = defineProps<{
 	column: Column;
@@ -37,7 +37,7 @@ function removeWidget(widget) {
 	removeColumnWidget(props.column.id, widget);
 }
 
-function updateWidget({ id, data }) {
+function updateWidget({id, data}) {
 	updateColumnWidget(props.column.id, id, data);
 }
 

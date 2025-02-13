@@ -4,45 +4,49 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="700">
-		<div class="_gaps_m">
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs"/>
+		</template>
+		<MkSpacer :contentMax="700">
 			<div class="_gaps_m">
-				<MkInput v-model="endpoint" :datalist="endpoints" @update:modelValue="onEndpointChange()">
-					<template #label>Endpoint</template>
-				</MkInput>
-				<MkTextarea v-model="body" code>
-					<template #label>Params (JSON or JSON5)</template>
-				</MkTextarea>
-				<MkSwitch v-model="withCredential">
-					With credential
-				</MkSwitch>
-				<MkButton primary :disabled="sending" @click="send">
-					<template v-if="sending"><MkEllipsis/></template>
-					<template v-else><i class="ti ti-send"></i> Send</template>
-				</MkButton>
+				<div class="_gaps_m">
+					<MkInput v-model="endpoint" :datalist="endpoints" @update:modelValue="onEndpointChange()">
+						<template #label>Endpoint</template>
+					</MkInput>
+					<MkTextarea v-model="body" code>
+						<template #label>Params (JSON or JSON5)</template>
+					</MkTextarea>
+					<MkSwitch v-model="withCredential">
+						With credential
+					</MkSwitch>
+					<MkButton :disabled="sending" primary @click="send">
+						<template v-if="sending">
+							<MkEllipsis/>
+						</template>
+						<template v-else><i class="ti ti-send"></i> Send</template>
+					</MkButton>
+				</div>
+				<div v-if="res">
+					<MkTextarea v-model="res" code readonly tall>
+						<template #label>Response</template>
+					</MkTextarea>
+				</div>
 			</div>
-			<div v-if="res">
-				<MkTextarea v-model="res" code readonly tall>
-					<template #label>Response</template>
-				</MkTextarea>
-			</div>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
+import {ref, computed} from 'vue';
 import JSON5 from 'json5';
-import type { Endpoints } from 'misskey-js';
+import type {Endpoints} from 'misskey-js';
 import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/MkInput.vue';
 import MkTextarea from '@/components/MkTextarea.vue';
 import MkSwitch from '@/components/MkSwitch.vue';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
 
 const body = ref('{}');
 const endpoint = ref('');
@@ -68,16 +72,16 @@ function send() {
 }
 
 function onEndpointChange() {
-	misskeyApi('endpoint', { endpoint: endpoint.value }, withCredential.value ? undefined : null).then(resp => {
+	misskeyApi('endpoint', {endpoint: endpoint.value}, withCredential.value ? undefined : null).then(resp => {
 		const endpointBody = {};
 		for (const p of resp.params) {
 			endpointBody[p.name] =
 				p.type === 'String' ? '' :
-				p.type === 'Number' ? 0 :
-				p.type === 'Boolean' ? false :
-				p.type === 'Array' ? [] :
-				p.type === 'Object' ? {} :
-				null;
+					p.type === 'Number' ? 0 :
+						p.type === 'Boolean' ? false :
+							p.type === 'Array' ? [] :
+								p.type === 'Object' ? {} :
+									null;
 		}
 		body.value = JSON5.stringify(endpointBody, null, 2);
 	});

@@ -3,11 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { action } from '@storybook/addon-actions';
-import { expect, userEvent, waitFor, within } from '@storybook/test';
-import type { StoryObj } from '@storybook/vue3';
-import { i18n } from '@/i18n.js';
+import {action} from '@storybook/addon-actions';
+import {expect, userEvent, waitFor, within} from '@storybook/test';
+import type {StoryObj} from '@storybook/vue3';
+import {i18n} from '@/i18n.js';
 import MkEmojiPicker from './MkEmojiPicker.vue';
+
 export const Default = {
 	render(args) {
 		return {
@@ -34,7 +35,7 @@ export const Default = {
 			template: '<MkEmojiPicker v-bind="props" v-on="events" />',
 		};
 	},
-	async play({ canvasElement }) {
+	async play({canvasElement}) {
 		const canvas = within(canvasElement);
 		const faceSection = canvas.getByText(/face/i);
 		await waitFor(() => userEvent.click(faceSection));

@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { IdService } from '@/core/IdService.js';
-import type { WebhooksRepository } from '@/models/_.js';
-import { webhookEventTypes } from '@/models/Webhook.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { DI } from '@/di-symbols.js';
-import { RoleService } from '@/core/RoleService.js';
-import { ApiError } from '@/server/api/error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {IdService} from '@/core/IdService.js';
+import type {WebhooksRepository} from '@/models/_.js';
+import {webhookEventTypes} from '@/models/Webhook.js';
+import {GlobalEventService} from '@/core/GlobalEventService.js';
+import {DI} from '@/di-symbols.js';
+import {RoleService} from '@/core/RoleService.js';
+import {ApiError} from '@/server/api/error.js';
 
 // TODO: UserWebhook schemaの適用
 export const meta = {
@@ -40,7 +40,7 @@ export const meta = {
 				type: 'string',
 				format: 'misskey:id',
 			},
-			name: { type: 'string' },
+			name: {type: 'string'},
 			on: {
 				type: 'array',
 				items: {
@@ -48,11 +48,11 @@ export const meta = {
 					enum: webhookEventTypes,
 				},
 			},
-			url: { type: 'string' },
-			secret: { type: 'string' },
-			active: { type: 'boolean' },
-			latestSentAt: { type: 'string', format: 'date-time', nullable: true },
-			latestStatus: { type: 'integer', nullable: true },
+			url: {type: 'string'},
+			secret: {type: 'string'},
+			active: {type: 'boolean'},
+			latestSentAt: {type: 'string', format: 'date-time', nullable: true},
+			latestStatus: {type: 'integer', nullable: true},
 		},
 	},
 } as const;
@@ -60,12 +60,14 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		name: { type: 'string', minLength: 1, maxLength: 100 },
-		url: { type: 'string', minLength: 1, maxLength: 1024 },
-		secret: { type: 'string', maxLength: 1024, default: '' },
-		on: { type: 'array', items: {
-			type: 'string', enum: webhookEventTypes,
-		} },
+		name: {type: 'string', minLength: 1, maxLength: 100},
+		url: {type: 'string', minLength: 1, maxLength: 1024},
+		secret: {type: 'string', maxLength: 1024, default: ''},
+		on: {
+			type: 'array', items: {
+				type: 'string', enum: webhookEventTypes,
+			}
+		},
 	},
 	required: ['name', 'url', 'on'],
 } as const;
@@ -77,7 +79,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.webhooksRepository)
 		private webhooksRepository: WebhooksRepository,
-
 		private idService: IdService,
 		private globalEventService: GlobalEventService,
 		private roleService: RoleService,

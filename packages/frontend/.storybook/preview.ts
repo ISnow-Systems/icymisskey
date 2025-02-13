@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { FORCE_RE_RENDER, FORCE_REMOUNT } from '@storybook/core-events';
-import { addons } from '@storybook/preview-api';
-import { type Preview, setup } from '@storybook/vue3';
+import {FORCE_RE_RENDER, FORCE_REMOUNT} from '@storybook/core-events';
+import {addons} from '@storybook/preview-api';
+import {type Preview, setup} from '@storybook/vue3';
 import isChromatic from 'chromatic/isChromatic';
-import { initialize, mswLoader } from 'msw-storybook-addon';
-import { userDetailed } from './fakes.js';
+import {initialize, mswLoader} from 'msw-storybook-addon';
+import {userDetailed} from './fakes.js';
 import locale from './locale.js';
-import { commonHandlers, onUnhandledRequest } from './mocks.js';
+import {commonHandlers, onUnhandledRequest} from './mocks.js';
 import themes from './themes.js';
 import '../src/style.scss';
 
@@ -18,7 +18,8 @@ const appInitialized = Symbol();
 
 let lastStory: string | null = null;
 let moduleInitialized = false;
-let unobserve = () => {};
+let unobserve = () => {
+};
 let misskeyOS = null;
 
 function loadTheme(applyTheme: typeof import('../src/scripts/theme')['applyTheme']) {
@@ -70,7 +71,7 @@ queueMicrotask(() => {
 		import('../src/scripts/theme'),
 		import('../src/store'),
 		import('../src/os'),
-	]).then(([{ default: components }, { default: directives }, { default: widgets }, { applyTheme }, { defaultStore }, os]) => {
+	]).then(([{default: components}, {default: directives}, {default: widgets}, {applyTheme}, {defaultStore}, os]) => {
 		setup((app) => {
 			moduleInitialized = true;
 			if (app[appInitialized]) {
@@ -99,25 +100,27 @@ const preview = {
 				const channel = addons.getChannel();
 				const resetIndexedDBPromise = globalThis.indexedDB?.databases
 					? indexedDB.databases().then((r) => {
-							for (var i = 0; i < r.length; i++) {
-								indexedDB.deleteDatabase(r[i].name!);
-							}
-						}).catch(() => {})
+						for (var i = 0; i < r.length; i++) {
+							indexedDB.deleteDatabase(r[i].name!);
+						}
+					}).catch(() => {
+					})
 					: Promise.resolve();
-				const resetDefaultStorePromise = import('../src/store').then(({ defaultStore }) => {
+				const resetDefaultStorePromise = import('../src/store').then(({defaultStore}) => {
 					// @ts-expect-error
 					defaultStore.init();
-				}).catch(() => {});
+				}).catch(() => {
+				});
 				Promise.all([resetIndexedDBPromise, resetDefaultStorePromise]).then(() => {
 					initLocalStorage();
-					channel.emit(FORCE_RE_RENDER, { storyId: context.id });
+					channel.emit(FORCE_RE_RENDER, {storyId: context.id});
 				});
 			}
 			const story = Story();
 			if (!moduleInitialized) {
 				const channel = addons.getChannel();
 				(globalThis.requestIdleCallback || setTimeout)(() => {
-					channel.emit(FORCE_REMOUNT, { storyId: context.id });
+					channel.emit(FORCE_REMOUNT, {storyId: context.id});
 				});
 			}
 			return story;

@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { Provider } from '@nestjs/common';
-import { Module } from '@nestjs/common';
-import { DI } from '@/di-symbols.js';
+import type {Provider} from '@nestjs/common';
+import {Module} from '@nestjs/common';
+import {DI} from '@/di-symbols.js';
 import {
 	MiAbuseReportNotificationRecipient,
 	MiAbuseUserReport,
@@ -79,7 +79,7 @@ import {
 	MiUserSecurityKey,
 	MiWebhook
 } from './_.js';
-import type { DataSource } from 'typeorm';
+import type {DataSource} from 'typeorm';
 
 const $usersRepository: Provider = {
 	provide: DI.usersRepository,

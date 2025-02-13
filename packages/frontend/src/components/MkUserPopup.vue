@@ -4,70 +4,74 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<Transition
-	:enterActiveClass="defaultStore.state.animation ? $style.transition_popup_enterActive : ''"
-	:leaveActiveClass="defaultStore.state.animation ? $style.transition_popup_leaveActive : ''"
-	:enterFromClass="defaultStore.state.animation ? $style.transition_popup_enterFrom : ''"
-	:leaveToClass="defaultStore.state.animation ? $style.transition_popup_leaveTo : ''"
-	appear @afterLeave="emit('closed')"
->
-	<div v-if="showing" :class="$style.root" class="_popup _shadow" :style="{ zIndex, top: top + 'px', left: left + 'px' }" @mouseover="() => { emit('mouseover'); }" @mouseleave="() => { emit('mouseleave'); }">
-		<div v-if="user != null">
-			<div :class="$style.banner" :style="user.bannerUrl ? `background-image: url(${defaultStore.state.disableShowingAnimatedImages ? getStaticImageUrl(user.bannerUrl) : user.bannerUrl})` : ''">
-				<span v-if="$i && $i.id != user.id && user.isFollowed" :class="$style.followed">{{ i18n.ts.followsYou }}</span>
-			</div>
-			<svg viewBox="0 0 128 128" :class="$style.avatarBack">
-				<g transform="matrix(1.6,0,0,1.6,-38.4,-51.2)">
-					<path d="M64,32C81.661,32 96,46.339 96,64C95.891,72.184 104,72 104,72C104,72 74.096,80 64,80C52.755,80 24,72 24,72C24,72 31.854,72.018 32,64C32,46.339 46.339,32 64,32Z" style="fill: var(--MI_THEME-popup);"/>
-				</g>
-			</svg>
-			<MkAvatar :class="$style.avatar" :user="user" indicator/>
-			<div :class="$style.title">
-				<MkA :class="$style.name" :to="userPage(user)"><MkUserName :user="user" :nowrap="false"/></MkA>
-				<div :class="$style.username"><MkAcct :user="user"/></div>
-			</div>
-			<div :class="$style.description">
-				<Mfm v-if="user.description" :class="$style.mfm" :text="user.description" :author="user"/>
-				<div v-else style="opacity: 0.7;">{{ i18n.ts.noAccountDescription }}</div>
-			</div>
-			<div :class="$style.status">
-				<div :class="$style.statusItem">
-					<div :class="$style.statusItemLabel">{{ i18n.ts.notes }}</div>
-					<div>{{ number(user.notesCount) }}</div>
+	<Transition
+		:enterActiveClass="defaultStore.state.animation ? $style.transition_popup_enterActive : ''"
+		:enterFromClass="defaultStore.state.animation ? $style.transition_popup_enterFrom : ''"
+		:leaveActiveClass="defaultStore.state.animation ? $style.transition_popup_leaveActive : ''"
+		:leaveToClass="defaultStore.state.animation ? $style.transition_popup_leaveTo : ''"
+		appear @afterLeave="emit('closed')"
+	>
+		<div v-if="showing" :class="$style.root" :style="{ zIndex, top: top + 'px', left: left + 'px' }" class="_popup _shadow" @mouseleave="() => { emit('mouseleave'); }" @mouseover="() => { emit('mouseover'); }">
+			<div v-if="user != null">
+				<div :class="$style.banner" :style="user.bannerUrl ? `background-image: url(${defaultStore.state.disableShowingAnimatedImages ? getStaticImageUrl(user.bannerUrl) : user.bannerUrl})` : ''">
+					<span v-if="$i && $i.id != user.id && user.isFollowed" :class="$style.followed">{{ i18n.ts.followsYou }}</span>
 				</div>
-				<div v-if="isFollowingVisibleForMe(user)" :class="$style.statusItem">
-					<div :class="$style.statusItemLabel">{{ i18n.ts.following }}</div>
-					<div>{{ number(user.followingCount) }}</div>
+				<svg :class="$style.avatarBack" viewBox="0 0 128 128">
+					<g transform="matrix(1.6,0,0,1.6,-38.4,-51.2)">
+						<path d="M64,32C81.661,32 96,46.339 96,64C95.891,72.184 104,72 104,72C104,72 74.096,80 64,80C52.755,80 24,72 24,72C24,72 31.854,72.018 32,64C32,46.339 46.339,32 64,32Z" style="fill: var(--MI_THEME-popup);"/>
+					</g>
+				</svg>
+				<MkAvatar :class="$style.avatar" :user="user" indicator/>
+				<div :class="$style.title">
+					<MkA :class="$style.name" :to="userPage(user)">
+						<MkUserName :nowrap="false" :user="user"/>
+					</MkA>
+					<div :class="$style.username">
+						<MkAcct :user="user"/>
+					</div>
 				</div>
-				<div v-if="isFollowersVisibleForMe(user)" :class="$style.statusItem">
-					<div :class="$style.statusItemLabel">{{ i18n.ts.followers }}</div>
-					<div>{{ number(user.followersCount) }}</div>
+				<div :class="$style.description">
+					<Mfm v-if="user.description" :author="user" :class="$style.mfm" :text="user.description"/>
+					<div v-else style="opacity: 0.7;">{{ i18n.ts.noAccountDescription }}</div>
 				</div>
+				<div :class="$style.status">
+					<div :class="$style.statusItem">
+						<div :class="$style.statusItemLabel">{{ i18n.ts.notes }}</div>
+						<div>{{ number(user.notesCount) }}</div>
+					</div>
+					<div v-if="isFollowingVisibleForMe(user)" :class="$style.statusItem">
+						<div :class="$style.statusItemLabel">{{ i18n.ts.following }}</div>
+						<div>{{ number(user.followingCount) }}</div>
+					</div>
+					<div v-if="isFollowersVisibleForMe(user)" :class="$style.statusItem">
+						<div :class="$style.statusItemLabel">{{ i18n.ts.followers }}</div>
+						<div>{{ number(user.followersCount) }}</div>
+					</div>
+				</div>
+				<button :class="$style.menu" class="_button" @click="showMenu"><i class="ti ti-dots"></i></button>
+				<MkFollowButton v-if="$i && user.id != $i.id" v-model:user="user" :class="$style.follow" mini/>
 			</div>
-			<button class="_button" :class="$style.menu" @click="showMenu"><i class="ti ti-dots"></i></button>
-			<MkFollowButton v-if="$i && user.id != $i.id" v-model:user="user" :class="$style.follow" mini/>
+			<div v-else>
+				<MkLoading/>
+			</div>
 		</div>
-		<div v-else>
-			<MkLoading/>
-		</div>
-	</div>
-</Transition>
+	</Transition>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import * as Misskey from 'misskey-js';
 import MkFollowButton from '@/components/MkFollowButton.vue';
-import { userPage } from '@/filters/user.js';
+import {userPage} from '@/filters/user.js';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { getUserMenu } from '@/scripts/get-user-menu.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {getUserMenu} from '@/scripts/get-user-menu.js';
 import number from '@/filters/number.js';
-import { i18n } from '@/i18n.js';
-import { defaultStore } from '@/store.js';
-import { $i } from '@/account.js';
-import { isFollowingVisibleForMe, isFollowersVisibleForMe } from '@/scripts/isFfVisibleForMe.js';
-import { getStaticImageUrl } from '@/scripts/media-proxy.js';
+import {i18n} from '@/i18n.js';
+import {defaultStore} from '@/store.js';
+import {$i} from '@/account.js';
+import {isFollowingVisibleForMe, isFollowersVisibleForMe} from '@/scripts/isFfVisibleForMe.js';
+import {getStaticImageUrl} from '@/scripts/media-proxy.js';
 
 const props = defineProps<{
 	showing: boolean;
@@ -88,7 +92,7 @@ const left = ref(0);
 
 function showMenu(ev: MouseEvent) {
 	if (user.value == null) return;
-	const { menu, cleanup } = getUserMenu(user.value);
+	const {menu, cleanup} = getUserMenu(user.value);
 	os.popupMenu(menu, ev.currentTarget ?? ev.target).finally(cleanup);
 }
 
@@ -98,7 +102,7 @@ onMounted(() => {
 	} else {
 		const query = props.q.startsWith('@') ?
 			Misskey.acct.parse(props.q.substring(1)) :
-			{ userId: props.q };
+			{userId: props.q};
 
 		misskeyApi('users/show', query).then(res => {
 			if (!props.showing) return;
@@ -120,6 +124,7 @@ onMounted(() => {
 .transition_popup_leaveActive {
 	transition: opacity 0.15s, transform 0.15s !important;
 }
+
 .transition_popup_enterFrom,
 .transition_popup_leaveTo {
 	opacity: 0;

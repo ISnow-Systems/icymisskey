@@ -2,13 +2,13 @@
  * SPDX-FileCopyrightText: syuilo and misskey-project
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import { defineAsyncComponent } from 'vue';
-import { v4 as uuid } from 'uuid';
-import type { EmbedParams, EmbeddableEntity } from '@@/js/embed-page.js';
-import { url } from '@@/js/config.js';
+import {defineAsyncComponent} from 'vue';
+import {v4 as uuid} from 'uuid';
+import type {EmbedParams, EmbeddableEntity} from '@@/js/embed-page.js';
+import {url} from '@@/js/config.js';
 import * as os from '@/os.js';
-import { copyToClipboard } from '@/scripts/copy-to-clipboard.js';
-import { defaultEmbedParams, embedRouteWithScrollbar } from '@@/js/embed-page.js';
+import {copyToClipboard} from '@/scripts/copy-to-clipboard.js';
+import {defaultEmbedParams, embedRouteWithScrollbar} from '@@/js/embed-page.js';
 
 const MOBILE_THRESHOLD = 500;
 
@@ -65,7 +65,7 @@ export function getEmbedCode(path: string, params?: EmbedParams): string {
  * カスタマイズ機能がいらない場合（事前にパラメータを指定する場合）は getEmbedCode を直接使ってください
  */
 export function genEmbedCode(entity: EmbeddableEntity, id: string, params?: EmbedParams) {
-	const _params = { ...params };
+	const _params = {...params};
 
 	if (embedRouteWithScrollbar.includes(entity) && _params.maxHeight == null) {
 		_params.maxHeight = 700;
@@ -76,7 +76,7 @@ export function genEmbedCode(entity: EmbeddableEntity, id: string, params?: Embe
 		copyToClipboard(getEmbedCode(`/embed/${entity}/${id}`, _params));
 		os.success();
 	} else {
-		const { dispose } = os.popup(defineAsyncComponent(() => import('@/components/MkEmbedCodeGenDialog.vue')), {
+		const {dispose} = os.popup(defineAsyncComponent(() => import('@/components/MkEmbedCodeGenDialog.vue')), {
 			entity,
 			id,
 			params: _params,

@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { StoryObj } from '@storybook/vue3';
-import { HttpResponse, http } from 'msw';
+import type {StoryObj} from '@storybook/vue3';
+import {HttpResponse, http} from 'msw';
 import search_ from './search.vue';
-import { userDetailed } from '@/../.storybook/fakes.js';
-import { commonHandlers } from '@/../.storybook/mocks.js';
+import {userDetailed} from '@/../.storybook/fakes.js';
+import {commonHandlers} from '@/../.storybook/mocks.js';
 
 const localUser = userDetailed('someuserid', 'miskist', null, 'Local Misskey User');
 

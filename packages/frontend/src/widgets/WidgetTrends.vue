@@ -4,37 +4,37 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkContainer :showHeader="widgetProps.showHeader" data-cy-mkw-trends class="mkw-trends">
-	<template #icon><i class="ti ti-hash"></i></template>
-	<template #header>{{ i18n.ts._widgets.trends }}</template>
+	<MkContainer :showHeader="widgetProps.showHeader" class="mkw-trends" data-cy-mkw-trends>
+		<template #icon><i class="ti ti-hash"></i></template>
+		<template #header>{{ i18n.ts._widgets.trends }}</template>
 
-	<div class="wbrkwala">
-		<MkLoading v-if="fetching"/>
-		<TransitionGroup v-else tag="div" :name="defaultStore.state.animation ? 'chart' : ''" class="tags">
-			<div v-for="stat in stats" :key="stat.tag">
-				<div class="tag">
-					<MkA class="a" :to="`/tags/${ encodeURIComponent(stat.tag) }`" :title="stat.tag">#{{ stat.tag }}</MkA>
-					<p>{{ i18n.tsx.nUsersMentioned({ n: stat.usersCount }) }}</p>
+		<div class="wbrkwala">
+			<MkLoading v-if="fetching"/>
+			<TransitionGroup v-else :name="defaultStore.state.animation ? 'chart' : ''" class="tags" tag="div">
+				<div v-for="stat in stats" :key="stat.tag">
+					<div class="tag">
+						<MkA :title="stat.tag" :to="`/tags/${ encodeURIComponent(stat.tag) }`" class="a">#{{ stat.tag }}</MkA>
+						<p>{{ i18n.tsx.nUsersMentioned({n: stat.usersCount}) }}</p>
+					</div>
+					<MkMiniChart :src="stat.chart" class="chart"/>
 				</div>
-				<MkMiniChart class="chart" :src="stat.chart"/>
-			</div>
-		</TransitionGroup>
-	</div>
-</MkContainer>
+			</TransitionGroup>
+		</div>
+	</MkContainer>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import {ref} from 'vue';
 import * as Misskey from 'misskey-js';
-import { useWidgetPropsManager } from './widget.js';
-import type { WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget.js';
-import type { GetFormResultType } from '@/scripts/form.js';
+import {useWidgetPropsManager} from './widget.js';
+import type {WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps} from './widget.js';
+import type {GetFormResultType} from '@/scripts/form.js';
 import MkContainer from '@/components/MkContainer.vue';
 import MkMiniChart from '@/components/MkMiniChart.vue';
-import { misskeyApiGet } from '@/scripts/misskey-api.js';
-import { useInterval } from '@@/js/use-interval.js';
-import { i18n } from '@/i18n.js';
-import { defaultStore } from '@/store.js';
+import {misskeyApiGet} from '@/scripts/misskey-api.js';
+import {useInterval} from '@@/js/use-interval.js';
+import {i18n} from '@/i18n.js';
+import {defaultStore} from '@/store.js';
 
 const name = 'hashtags';
 
@@ -50,7 +50,7 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 const props = defineProps<WidgetComponentProps<WidgetProps>>();
 const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 
-const { widgetProps, configure } = useWidgetPropsManager(name,
+const {widgetProps, configure} = useWidgetPropsManager(name,
 	widgetPropsDef,
 	props,
 	emit,

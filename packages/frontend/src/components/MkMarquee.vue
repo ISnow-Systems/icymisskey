@@ -4,7 +4,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <script lang="ts">
-import { h, onMounted, onUnmounted, ref, watch } from 'vue';
+import {h, onMounted, onUnmounted, ref, watch} from 'vue';
 
 export default {
 	name: 'MarqueeText',
@@ -52,11 +52,11 @@ export default {
 		};
 	},
 	render({
-		$slots, $style, $props: {
+			   $slots, $style, $props: {
 			duration, repeat, paused, reverse,
 		},
-	}) {
-		return h('div', { class: [$style.wrap] }, [
+		   }) {
+		return h('div', {class: [$style.wrap]}, [
 			h('span', {
 				ref: 'contentEl',
 				class: [
@@ -89,11 +89,13 @@ export default {
 		animation-play-state: paused;
 	}
 }
+
 .content {
 	display: inline-block;
 	white-space: nowrap;
 	animation-play-state: inherit;
 }
+
 .text {
 	display: inline-block;
 	animation-name: marquee;
@@ -102,11 +104,17 @@ export default {
 	animation-duration: inherit;
 	animation-play-state: inherit;
 }
+
 .paused .text {
 	animation-play-state: paused;
 }
+
 @keyframes marquee {
-	0% { transform:translateX(0); }
-	100% { transform:translateX(-100%); }
+	0% {
+		transform: translateX(0);
+	}
+	100% {
+		transform: translateX(-100%);
+	}
 }
 </style>

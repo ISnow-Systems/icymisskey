@@ -4,8 +4,8 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <script lang="ts">
-import { defineComponent, h, ref, watch } from 'vue';
-import type { VNode } from 'vue';
+import {defineComponent, h, ref, watch} from 'vue';
+import type {VNode} from 'vue';
 import MkRadio from './MkRadio.vue';
 
 export default defineComponent({
@@ -40,14 +40,14 @@ export default defineComponent({
 				class: 'label',
 			}, label)] : []),
 			h('div', {
-				class: 'body',
-			}, options.map(option => h(MkRadio, {
-				key: option.key as string,
-				value: option.props?.value,
-				disabled: option.props?.disabled,
-				modelValue: value.value,
-				'onUpdate:modelValue': _v => value.value = _v,
-			}, () => option.children)),
+					class: 'body',
+				}, options.map(option => h(MkRadio, {
+					key: option.key as string,
+					value: option.props?.value,
+					disabled: option.props?.disabled,
+					modelValue: value.value,
+					'onUpdate:modelValue': _v => value.value = _v,
+				}, () => option.children)),
 			),
 			...(caption ? [h('div', {
 				class: 'caption',
@@ -71,8 +71,8 @@ export default defineComponent({
 
 	> .body {
 		display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
+		gap: 12px;
+		flex-wrap: wrap;
 	}
 
 	> .caption {

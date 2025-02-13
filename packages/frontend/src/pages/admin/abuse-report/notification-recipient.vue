@@ -4,58 +4,58 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<template #header>
-		<XHeader :actions="headerActions" :tabs="headerTabs"/>
-	</template>
+	<MkStickyContainer>
+		<template #header>
+			<XHeader :actions="headerActions" :tabs="headerTabs"/>
+		</template>
 
-	<MkSpacer :contentMax="900">
-		<div :class="$style.root" class="_gaps_m">
-			<div :class="$style.addButton">
-				<MkButton primary @click="onAddButtonClicked">
-					<span class="ti ti-plus"/> {{ i18n.ts._abuseReport._notificationRecipient.createRecipient }}
-				</MkButton>
-			</div>
-			<div :class="$style.subMenus" class="_gaps_s">
-				<MkSelect v-model="filterMethod" style="flex: 1">
-					<template #label>{{ i18n.ts._abuseReport._notificationRecipient.recipientType }}</template>
-					<option :value="null">-</option>
-					<option :value="'email'">{{ i18n.ts._abuseReport._notificationRecipient._recipientType.mail }}</option>
-					<option :value="'webhook'">{{ i18n.ts._abuseReport._notificationRecipient._recipientType.webhook }}</option>
-				</MkSelect>
-				<MkInput v-model="filterText" type="search" style="flex: 1">
-					<template #label>{{ i18n.ts._abuseReport._notificationRecipient.keywords }}</template>
-				</MkInput>
-			</div>
+		<MkSpacer :contentMax="900">
+			<div :class="$style.root" class="_gaps_m">
+				<div :class="$style.addButton">
+					<MkButton primary @click="onAddButtonClicked">
+						<span class="ti ti-plus"/> {{ i18n.ts._abuseReport._notificationRecipient.createRecipient }}
+					</MkButton>
+				</div>
+				<div :class="$style.subMenus" class="_gaps_s">
+					<MkSelect v-model="filterMethod" style="flex: 1">
+						<template #label>{{ i18n.ts._abuseReport._notificationRecipient.recipientType }}</template>
+						<option :value="null">-</option>
+						<option :value="'email'">{{ i18n.ts._abuseReport._notificationRecipient._recipientType.mail }}</option>
+						<option :value="'webhook'">{{ i18n.ts._abuseReport._notificationRecipient._recipientType.webhook }}</option>
+					</MkSelect>
+					<MkInput v-model="filterText" style="flex: 1" type="search">
+						<template #label>{{ i18n.ts._abuseReport._notificationRecipient.keywords }}</template>
+					</MkInput>
+				</div>
 
-			<MkDivider/>
+				<MkDivider/>
 
-			<div :class="$style.recipients" class="_gaps_s">
-				<XRecipient
-					v-for="r in filteredRecipients"
-					:key="r.id"
-					:entity="r"
-					@edit="onEditButtonClicked"
-					@delete="onDeleteButtonClicked"
-				/>
+				<div :class="$style.recipients" class="_gaps_s">
+					<XRecipient
+						v-for="r in filteredRecipients"
+						:key="r.id"
+						:entity="r"
+						@delete="onDeleteButtonClicked"
+						@edit="onEditButtonClicked"
+					/>
+				</div>
 			</div>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
-<script setup lang="ts">
-import { entities } from 'misskey-js';
-import { computed, defineAsyncComponent, onMounted, ref } from 'vue';
+<script lang="ts" setup>
+import {entities} from 'misskey-js';
+import {computed, defineAsyncComponent, onMounted, ref} from 'vue';
 import XRecipient from './notification-recipient.item.vue';
 import XHeader from '@/pages/admin/_header_.vue';
-import { misskeyApi } from '@/scripts/misskey-api.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
 import MkInput from '@/components/MkInput.vue';
 import MkSelect from '@/components/MkSelect.vue';
 import MkButton from '@/components/MkButton.vue';
 import * as os from '@/os.js';
 import MkDivider from '@/components/MkDivider.vue';
-import { i18n } from '@/i18n.js';
+import {i18n} from '@/i18n.js';
 
 const recipients = ref<entities.AbuseReportNotificationRecipient[]>([]);
 
@@ -102,14 +102,14 @@ async function onDeleteButtonClicked(id: string) {
 		title: i18n.ts._abuseReport._notificationRecipient.deleteConfirm,
 	});
 	if (!res.canceled) {
-		await misskeyApi('admin/abuse-report/notification-recipient/delete', { id: id });
+		await misskeyApi('admin/abuse-report/notification-recipient/delete', {id: id});
 		await fetchRecipients();
 	}
 }
 
 async function showEditor(mode: 'create' | 'edit', id?: string) {
-	const { needLoad } = await new Promise<{ needLoad: boolean }>(async resolve => {
-		const { dispose } = os.popup(
+	const {needLoad} = await new Promise<{ needLoad: boolean }>(async resolve => {
+		const {dispose} = os.popup(
 			defineAsyncComponent(() => import('./notification-recipient.editor.vue')),
 			{
 				mode,
@@ -117,10 +117,10 @@ async function showEditor(mode: 'create' | 'edit', id?: string) {
 			},
 			{
 				submitted: () => {
-					resolve({ needLoad: true });
+					resolve({needLoad: true});
 				},
 				canceled: () => {
-					resolve({ needLoad: false });
+					resolve({needLoad: false});
 				},
 				closed: () => {
 					dispose();
@@ -147,7 +147,7 @@ onMounted(async () => {
 });
 </script>
 
-<style module lang="scss">
+<style lang="scss" module>
 .root {
 	display: flex;
 	flex-direction: column;

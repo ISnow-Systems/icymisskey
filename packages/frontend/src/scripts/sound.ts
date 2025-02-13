@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { SoundStore } from '@/store.js';
-import { defaultStore } from '@/store.js';
+import type {SoundStore} from '@/store.js';
+import {defaultStore} from '@/store.js';
 
 let ctx: AudioContext;
 const cache = new Map<string, AudioBuffer>();
@@ -176,7 +176,7 @@ async function playMisskeySfxFileInternal(soundStore: SoundStore): Promise<boole
 	});
 	if (!buffer) return false;
 	const volume = soundStore.volume * masterVolume;
-	createSourceNode(buffer, { volume }).soundSource.start();
+	createSourceNode(buffer, {volume}).soundSource.start();
 	return true;
 }
 
@@ -217,7 +217,7 @@ export function createSourceNode(buffer: AudioBuffer, opts: {
 		.connect(gainNode)
 		.connect(ctx.destination);
 
-	return { soundSource, panNode, gainNode };
+	return {soundSource, panNode, gainNode};
 }
 
 /**

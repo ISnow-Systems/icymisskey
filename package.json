@@ -1,6 +1,6 @@
 {
 	"name": "icymisskey",
-	"version": "2025.2.0-icy-next(2025.02.10.00)",
+	"version": "2025.02.13.00",
 	"codename": "sorbet",
 	"repository": {
 		"type": "git",
@@ -33,7 +33,6 @@
 		"migrateandstart": "pnpm migrate && pnpm start",
 		"watch": "pnpm dev",
 		"dev": "node scripts/dev.mjs",
-		"lint": "pnpm -r lint",
 		"cy:open": "pnpm cypress open --browser --e2e --config-file=cypress.config.ts",
 		"cy:run": "pnpm cypress run",
 		"e2e": "pnpm start-server-and-test start:test http://localhost:61812 cy:run",
@@ -60,13 +59,9 @@
 		"typescript": "^5.7.3"
 	},
 	"devDependencies": {
-		"@misskey-dev/eslint-plugin": "^2.1.0",
 		"@types/node": "^22.13.1",
-		"@typescript-eslint/eslint-plugin": "^8.24.0",
-		"@typescript-eslint/parser": "^8.24.0",
 		"cross-env": "^7.0.3",
 		"cypress": "^14.0.2",
-		"eslint": "^9.20.1",
 		"globals": "^15.14.0",
 		"ncp": "^2.0.0",
 		"start-server-and-test": "^2.0.10"

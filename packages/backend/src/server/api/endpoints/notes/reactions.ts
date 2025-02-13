@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Brackets, type FindOptionsWhere } from 'typeorm';
-import type { NoteReactionsRepository } from '@/models/_.js';
-import type { MiNoteReaction } from '@/models/NoteReaction.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { NoteReactionEntityService } from '@/core/entities/NoteReactionEntityService.js';
-import { DI } from '@/di-symbols.js';
-import { QueryService } from '@/core/QueryService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Brackets, type FindOptionsWhere} from 'typeorm';
+import type {NoteReactionsRepository} from '@/models/_.js';
+import type {MiNoteReaction} from '@/models/NoteReaction.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {NoteReactionEntityService} from '@/core/entities/NoteReactionEntityService.js';
+import {DI} from '@/di-symbols.js';
+import {QueryService} from '@/core/QueryService.js';
 
 export const meta = {
 	tags: ['notes', 'reactions'],
@@ -42,11 +42,11 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		noteId: { type: 'string', format: 'misskey:id' },
-		type: { type: 'string', nullable: true },
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
+		noteId: {type: 'string', format: 'misskey:id'},
+		type: {type: 'string', nullable: true},
+		limit: {type: 'integer', minimum: 1, maximum: 100, default: 10},
+		sinceId: {type: 'string', format: 'misskey:id'},
+		untilId: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['noteId'],
 } as const;
@@ -56,13 +56,12 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.noteReactionsRepository)
 		private noteReactionsRepository: NoteReactionsRepository,
-
 		private noteReactionEntityService: NoteReactionEntityService,
 		private queryService: QueryService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			const query = this.queryService.makePaginationQuery(this.noteReactionsRepository.createQueryBuilder('reaction'), ps.sinceId, ps.untilId)
-				.andWhere('reaction.noteId = :noteId', { noteId: ps.noteId })
+				.andWhere('reaction.noteId = :noteId', {noteId: ps.noteId})
 				.leftJoinAndSelect('reaction.user', 'user')
 				.leftJoinAndSelect('reaction.note', 'note');
 
@@ -71,7 +70,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				// DB 上ではそうではないので、必要に応じて変換
 				const suffix = '@.:';
 				const type = ps.type.endsWith(suffix) ? ps.type.slice(0, ps.type.length - suffix.length) + ':' : ps.type;
-				query.andWhere('reaction.reaction = :type', { type });
+				query.andWhere('reaction.reaction = :type', {type});
 			}
 
 			const reactions = await query.limit(ps.limit).getMany();

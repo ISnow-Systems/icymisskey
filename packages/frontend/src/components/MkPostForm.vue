@@ -4,134 +4,140 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div
-	:class="[$style.root, { [$style.modal]: modal, _popup: modal }]"
-	@dragover.stop="onDragover"
-	@dragenter="onDragenter"
-	@dragleave="onDragleave"
-	@drop.stop="onDrop"
->
-	<header :class="$style.header">
-		<div :class="$style.headerLeft">
-			<button v-if="!fixed" :class="$style.cancel" class="_button" @click="cancel"><i class="ti ti-x"></i></button>
-			<button v-click-anime v-tooltip="i18n.ts.switchAccount" :class="$style.account" class="_button" @click="openAccountMenu">
-				<MkAvatar :user="postAccount ?? $i" :class="$style.avatar"/>
-			</button>
-		</div>
-		<div :class="$style.headerRight">
-			<template v-if="!(channel != null && fixed)">
-				<button v-if="channel == null" ref="visibilityButton" v-click-anime v-tooltip="i18n.ts.visibility" :class="['_button', $style.headerRightItem, $style.visibility]" @click="setVisibility">
-					<span v-if="visibility === 'public'"><i class="ti ti-world"></i></span>
-					<span v-if="visibility === 'home'"><i class="ti ti-home"></i></span>
-					<span v-if="visibility === 'followers'"><i class="ti ti-lock"></i></span>
-					<span v-if="visibility === 'specified'"><i class="ti ti-mail"></i></span>
-					<span :class="$style.headerRightButtonText">{{ i18n.ts._visibility[visibility] }}</span>
+	<div
+		:class="[$style.root, { [$style.modal]: modal, _popup: modal }]"
+		@dragenter="onDragenter"
+		@dragleave="onDragleave"
+		@dragover.stop="onDragover"
+		@drop.stop="onDrop"
+	>
+		<header :class="$style.header">
+			<div :class="$style.headerLeft">
+				<button v-if="!fixed" :class="$style.cancel" class="_button" @click="cancel"><i class="ti ti-x"></i></button>
+				<button v-click-anime v-tooltip="i18n.ts.switchAccount" :class="$style.account" class="_button" @click="openAccountMenu">
+					<MkAvatar :class="$style.avatar" :user="postAccount ?? $i"/>
 				</button>
-				<button v-else class="_button" :class="[$style.headerRightItem, $style.visibility]" disabled>
-					<span><i class="ti ti-device-tv"></i></span>
-					<span :class="$style.headerRightButtonText">{{ channel.name }}</span>
+			</div>
+			<div :class="$style.headerRight">
+				<template v-if="!(channel != null && fixed)">
+					<button v-if="channel == null" ref="visibilityButton" v-click-anime v-tooltip="i18n.ts.visibility" :class="['_button', $style.headerRightItem, $style.visibility]" @click="setVisibility">
+						<span v-if="visibility === 'public'"><i class="ti ti-world"></i></span>
+						<span v-if="visibility === 'home'"><i class="ti ti-home"></i></span>
+						<span v-if="visibility === 'followers'"><i class="ti ti-lock"></i></span>
+						<span v-if="visibility === 'specified'"><i class="ti ti-mail"></i></span>
+						<span :class="$style.headerRightButtonText">{{ i18n.ts._visibility[visibility] }}</span>
+					</button>
+					<button v-else :class="[$style.headerRightItem, $style.visibility]" class="_button" disabled>
+						<span><i class="ti ti-device-tv"></i></span>
+						<span :class="$style.headerRightButtonText">{{ channel.name }}</span>
+					</button>
+				</template>
+				<button v-click-anime v-tooltip="i18n.ts._visibility.disableFederation" :class="[$style.headerRightItem, { [$style.danger]: localOnly }]" :disabled="channel != null || visibility === 'specified'" class="_button" @click="toggleLocalOnly">
+					<span v-if="!localOnly"><i class="ti ti-rocket"></i></span>
+					<span v-else><i class="ti ti-rocket-off"></i></span>
 				</button>
-			</template>
-			<button v-click-anime v-tooltip="i18n.ts._visibility.disableFederation" class="_button" :class="[$style.headerRightItem, { [$style.danger]: localOnly }]" :disabled="channel != null || visibility === 'specified'" @click="toggleLocalOnly">
-				<span v-if="!localOnly"><i class="ti ti-rocket"></i></span>
-				<span v-else><i class="ti ti-rocket-off"></i></span>
-			</button>
-			<button v-click-anime v-tooltip="i18n.ts.reactionAcceptance" class="_button" :class="[$style.headerRightItem, { [$style.danger]: reactionAcceptance === 'likeOnly' }]" @click="toggleReactionAcceptance">
-				<span v-if="reactionAcceptance === 'likeOnly'"><i class="ti ti-heart"></i></span>
-				<span v-else-if="reactionAcceptance === 'likeOnlyForRemote'"><i class="ti ti-heart-plus"></i></span>
-				<span v-else><i class="ti ti-icons"></i></span>
-			</button>
-			<button v-click-anime class="_button" :class="$style.submit" :disabled="!canPost" data-cy-open-post-form-submit @click="post">
-				<div :class="$style.submitInner">
-					<template v-if="posted"></template>
-					<template v-else-if="posting"><MkEllipsis/></template>
-					<template v-else>{{ submitText }}</template>
-					<i style="margin-left: 6px;" :class="posted ? 'ti ti-check' : reply ? 'ti ti-arrow-back-up' : renoteTargetNote ? 'ti ti-quote' : 'ti ti-send'"></i>
-				</div>
-			</button>
+				<button v-click-anime v-tooltip="i18n.ts.reactionAcceptance" :class="[$style.headerRightItem, { [$style.danger]: reactionAcceptance === 'likeOnly' }]" class="_button" @click="toggleReactionAcceptance">
+					<span v-if="reactionAcceptance === 'likeOnly'"><i class="ti ti-heart"></i></span>
+					<span v-else-if="reactionAcceptance === 'likeOnlyForRemote'"><i class="ti ti-heart-plus"></i></span>
+					<span v-else><i class="ti ti-icons"></i></span>
+				</button>
+				<button v-click-anime :class="$style.submit" :disabled="!canPost" class="_button" data-cy-open-post-form-submit @click="post">
+					<div :class="$style.submitInner">
+						<template v-if="posted"></template>
+						<template v-else-if="posting">
+							<MkEllipsis/>
+						</template>
+						<template v-else>{{ submitText }}</template>
+						<i :class="posted ? 'ti ti-check' : reply ? 'ti ti-arrow-back-up' : renoteTargetNote ? 'ti ti-quote' : 'ti ti-send'" style="margin-left: 6px;"></i>
+					</div>
+				</button>
+			</div>
+		</header>
+		<MkNoteSimple v-if="reply" :class="$style.targetNote" :note="reply"/>
+		<MkNoteSimple v-if="renoteTargetNote" :class="$style.targetNote" :note="renoteTargetNote"/>
+		<div v-if="quoteId" :class="$style.withQuote"><i class="ti ti-quote"></i> {{ i18n.ts.quoteAttached }}
+			<button @click="quoteId = null; renoteTargetNote = null;"><i class="ti ti-x"></i></button>
 		</div>
-	</header>
-	<MkNoteSimple v-if="reply" :class="$style.targetNote" :note="reply"/>
-	<MkNoteSimple v-if="renoteTargetNote" :class="$style.targetNote" :note="renoteTargetNote"/>
-	<div v-if="quoteId" :class="$style.withQuote"><i class="ti ti-quote"></i> {{ i18n.ts.quoteAttached }}<button @click="quoteId = null; renoteTargetNote = null;"><i class="ti ti-x"></i></button></div>
-	<div v-if="visibility === 'specified'" :class="$style.toSpecified">
-		<span style="margin-right: 8px;">{{ i18n.ts.recipient }}</span>
-		<div :class="$style.visibleUsers">
+		<div v-if="visibility === 'specified'" :class="$style.toSpecified">
+			<span style="margin-right: 8px;">{{ i18n.ts.recipient }}</span>
+			<div :class="$style.visibleUsers">
 			<span v-for="u in visibleUsers" :key="u.id" :class="$style.visibleUser">
 				<MkAcct :user="u"/>
 				<button class="_button" style="padding: 4px 8px;" @click="removeVisibleUser(u)"><i class="ti ti-x"></i></button>
 			</span>
-			<button class="_buttonPrimary" style="padding: 4px; border-radius: 8px;" @click="addVisibleUser"><i class="ti ti-plus ti-fw"></i></button>
+				<button class="_buttonPrimary" style="padding: 4px; border-radius: 8px;" @click="addVisibleUser"><i class="ti ti-plus ti-fw"></i></button>
+			</div>
 		</div>
-	</div>
-	<MkInfo v-if="hasNotSpecifiedMentions" warn :class="$style.hasNotSpecifiedMentions">{{ i18n.ts.notSpecifiedMentionWarning }} - <button class="_textButton" @click="addMissingMention()">{{ i18n.ts.add }}</button></MkInfo>
-	<input v-show="useCw" ref="cwInputEl" v-model="cw" :class="$style.cw" :placeholder="i18n.ts.annotation" @keydown="onKeydown" @keyup="onKeyup" @compositionend="onCompositionEnd">
-	<div :class="[$style.textOuter, { [$style.withCw]: useCw }]">
-		<div v-if="channel" :class="$style.colorBar" :style="{ background: channel.color }"></div>
-		<textarea ref="textareaEl" v-model="text" :class="[$style.text]" :disabled="posting || posted" :readonly="textAreaReadOnly" :placeholder="placeholder" data-cy-post-form-text @keydown="onKeydown" @keyup="onKeyup" @paste="onPaste" @compositionupdate="onCompositionUpdate" @compositionend="onCompositionEnd"/>
-		<div v-if="maxTextLength - textLength < 100" :class="['_acrylic', $style.textCount, { [$style.textOver]: textLength > maxTextLength }]">{{ maxTextLength - textLength }}</div>
-	</div>
-	<input v-show="withHashtags" ref="hashtagsInputEl" v-model="hashtags" :class="$style.hashtags" :placeholder="i18n.ts.hashtags" list="hashtags">
-	<XPostFormAttaches v-model="files" @detach="detachFile" @changeSensitive="updateFileSensitive" @changeName="updateFileName" @replaceFile="replaceFile"/>
-	<MkPollEditor v-if="poll" v-model="poll" @destroyed="poll = null"/>
-	<MkNotePreview v-if="showPreview" :class="$style.preview" :text="text" :files="files" :poll="poll ?? undefined" :useCw="useCw" :cw="cw" :user="postAccount ?? $i"/>
-	<div v-if="showingOptions" style="padding: 8px 16px;">
-	</div>
-	<footer :class="$style.footer">
-		<div :class="$style.footerLeft">
-			<button v-tooltip="i18n.ts.attachFile" class="_button" :class="$style.footerButton" @click="chooseFileFrom"><i class="ti ti-photo-plus"></i></button>
-			<button v-tooltip="i18n.ts.poll" class="_button" :class="[$style.footerButton, { [$style.footerButtonActive]: poll }]" @click="togglePoll"><i class="ti ti-chart-arrows"></i></button>
-			<button v-tooltip="i18n.ts.useCw" class="_button" :class="[$style.footerButton, { [$style.footerButtonActive]: useCw }]" @click="useCw = !useCw"><i class="ti ti-eye-off"></i></button>
-			<button v-tooltip="i18n.ts.mention" class="_button" :class="$style.footerButton" @click="insertMention"><i class="ti ti-at"></i></button>
-			<button v-tooltip="i18n.ts.hashtags" class="_button" :class="[$style.footerButton, { [$style.footerButtonActive]: withHashtags }]" @click="withHashtags = !withHashtags"><i class="ti ti-hash"></i></button>
-			<button v-if="postFormActions.length > 0" v-tooltip="i18n.ts.plugins" class="_button" :class="$style.footerButton" @click="showActions"><i class="ti ti-plug"></i></button>
-			<button v-tooltip="i18n.ts.emoji" :class="['_button', $style.footerButton]" @click="insertEmoji"><i class="ti ti-mood-happy"></i></button>
-			<button v-if="showAddMfmFunction" v-tooltip="i18n.ts.addMfmFunction" :class="['_button', $style.footerButton]" @click="insertMfmFunction"><i class="ti ti-palette"></i></button>
+		<MkInfo v-if="hasNotSpecifiedMentions" :class="$style.hasNotSpecifiedMentions" warn>{{ i18n.ts.notSpecifiedMentionWarning }} -
+			<button class="_textButton" @click="addMissingMention()">{{ i18n.ts.add }}</button>
+		</MkInfo>
+		<input v-show="useCw" ref="cwInputEl" v-model="cw" :class="$style.cw" :placeholder="i18n.ts.annotation" @compositionend="onCompositionEnd" @keydown="onKeydown" @keyup="onKeyup">
+		<div :class="[$style.textOuter, { [$style.withCw]: useCw }]">
+			<div v-if="channel" :class="$style.colorBar" :style="{ background: channel.color }"></div>
+			<textarea ref="textareaEl" v-model="text" :class="[$style.text]" :disabled="posting || posted" :placeholder="placeholder" :readonly="textAreaReadOnly" data-cy-post-form-text @compositionend="onCompositionEnd" @compositionupdate="onCompositionUpdate" @keydown="onKeydown" @keyup="onKeyup" @paste="onPaste"/>
+			<div v-if="maxTextLength - textLength < 100" :class="['_acrylic', $style.textCount, { [$style.textOver]: textLength > maxTextLength }]">{{ maxTextLength - textLength }}</div>
 		</div>
-		<div :class="$style.footerRight">
-			<button v-tooltip="i18n.ts.previewNoteText" class="_button" :class="[$style.footerButton, { [$style.previewButtonActive]: showPreview }]" @click="showPreview = !showPreview"><i class="ti ti-eye"></i></button>
-			<!--<button v-tooltip="i18n.ts.more" class="_button" :class="$style.footerButton" @click="showingOptions = !showingOptions"><i class="ti ti-dots"></i></button>-->
+		<input v-show="withHashtags" ref="hashtagsInputEl" v-model="hashtags" :class="$style.hashtags" :placeholder="i18n.ts.hashtags" list="hashtags">
+		<XPostFormAttaches v-model="files" @changeName="updateFileName" @changeSensitive="updateFileSensitive" @detach="detachFile" @replaceFile="replaceFile"/>
+		<MkPollEditor v-if="poll" v-model="poll" @destroyed="poll = null"/>
+		<MkNotePreview v-if="showPreview" :class="$style.preview" :cw="cw" :files="files" :poll="poll ?? undefined" :text="text" :useCw="useCw" :user="postAccount ?? $i"/>
+		<div v-if="showingOptions" style="padding: 8px 16px;">
 		</div>
-	</footer>
-	<datalist id="hashtags">
-		<option v-for="hashtag in recentHashtags" :key="hashtag" :value="hashtag"/>
-	</datalist>
-</div>
+		<footer :class="$style.footer">
+			<div :class="$style.footerLeft">
+				<button v-tooltip="i18n.ts.attachFile" :class="$style.footerButton" class="_button" @click="chooseFileFrom"><i class="ti ti-photo-plus"></i></button>
+				<button v-tooltip="i18n.ts.poll" :class="[$style.footerButton, { [$style.footerButtonActive]: poll }]" class="_button" @click="togglePoll"><i class="ti ti-chart-arrows"></i></button>
+				<button v-tooltip="i18n.ts.useCw" :class="[$style.footerButton, { [$style.footerButtonActive]: useCw }]" class="_button" @click="useCw = !useCw"><i class="ti ti-eye-off"></i></button>
+				<button v-tooltip="i18n.ts.mention" :class="$style.footerButton" class="_button" @click="insertMention"><i class="ti ti-at"></i></button>
+				<button v-tooltip="i18n.ts.hashtags" :class="[$style.footerButton, { [$style.footerButtonActive]: withHashtags }]" class="_button" @click="withHashtags = !withHashtags"><i class="ti ti-hash"></i></button>
+				<button v-if="postFormActions.length > 0" v-tooltip="i18n.ts.plugins" :class="$style.footerButton" class="_button" @click="showActions"><i class="ti ti-plug"></i></button>
+				<button v-tooltip="i18n.ts.emoji" :class="['_button', $style.footerButton]" @click="insertEmoji"><i class="ti ti-mood-happy"></i></button>
+				<button v-if="showAddMfmFunction" v-tooltip="i18n.ts.addMfmFunction" :class="['_button', $style.footerButton]" @click="insertMfmFunction"><i class="ti ti-palette"></i></button>
+			</div>
+			<div :class="$style.footerRight">
+				<button v-tooltip="i18n.ts.previewNoteText" :class="[$style.footerButton, { [$style.previewButtonActive]: showPreview }]" class="_button" @click="showPreview = !showPreview"><i class="ti ti-eye"></i></button>
+				<!--<button v-tooltip="i18n.ts.more" class="_button" :class="$style.footerButton" @click="showingOptions = !showingOptions"><i class="ti ti-dots"></i></button>-->
+			</div>
+		</footer>
+		<datalist id="hashtags">
+			<option v-for="hashtag in recentHashtags" :key="hashtag" :value="hashtag"/>
+		</datalist>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { inject, watch, nextTick, onMounted, defineAsyncComponent, provide, shallowRef, ref, computed } from 'vue';
-import type { ShallowRef } from 'vue';
+import {inject, watch, nextTick, onMounted, defineAsyncComponent, provide, shallowRef, ref, computed} from 'vue';
+import type {ShallowRef} from 'vue';
 import * as mfm from 'mfm-js';
 import * as Misskey from 'misskey-js';
 import insertTextAtCursor from 'insert-text-at-cursor';
-import { toASCII } from 'punycode.js';
-import { host, url } from '@@/js/config.js';
-import type { PostFormProps } from '@/types/post-form.js';
+import {toASCII} from 'punycode.js';
+import {host, url} from '@@/js/config.js';
+import type {PostFormProps} from '@/types/post-form.js';
 import MkNoteSimple from '@/components/MkNoteSimple.vue';
 import MkNotePreview from '@/components/MkNotePreview.vue';
 import XPostFormAttaches from '@/components/MkPostFormAttaches.vue';
 import MkPollEditor from '@/components/MkPollEditor.vue';
-import type { PollEditorModelValue } from '@/components/MkPollEditor.vue';
-import { erase, unique } from '@/scripts/array.js';
-import { extractMentions } from '@/scripts/extract-mentions.js';
-import { formatTimeString } from '@/scripts/format-time-string.js';
-import { Autocomplete } from '@/scripts/autocomplete.js';
+import type {PollEditorModelValue} from '@/components/MkPollEditor.vue';
+import {erase, unique} from '@/scripts/array.js';
+import {extractMentions} from '@/scripts/extract-mentions.js';
+import {formatTimeString} from '@/scripts/format-time-string.js';
+import {Autocomplete} from '@/scripts/autocomplete.js';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { selectFiles } from '@/scripts/select-file.js';
-import { defaultStore, notePostInterruptors, postFormActions } from '@/store.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {selectFiles} from '@/scripts/select-file.js';
+import {defaultStore, notePostInterruptors, postFormActions} from '@/store.js';
 import MkInfo from '@/components/MkInfo.vue';
-import { i18n } from '@/i18n.js';
-import { instance } from '@/instance.js';
-import { signinRequired, notesCount, incNotesCount, getAccounts, openAccountMenu as openAccountMenu_ } from '@/account.js';
-import { uploadFile } from '@/scripts/upload.js';
-import { deepClone } from '@/scripts/clone.js';
+import {i18n} from '@/i18n.js';
+import {instance} from '@/instance.js';
+import {signinRequired, notesCount, incNotesCount, getAccounts, openAccountMenu as openAccountMenu_} from '@/account.js';
+import {uploadFile} from '@/scripts/upload.js';
+import {deepClone} from '@/scripts/clone.js';
 import MkRippleEffect from '@/components/MkRippleEffect.vue';
-import { miLocalStorage } from '@/local-storage.js';
-import { claimAchievement } from '@/scripts/achievements.js';
-import { emojiPicker } from '@/scripts/emoji-picker.js';
-import { mfmFunctionPicker } from '@/scripts/mfm-function-picker.js';
+import {miLocalStorage} from '@/local-storage.js';
+import {claimAchievement} from '@/scripts/achievements.js';
+import {emojiPicker} from '@/scripts/emoji-picker.js';
+import {mfmFunctionPicker} from '@/scripts/mfm-function-picker.js';
 
 const $i = signinRequired();
 
@@ -263,11 +269,11 @@ const hashtags = computed(defaultStore.makeGetterSetter('postFormHashtags'));
 
 watch(text, () => {
 	checkMissingMention();
-}, { immediate: true });
+}, {immediate: true});
 
 watch(visibility, () => {
 	checkMissingMention();
-}, { immediate: true });
+}, {immediate: true});
 
 watch(visibleUsers, () => {
 	checkMissingMention();
@@ -334,7 +340,7 @@ if (props.reply && ['home', 'followers', 'specified'].includes(props.reply.visib
 		}
 
 		if (props.reply.userId !== $i.id) {
-			misskeyApi('users/show', { userId: props.reply.userId }).then(user => {
+			misskeyApi('users/show', {userId: props.reply.userId}).then(user => {
 				pushVisibleUser(user);
 			});
 		}
@@ -357,7 +363,7 @@ function watchForDraft() {
 	watch(useCw, () => saveDraft());
 	watch(cw, () => saveDraft());
 	watch(poll, () => saveDraft());
-	watch(files, () => saveDraft(), { deep: true });
+	watch(files, () => saveDraft(), {deep: true});
 	watch(visibility, () => saveDraft());
 	watch(localOnly, () => saveDraft());
 	watch(quoteId, () => saveDraft());
@@ -383,7 +389,7 @@ function addMissingMention() {
 
 	for (const x of extractMentions(ast)) {
 		if (!visibleUsers.value.some(u => (u.username === x.username) && (u.host === x.host))) {
-			misskeyApi('users/show', { username: x.username, host: x.host }).then(user => {
+			misskeyApi('users/show', {username: x.username, host: x.host}).then(user => {
 				pushVisibleUser(user);
 			});
 		}
@@ -458,12 +464,12 @@ function setVisibility() {
 		return;
 	}
 
-	const { dispose } = os.popup(defineAsyncComponent(() => import('@/components/MkVisibilityPicker.vue')), {
+	const {dispose} = os.popup(defineAsyncComponent(() => import('@/components/MkVisibilityPicker.vue')), {
 		currentVisibility: visibility.value,
 		isSilenced: $i.isSilenced,
 		localOnly: localOnly.value,
 		src: visibilityButton.value,
-		...(props.reply ? { isReplyVisibilitySpecified: props.reply.visibility === 'specified' } : {}),
+		...(props.reply ? {isReplyVisibilitySpecified: props.reply.visibility === 'specified'} : {}),
 	}, {
 		changeVisibility: v => {
 			visibility.value = v;
@@ -524,11 +530,11 @@ async function toggleReactionAcceptance() {
 	const select = await os.select({
 		title: i18n.ts.reactionAcceptance,
 		items: [
-			{ value: null, text: i18n.ts.all },
-			{ value: 'likeOnlyForRemote' as const, text: i18n.ts.likeOnlyForRemote },
-			{ value: 'nonSensitiveOnly' as const, text: i18n.ts.nonSensitiveOnly },
-			{ value: 'nonSensitiveOnlyForLocalLikeOnlyForRemote' as const, text: i18n.ts.nonSensitiveOnlyForLocalLikeOnlyForRemote },
-			{ value: 'likeOnly' as const, text: i18n.ts.likeOnly },
+			{value: null, text: i18n.ts.all},
+			{value: 'likeOnlyForRemote' as const, text: i18n.ts.likeOnlyForRemote},
+			{value: 'nonSensitiveOnly' as const, text: i18n.ts.nonSensitiveOnly},
+			{value: 'nonSensitiveOnlyForLocalLikeOnlyForRemote' as const, text: i18n.ts.nonSensitiveOnlyForLocalLikeOnlyForRemote},
+			{value: 'likeOnly' as const, text: i18n.ts.likeOnly},
 		],
 		default: reactionAcceptance.value,
 	});
@@ -588,7 +594,7 @@ async function onPaste(ev: ClipboardEvent) {
 	if (props.mock) return;
 	if (!ev.clipboardData) return;
 
-	for (const { item, i } of Array.from(ev.clipboardData.items, (data, x) => ({ item: data, i: x }))) {
+	for (const {item, i} of Array.from(ev.clipboardData.items, (data, x) => ({item: data, i: x}))) {
 		if (item.kind === 'file') {
 			const file = item.getAsFile();
 			if (!file) continue;
@@ -607,7 +613,7 @@ async function onPaste(ev: ClipboardEvent) {
 		os.confirm({
 			type: 'info',
 			text: i18n.ts.quoteQuestion,
-		}).then(({ canceled }) => {
+		}).then(({canceled}) => {
 			if (canceled) {
 				insertTextAtCursor(textareaEl.value, paste);
 				return;
@@ -622,14 +628,14 @@ async function onPaste(ev: ClipboardEvent) {
 		os.confirm({
 			type: 'info',
 			text: i18n.ts.attachAsFileQuestion,
-		}).then(({ canceled }) => {
+		}).then(({canceled}) => {
 			if (canceled) {
 				insertTextAtCursor(textareaEl.value, paste);
 				return;
 			}
 
 			const fileName = formatTimeString(new Date(), defaultStore.state.pastedFileName).replace(/{{number}}/g, '0');
-			const file = new File([paste], `${fileName}.txt`, { type: 'text/plain' });
+			const file = new File([paste], `${fileName}.txt`, {type: 'text/plain'});
 			upload(file, `${fileName}.txt`);
 		});
 	}
@@ -745,7 +751,7 @@ async function post(ev?: MouseEvent) {
 			const rect = el.getBoundingClientRect();
 			const x = rect.left + (el.offsetWidth / 2);
 			const y = rect.top + (el.offsetHeight / 2);
-			const { dispose } = os.popup(MkRippleEffect, { x, y }, {
+			const {dispose} = os.popup(MkRippleEffect, {x, y}, {
 				end: () => dispose(),
 			});
 		}
@@ -757,7 +763,7 @@ async function post(ev?: MouseEvent) {
 		(useCw.value && cw.value != null && cw.value.trim() !== '' && isAnnoying(cw.value)) || // CWが迷惑になる場合
 		((!useCw.value || cw.value == null || cw.value.trim() === '') && text.value != null && text.value.trim() !== '' && isAnnoying(text.value)) // CWが無い かつ 本文が迷惑になる場合
 	)) {
-		const { canceled, result } = await os.actions({
+		const {canceled, result} = await os.actions({
 			type: 'warning',
 			text: i18n.ts.thisPostMayBeAnnoying,
 			actions: [{
@@ -901,7 +907,7 @@ function cancel() {
 }
 
 function insertMention() {
-	os.selectUser({ localOnly: localOnly.value, includeSelf: true }).then(user => {
+	os.selectUser({localOnly: localOnly.value, includeSelf: true}).then(user => {
 		insertTextAtCursor(textareaEl.value, '@' + Misskey.acct.toString(user) + ' ');
 	});
 }
@@ -953,8 +959,13 @@ function showActions(ev: MouseEvent) {
 				cw: cw.value,
 			}, (key, value) => {
 				if (typeof key !== 'string' || typeof value !== 'string') return;
-				if (key === 'text') { text.value = value; }
-				if (key === 'cw') { useCw.value = value !== null; cw.value = value; }
+				if (key === 'text') {
+					text.value = value;
+				}
+				if (key === 'cw') {
+					useCw.value = value !== null;
+					cw.value = value;
+				}
 			});
 		},
 	})), ev.currentTarget ?? ev.target);
@@ -1008,7 +1019,7 @@ onMounted(() => {
 					poll.value = draft.data.poll;
 				}
 				if (draft.data.visibleUserIds) {
-					misskeyApi('users/show', { userIds: draft.data.visibleUserIds }).then(users => {
+					misskeyApi('users/show', {userIds: draft.data.visibleUserIds}).then(users => {
 						users.forEach(u => pushVisibleUser(u));
 					});
 				}
@@ -1035,7 +1046,7 @@ onMounted(() => {
 				};
 			}
 			if (init.visibleUserIds) {
-				misskeyApi('users/show', { userIds: init.visibleUserIds }).then(users => {
+				misskeyApi('users/show', {userIds: init.visibleUserIds}).then(users => {
 					users.forEach(u => pushVisibleUser(u));
 				});
 			}
@@ -1148,7 +1159,7 @@ defineExpose({
 	top: 0px;
 	left: 12px;
 	width: 5px;
-	height: 100% ;
+	height: 100%;
 	border-radius: 999px;
 	pointer-events: none;
 }
@@ -1198,6 +1209,7 @@ defineExpose({
 		}
 	}
 }
+
 //#endregion
 
 .preview {
@@ -1389,6 +1401,7 @@ html[data-color-scheme=light] .preview {
 	.preview {
 		padding: 16px 14px 0 14px;
 	}
+
 	.cw,
 	.hashtags,
 	.text {

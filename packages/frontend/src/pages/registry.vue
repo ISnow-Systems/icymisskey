@@ -4,31 +4,33 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="600" :marginMin="16">
-		<MkButton primary @click="createKey">{{ i18n.ts._registry.createKey }}</MkButton>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs"/>
+		</template>
+		<MkSpacer :contentMax="600" :marginMin="16">
+			<MkButton primary @click="createKey">{{ i18n.ts._registry.createKey }}</MkButton>
 
-		<div v-if="scopesWithDomain" class="_gaps_m">
-			<FormSection v-for="domain in scopesWithDomain" :key="domain.domain">
-				<template #label>{{ domain.domain ? domain.domain.toUpperCase() : i18n.ts.system }}</template>
-				<div class="_gaps_s">
-					<FormLink v-for="scope in domain.scopes" :to="`/registry/keys/${domain.domain ?? '@'}/${scope.join('/')}`" class="_monospace">{{ scope.length === 0 ? '(root)' : scope.join('/') }}</FormLink>
-				</div>
-			</FormSection>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+			<div v-if="scopesWithDomain" class="_gaps_m">
+				<FormSection v-for="domain in scopesWithDomain" :key="domain.domain">
+					<template #label>{{ domain.domain ? domain.domain.toUpperCase() : i18n.ts.system }}</template>
+					<div class="_gaps_s">
+						<FormLink v-for="scope in domain.scopes" :to="`/registry/keys/${domain.domain ?? '@'}/${scope.join('/')}`" class="_monospace">{{ scope.length === 0 ? '(root)' : scope.join('/') }}</FormLink>
+					</div>
+				</FormSection>
+			</div>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
+import {ref, computed} from 'vue';
 import * as Misskey from 'misskey-js';
 import JSON5 from 'json5';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { i18n } from '@/i18n.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {i18n} from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
 import FormLink from '@/components/form/link.vue';
 import FormSection from '@/components/form/section.vue';
 import MkButton from '@/components/MkButton.vue';
@@ -42,7 +44,7 @@ function fetchScopes() {
 }
 
 async function createKey() {
-	const { canceled, result } = await os.form(i18n.ts._registry.createKey, {
+	const {canceled, result} = await os.form(i18n.ts._registry.createKey, {
 		key: {
 			type: 'string',
 			label: i18n.ts._registry.key,

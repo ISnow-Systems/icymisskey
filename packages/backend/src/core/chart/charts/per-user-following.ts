@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable, Inject } from '@nestjs/common';
-import { Not, IsNull, DataSource } from 'typeorm';
-import type { MiUser } from '@/models/User.js';
-import { AppLockService } from '@/core/AppLockService.js';
-import { DI } from '@/di-symbols.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import type { FollowingsRepository } from '@/models/_.js';
-import { bindThis } from '@/decorators.js';
+import {Injectable, Inject} from '@nestjs/common';
+import {Not, IsNull, DataSource} from 'typeorm';
+import type {MiUser} from '@/models/User.js';
+import {AppLockService} from '@/core/AppLockService.js';
+import {DI} from '@/di-symbols.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import type {FollowingsRepository} from '@/models/_.js';
+import {bindThis} from '@/decorators.js';
 import Chart from '../core.js';
-import { ChartLoggerService } from '../ChartLoggerService.js';
-import { name, schema } from './entities/per-user-following.js';
-import type { KVs } from '../core.js';
+import {ChartLoggerService} from '../ChartLoggerService.js';
+import {name, schema} from './entities/per-user-following.js';
+import type {KVs} from '../core.js';
 
 /**
  * ユーザーごとのフォローに関するチャート
@@ -24,40 +24,13 @@ export default class PerUserFollowingChart extends Chart<typeof schema> { // esl
 	constructor(
 		@Inject(DI.db)
 		private db: DataSource,
-
 		@Inject(DI.followingsRepository)
 		private followingsRepository: FollowingsRepository,
-
 		private appLockService: AppLockService,
 		private userEntityService: UserEntityService,
 		private chartLoggerService: ChartLoggerService,
 	) {
 		super(db, (k) => appLockService.getChartInsertLock(k), chartLoggerService.logger, name, schema, true);
-	}
-
-	protected async tickMajor(group: string): Promise<Partial<KVs<typeof schema>>> {
-		const [
-			localFollowingsCount,
-			localFollowersCount,
-			remoteFollowingsCount,
-			remoteFollowersCount,
-		] = await Promise.all([
-			this.followingsRepository.countBy({ followerId: group, followeeHost: IsNull() }),
-			this.followingsRepository.countBy({ followeeId: group, followerHost: IsNull() }),
-			this.followingsRepository.countBy({ followerId: group, followeeHost: Not(IsNull()) }),
-			this.followingsRepository.countBy({ followeeId: group, followerHost: Not(IsNull()) }),
-		]);
-
-		return {
-			'local.followings.total': localFollowingsCount,
-			'local.followers.total': localFollowersCount,
-			'remote.followings.total': remoteFollowingsCount,
-			'remote.followers.total': remoteFollowersCount,
-		};
-	}
-
-	protected async tickMinor(): Promise<Partial<KVs<typeof schema>>> {
-		return {};
 	}
 
 	@bindThis
@@ -75,5 +48,30 @@ export default class PerUserFollowingChart extends Chart<typeof schema> { // esl
 			[`${prefixFollowee}.followers.inc`]: isFollow ? 1 : 0,
 			[`${prefixFollowee}.followers.dec`]: isFollow ? 0 : 1,
 		}, followee.id);
+	}
+
+	protected async tickMajor(group: string): Promise<Partial<KVs<typeof schema>>> {
+		const [
+			localFollowingsCount,
+			localFollowersCount,
+			remoteFollowingsCount,
+			remoteFollowersCount,
+		] = await Promise.all([
+			this.followingsRepository.countBy({followerId: group, followeeHost: IsNull()}),
+			this.followingsRepository.countBy({followeeId: group, followerHost: IsNull()}),
+			this.followingsRepository.countBy({followerId: group, followeeHost: Not(IsNull())}),
+			this.followingsRepository.countBy({followeeId: group, followerHost: Not(IsNull())}),
+		]);
+
+		return {
+			'local.followings.total': localFollowingsCount,
+			'local.followers.total': localFollowersCount,
+			'remote.followings.total': remoteFollowingsCount,
+			'remote.followers.total': remoteFollowersCount,
+		};
+	}
+
+	protected async tickMinor(): Promise<Partial<KVs<typeof schema>>> {
+		return {};
 	}
 }

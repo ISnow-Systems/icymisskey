@@ -4,22 +4,22 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkSpacer :contentMax="700">
-	<MkPagination v-slot="{items}" ref="list" :pagination="pagination">
-		<div v-for="item in items" :key="item.id" :to="`/clips/${item.id}`" class="_panel _margin">
-			<div :class="$style.header">
-				<MkAvatar :class="$style.avatar" :user="user"/>
-				<MkReactionIcon :class="$style.reaction" :reaction="item.type" :noStyle="true"/>
-				<MkTime :time="item.createdAt" :class="$style.createdAt"/>
+	<MkSpacer :contentMax="700">
+		<MkPagination ref="list" v-slot="{items}" :pagination="pagination">
+			<div v-for="item in items" :key="item.id" :to="`/clips/${item.id}`" class="_panel _margin">
+				<div :class="$style.header">
+					<MkAvatar :class="$style.avatar" :user="user"/>
+					<MkReactionIcon :class="$style.reaction" :noStyle="true" :reaction="item.type"/>
+					<MkTime :class="$style.createdAt" :time="item.createdAt"/>
+				</div>
+				<MkNote :key="item.id" :note="item.note"/>
 			</div>
-			<MkNote :key="item.id" :note="item.note"/>
-		</div>
-	</MkPagination>
-</MkSpacer>
+		</MkPagination>
+	</MkSpacer>
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+import {computed} from 'vue';
 import * as Misskey from 'misskey-js';
 import MkPagination from '@/components/MkPagination.vue';
 import MkNote from '@/components/MkNote.vue';

@@ -4,52 +4,52 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkModalWindow
-	ref="windowEl"
-	:withOkButton="false"
-	:okButtonDisabled="false"
-	:width="400"
-	:height="500"
-	@close="onCloseModalWindow"
-	@closed="console.log('MkRoleSelectDialog: closed') ; $emit('dispose')"
->
-	<template #header>{{ title }}</template>
-	<MkSpacer :marginMin="20" :marginMax="28">
-		<MkLoading v-if="fetching"/>
-		<div v-else class="_gaps" :class="$style.root">
-			<div :class="$style.header">
-				<MkButton rounded @click="addRole"><i class="ti ti-plus"></i> {{ i18n.ts.add }}</MkButton>
-			</div>
+	<MkModalWindow
+		ref="windowEl"
+		:height="500"
+		:okButtonDisabled="false"
+		:width="400"
+		:withOkButton="false"
+		@close="onCloseModalWindow"
+		@closed="console.log('MkRoleSelectDialog: closed') ; $emit('dispose')"
+	>
+		<template #header>{{ title }}</template>
+		<MkSpacer :marginMax="28" :marginMin="20">
+			<MkLoading v-if="fetching"/>
+			<div v-else :class="$style.root" class="_gaps">
+				<div :class="$style.header">
+					<MkButton rounded @click="addRole"><i class="ti ti-plus"></i> {{ i18n.ts.add }}</MkButton>
+				</div>
 
-			<div v-if="selectedRoles.length > 0" class="_gaps" :class="$style.roleItemArea">
-				<div v-for="role in selectedRoles" :key="role.id" :class="$style.roleItem">
-					<MkRolePreview :class="$style.role" :role="role" :forModeration="true" :detailed="false" style="pointer-events: none;"/>
-					<button class="_button" :class="$style.roleUnAssign" @click="removeRole(role.id)"><i class="ti ti-x"></i></button>
+				<div v-if="selectedRoles.length > 0" :class="$style.roleItemArea" class="_gaps">
+					<div v-for="role in selectedRoles" :key="role.id" :class="$style.roleItem">
+						<MkRolePreview :class="$style.role" :detailed="false" :forModeration="true" :role="role" style="pointer-events: none;"/>
+						<button :class="$style.roleUnAssign" class="_button" @click="removeRole(role.id)"><i class="ti ti-x"></i></button>
+					</div>
+				</div>
+				<div v-else :class="$style.roleItemArea" style="text-align: center">
+					{{ i18n.ts._roleSelectDialog.notSelected }}
+				</div>
+
+				<MkInfo v-if="infoMessage">{{ infoMessage }}</MkInfo>
+
+				<div :class="$style.buttons">
+					<MkButton primary @click="onOkClicked">{{ i18n.ts.ok }}</MkButton>
+					<MkButton @click="onCancelClicked">{{ i18n.ts.cancel }}</MkButton>
 				</div>
 			</div>
-			<div v-else :class="$style.roleItemArea" style="text-align: center">
-				{{ i18n.ts._roleSelectDialog.notSelected }}
-			</div>
-
-			<MkInfo v-if="infoMessage">{{ infoMessage }}</MkInfo>
-
-			<div :class="$style.buttons">
-				<MkButton primary @click="onOkClicked">{{ i18n.ts.ok }}</MkButton>
-				<MkButton @click="onCancelClicked">{{ i18n.ts.cancel }}</MkButton>
-			</div>
-		</div>
-	</MkSpacer>
-</MkModalWindow>
+		</MkSpacer>
+	</MkModalWindow>
 </template>
 
-<script setup lang="ts">
-import { computed, ref, toRefs } from 'vue';
+<script lang="ts" setup>
+import {computed, ref, toRefs} from 'vue';
 import * as Misskey from 'misskey-js';
-import { i18n } from '@/i18n.js';
+import {i18n} from '@/i18n.js';
 import MkButton from '@/components/MkButton.vue';
 import MkInfo from '@/components/MkInfo.vue';
 import MkRolePreview from '@/components/MkRolePreview.vue';
-import { misskeyApi } from '@/scripts/misskey-api.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
 import * as os from '@/os.js';
 import MkSpacer from '@/components/global/MkSpacer.vue';
 import MkModalWindow from '@/components/MkModalWindow.vue';
@@ -73,7 +73,7 @@ const props = withDefaults(defineProps<{
 	publicOnly: true,
 });
 
-const { initialRoleIds, infoMessage, title, publicOnly } = toRefs(props);
+const {initialRoleIds, infoMessage, title, publicOnly} = toRefs(props);
 
 const windowEl = ref<InstanceType<typeof MkModalWindow>>();
 const roles = ref<Misskey.entities.Role[]>([]);
@@ -103,9 +103,9 @@ async function addRole() {
 	const items = roles.value
 		.filter(r => r.isPublic)
 		.filter(r => !selectedRoleIds.value.includes(r.id))
-		.map(r => ({ text: r.name, value: r }));
+		.map(r => ({text: r.name, value: r}));
 
-	const { canceled, result: role } = await os.select({ items });
+	const {canceled, result: role} = await os.select({items});
 	if (canceled) {
 		return;
 	}
@@ -135,7 +135,7 @@ function onCloseModalWindow() {
 fetchRoles();
 </script>
 
-<style module lang="scss">
+<style lang="scss" module>
 .root {
 	max-height: 410px;
 	height: 410px;

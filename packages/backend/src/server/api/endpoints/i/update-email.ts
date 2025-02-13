@@ -3,19 +3,19 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import ms from 'ms';
 import bcrypt from 'bcryptjs';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { MiMeta, UserProfilesRepository } from '@/models/_.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { EmailService } from '@/core/EmailService.js';
-import type { Config } from '@/config.js';
-import { DI } from '@/di-symbols.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { L_CHARS, secureRndstr } from '@/misc/secure-rndstr.js';
-import { UserAuthService } from '@/core/UserAuthService.js';
-import { ApiError } from '../../error.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {MiMeta, UserProfilesRepository} from '@/models/_.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {EmailService} from '@/core/EmailService.js';
+import type {Config} from '@/config.js';
+import {DI} from '@/di-symbols.js';
+import {GlobalEventService} from '@/core/GlobalEventService.js';
+import {L_CHARS, secureRndstr} from '@/misc/secure-rndstr.js';
+import {UserAuthService} from '@/core/UserAuthService.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	requireCredential: true,
@@ -56,9 +56,9 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		password: { type: 'string' },
-		email: { type: 'string', nullable: true },
-		token: { type: 'string', nullable: true },
+		password: {type: 'string'},
+		email: {type: 'string', nullable: true},
+		token: {type: 'string', nullable: true},
 	},
 	required: ['password'],
 } as const;
@@ -68,13 +68,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.meta)
 		private serverSettings: MiMeta,
-
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
-
 		private userEntityService: UserEntityService,
 		private emailService: EmailService,
 		private userAuthService: UserAuthService,
@@ -82,7 +79,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			const token = ps.token;
-			const profile = await this.userProfilesRepository.findOneByOrFail({ userId: me.id });
+			const profile = await this.userProfilesRepository.findOneByOrFail({userId: me.id});
 
 			if (profile.twoFactorEnabled) {
 				if (token == null) {
@@ -125,7 +122,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			this.globalEventService.publishMainStream(me.id, 'meUpdated', iObj);
 
 			if (ps.email != null) {
-				const code = secureRndstr(16, { chars: L_CHARS });
+				const code = secureRndstr(16, {chars: L_CHARS});
 
 				await this.userProfilesRepository.update(me.id, {
 					emailVerifyCode: code,

@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { setTimeout } from 'node:timers/promises';
-import { Inject, Injectable, OnApplicationShutdown } from '@nestjs/common';
-import { In } from 'typeorm';
-import { DI } from '@/di-symbols.js';
-import type { MiUser } from '@/models/User.js';
-import type { Packed } from '@/misc/json-schema.js';
-import type { MiNote } from '@/models/Note.js';
-import { IdService } from '@/core/IdService.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import type { NoteUnreadsRepository, MutingsRepository, NoteThreadMutingsRepository } from '@/models/_.js';
-import { bindThis } from '@/decorators.js';
-import { trackPromise } from '@/misc/promise-tracker.js';
+import {setTimeout} from 'node:timers/promises';
+import {Inject, Injectable, OnApplicationShutdown} from '@nestjs/common';
+import {In} from 'typeorm';
+import {DI} from '@/di-symbols.js';
+import type {MiUser} from '@/models/User.js';
+import type {Packed} from '@/misc/json-schema.js';
+import type {MiNote} from '@/models/Note.js';
+import {IdService} from '@/core/IdService.js';
+import {GlobalEventService} from '@/core/GlobalEventService.js';
+import type {NoteUnreadsRepository, MutingsRepository, NoteThreadMutingsRepository} from '@/models/_.js';
+import {bindThis} from '@/decorators.js';
+import {trackPromise} from '@/misc/promise-tracker.js';
 
 @Injectable()
 export class NoteReadService implements OnApplicationShutdown {
@@ -23,13 +23,10 @@ export class NoteReadService implements OnApplicationShutdown {
 	constructor(
 		@Inject(DI.noteUnreadsRepository)
 		private noteUnreadsRepository: NoteUnreadsRepository,
-
 		@Inject(DI.mutingsRepository)
 		private mutingsRepository: MutingsRepository,
-
 		@Inject(DI.noteThreadMutingsRepository)
 		private noteThreadMutingsRepository: NoteThreadMutingsRepository,
-
 		private idService: IdService,
 		private globalEventService: GlobalEventService,
 	) {
@@ -69,8 +66,8 @@ export class NoteReadService implements OnApplicationShutdown {
 		await this.noteUnreadsRepository.insert(unread);
 
 		// 2秒経っても既読にならなかったら「未読の投稿がありますよ」イベントを発行する
-		setTimeout(2000, 'unread note', { signal: this.#shutdownController.signal }).then(async () => {
-			const exist = await this.noteUnreadsRepository.exists({ where: { id: unread.id } });
+		setTimeout(2000, 'unread note', {signal: this.#shutdownController.signal}).then(async () => {
+			const exist = await this.noteUnreadsRepository.exists({where: {id: unread.id}});
 
 			if (!exist) return;
 
@@ -80,7 +77,8 @@ export class NoteReadService implements OnApplicationShutdown {
 			if (params.isSpecified) {
 				this.globalEventService.publishMainStream(userId, 'unreadSpecifiedNote', note.id);
 			}
-		}, () => { /* aborted, ignore it */ });
+		}, () => { /* aborted, ignore it */
+		});
 	}
 
 	@bindThis

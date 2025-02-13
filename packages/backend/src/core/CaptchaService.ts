@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import { HttpRequestService } from '@/core/HttpRequestService.js';
-import { bindThis } from '@/decorators.js';
-import { MetaService } from '@/core/MetaService.js';
-import { MiMeta } from '@/models/Meta.js';
+import {Injectable} from '@nestjs/common';
+import {HttpRequestService} from '@/core/HttpRequestService.js';
+import {bindThis} from '@/decorators.js';
+import {MetaService} from '@/core/MetaService.js';
+import {MiMeta} from '@/models/Meta.js';
 import Logger from '@/logger.js';
-import { LoggerService } from './LoggerService.js';
+import {LoggerService} from './LoggerService.js';
 
 export const supportedCaptchaProviders = ['none', 'hcaptcha', 'mcaptcha', 'recaptcha', 'turnstile', 'testcaptcha'] as const;
 export type CaptchaProvider = typeof supportedCaptchaProviders[number];
@@ -84,28 +84,6 @@ export class CaptchaService {
 	}
 
 	@bindThis
-	private async getCaptchaResponse(url: string, secret: string, response: string): Promise<CaptchaResponse> {
-		const params = new URLSearchParams({
-			secret,
-			response,
-		});
-
-		const res = await this.httpRequestService.send(url, {
-			method: 'POST',
-			body: params.toString(),
-			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded',
-			},
-		}, { throwErrorWhenResponseNotOk: false });
-
-		if (!res.ok) {
-			throw new Error(`${res.status}`);
-		}
-
-		return await res.json() as CaptchaResponse;
-	}
-
-	@bindThis
 	public async verifyRecaptcha(secret: string, response: string | null | undefined): Promise<void> {
 		if (response == null) {
 			throw new CaptchaError(captchaErrorCodes.noResponseProvided, 'recaptcha-failed: no response provided');
@@ -155,7 +133,7 @@ export class CaptchaService {
 			headers: {
 				'Content-Type': 'application/json',
 			},
-		}, { throwErrorWhenResponseNotOk: false });
+		}, {throwErrorWhenResponseNotOk: false});
 
 		if (result.status !== 200) {
 			throw new CaptchaError(captchaErrorCodes.requestFailed, 'mcaptcha-failed: mcaptcha didn\'t return 200 OK');
@@ -331,7 +309,7 @@ export class CaptchaService {
 		}[provider];
 
 		return operation()
-			.then(() => ({ success: true }) as CaptchaSaveSuccess)
+			.then(() => ({success: true}) as CaptchaSaveSuccess)
 			.catch(err => {
 				this.logger.info(err);
 				const error = err instanceof CaptchaError
@@ -342,6 +320,28 @@ export class CaptchaService {
 					error,
 				};
 			});
+	}
+
+	@bindThis
+	private async getCaptchaResponse(url: string, secret: string, response: string): Promise<CaptchaResponse> {
+		const params = new URLSearchParams({
+			secret,
+			response,
+		});
+
+		const res = await this.httpRequestService.send(url, {
+			method: 'POST',
+			body: params.toString(),
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+		}, {throwErrorWhenResponseNotOk: false});
+
+		if (!res.ok) {
+			throw new Error(`${res.status}`);
+		}
+
+		return await res.json() as CaptchaResponse;
 	}
 
 	@bindThis

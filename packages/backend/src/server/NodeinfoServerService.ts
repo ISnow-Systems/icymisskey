@@ -3,19 +3,20 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { DI } from '@/di-symbols.js';
-import type { Config } from '@/config.js';
-import { MetaService } from '@/core/MetaService.js';
-import { MAX_NOTE_TEXT_LENGTH } from '@/const.js';
-import { MemorySingleCache } from '@/misc/cache.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { bindThis } from '@/decorators.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {DI} from '@/di-symbols.js';
+import type {Config} from '@/config.js';
+import {MetaService} from '@/core/MetaService.js';
+import {MAX_NOTE_TEXT_LENGTH} from '@/const.js';
+import {MemorySingleCache} from '@/misc/cache.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {bindThis} from '@/decorators.js';
 import NotesChart from '@/core/chart/charts/notes.js';
 import UsersChart from '@/core/chart/charts/users.js';
-import { DEFAULT_POLICIES } from '@/core/RoleService.js';
-import type { FastifyInstance, FastifyPluginOptions } from 'fastify';
+import {DEFAULT_POLICIES} from '@/core/RoleService.js';
+import type {FastifyInstance, FastifyPluginOptions} from 'fastify';
 
+const nodeinfo2_2path = '/nodeinfo/2.2';
 const nodeinfo2_1path = '/nodeinfo/2.1';
 const nodeinfo2_0path = '/nodeinfo/2.0';
 const nodeinfo_homepage = 'https://misskey-hub.net';
@@ -25,7 +26,6 @@ export class NodeinfoServerService {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		private userEntityService: UserEntityService,
 		private metaService: MetaService,
 		private notesChart: NotesChart,
@@ -37,6 +37,9 @@ export class NodeinfoServerService {
 	@bindThis
 	public getLinks() {
 		return [{
+			rel: 'http://nodeinfo.diaspora.software/ns/schema/2.2',
+			href: this.config.url + nodeinfo2_2path,
+		}, {
 			rel: 'http://nodeinfo.diaspora.software/ns/schema/2.1',
 			href: this.config.url + nodeinfo2_1path,
 		}, {
@@ -67,17 +70,17 @@ export class NodeinfoServerService {
 				//this.usersRepository.count({ where: { host: IsNull(), lastActiveDate: MoreThan(new Date(now - 2592000000)) } }),
 			]);
 
-			const activeHalfyear = null;
-			const activeMonth = null;
+			//const activeHalfyear = null;
+			//const activeMonth = null;
 
 			const proxyAccount = meta.proxyAccountId ? await this.userEntityService.pack(meta.proxyAccountId).catch(() => null) : null;
 
-			const basePolicies = { ...DEFAULT_POLICIES, ...meta.policies };
+			const basePolicies = {...DEFAULT_POLICIES, ...meta.policies};
 
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const document: any = {
 				software: {
-					name: 'misskey',
+					name: 'icymisskey',
 					version: this.config.version,
 					homepage: nodeinfo_homepage,
 					repository: meta.repositoryUrl,
@@ -89,7 +92,12 @@ export class NodeinfoServerService {
 				},
 				openRegistrations: !meta.disableRegistration,
 				usage: {
-					users: { total, activeHalfyear, activeMonth },
+					users: {
+						total,
+						activeHalfyear: null,
+						activeMonth: null,
+						activeWeek: null,
+					},
 					localPosts,
 					localComments: 0,
 				},
@@ -127,6 +135,12 @@ export class NodeinfoServerService {
 					themeColor: meta.themeColor ?? '#86b300',
 				},
 			};
+			if (version >= 22) {
+				document.instance = {
+					name: (meta.name ?? 'IcyMisskey').slice(0, 500),
+					description: (meta.description ?? 'A instance of IcyMisskey').slice(0, 5000),
+				};
+			}
 			if (version >= 21) {
 				document.software.repository = meta.repositoryUrl;
 				document.software.homepage = meta.repositoryUrl;
@@ -135,6 +149,21 @@ export class NodeinfoServerService {
 		};
 
 		const cache = new MemorySingleCache<Awaited<ReturnType<typeof nodeinfo2>>>(1000 * 60 * 10); // 10m
+
+		fastify.get(nodeinfo2_2path, async (request, reply) => {
+			const base = await cache.fetch(() => nodeinfo2(22));
+
+			reply
+				.type(
+					'application/json; profile="http://nodeinfo.diaspora.software/ns/schema/2.2#"',
+				)
+				.header('Cache-Control', 'public, max-age=600')
+				.header('Access-Control-Allow-Headers', 'Accept')
+				.header('Access-Control-Allow-Methods', 'GET, OPTIONS')
+				.header('Access-Control-Allow-Origin', '*')
+				.header('Access-Control-Expose-Headers', 'Vary');
+			return {version: '2.2', ...base};
+		});
 
 		fastify.get(nodeinfo2_1path, async (request, reply) => {
 			const base = await cache.fetch(() => nodeinfo2(21));
@@ -148,7 +177,7 @@ export class NodeinfoServerService {
 				.header('Access-Control-Allow-Methods', 'GET, OPTIONS')
 				.header('Access-Control-Allow-Origin', '*')
 				.header('Access-Control-Expose-Headers', 'Vary');
-			return { version: '2.1', ...base };
+			return {version: '2.1', ...base};
 		});
 
 		fastify.get(nodeinfo2_0path, async (request, reply) => {
@@ -165,7 +194,7 @@ export class NodeinfoServerService {
 				.header('Access-Control-Allow-Methods', 'GET, OPTIONS')
 				.header('Access-Control-Allow-Origin', '*')
 				.header('Access-Control-Expose-Headers', 'Vary');
-			return { version: '2.0', ...base };
+			return {version: '2.0', ...base};
 		});
 
 		done();

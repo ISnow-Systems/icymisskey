@@ -3,37 +3,33 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { DI } from '@/di-symbols.js';
-import type { NotesRepository, UserNotePiningsRepository, UsersRepository } from '@/models/_.js';
-import { IdentifiableError } from '@/misc/identifiable-error.js';
-import type { MiUser } from '@/models/User.js';
-import type { MiNote } from '@/models/Note.js';
-import { IdService } from '@/core/IdService.js';
-import type { MiUserNotePining } from '@/models/UserNotePining.js';
-import { RelayService } from '@/core/RelayService.js';
-import type { Config } from '@/config.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { ApDeliverManagerService } from '@/core/activitypub/ApDeliverManagerService.js';
-import { ApRendererService } from '@/core/activitypub/ApRendererService.js';
-import { bindThis } from '@/decorators.js';
-import { RoleService } from '@/core/RoleService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {DI} from '@/di-symbols.js';
+import type {NotesRepository, UserNotePiningsRepository, UsersRepository} from '@/models/_.js';
+import {IdentifiableError} from '@/misc/identifiable-error.js';
+import type {MiUser} from '@/models/User.js';
+import type {MiNote} from '@/models/Note.js';
+import {IdService} from '@/core/IdService.js';
+import type {MiUserNotePining} from '@/models/UserNotePining.js';
+import {RelayService} from '@/core/RelayService.js';
+import type {Config} from '@/config.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {ApDeliverManagerService} from '@/core/activitypub/ApDeliverManagerService.js';
+import {ApRendererService} from '@/core/activitypub/ApRendererService.js';
+import {bindThis} from '@/decorators.js';
+import {RoleService} from '@/core/RoleService.js';
 
 @Injectable()
 export class NotePiningService {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		@Inject(DI.userNotePiningsRepository)
 		private userNotePiningsRepository: UserNotePiningsRepository,
-
 		private userEntityService: UserEntityService,
 		private idService: IdService,
 		private roleService: RoleService,
@@ -50,7 +46,7 @@ export class NotePiningService {
 	 */
 	@bindThis
 	public async addPinned(user: { id: MiUser['id']; host: MiUser['host']; }, noteId: MiNote['id']) {
-	// Fetch pinee
+		// Fetch pinee
 		const note = await this.notesRepository.findOneBy({
 			id: noteId,
 			userId: user.id,
@@ -60,7 +56,7 @@ export class NotePiningService {
 			throw new IdentifiableError('70c4e51f-5bea-449c-a030-53bee3cce202', 'No such note.');
 		}
 
-		const pinings = await this.userNotePiningsRepository.findBy({ userId: user.id });
+		const pinings = await this.userNotePiningsRepository.findBy({userId: user.id});
 
 		if (pinings.length >= (await this.roleService.getUserPolicies(user.id)).pinLimit) {
 			throw new IdentifiableError('15a018eb-58e5-4da1-93be-330fcc5e4e1a', 'You can not pin notes any more.');
@@ -89,7 +85,7 @@ export class NotePiningService {
 	 */
 	@bindThis
 	public async removePinned(user: { id: MiUser['id']; host: MiUser['host']; }, noteId: MiNote['id']) {
-	// Fetch unpinee
+		// Fetch unpinee
 		const note = await this.notesRepository.findOneBy({
 			id: noteId,
 			userId: user.id,
@@ -112,7 +108,7 @@ export class NotePiningService {
 
 	@bindThis
 	public async deliverPinnedChange(userId: MiUser['id'], noteId: MiNote['id'], isAddition: boolean) {
-		const user = await this.usersRepository.findOneBy({ id: userId });
+		const user = await this.usersRepository.findOneBy({id: userId});
 		if (user == null) throw new Error('user not found');
 
 		if (!this.userEntityService.isLocalUser(user)) return;

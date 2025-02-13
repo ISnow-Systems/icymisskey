@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { UserSearchService } from '@/core/UserSearchService.js';
+import {Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {UserSearchService} from '@/core/UserSearchService.js';
 
 export const meta = {
 	tags: ['users'],
@@ -28,15 +28,15 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
-		detail: { type: 'boolean', default: true },
+		limit: {type: 'integer', minimum: 1, maximum: 100, default: 10},
+		detail: {type: 'boolean', default: true},
 
-		username: { type: 'string', nullable: true },
-		host: { type: 'string', nullable: true },
+		username: {type: 'string', nullable: true},
+		host: {type: 'string', nullable: true},
 	},
 	anyOf: [
-		{ required: ['username'] },
-		{ required: ['host'] },
+		{required: ['username']},
+		{required: ['host']},
 	],
 } as const;
 

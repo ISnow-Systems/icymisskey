@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Entity, Column, PrimaryColumn } from 'typeorm';
-import { id } from './util/id.js';
+import {Entity, Column, PrimaryColumn} from 'typeorm';
+import {id} from './util/id.js';
 
 /**
  * ～かつ～
@@ -174,7 +174,7 @@ export type RoleCondFormulaValue = { id: string } & (
 	CondFormulaValueFollowingMoreThanOrEq |
 	CondFormulaValueNotesLessThanOrEq |
 	CondFormulaValueNotesMoreThanOrEq
-);
+	);
 
 @Entity('role')
 export class MiRole {
@@ -218,7 +218,7 @@ export class MiRole {
 	public target: 'manual' | 'conditional';
 
 	@Column('jsonb', {
-		default: { },
+		default: {},
 	})
 	public condFormula: RoleCondFormulaValue;
 
@@ -260,7 +260,7 @@ export class MiRole {
 	public displayOrder: number;
 
 	@Column('jsonb', {
-		default: { },
+		default: {},
 	})
 	public policies: Record<string, {
 		useDefault: boolean;

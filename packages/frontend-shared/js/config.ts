@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { Locale } from '../../../locales/index.js';
+import type {Locale} from '../../../locales/index.js';
 
 // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
 const address = new URL(document.querySelector<HTMLMetaElement>('meta[property="instance_url"]')?.content || location.href);

@@ -3,20 +3,20 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import type { Packed } from '@/misc/json-schema.js';
-import { MetaService } from '@/core/MetaService.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { bindThis } from '@/decorators.js';
-import { RoleService } from '@/core/RoleService.js';
-import { isQuotePacked, isRenotePacked } from '@/misc/is-renote.js';
-import type { JsonObject } from '@/misc/json-value.js';
-import Channel, { type MiChannelService } from '../channel.js';
+import {Injectable} from '@nestjs/common';
+import type {Packed} from '@/misc/json-schema.js';
+import {MetaService} from '@/core/MetaService.js';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
+import {bindThis} from '@/decorators.js';
+import {RoleService} from '@/core/RoleService.js';
+import {isQuotePacked, isRenotePacked} from '@/misc/is-renote.js';
+import type {JsonObject} from '@/misc/json-value.js';
+import Channel, {type MiChannelService} from '../channel.js';
 
 class LocalTimelineChannel extends Channel {
-	public readonly chName = 'localTimeline';
 	public static shouldShare = false;
 	public static requireCredential = false as const;
+	public readonly chName = 'localTimeline';
 	private withRenotes: boolean;
 	private withReplies: boolean;
 	private withFiles: boolean;
@@ -25,7 +25,6 @@ class LocalTimelineChannel extends Channel {
 		private metaService: MetaService,
 		private roleService: RoleService,
 		private noteEntityService: NoteEntityService,
-
 		id: string,
 		connection: Channel['connection'],
 	) {
@@ -44,6 +43,12 @@ class LocalTimelineChannel extends Channel {
 
 		// Subscribe events
 		this.subscriber.on('notesStream', this.onNote);
+	}
+
+	@bindThis
+	public dispose() {
+		// Unsubscribe events
+		this.subscriber.off('notesStream', this.onNote);
 	}
 
 	@bindThis
@@ -75,12 +80,6 @@ class LocalTimelineChannel extends Channel {
 		this.connection.cacheNote(note);
 
 		this.send('note', note);
-	}
-
-	@bindThis
-	public dispose() {
-		// Unsubscribe events
-		this.subscriber.off('notesStream', this.onNote);
 	}
 }
 

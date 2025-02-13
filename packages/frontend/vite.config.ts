@@ -1,13 +1,13 @@
 import path from 'path';
 import pluginReplace from '@rollup/plugin-replace';
 import pluginVue from '@vitejs/plugin-vue';
-import { type UserConfig, defineConfig } from 'vite';
+import {defineConfig, type UserConfig} from 'vite';
 import * as yaml from 'js-yaml';
-import { promises as fsp } from 'fs';
+import {promises as fsp} from 'fs';
 
 import locales from '../../locales/index.js';
 import meta from '../../package.json';
-import packageInfo from './package.json' with { type: 'json' };
+import packageInfo from './package.json' with {type: 'json'};
 import pluginUnwindCssModuleClassName from './lib/rollup-plugin-unwind-css-module-class-name.js';
 import pluginJson5 from './vite.json5.js';
 
@@ -205,6 +205,6 @@ export function getConfig(): UserConfig {
 	};
 }
 
-const config = defineConfig(({ command, mode }) => getConfig());
+const config = defineConfig(({command, mode}) => getConfig());
 
 export default config;

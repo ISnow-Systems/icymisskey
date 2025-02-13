@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import ms from 'ms';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { MutingsRepository } from '@/models/_.js';
-import { DI } from '@/di-symbols.js';
-import { GetterService } from '@/server/api/GetterService.js';
-import { UserMutingService } from '@/core/UserMutingService.js';
-import { ApiError } from '../../error.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {MutingsRepository} from '@/models/_.js';
+import {DI} from '@/di-symbols.js';
+import {GetterService} from '@/server/api/GetterService.js';
+import {UserMutingService} from '@/core/UserMutingService.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['account'],
@@ -49,7 +49,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		userId: { type: 'string', format: 'misskey:id' },
+		userId: {type: 'string', format: 'misskey:id'},
 		expiresAt: {
 			type: 'integer',
 			nullable: true,
@@ -64,7 +64,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.mutingsRepository)
 		private mutingsRepository: MutingsRepository,
-
 		private getterService: GetterService,
 		private userMutingService: UserMutingService,
 	) {

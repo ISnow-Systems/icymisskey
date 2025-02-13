@@ -4,7 +4,7 @@
  */
 
 import * as Misskey from 'misskey-js';
-import { misskeyApi } from '@/misskey-api.js';
+import {misskeyApi} from '@/misskey-api.js';
 
 const providedMetaEl = document.getElementById('misskey_meta');
 

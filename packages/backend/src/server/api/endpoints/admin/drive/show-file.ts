@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import type { DriveFilesRepository, UsersRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
-import { RoleService } from '@/core/RoleService.js';
-import { IdService } from '@/core/IdService.js';
-import { ApiError } from '../../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {DriveFilesRepository, UsersRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {DI} from '@/di-symbols.js';
+import {RoleService} from '@/core/RoleService.js';
+import {IdService} from '@/core/IdService.js';
+import {ApiError} from '../../../error.js';
 
 export const meta = {
 	tags: ['admin'],
@@ -164,12 +164,12 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		fileId: { type: 'string', format: 'misskey:id' },
-		url: { type: 'string' },
+		fileId: {type: 'string', format: 'misskey:id'},
+		url: {type: 'string'},
 	},
 	anyOf: [
-		{ required: ['fileId'] },
-		{ required: ['url'] },
+		{required: ['fileId']},
+		{required: ['url']},
 	],
 } as const;
 
@@ -178,15 +178,13 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.driveFilesRepository)
 		private driveFilesRepository: DriveFilesRepository,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		private roleService: RoleService,
 		private idService: IdService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const file = ps.fileId ? await this.driveFilesRepository.findOneBy({ id: ps.fileId }) : await this.driveFilesRepository.findOne({
+			const file = ps.fileId ? await this.driveFilesRepository.findOneBy({id: ps.fileId}) : await this.driveFilesRepository.findOne({
 				where: [{
 					url: ps.url,
 				}, {

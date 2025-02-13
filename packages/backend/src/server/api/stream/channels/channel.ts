@@ -3,23 +3,22 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import type { Packed } from '@/misc/json-schema.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { bindThis } from '@/decorators.js';
-import { isRenotePacked, isQuotePacked } from '@/misc/is-renote.js';
-import type { JsonObject } from '@/misc/json-value.js';
-import Channel, { type MiChannelService } from '../channel.js';
+import {Injectable} from '@nestjs/common';
+import type {Packed} from '@/misc/json-schema.js';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
+import {bindThis} from '@/decorators.js';
+import {isRenotePacked, isQuotePacked} from '@/misc/is-renote.js';
+import type {JsonObject} from '@/misc/json-value.js';
+import Channel, {type MiChannelService} from '../channel.js';
 
 class ChannelChannel extends Channel {
-	public readonly chName = 'channel';
 	public static shouldShare = false;
 	public static requireCredential = false as const;
+	public readonly chName = 'channel';
 	private channelId: string;
 
 	constructor(
 		private noteEntityService: NoteEntityService,
-
 		id: string,
 		connection: Channel['connection'],
 	) {
@@ -34,6 +33,12 @@ class ChannelChannel extends Channel {
 
 		// Subscribe stream
 		this.subscriber.on('notesStream', this.onNote);
+	}
+
+	@bindThis
+	public dispose() {
+		// Unsubscribe events
+		this.subscriber.off('notesStream', this.onNote);
 	}
 
 	@bindThis
@@ -52,12 +57,6 @@ class ChannelChannel extends Channel {
 		this.connection.cacheNote(note);
 
 		this.send('note', note);
-	}
-
-	@bindThis
-	public dispose() {
-		// Unsubscribe events
-		this.subscriber.off('notesStream', this.onNote);
 	}
 }
 

@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import type { NotesRepository, NoteThreadMutingsRepository, NoteFavoritesRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {NotesRepository, NoteThreadMutingsRepository, NoteFavoritesRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {DI} from '@/di-symbols.js';
 
 export const meta = {
 	tags: ['notes'],
@@ -33,7 +33,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		noteId: { type: 'string', format: 'misskey:id' },
+		noteId: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['noteId'],
 } as const;
@@ -43,15 +43,13 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		@Inject(DI.noteThreadMutingsRepository)
 		private noteThreadMutingsRepository: NoteThreadMutingsRepository,
-
 		@Inject(DI.noteFavoritesRepository)
 		private noteFavoritesRepository: NoteFavoritesRepository,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const note = await this.notesRepository.findOneByOrFail({ id: ps.noteId });
+			const note = await this.notesRepository.findOneByOrFail({id: ps.noteId});
 
 			const [favorite, threadMuting] = await Promise.all([
 				this.noteFavoritesRepository.count({

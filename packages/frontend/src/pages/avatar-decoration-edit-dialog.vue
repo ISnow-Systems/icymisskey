@@ -4,63 +4,63 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkWindow
-	ref="windowEl"
-	:initialWidth="400"
-	:initialHeight="500"
-	:canResize="true"
-	@close="windowEl?.close()"
-	@closed="emit('closed')"
->
-	<template v-if="avatarDecoration" #header>{{ avatarDecoration.name }}</template>
-	<template v-else #header>New decoration</template>
+	<MkWindow
+		ref="windowEl"
+		:canResize="true"
+		:initialHeight="500"
+		:initialWidth="400"
+		@close="windowEl?.close()"
+		@closed="emit('closed')"
+	>
+		<template v-if="avatarDecoration" #header>{{ avatarDecoration.name }}</template>
+		<template v-else #header>New decoration</template>
 
-	<div style="display: flex; flex-direction: column; min-height: 100%;">
-		<MkSpacer :marginMin="20" :marginMax="28" style="flex-grow: 1;">
-			<div class="_gaps_m">
-				<div :class="$style.preview">
-					<div :class="[$style.previewItem, $style.light]">
-						<MkAvatar style="width: 60px; height: 60px;" :user="$i" :decorations="url != '' ? [{ url }] : []" forceShowDecoration/>
-					</div>
-					<div :class="[$style.previewItem, $style.dark]">
-						<MkAvatar style="width: 60px; height: 60px;" :user="$i" :decorations="url != '' ? [{ url }] : []" forceShowDecoration/>
-					</div>
-				</div>
-				<MkInput v-model="name">
-					<template #label>{{ i18n.ts.name }}</template>
-				</MkInput>
-				<MkInput v-model="url">
-					<template #label>{{ i18n.ts.imageUrl }}</template>
-				</MkInput>
-				<MkTextarea v-model="description">
-					<template #label>{{ i18n.ts.description }}</template>
-				</MkTextarea>
-				<MkFolder>
-					<template #label>{{ i18n.ts.availableRoles }}</template>
-					<template #suffix>{{ rolesThatCanBeUsedThisDecoration.length === 0 ? i18n.ts.all : rolesThatCanBeUsedThisDecoration.length }}</template>
-
-					<div class="_gaps">
-						<MkButton rounded @click="addRole"><i class="ti ti-plus"></i> {{ i18n.ts.add }}</MkButton>
-
-						<div v-for="role in rolesThatCanBeUsedThisDecoration" :key="role.id" :class="$style.roleItem">
-							<MkRolePreview :class="$style.role" :role="role" :forModeration="true" :detailed="false" style="pointer-events: none;"/>
-							<button v-if="role.target === 'manual'" class="_button" :class="$style.roleUnassign" @click="removeRole(role, $event)"><i class="ti ti-x"></i></button>
-							<button v-else class="_button" :class="$style.roleUnassign" disabled><i class="ti ti-ban"></i></button>
+		<div style="display: flex; flex-direction: column; min-height: 100%;">
+			<MkSpacer :marginMax="28" :marginMin="20" style="flex-grow: 1;">
+				<div class="_gaps_m">
+					<div :class="$style.preview">
+						<div :class="[$style.previewItem, $style.light]">
+							<MkAvatar :decorations="url != '' ? [{ url }] : []" :user="$i" forceShowDecoration style="width: 60px; height: 60px;"/>
+						</div>
+						<div :class="[$style.previewItem, $style.dark]">
+							<MkAvatar :decorations="url != '' ? [{ url }] : []" :user="$i" forceShowDecoration style="width: 60px; height: 60px;"/>
 						</div>
 					</div>
-				</MkFolder>
-				<MkButton v-if="avatarDecoration" danger @click="del()"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
+					<MkInput v-model="name">
+						<template #label>{{ i18n.ts.name }}</template>
+					</MkInput>
+					<MkInput v-model="url">
+						<template #label>{{ i18n.ts.imageUrl }}</template>
+					</MkInput>
+					<MkTextarea v-model="description">
+						<template #label>{{ i18n.ts.description }}</template>
+					</MkTextarea>
+					<MkFolder>
+						<template #label>{{ i18n.ts.availableRoles }}</template>
+						<template #suffix>{{ rolesThatCanBeUsedThisDecoration.length === 0 ? i18n.ts.all : rolesThatCanBeUsedThisDecoration.length }}</template>
+
+						<div class="_gaps">
+							<MkButton rounded @click="addRole"><i class="ti ti-plus"></i> {{ i18n.ts.add }}</MkButton>
+
+							<div v-for="role in rolesThatCanBeUsedThisDecoration" :key="role.id" :class="$style.roleItem">
+								<MkRolePreview :class="$style.role" :detailed="false" :forModeration="true" :role="role" style="pointer-events: none;"/>
+								<button v-if="role.target === 'manual'" :class="$style.roleUnassign" class="_button" @click="removeRole(role, $event)"><i class="ti ti-x"></i></button>
+								<button v-else :class="$style.roleUnassign" class="_button" disabled><i class="ti ti-ban"></i></button>
+							</div>
+						</div>
+					</MkFolder>
+					<MkButton v-if="avatarDecoration" danger @click="del()"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
+				</div>
+			</MkSpacer>
+			<div :class="$style.footer">
+				<MkButton primary rounded style="margin: 0 auto;" @click="done"><i class="ti ti-check"></i> {{ props.avatarDecoration ? i18n.ts.update : i18n.ts.create }}</MkButton>
 			</div>
-		</MkSpacer>
-		<div :class="$style.footer">
-			<MkButton primary rounded style="margin: 0 auto;" @click="done"><i class="ti ti-check"></i> {{ props.avatarDecoration ? i18n.ts.update : i18n.ts.create }}</MkButton>
 		</div>
-	</div>
-</MkWindow>
+	</MkWindow>
 </template>
 
 <script lang="ts" setup>
-import { computed, watch, ref } from 'vue';
+import {computed, watch, ref} from 'vue';
 import * as Misskey from 'misskey-js';
 import MkWindow from '@/components/MkWindow.vue';
 import MkButton from '@/components/MkButton.vue';
@@ -68,12 +68,12 @@ import MkInput from '@/components/MkInput.vue';
 import MkInfo from '@/components/MkInfo.vue';
 import MkFolder from '@/components/MkFolder.vue';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { i18n } from '@/i18n.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {i18n} from '@/i18n.js';
 import MkSwitch from '@/components/MkSwitch.vue';
 import MkRolePreview from '@/components/MkRolePreview.vue';
 import MkTextarea from '@/components/MkTextarea.vue';
-import { signinRequired } from '@/account.js';
+import {signinRequired} from '@/account.js';
 
 const $i = signinRequired();
 
@@ -94,15 +94,15 @@ const roleIdsThatCanBeUsedThisDecoration = ref(props.avatarDecoration ? props.av
 const rolesThatCanBeUsedThisDecoration = ref<Misskey.entities.Role[]>([]);
 
 watch(roleIdsThatCanBeUsedThisDecoration, async () => {
-	rolesThatCanBeUsedThisDecoration.value = (await Promise.all(roleIdsThatCanBeUsedThisDecoration.value.map((id) => misskeyApi('admin/roles/show', { roleId: id }).catch(() => null)))).filter(x => x != null);
-}, { immediate: true });
+	rolesThatCanBeUsedThisDecoration.value = (await Promise.all(roleIdsThatCanBeUsedThisDecoration.value.map((id) => misskeyApi('admin/roles/show', {roleId: id}).catch(() => null)))).filter(x => x != null);
+}, {immediate: true});
 
 async function addRole() {
 	const roles = await misskeyApi('admin/roles/list');
 	const currentRoleIds = rolesThatCanBeUsedThisDecoration.value.map(x => x.id);
 
-	const { canceled, result: role } = await os.select({
-		items: roles.filter(r => r.isPublic).filter(r => !currentRoleIds.includes(r.id)).map(r => ({ text: r.name, value: r })),
+	const {canceled, result: role} = await os.select({
+		items: roles.filter(r => r.isPublic).filter(r => !currentRoleIds.includes(r.id)).map(r => ({text: r.name, value: r})),
 	});
 	if (canceled || role == null) return;
 
@@ -147,9 +147,9 @@ async function done() {
 }
 
 async function del() {
-	const { canceled } = await os.confirm({
+	const {canceled} = await os.confirm({
 		type: 'warning',
-		text: i18n.tsx.removeAreYouSure({ x: name.value }),
+		text: i18n.tsx.removeAreYouSure({x: name.value}),
 	});
 	if (canceled) return;
 

@@ -4,16 +4,16 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Test, TestingModule } from '@nestjs/testing';
-import { beforeAll, describe, jest } from '@jest/globals';
-import { WebhookTestService } from '@/core/WebhookTestService.js';
-import { UserWebhookPayload, UserWebhookService } from '@/core/UserWebhookService.js';
-import { SystemWebhookService } from '@/core/SystemWebhookService.js';
-import { GlobalModule } from '@/GlobalModule.js';
-import { MiSystemWebhook, MiUser, MiWebhook, UserProfilesRepository, UsersRepository } from '@/models/_.js';
-import { IdService } from '@/core/IdService.js';
-import { DI } from '@/di-symbols.js';
-import { QueueService } from '@/core/QueueService.js';
+import {Test, TestingModule} from '@nestjs/testing';
+import {beforeAll, describe, jest} from '@jest/globals';
+import {WebhookTestService} from '@/core/WebhookTestService.js';
+import {UserWebhookPayload, UserWebhookService} from '@/core/UserWebhookService.js';
+import {SystemWebhookService} from '@/core/SystemWebhookService.js';
+import {GlobalModule} from '@/GlobalModule.js';
+import {MiSystemWebhook, MiUser, MiWebhook, UserProfilesRepository, UsersRepository} from '@/models/_.js';
+import {IdService} from '@/core/IdService.js';
+import {DI} from '@/di-symbols.js';
+import {QueueService} from '@/core/QueueService.js';
 
 describe('WebhookTestService', () => {
 	let app: TestingModule;
@@ -88,14 +88,14 @@ describe('WebhookTestService', () => {
 	});
 
 	beforeEach(async () => {
-		root = await createUser({ username: 'root', usernameLower: 'root', isRoot: true });
-		alice = await createUser({ username: 'alice', usernameLower: 'alice', isRoot: false });
+		root = await createUser({username: 'root', usernameLower: 'root', isRoot: true});
+		alice = await createUser({username: 'alice', usernameLower: 'alice', isRoot: false});
 
 		userWebhookService.fetchWebhooks.mockReturnValue(Promise.resolve([
-			{ id: 'dummy-webhook', active: true, userId: alice.id } as MiWebhook,
+			{id: 'dummy-webhook', active: true, userId: alice.id} as MiWebhook,
 		]));
 		systemWebhookService.fetchSystemWebhooks.mockReturnValue(Promise.resolve([
-			{ id: 'dummy-webhook', isActive: true } as MiSystemWebhook,
+			{id: 'dummy-webhook', isActive: true} as MiSystemWebhook,
 		]));
 	});
 
@@ -117,7 +117,7 @@ describe('WebhookTestService', () => {
 
 	describe('testUserWebhook', () => {
 		test('note', async () => {
-			await service.testUserWebhook({ webhookId: 'dummy-webhook', type: 'note' }, alice);
+			await service.testUserWebhook({webhookId: 'dummy-webhook', type: 'note'}, alice);
 
 			const calls = queueService.userWebhookDeliver.mock.calls[0];
 			expect((calls[0] as any).id).toBe('dummy-webhook');
@@ -126,7 +126,7 @@ describe('WebhookTestService', () => {
 		});
 
 		test('reply', async () => {
-			await service.testUserWebhook({ webhookId: 'dummy-webhook', type: 'reply' }, alice);
+			await service.testUserWebhook({webhookId: 'dummy-webhook', type: 'reply'}, alice);
 
 			const calls = queueService.userWebhookDeliver.mock.calls[0];
 			expect((calls[0] as any).id).toBe('dummy-webhook');
@@ -135,7 +135,7 @@ describe('WebhookTestService', () => {
 		});
 
 		test('renote', async () => {
-			await service.testUserWebhook({ webhookId: 'dummy-webhook', type: 'renote' }, alice);
+			await service.testUserWebhook({webhookId: 'dummy-webhook', type: 'renote'}, alice);
 
 			const calls = queueService.userWebhookDeliver.mock.calls[0];
 			expect((calls[0] as any).id).toBe('dummy-webhook');
@@ -144,7 +144,7 @@ describe('WebhookTestService', () => {
 		});
 
 		test('mention', async () => {
-			await service.testUserWebhook({ webhookId: 'dummy-webhook', type: 'mention' }, alice);
+			await service.testUserWebhook({webhookId: 'dummy-webhook', type: 'mention'}, alice);
 
 			const calls = queueService.userWebhookDeliver.mock.calls[0];
 			expect((calls[0] as any).id).toBe('dummy-webhook');
@@ -153,7 +153,7 @@ describe('WebhookTestService', () => {
 		});
 
 		test('follow', async () => {
-			await service.testUserWebhook({ webhookId: 'dummy-webhook', type: 'follow' }, alice);
+			await service.testUserWebhook({webhookId: 'dummy-webhook', type: 'follow'}, alice);
 
 			const calls = queueService.userWebhookDeliver.mock.calls[0];
 			expect((calls[0] as any).id).toBe('dummy-webhook');
@@ -162,7 +162,7 @@ describe('WebhookTestService', () => {
 		});
 
 		test('followed', async () => {
-			await service.testUserWebhook({ webhookId: 'dummy-webhook', type: 'followed' }, alice);
+			await service.testUserWebhook({webhookId: 'dummy-webhook', type: 'followed'}, alice);
 
 			const calls = queueService.userWebhookDeliver.mock.calls[0];
 			expect((calls[0] as any).id).toBe('dummy-webhook');
@@ -171,7 +171,7 @@ describe('WebhookTestService', () => {
 		});
 
 		test('unfollow', async () => {
-			await service.testUserWebhook({ webhookId: 'dummy-webhook', type: 'unfollow' }, alice);
+			await service.testUserWebhook({webhookId: 'dummy-webhook', type: 'unfollow'}, alice);
 
 			const calls = queueService.userWebhookDeliver.mock.calls[0];
 			expect((calls[0] as any).id).toBe('dummy-webhook');
@@ -183,10 +183,10 @@ describe('WebhookTestService', () => {
 			test('user not match', async () => {
 				userWebhookService.fetchWebhooks.mockClear();
 				userWebhookService.fetchWebhooks.mockReturnValue(Promise.resolve([
-					{ id: 'dummy-webhook', active: true } as MiWebhook,
+					{id: 'dummy-webhook', active: true} as MiWebhook,
 				]));
 
-				await expect(service.testUserWebhook({ webhookId: 'dummy-webhook', type: 'note' }, root))
+				await expect(service.testUserWebhook({webhookId: 'dummy-webhook', type: 'note'}, root))
 					.rejects.toThrow(WebhookTestService.NoSuchWebhookError);
 			});
 		});
@@ -194,7 +194,7 @@ describe('WebhookTestService', () => {
 
 	describe('testSystemWebhook', () => {
 		test('abuseReport', async () => {
-			await service.testSystemWebhook({ webhookId: 'dummy-webhook', type: 'abuseReport' });
+			await service.testSystemWebhook({webhookId: 'dummy-webhook', type: 'abuseReport'});
 
 			const calls = queueService.systemWebhookDeliver.mock.calls[0];
 			expect((calls[0] as any).id).toBe('dummy-webhook');
@@ -204,7 +204,7 @@ describe('WebhookTestService', () => {
 		});
 
 		test('abuseReportResolved', async () => {
-			await service.testSystemWebhook({ webhookId: 'dummy-webhook', type: 'abuseReportResolved' });
+			await service.testSystemWebhook({webhookId: 'dummy-webhook', type: 'abuseReportResolved'});
 
 			const calls = queueService.systemWebhookDeliver.mock.calls[0];
 			expect((calls[0] as any).id).toBe('dummy-webhook');
@@ -214,7 +214,7 @@ describe('WebhookTestService', () => {
 		});
 
 		test('userCreated', async () => {
-			await service.testSystemWebhook({ webhookId: 'dummy-webhook', type: 'userCreated' });
+			await service.testSystemWebhook({webhookId: 'dummy-webhook', type: 'userCreated'});
 
 			const calls = queueService.systemWebhookDeliver.mock.calls[0];
 			expect((calls[0] as any).id).toBe('dummy-webhook');

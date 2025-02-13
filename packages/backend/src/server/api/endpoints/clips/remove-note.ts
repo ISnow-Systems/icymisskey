@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { ClipService } from '@/core/ClipService.js';
-import { ApiError } from '../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {ClipService} from '@/core/ClipService.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['account', 'notes', 'clips'],
@@ -35,8 +35,8 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		clipId: { type: 'string', format: 'misskey:id' },
-		noteId: { type: 'string', format: 'misskey:id' },
+		clipId: {type: 'string', format: 'misskey:id'},
+		noteId: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['clipId', 'noteId'],
 } as const;

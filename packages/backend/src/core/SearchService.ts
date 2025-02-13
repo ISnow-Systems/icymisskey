@@ -3,21 +3,21 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { In } from 'typeorm';
-import { DI } from '@/di-symbols.js';
-import { type Config, FulltextSearchProvider } from '@/config.js';
-import { bindThis } from '@/decorators.js';
-import { MiNote } from '@/models/Note.js';
-import type { NotesRepository } from '@/models/_.js';
-import { MiUser } from '@/models/_.js';
-import { sqlLikeEscape } from '@/misc/sql-like-escape.js';
-import { isUserRelated } from '@/misc/is-user-related.js';
-import { CacheService } from '@/core/CacheService.js';
-import { QueryService } from '@/core/QueryService.js';
-import { IdService } from '@/core/IdService.js';
-import { LoggerService } from '@/core/LoggerService.js';
-import type { Index, MeiliSearch } from 'meilisearch';
+import {Inject, Injectable} from '@nestjs/common';
+import {In} from 'typeorm';
+import {DI} from '@/di-symbols.js';
+import {type Config, FulltextSearchProvider} from '@/config.js';
+import {bindThis} from '@/decorators.js';
+import {MiNote} from '@/models/Note.js';
+import type {NotesRepository} from '@/models/_.js';
+import {MiUser} from '@/models/_.js';
+import {sqlLikeEscape} from '@/misc/sql-like-escape.js';
+import {isUserRelated} from '@/misc/is-user-related.js';
+import {CacheService} from '@/core/CacheService.js';
+import {QueryService} from '@/core/QueryService.js';
+import {IdService} from '@/core/IdService.js';
+import {LoggerService} from '@/core/LoggerService.js';
+import type {Index, MeiliSearch} from 'meilisearch';
 
 type K = string;
 type V = string | number | boolean;
@@ -59,18 +59,30 @@ function compileValue(value: V): string {
 
 function compileQuery(q: Q): string {
 	switch (q.op) {
-		case '=': return `(${q.k} = ${compileValue(q.v)})`;
-		case '!=': return `(${q.k} != ${compileValue(q.v)})`;
-		case '>': return `(${q.k} > ${compileValue(q.v)})`;
-		case '<': return `(${q.k} < ${compileValue(q.v)})`;
-		case '>=': return `(${q.k} >= ${compileValue(q.v)})`;
-		case '<=': return `(${q.k} <= ${compileValue(q.v)})`;
-		case 'and': return q.qs.length === 0 ? '' : `(${ q.qs.map(_q => compileQuery(_q)).join(' AND ') })`;
-		case 'or': return q.qs.length === 0 ? '' : `(${ q.qs.map(_q => compileQuery(_q)).join(' OR ') })`;
-		case 'is null': return `(${q.k} IS NULL)`;
-		case 'is not null': return `(${q.k} IS NOT NULL)`;
-		case 'not': return `(NOT ${compileQuery(q.q)})`;
-		default: throw new Error('unrecognized query operator');
+		case '=':
+			return `(${q.k} = ${compileValue(q.v)})`;
+		case '!=':
+			return `(${q.k} != ${compileValue(q.v)})`;
+		case '>':
+			return `(${q.k} > ${compileValue(q.v)})`;
+		case '<':
+			return `(${q.k} < ${compileValue(q.v)})`;
+		case '>=':
+			return `(${q.k} >= ${compileValue(q.v)})`;
+		case '<=':
+			return `(${q.k} <= ${compileValue(q.v)})`;
+		case 'and':
+			return q.qs.length === 0 ? '' : `(${q.qs.map(_q => compileQuery(_q)).join(' AND ')})`;
+		case 'or':
+			return q.qs.length === 0 ? '' : `(${q.qs.map(_q => compileQuery(_q)).join(' OR ')})`;
+		case 'is null':
+			return `(${q.k} IS NULL)`;
+		case 'is not null':
+			return `(${q.k} IS NOT NULL)`;
+		case 'not':
+			return `(NOT ${compileQuery(q.q)})`;
+		default:
+			throw new Error('unrecognized query operator');
 	}
 }
 
@@ -83,13 +95,10 @@ export class SearchService {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.meilisearch)
 		private meilisearch: MeiliSearch | null,
-
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		private cacheService: CacheService,
 		private queryService: QueryService,
 		private idService: IdService,
@@ -207,9 +216,9 @@ export class SearchService {
 		const query = this.queryService.makePaginationQuery(this.notesRepository.createQueryBuilder('note'), pagination.sinceId, pagination.untilId);
 
 		if (opts.userId) {
-			query.andWhere('note.userId = :userId', { userId: opts.userId });
+			query.andWhere('note.userId = :userId', {userId: opts.userId});
 		} else if (opts.channelId) {
-			query.andWhere('note.channelId = :channelId', { channelId: opts.channelId });
+			query.andWhere('note.channelId = :channelId', {channelId: opts.channelId});
 		}
 
 		query
@@ -220,16 +229,16 @@ export class SearchService {
 			.leftJoinAndSelect('renote.user', 'renoteUser');
 
 		if (this.config.fulltextSearch?.provider === 'sqlPgroonga') {
-			query.andWhere('note.text &@ :q', { q });
+			query.andWhere('note.text &@ :q', {q});
 		} else {
-			query.andWhere('LOWER(note.text) LIKE :q', { q: `%${ sqlLikeEscape(q.toLowerCase()) }%` });
+			query.andWhere('LOWER(note.text) LIKE :q', {q: `%${sqlLikeEscape(q.toLowerCase())}%`});
 		}
 
 		if (opts.host) {
 			if (opts.host === '.') {
 				query.andWhere('user.host IS NULL');
 			} else {
-				query.andWhere('user.host = :host', { host: opts.host });
+				query.andWhere('user.host = :host', {host: opts.host});
 			}
 		}
 
@@ -265,13 +274,13 @@ export class SearchService {
 			k: 'createdAt',
 			v: this.idService.parse(pagination.sinceId).date.getTime(),
 		});
-		if (opts.userId) filter.qs.push({ op: '=', k: 'userId', v: opts.userId });
-		if (opts.channelId) filter.qs.push({ op: '=', k: 'channelId', v: opts.channelId });
+		if (opts.userId) filter.qs.push({op: '=', k: 'userId', v: opts.userId});
+		if (opts.channelId) filter.qs.push({op: '=', k: 'channelId', v: opts.channelId});
 		if (opts.host) {
 			if (opts.host === '.') {
-				filter.qs.push({ op: 'is null', k: 'userHost' });
+				filter.qs.push({op: 'is null', k: 'userHost'});
 			} else {
-				filter.qs.push({ op: '=', k: 'userHost', v: opts.host });
+				filter.qs.push({op: '=', k: 'userHost', v: opts.host});
 			}
 		}
 

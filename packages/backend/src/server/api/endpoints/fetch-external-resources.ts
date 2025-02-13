@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { createHash } from 'crypto';
+import {createHash} from 'crypto';
 import ms from 'ms';
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { HttpRequestService } from '@/core/HttpRequestService.js';
-import { ApiError } from '../error.js';
+import {Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {HttpRequestService} from '@/core/HttpRequestService.js';
+import {ApiError} from '../error.js';
 
 export const meta = {
 	tags: ['meta'],
@@ -50,8 +50,8 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		url: { type: 'string' },
-		hash: { type: 'string' },
+		url: {type: 'string'},
+		hash: {type: 'string'},
 	},
 	required: ['url', 'hash'],
 } as const;

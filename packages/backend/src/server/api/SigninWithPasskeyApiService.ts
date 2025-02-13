@@ -3,45 +3,42 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { randomUUID } from 'crypto';
-import { Inject, Injectable } from '@nestjs/common';
-import { IsNull } from 'typeorm';
-import { DI } from '@/di-symbols.js';
+import {randomUUID} from 'crypto';
+import {Inject, Injectable} from '@nestjs/common';
+import {IsNull} from 'typeorm';
+import {DI} from '@/di-symbols.js';
 import type {
 	SigninsRepository,
 	UserProfilesRepository,
 	UsersRepository,
 } from '@/models/_.js';
-import type { Config } from '@/config.js';
-import { getIpHash } from '@/misc/get-ip-hash.js';
-import type { MiLocalUser, MiUser } from '@/models/User.js';
-import { IdService } from '@/core/IdService.js';
-import { bindThis } from '@/decorators.js';
-import { WebAuthnService } from '@/core/WebAuthnService.js';
+import type {Config} from '@/config.js';
+import {getIpHash} from '@/misc/get-ip-hash.js';
+import type {MiLocalUser, MiUser} from '@/models/User.js';
+import {IdService} from '@/core/IdService.js';
+import {bindThis} from '@/decorators.js';
+import {WebAuthnService} from '@/core/WebAuthnService.js';
 import Logger from '@/logger.js';
-import { LoggerService } from '@/core/LoggerService.js';
-import type { IdentifiableError } from '@/misc/identifiable-error.js';
-import { RateLimiterService } from './RateLimiterService.js';
-import { SigninService } from './SigninService.js';
-import type { AuthenticationResponseJSON } from '@simplewebauthn/types';
-import type { FastifyReply, FastifyRequest } from 'fastify';
+import {LoggerService} from '@/core/LoggerService.js';
+import type {IdentifiableError} from '@/misc/identifiable-error.js';
+import {RateLimiterService} from './RateLimiterService.js';
+import {SigninService} from './SigninService.js';
+import type {AuthenticationResponseJSON} from '@simplewebauthn/types';
+import type {FastifyReply, FastifyRequest} from 'fastify';
 
 @Injectable()
 export class SigninWithPasskeyApiService {
 	private logger: Logger;
+
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
-
 		@Inject(DI.signinsRepository)
 		private signinsRepository: SigninsRepository,
-
 		private idService: IdService,
 		private rateLimiterService: RateLimiterService,
 		private signinService: SigninService,
@@ -69,7 +66,7 @@ export class SigninWithPasskeyApiService {
 
 		function error(status: number, error: { id: string }) {
 			reply.code(status);
-			return { error };
+			return {error};
 		}
 
 		const fail = async (userId: MiUser['id'], status?: number, failure?: { id: string }) => {
@@ -81,13 +78,13 @@ export class SigninWithPasskeyApiService {
 				headers: request.headers as any,
 				success: false,
 			});
-			return error(status ?? 500, failure ?? { id: '4e30e80c-e338-45a0-8c8f-44455efa3b76' });
+			return error(status ?? 500, failure ?? {id: '4e30e80c-e338-45a0-8c8f-44455efa3b76'});
 		};
 
 		try {
 			// Not more than 1 API call per 250ms and not more than 100 attempts per 30min
 			// NOTE: 1 Sign-in require 2 API calls
-			await this.rateLimiterService.limit({ key: 'signin-with-passkey', duration: 60 * 30 * 1000, max: 200, minInterval: 250 }, getIpHash(request.ip));
+			await this.rateLimiterService.limit({key: 'signin-with-passkey', duration: 60 * 30 * 1000, max: 200, minInterval: 250}, getIpHash(request.ip));
 		} catch (err) {
 			reply.code(429);
 			return {
@@ -156,7 +153,7 @@ export class SigninWithPasskeyApiService {
 			});
 		}
 
-		const profile = await this.userProfilesRepository.findOneByOrFail({ userId: user.id });
+		const profile = await this.userProfilesRepository.findOneByOrFail({userId: user.id});
 
 		// Authentication was successful, but passwordless login is not enabled
 		if (!profile.usePasswordLessLogin) {

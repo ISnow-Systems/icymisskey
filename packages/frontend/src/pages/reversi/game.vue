@@ -4,25 +4,27 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div v-if="game == null || (!game.isEnded && connection == null)"><MkLoading/></div>
-<GameSetting v-else-if="!game.isStarted" v-model:shareWhenStart="shareWhenStart" :game="game" :connection="connection!"/>
-<GameBoard v-else :game="game" :connection="connection"/>
+	<div v-if="game == null || (!game.isEnded && connection == null)">
+		<MkLoading/>
+	</div>
+	<GameSetting v-else-if="!game.isStarted" v-model:shareWhenStart="shareWhenStart" :connection="connection!" :game="game"/>
+	<GameBoard v-else :connection="connection" :game="game"/>
 </template>
 
 <script lang="ts" setup>
-import { computed, watch, ref, onMounted, shallowRef, onUnmounted } from 'vue';
+import {computed, watch, ref, onMounted, shallowRef, onUnmounted} from 'vue';
 import * as Misskey from 'misskey-js';
 import GameSetting from './game.setting.vue';
 import GameBoard from './game.board.vue';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
-import { useStream } from '@/stream.js';
-import { signinRequired } from '@/account.js';
-import { useRouter } from '@/router/supplier.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
+import {useStream} from '@/stream.js';
+import {signinRequired} from '@/account.js';
+import {useRouter} from '@/router/supplier.js';
 import * as os from '@/os.js';
-import { url } from '@@/js/config.js';
-import { i18n } from '@/i18n.js';
-import { useInterval } from '@@/js/use-interval.js';
+import {url} from '@@/js/config.js';
+import {i18n} from '@/i18n.js';
+import {useInterval} from '@@/js/use-interval.js';
 
 const $i = signinRequired();
 

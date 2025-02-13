@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { GetterService } from '@/server/api/GetterService.js';
-import { ApiError } from '../../error.js';
+import {Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
+import {GetterService} from '@/server/api/GetterService.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['notes'],
@@ -38,7 +38,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		noteId: { type: 'string', format: 'misskey:id' },
+		noteId: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['noteId'],
 } as const;

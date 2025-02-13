@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { defineAsyncComponent } from 'vue';
-import { compareVersions } from 'compare-versions';
-import { v4 as uuid } from 'uuid';
-import { Interpreter, Parser, utils } from '@syuilo/aiscript';
-import type { Plugin } from '@/store.js';
-import { ColdDeviceStorage } from '@/store.js';
+import {defineAsyncComponent} from 'vue';
+import {compareVersions} from 'compare-versions';
+import {v4 as uuid} from 'uuid';
+import {Interpreter, Parser, utils} from '@syuilo/aiscript';
+import type {Plugin} from '@/store.js';
+import {ColdDeviceStorage} from '@/store.js';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { i18n } from '@/i18n.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {i18n} from '@/i18n.js';
 
 export type AiScriptPluginMeta = {
 	name: string;
@@ -24,7 +24,7 @@ export type AiScriptPluginMeta = {
 
 const parser = new Parser();
 
-export function savePlugin({ id, meta, src, token }: {
+export function savePlugin({id, meta, src, token}: {
 	id: string;
 	meta: AiScriptPluginMeta;
 	src: string;
@@ -77,7 +77,7 @@ export async function parsePluginMeta(code: string): Promise<AiScriptPluginMeta>
 		throw new Error('Metadata not found');
 	}
 
-	const { name, version, author, description, permissions, config } = metadata;
+	const {name, version, author, description, permissions, config} = metadata;
 	if (name == null || version == null || author == null) {
 		throw new Error('Required property not found');
 	}
@@ -103,15 +103,15 @@ export async function installPlugin(code: string, meta?: AiScriptPluginMeta) {
 	}
 
 	const token = realMeta.permissions == null || realMeta.permissions.length === 0 ? null : await new Promise((res, rej) => {
-		const { dispose } = os.popup(defineAsyncComponent(() => import('@/components/MkTokenGenerateWindow.vue')), {
+		const {dispose} = os.popup(defineAsyncComponent(() => import('@/components/MkTokenGenerateWindow.vue')), {
 			title: i18n.ts.tokenRequested,
 			information: i18n.ts.pluginTokenRequestedDescription,
 			initialName: realMeta.name,
 			initialPermissions: realMeta.permissions,
 		}, {
 			done: async result => {
-				const { name, permissions } = result;
-				const { token } = await misskeyApi('miauth/gen-token', {
+				const {name, permissions} = result;
+				const {token} = await misskeyApi('miauth/gen-token', {
 					session: null,
 					name: name,
 					permission: permissions,

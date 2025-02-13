@@ -4,6 +4,7 @@
  */
 
 let isWebpSupportedCache: boolean | undefined;
+
 export function isWebpSupported() {
 	if (isWebpSupportedCache === undefined) {
 		const canvas = document.createElement('canvas');

@@ -24,7 +24,9 @@
 		"isolatedModules": true,
 		"baseUrl": "./",
 		"paths": {
-			"@/*": ["../src/*"]
+			"@/*": [
+				"../src/*"
+			]
 		},
 		"typeRoots": [
 			"../node_modules/@types"
@@ -33,7 +35,9 @@
 			"esnext",
 			"dom"
 		],
-		"types": ["node"]
+		"types": [
+			"node"
+		]
 	},
 	"compileOnSave": false,
 	"include": [

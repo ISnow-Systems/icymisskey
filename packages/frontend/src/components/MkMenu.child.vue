@@ -4,15 +4,15 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div ref="el" :class="$style.root">
-	<MkMenu :items="items" :align="align" :width="width" :asDrawer="false" @close="onChildClosed"/>
-</div>
+	<div ref="el" :class="$style.root">
+		<MkMenu :align="align" :asDrawer="false" :items="items" :width="width" @close="onChildClosed"/>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { nextTick, onMounted, onUnmounted, provide, shallowRef, watch } from 'vue';
+import {nextTick, onMounted, onUnmounted, provide, shallowRef, watch} from 'vue';
 import MkMenu from './MkMenu.vue';
-import type { MenuItem } from '@/types/menu.js';
+import type {MenuItem} from '@/types/menu.js';
 
 const props = defineProps<{
 	items: MenuItem[];

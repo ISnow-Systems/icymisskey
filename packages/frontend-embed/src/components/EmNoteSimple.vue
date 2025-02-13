@@ -4,27 +4,27 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="$style.root">
-	<EmAvatar :class="$style.avatar" :user="note.user" link preview/>
-	<div :class="$style.main">
-		<EmNoteHeader :class="$style.header" :note="note" :mini="true"/>
-		<div>
-			<p v-if="note.cw != null" :class="$style.cw">
-				<EmMfm v-if="note.cw != ''" style="margin-right: 8px;" :text="note.cw" :author="note.user" :nyaize="'respect'" :emojiUrls="note.emojis"/>
-				<button style="display: block; width: 100%;" class="_buttonGray _buttonRounded" @click="showContent = !showContent">{{ showContent ? i18n.ts._cw.hide : i18n.ts._cw.show }}</button>
-			</p>
-			<div v-show="note.cw == null || showContent">
-				<EmSubNoteContent :class="$style.text" :note="note"/>
+	<div :class="$style.root">
+		<EmAvatar :class="$style.avatar" :user="note.user" link preview/>
+		<div :class="$style.main">
+			<EmNoteHeader :class="$style.header" :mini="true" :note="note"/>
+			<div>
+				<p v-if="note.cw != null" :class="$style.cw">
+					<EmMfm v-if="note.cw != ''" :author="note.user" :emojiUrls="note.emojis" :nyaize="'respect'" :text="note.cw" style="margin-right: 8px;"/>
+					<button class="_buttonGray _buttonRounded" style="display: block; width: 100%;" @click="showContent = !showContent">{{ showContent ? i18n.ts._cw.hide : i18n.ts._cw.show }}</button>
+				</p>
+				<div v-show="note.cw == null || showContent">
+					<EmSubNoteContent :class="$style.text" :note="note"/>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import {ref} from 'vue';
 import * as Misskey from 'misskey-js';
-import { i18n } from '@/i18n.js';
+import {i18n} from '@/i18n.js';
 import EmAvatar from '@/components/EmAvatar.vue';
 import EmNoteHeader from '@/components/EmNoteHeader.vue';
 import EmSubNoteContent from '@/components/EmSubNoteContent.vue';

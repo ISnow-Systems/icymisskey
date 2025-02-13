@@ -4,16 +4,18 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="[$style.root, { [$style.warn]: warn }]">
-	<i v-if="warn" class="ti ti-alert-triangle" :class="$style.i"></i>
-	<i v-else class="ti ti-info-circle" :class="$style.i"></i>
-	<div><slot></slot></div>
-	<button v-if="closable" :class="$style.button" class="_button" @click="close()"><i class="ti ti-x"></i></button>
-</div>
+	<div :class="[$style.root, { [$style.warn]: warn }]">
+		<i v-if="warn" :class="$style.i" class="ti ti-alert-triangle"></i>
+		<i v-else :class="$style.i" class="ti ti-info-circle"></i>
+		<div>
+			<slot></slot>
+		</div>
+		<button v-if="closable" :class="$style.button" class="_button" @click="close()"><i class="ti ti-x"></i></button>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import {} from 'vue';
 
 const props = defineProps<{
 	warn?: boolean;
@@ -33,7 +35,7 @@ function close() {
 <style lang="scss" module>
 .root {
 	display: flex;
-  align-items: center;
+	align-items: center;
 	padding: 12px 14px;
 	font-size: 90%;
 	background: var(--MI_THEME-infoBg);

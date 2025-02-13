@@ -4,39 +4,41 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkContainer :naked="widgetProps.transparent" :showHeader="widgetProps.showHeader" class="mkw-rss-ticker">
-	<template #icon><i class="ti ti-rss"></i></template>
-	<template #header>RSS</template>
-	<template #func="{ buttonStyleClass }"><button class="_button" :class="buttonStyleClass" @click="configure"><i class="ti ti-settings"></i></button></template>
+	<MkContainer :naked="widgetProps.transparent" :showHeader="widgetProps.showHeader" class="mkw-rss-ticker">
+		<template #icon><i class="ti ti-rss"></i></template>
+		<template #header>RSS</template>
+		<template #func="{ buttonStyleClass }">
+			<button :class="buttonStyleClass" class="_button" @click="configure"><i class="ti ti-settings"></i></button>
+		</template>
 
-	<div :class="$style.feed">
-		<div v-if="fetching" :class="$style.loading">
-			<MkEllipsis/>
-		</div>
-		<div v-else>
-			<Transition :name="$style.change" mode="default" appear>
-				<MarqueeText :key="key" :duration="widgetProps.duration" :reverse="widgetProps.reverse">
+		<div :class="$style.feed">
+			<div v-if="fetching" :class="$style.loading">
+				<MkEllipsis/>
+			</div>
+			<div v-else>
+				<Transition :name="$style.change" appear mode="default">
+					<MarqueeText :key="key" :duration="widgetProps.duration" :reverse="widgetProps.reverse">
 					<span v-for="item in items" :key="item.link" :class="$style.item">
-						<a :href="item.link" rel="nofollow noopener" target="_blank" :title="item.title">{{ item.title }}</a><span :class="$style.divider"></span>
+						<a :href="item.link" :title="item.title" rel="nofollow noopener" target="_blank">{{ item.title }}</a><span :class="$style.divider"></span>
 					</span>
-				</MarqueeText>
-			</Transition>
+					</MarqueeText>
+				</Transition>
+			</div>
 		</div>
-	</div>
-</MkContainer>
+	</MkContainer>
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, computed } from 'vue';
+import {ref, watch, computed} from 'vue';
 import * as Misskey from 'misskey-js';
-import { useWidgetPropsManager } from './widget.js';
-import type { WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget.js';
+import {useWidgetPropsManager} from './widget.js';
+import type {WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps} from './widget.js';
 import MarqueeText from '@/components/MkMarquee.vue';
-import type { GetFormResultType } from '@/scripts/form.js';
+import type {GetFormResultType} from '@/scripts/form.js';
 import MkContainer from '@/components/MkContainer.vue';
-import { shuffle } from '@/scripts/shuffle.js';
-import { url as base } from '@@/js/config.js';
-import { useInterval } from '@@/js/use-interval.js';
+import {shuffle} from '@/scripts/shuffle.js';
+import {url as base} from '@@/js/config.js';
+import {useInterval} from '@@/js/use-interval.js';
 
 const name = 'rssTicker';
 
@@ -83,7 +85,7 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 const props = defineProps<WidgetComponentProps<WidgetProps>>();
 const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 
-const { widgetProps, configure } = useWidgetPropsManager(name,
+const {widgetProps, configure} = useWidgetPropsManager(name,
 	widgetPropsDef,
 	props,
 	emit,
@@ -128,7 +130,7 @@ watch(() => widgetProps.refreshIntervalSec, () => {
 		immediate: true,
 		afterMounted: true,
 	});
-}, { immediate: true });
+}, {immediate: true});
 
 defineExpose<WidgetComponentExpose>({
 	name,
@@ -145,10 +147,12 @@ defineExpose<WidgetComponentExpose>({
 		top: 0;
 		transition: all 1s ease;
 	}
+
 	&:global(-enter-from) {
 		opacity: 0;
 		transform: translateY(-100%);
 	}
+
 	&:global(-leave-to) {
 		opacity: 0;
 		transform: translateY(100%);

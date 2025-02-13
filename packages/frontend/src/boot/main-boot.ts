@@ -3,31 +3,31 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { createApp, defineAsyncComponent, markRaw } from 'vue';
-import { ui } from '@@/js/config.js';
-import { common } from './common.js';
+import {createApp, defineAsyncComponent, markRaw} from 'vue';
+import {ui} from '@@/js/config.js';
+import {common} from './common.js';
 import * as Misskey from 'misskey-js';
-import type { Component } from 'vue';
-import { i18n } from '@/i18n.js';
-import { alert, confirm, popup, post, toast } from '@/os.js';
-import { useStream } from '@/stream.js';
+import type {Component} from 'vue';
+import {i18n} from '@/i18n.js';
+import {alert, confirm, popup, post, toast} from '@/os.js';
+import {useStream} from '@/stream.js';
 import * as sound from '@/scripts/sound.js';
-import { $i, signout, updateAccountPartial } from '@/account.js';
-import { instance } from '@/instance.js';
-import { ColdDeviceStorage, defaultStore } from '@/store.js';
-import { reactionPicker } from '@/scripts/reaction-picker.js';
-import { miLocalStorage } from '@/local-storage.js';
-import { claimAchievement, claimedAchievements } from '@/scripts/achievements.js';
-import { initializeSw } from '@/scripts/initialize-sw.js';
-import { deckStore } from '@/ui/deck/deck-store.js';
-import { emojiPicker } from '@/scripts/emoji-picker.js';
-import { mainRouter } from '@/router/main.js';
-import { makeHotkey } from '@/scripts/hotkey.js';
-import type { Keymap } from '@/scripts/hotkey.js';
-import { addCustomEmoji, removeCustomEmojis, updateCustomEmojis } from '@/custom-emojis.js';
+import {$i, signout, updateAccountPartial} from '@/account.js';
+import {instance} from '@/instance.js';
+import {ColdDeviceStorage, defaultStore} from '@/store.js';
+import {reactionPicker} from '@/scripts/reaction-picker.js';
+import {miLocalStorage} from '@/local-storage.js';
+import {claimAchievement, claimedAchievements} from '@/scripts/achievements.js';
+import {initializeSw} from '@/scripts/initialize-sw.js';
+import {deckStore} from '@/ui/deck/deck-store.js';
+import {emojiPicker} from '@/scripts/emoji-picker.js';
+import {mainRouter} from '@/router/main.js';
+import {makeHotkey} from '@/scripts/hotkey.js';
+import type {Keymap} from '@/scripts/hotkey.js';
+import {addCustomEmoji, removeCustomEmojis, updateCustomEmojis} from '@/custom-emojis.js';
 
 export async function mainBoot() {
-	const { isClientUpdated } = await common(() => {
+	const {isClientUpdated} = await common(() => {
 		let uiStyle = ui;
 		const searchParams = new URLSearchParams(window.location.search);
 
@@ -64,7 +64,7 @@ export async function mainBoot() {
 	emojiPicker.init();
 
 	if (isClientUpdated && $i) {
-		const { dispose } = popup(defineAsyncComponent(() => import('@/components/MkUpdated.vue')), {}, {
+		const {dispose} = popup(defineAsyncComponent(() => import('@/components/MkUpdated.vue')), {}, {
 			closed: () => dispose(),
 		});
 	}
@@ -78,7 +78,7 @@ export async function mainBoot() {
 		} else if (defaultStore.state.serverDisconnectedBehavior === 'dialog') {
 			if (reloadDialogShowing) return;
 			reloadDialogShowing = true;
-			const { canceled } = await confirm({
+			const {canceled} = await confirm({
 				type: 'warning',
 				title: i18n.ts.disconnectedFromServer,
 				text: i18n.ts.reloadConfirm,
@@ -103,7 +103,7 @@ export async function mainBoot() {
 	});
 
 	for (const plugin of ColdDeviceStorage.get('plugins').filter(p => p.active)) {
-		import('@/plugin.js').then(async ({ install }) => {
+		import('@/plugin.js').then(async ({install}) => {
 			// Workaround for https://bugs.webkit.org/show_bug.cgi?id=242740
 			await new Promise(r => setTimeout(r, 0));
 			install(plugin);
@@ -140,24 +140,24 @@ export async function mainBoot() {
 	if ($i) {
 		defaultStore.loaded.then(() => {
 			if (defaultStore.state.accountSetupWizard !== -1) {
-				const { dispose } = popup(defineAsyncComponent(() => import('@/components/MkUserSetupDialog.vue')), {}, {
+				const {dispose} = popup(defineAsyncComponent(() => import('@/components/MkUserSetupDialog.vue')), {}, {
 					closed: () => dispose(),
 				});
 			}
 		});
 
 		for (const announcement of ($i.unreadAnnouncements ?? []).filter(x => x.display === 'dialog')) {
-			const { dispose } = popup(defineAsyncComponent(() => import('@/components/MkAnnouncementDialog.vue')), {
+			const {dispose} = popup(defineAsyncComponent(() => import('@/components/MkAnnouncementDialog.vue')), {
 				announcement,
 			}, {
 				closed: () => dispose(),
 			});
 		}
 
-		function onAnnouncementCreated (ev: { announcement: Misskey.entities.Announcement }) {
+		function onAnnouncementCreated(ev: { announcement: Misskey.entities.Announcement }) {
 			const announcement = ev.announcement;
 			if (announcement.display === 'dialog') {
-				const { dispose } = popup(defineAsyncComponent(() => import('@/components/MkAnnouncementDialog.vue')), {
+				const {dispose} = popup(defineAsyncComponent(() => import('@/components/MkAnnouncementDialog.vue')), {
 					announcement,
 				}, {
 					closed: () => dispose(),
@@ -290,7 +290,7 @@ export async function mainBoot() {
 				}
 
 				lastVisibilityChangedAt = now;
-			}, { passive: true });
+			}, {passive: true});
 
 			claimPlainLucky();
 		}
@@ -324,7 +324,7 @@ export async function mainBoot() {
 		const neverShowDonationInfo = miLocalStorage.getItem('neverShowDonationInfo');
 		if (neverShowDonationInfo !== 'true' && (createdAt.getTime() < (Date.now() - (1000 * 60 * 60 * 24 * 3))) && !location.pathname.startsWith('/miauth')) {
 			if (latestDonationInfoShownAt == null || (new Date(latestDonationInfoShownAt).getTime() < (Date.now() - (1000 * 60 * 60 * 24 * 30)))) {
-				const { dispose } = popup(defineAsyncComponent(() => import('@/components/MkDonation.vue')), {}, {
+				const {dispose} = popup(defineAsyncComponent(() => import('@/components/MkDonation.vue')), {}, {
 					closed: () => dispose(),
 				});
 			}
@@ -332,7 +332,7 @@ export async function mainBoot() {
 
 		const modifiedVersionMustProminentlyOfferInAgplV3Section13Read = miLocalStorage.getItem('modifiedVersionMustProminentlyOfferInAgplV3Section13Read');
 		if (modifiedVersionMustProminentlyOfferInAgplV3Section13Read !== 'true' && instance.repositoryUrl !== 'https://github.com/misskey-dev/misskey') {
-			const { dispose } = popup(defineAsyncComponent(() => import('@/components/MkSourceCodeAvailablePopup.vue')), {}, {
+			const {dispose} = popup(defineAsyncComponent(() => import('@/components/MkSourceCodeAvailablePopup.vue')), {}, {
 				closed: () => dispose(),
 			});
 		}
@@ -367,32 +367,32 @@ export async function mainBoot() {
 		});
 
 		main.on('unreadMention', () => {
-			updateAccountPartial({ hasUnreadMentions: true });
+			updateAccountPartial({hasUnreadMentions: true});
 		});
 
 		main.on('readAllUnreadMentions', () => {
-			updateAccountPartial({ hasUnreadMentions: false });
+			updateAccountPartial({hasUnreadMentions: false});
 		});
 
 		main.on('unreadSpecifiedNote', () => {
-			updateAccountPartial({ hasUnreadSpecifiedNotes: true });
+			updateAccountPartial({hasUnreadSpecifiedNotes: true});
 		});
 
 		main.on('readAllUnreadSpecifiedNotes', () => {
-			updateAccountPartial({ hasUnreadSpecifiedNotes: false });
+			updateAccountPartial({hasUnreadSpecifiedNotes: false});
 		});
 
 		main.on('readAllAntennas', () => {
-			updateAccountPartial({ hasUnreadAntenna: false });
+			updateAccountPartial({hasUnreadAntenna: false});
 		});
 
 		main.on('unreadAntenna', () => {
-			updateAccountPartial({ hasUnreadAntenna: true });
+			updateAccountPartial({hasUnreadAntenna: true});
 			sound.playMisskeySfx('antenna');
 		});
 
 		main.on('readAllAnnouncements', () => {
-			updateAccountPartial({ hasUnreadAnnouncement: false });
+			updateAccountPartial({hasUnreadAnnouncement: false});
 		});
 
 		// 個人宛てお知らせが発行されたとき
@@ -418,7 +418,7 @@ export async function mainBoot() {
 			mainRouter.push('/search');
 		},
 	} as const satisfies Keymap;
-	document.addEventListener('keydown', makeHotkey(keymap), { passive: false });
+	document.addEventListener('keydown', makeHotkey(keymap), {passive: false});
 
 	initializeSw();
 }

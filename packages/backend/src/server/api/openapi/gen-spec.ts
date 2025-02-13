@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { Config } from '@/config.js';
-import endpoints, { IEndpoint } from '../endpoints.js';
-import { errors as basicErrors } from './errors.js';
-import { getSchemas, convertSchemaToOpenApiSchema } from './schemas.js';
+import type {Config} from '@/config.js';
+import endpoints, {IEndpoint} from '../endpoints.js';
+import {errors as basicErrors} from './errors.js';
+import {getSchemas, convertSchemaToOpenApiSchema} from './schemas.js';
 
 export function genOpenapiSpec(config: Config, includeSelfRef = false) {
 	const spec = {
@@ -70,7 +70,7 @@ export function genOpenapiSpec(config: Config, includeSelfRef = false) {
 		}
 
 		const requestType = endpoint.meta.requireFile ? 'multipart/form-data' : 'application/json';
-		const schema = { ...convertSchemaToOpenApiSchema(endpoint.params, 'param', false) };
+		const schema = {...convertSchemaToOpenApiSchema(endpoint.params, 'param', false)};
 
 		if (endpoint.meta.requireFile) {
 			schema.properties = {
@@ -144,7 +144,7 @@ export function genOpenapiSpec(config: Config, includeSelfRef = false) {
 							schema: {
 								$ref: '#/components/schemas/Error',
 							},
-							examples: { ...errors, ...basicErrors['400'] },
+							examples: {...errors, ...basicErrors['400']},
 						},
 					},
 				},

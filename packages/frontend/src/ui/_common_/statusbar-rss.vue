@@ -8,14 +8,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 	<template v-if="display === 'marquee'">
 		<Transition
 			:enterActiveClass="$style.transition_change_enterActive"
-			:leaveActiveClass="$style.transition_change_leaveActive"
 			:enterFromClass="$style.transition_change_enterFrom"
+			:leaveActiveClass="$style.transition_change_leaveActive"
 			:leaveToClass="$style.transition_change_leaveTo"
 			mode="default"
 		>
 			<MarqueeText :key="key" :duration="marqueeDuration" :reverse="marqueeReverse">
 				<span v-for="item in items" :class="$style.item">
-					<a :href="item.link" rel="nofollow noopener" target="_blank" :title="item.title">{{ item.title }}</a><span :class="$style.divider"></span>
+					<a :href="item.link" :title="item.title" rel="nofollow noopener" target="_blank">{{ item.title }}</a><span :class="$style.divider"></span>
 				</span>
 			</MarqueeText>
 		</Transition>
@@ -27,11 +27,11 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import {ref} from 'vue';
 import * as Misskey from 'misskey-js';
 import MarqueeText from '@/components/MkMarquee.vue';
-import { useInterval } from '@@/js/use-interval.js';
-import { shuffle } from '@/scripts/shuffle.js';
+import {useInterval} from '@@/js/use-interval.js';
+import {shuffle} from '@/scripts/shuffle.js';
 
 const props = defineProps<{
 	url?: string;
@@ -71,12 +71,14 @@ useInterval(tick, Math.max(5000, props.refreshIntervalSec * 1000), {
 .transition_change_leaveActive {
 	position: absolute;
 	top: 0;
-  transition: all 1s ease;
+	transition: all 1s ease;
 }
+
 .transition_change_enterFrom {
 	opacity: 0;
 	transform: translateY(-100%);
 }
+
 .transition_change_leaveTo {
 	opacity: 0;
 	transform: translateY(100%);

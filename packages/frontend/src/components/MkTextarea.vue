@@ -4,44 +4,48 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div>
-	<div :class="$style.label" @click="focus"><slot name="label"></slot></div>
-	<div :class="{ [$style.disabled]: disabled, [$style.focused]: focused, [$style.tall]: tall, [$style.pre]: pre }" style="position: relative;">
+	<div>
+		<div :class="$style.label" @click="focus">
+			<slot name="label"></slot>
+		</div>
+		<div :class="{ [$style.disabled]: disabled, [$style.focused]: focused, [$style.tall]: tall, [$style.pre]: pre }" style="position: relative;">
 		<textarea
 			ref="inputEl"
 			v-model="v"
 			v-adaptive-border
+			:autocomplete="autocomplete"
 			:class="[$style.textarea, { _monospace: code }]"
 			:disabled="disabled"
-			:required="required"
-			:readonly="readonly"
-			:placeholder="placeholder"
 			:pattern="pattern"
-			:autocomplete="autocomplete"
+			:placeholder="placeholder"
+			:readonly="readonly"
+			:required="required"
 			:spellcheck="spellcheck"
-			@focus="focused = true"
 			@blur="focused = false"
-			@keydown="onKeydown($event)"
+			@focus="focused = true"
 			@input="onInput"
+			@keydown="onKeydown($event)"
 		></textarea>
-	</div>
-	<div :class="$style.caption"><slot name="caption"></slot></div>
-	<button v-if="mfmPreview" style="font-size: 0.85em;" class="_textButton" type="button" @click="preview = !preview">{{ i18n.ts.preview }}</button>
-	<div v-if="mfmPreview" v-show="preview" v-panel :class="$style.mfmPreview">
-		<Mfm :text="v"/>
-	</div>
+		</div>
+		<div :class="$style.caption">
+			<slot name="caption"></slot>
+		</div>
+		<button v-if="mfmPreview" class="_textButton" style="font-size: 0.85em;" type="button" @click="preview = !preview">{{ i18n.ts.preview }}</button>
+		<div v-if="mfmPreview" v-show="preview" v-panel :class="$style.mfmPreview">
+			<Mfm :text="v"/>
+		</div>
 
-	<MkButton v-if="manualSave && changed" primary :class="$style.save" @click="updated"><i class="ti ti-device-floppy"></i> {{ i18n.ts.save }}</MkButton>
-</div>
+		<MkButton v-if="manualSave && changed" :class="$style.save" primary @click="updated"><i class="ti ti-device-floppy"></i> {{ i18n.ts.save }}</MkButton>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, nextTick, ref, watch, computed, toRefs, shallowRef } from 'vue';
-import { debounce } from 'throttle-debounce';
+import {onMounted, onUnmounted, nextTick, ref, watch, computed, toRefs, shallowRef} from 'vue';
+import {debounce} from 'throttle-debounce';
 import MkButton from '@/components/MkButton.vue';
-import { i18n } from '@/i18n.js';
-import { Autocomplete } from '@/scripts/autocomplete.js';
-import type { SuggestionType } from '@/scripts/autocomplete.js';
+import {i18n} from '@/i18n.js';
+import {Autocomplete} from '@/scripts/autocomplete.js';
+import type {SuggestionType} from '@/scripts/autocomplete.js';
 
 const props = defineProps<{
 	modelValue: string | null;
@@ -69,7 +73,7 @@ const emit = defineEmits<{
 	(ev: 'update:modelValue', value: string): void;
 }>();
 
-const { modelValue, autofocus } = toRefs(props);
+const {modelValue, autofocus} = toRefs(props);
 const v = ref<string>(modelValue.value ?? '');
 const focused = ref(false);
 const changed = ref(false);
@@ -226,10 +230,10 @@ onUnmounted(() => {
 }
 
 .mfmPreview {
-  padding: 12px;
-  border-radius: var(--MI-radius);
-  box-sizing: border-box;
-  min-height: 130px;
+	padding: 12px;
+	border-radius: var(--MI-radius);
+	box-sizing: border-box;
+	min-height: 130px;
 	pointer-events: none;
 }
 </style>

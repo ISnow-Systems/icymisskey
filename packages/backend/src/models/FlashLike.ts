@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne } from 'typeorm';
-import { id } from './util/id.js';
-import { MiUser } from './User.js';
-import { MiFlash } from './Flash.js';
+import {PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne} from 'typeorm';
+import {id} from './util/id.js';
+import {MiUser} from './User.js';
+import {MiFlash} from './Flash.js';
 
 @Entity('flash_like')
-@Index(['userId', 'flashId'], { unique: true })
+@Index(['userId', 'flashId'], {unique: true})
 export class MiFlashLike {
 	@PrimaryColumn(id())
 	public id: string;

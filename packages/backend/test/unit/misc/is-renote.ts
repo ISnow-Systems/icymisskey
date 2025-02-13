@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { isQuote, isRenote } from '@/misc/is-renote.js';
-import { MiNote } from '@/models/Note.js';
+import {isQuote, isRenote} from '@/misc/is-renote.js';
+import {MiNote} from '@/models/Note.js';
 
 const base: MiNote = {
 	id: 'some-note-id',
@@ -51,37 +51,37 @@ describe('misc:is-renote', () => {
 	});
 
 	test('note with renoteId should be Renote and not be Quote', () => {
-		const note: MiNote = { ...base, renoteId: 'some-renote-id' };
+		const note: MiNote = {...base, renoteId: 'some-renote-id'};
 		expect(isRenote(note)).toBe(true);
 		expect(isQuote(note as any)).toBe(false);
 	});
 
 	test('note with renoteId and text should be Quote', () => {
-		const note: MiNote = { ...base, renoteId: 'some-renote-id', text: 'some-text' };
+		const note: MiNote = {...base, renoteId: 'some-renote-id', text: 'some-text'};
 		expect(isRenote(note)).toBe(true);
 		expect(isQuote(note as any)).toBe(true);
 	});
 
 	test('note with renoteId and cw should be Quote', () => {
-		const note: MiNote = { ...base, renoteId: 'some-renote-id', cw: 'some-cw' };
+		const note: MiNote = {...base, renoteId: 'some-renote-id', cw: 'some-cw'};
 		expect(isRenote(note)).toBe(true);
 		expect(isQuote(note as any)).toBe(true);
 	});
 
 	test('note with renoteId and replyId should be Quote', () => {
-		const note: MiNote = { ...base, renoteId: 'some-renote-id', replyId: 'some-reply-id' };
+		const note: MiNote = {...base, renoteId: 'some-renote-id', replyId: 'some-reply-id'};
 		expect(isRenote(note)).toBe(true);
 		expect(isQuote(note as any)).toBe(true);
 	});
 
 	test('note with renoteId and poll should be Quote', () => {
-		const note: MiNote = { ...base, renoteId: 'some-renote-id', hasPoll: true };
+		const note: MiNote = {...base, renoteId: 'some-renote-id', hasPoll: true};
 		expect(isRenote(note)).toBe(true);
 		expect(isQuote(note as any)).toBe(true);
 	});
 
 	test('note with renoteId and non-empty fileIds should be Quote', () => {
-		const note: MiNote = { ...base, renoteId: 'some-renote-id', fileIds: ['some-file-id'] };
+		const note: MiNote = {...base, renoteId: 'some-renote-id', fileIds: ['some-file-id']};
 		expect(isRenote(note)).toBe(true);
 		expect(isQuote(note as any)).toBe(true);
 	});

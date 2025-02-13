@@ -4,19 +4,18 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<component
-	:is="popup.component"
-	v-for="popup in popups"
-	:key="popup.id"
-	v-bind="popup.props"
-	v-on="popup.events"
-/>
+	<component
+		:is="popup.component"
+		v-for="popup in popups"
+		:key="popup.id"
+		v-bind="popup.props"
+		v-on="popup.events"
+	/>
 
-<XUpload v-if="uploads.length > 0"/>
+	<XUpload v-if="uploads.length > 0"/>
 
-<TransitionGroup
-	tag="div"
-	:class="[$style.notifications, {
+	<TransitionGroup
+		:class="[$style.notifications, {
 		[$style.notificationsPosition_leftTop]: defaultStore.state.notificationPosition === 'leftTop',
 		[$style.notificationsPosition_leftBottom]: defaultStore.state.notificationPosition === 'leftBottom',
 		[$style.notificationsPosition_rightTop]: defaultStore.state.notificationPosition === 'rightTop',
@@ -24,40 +23,41 @@ SPDX-License-Identifier: AGPL-3.0-only
 		[$style.notificationsStackAxis_vertical]: defaultStore.state.notificationStackAxis === 'vertical',
 		[$style.notificationsStackAxis_horizontal]: defaultStore.state.notificationStackAxis === 'horizontal',
 	}]"
-	:moveClass="defaultStore.state.animation ? $style.transition_notification_move : ''"
-	:enterActiveClass="defaultStore.state.animation ? $style.transition_notification_enterActive : ''"
-	:leaveActiveClass="defaultStore.state.animation ? $style.transition_notification_leaveActive : ''"
-	:enterFromClass="defaultStore.state.animation ? $style.transition_notification_enterFrom : ''"
-	:leaveToClass="defaultStore.state.animation ? $style.transition_notification_leaveTo : ''"
->
-	<div v-for="notification in notifications" :key="notification.id" :class="$style.notification">
-		<XNotification :notification="notification"/>
-	</div>
-</TransitionGroup>
+		:enterActiveClass="defaultStore.state.animation ? $style.transition_notification_enterActive : ''"
+		:enterFromClass="defaultStore.state.animation ? $style.transition_notification_enterFrom : ''"
+		:leaveActiveClass="defaultStore.state.animation ? $style.transition_notification_leaveActive : ''"
+		:leaveToClass="defaultStore.state.animation ? $style.transition_notification_leaveTo : ''"
+		:moveClass="defaultStore.state.animation ? $style.transition_notification_move : ''"
+		tag="div"
+	>
+		<div v-for="notification in notifications" :key="notification.id" :class="$style.notification">
+			<XNotification :notification="notification"/>
+		</div>
+	</TransitionGroup>
 
-<XStreamIndicator/>
+	<XStreamIndicator/>
 
-<div v-if="pendingApiRequestsCount > 0" id="wait"></div>
+	<div v-if="pendingApiRequestsCount > 0" id="wait"></div>
 
-<div v-if="dev" id="devTicker"><span style="animation: dev-ticker-blink 2s infinite;">DEV BUILD</span></div>
+	<div v-if="dev" id="devTicker"><span style="animation: dev-ticker-blink 2s infinite;">DEV BUILD</span></div>
 
-<div v-if="$i && $i.isBot" id="botWarn"><span style="animation: dev-ticker-blink 2s infinite;">{{ i18n.ts.loggedInAsBot }}</span></div>
+	<div v-if="$i && $i.isBot" id="botWarn"><span style="animation: dev-ticker-blink 2s infinite;">{{ i18n.ts.loggedInAsBot }}</span></div>
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, ref } from 'vue';
+import {defineAsyncComponent, ref} from 'vue';
 import * as Misskey from 'misskey-js';
-import { swInject } from './sw-inject.js';
+import {swInject} from './sw-inject.js';
 import XNotification from './notification.vue';
-import { popups } from '@/os.js';
-import { pendingApiRequestsCount } from '@/scripts/misskey-api.js';
-import { uploads } from '@/scripts/upload.js';
+import {popups} from '@/os.js';
+import {pendingApiRequestsCount} from '@/scripts/misskey-api.js';
+import {uploads} from '@/scripts/upload.js';
 import * as sound from '@/scripts/sound.js';
-import { $i } from '@/account.js';
-import { useStream } from '@/stream.js';
-import { i18n } from '@/i18n.js';
-import { defaultStore } from '@/store.js';
-import { globalEvents } from '@/events.js';
+import {$i} from '@/account.js';
+import {useStream} from '@/stream.js';
+import {i18n} from '@/i18n.js';
+import {defaultStore} from '@/store.js';
+import {globalEvents} from '@/events.js';
 
 const XStreamIndicator = defineAsyncComponent(() => import('./stream-indicator.vue'));
 const XUpload = defineAsyncComponent(() => import('./upload.vue'));
@@ -104,10 +104,12 @@ if ($i) {
 .transition_notification_leaveActive {
 	transition: opacity 0.3s, transform 0.3s !important;
 }
+
 .transition_notification_enterFrom {
 	opacity: 0;
 	transform: translateX(250px);
 }
+
 .transition_notification_leaveTo {
 	opacity: 0;
 	transform: translateX(-250px);
@@ -205,9 +207,15 @@ if ($i) {
 
 <style lang="scss">
 @keyframes dev-ticker-blink {
-	0% { opacity: 1; }
-	50% { opacity: 0; }
-	100% { opacity: 1; }
+	0% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
 }
 
 @keyframes progress-spinner {

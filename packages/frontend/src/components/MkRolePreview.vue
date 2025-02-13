@@ -4,14 +4,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkA :to="forModeration ? `/admin/roles/${role.id}` : `/roles/${role.id}`" :class="$style.root" tabindex="-1" :style="{ '--color': role.color }">
-	<template v-if="forModeration">
-		<i v-if="role.isPublic" class="ti ti-world" :class="$style.icon" style="color: var(--MI_THEME-success)"></i>
-		<i v-else class="ti ti-lock" :class="$style.icon" style="color: var(--MI_THEME-warn)"></i>
-	</template>
+	<MkA :class="$style.root" :style="{ '--color': role.color }" :to="forModeration ? `/admin/roles/${role.id}` : `/roles/${role.id}`" tabindex="-1">
+		<template v-if="forModeration">
+			<i v-if="role.isPublic" :class="$style.icon" class="ti ti-world" style="color: var(--MI_THEME-success)"></i>
+			<i v-else :class="$style.icon" class="ti ti-lock" style="color: var(--MI_THEME-warn)"></i>
+		</template>
 
-	<div v-adaptive-bg class="_panel" :class="$style.body">
-		<div :class="$style.bodyTitle">
+		<div v-adaptive-bg :class="$style.body" class="_panel">
+			<div :class="$style.bodyTitle">
 			<span :class="$style.bodyIcon">
 				<template v-if="role.iconUrl">
 					<img :class="$style.bodyBadge" :src="role.iconUrl"/>
@@ -22,21 +22,21 @@ SPDX-License-Identifier: AGPL-3.0-only
 					<i v-else class="ti ti-user" style="opacity: 0.7;"></i>
 				</template>
 			</span>
-			<span :class="$style.bodyName">{{ role.name }}</span>
-			<template v-if="detailed">
-				<span v-if="role.target === 'manual'" :class="$style.bodyUsers">{{ role.usersCount }} users</span>
-				<span v-else-if="role.target === 'conditional'" :class="$style.bodyUsers">? users</span>
-			</template>
+				<span :class="$style.bodyName">{{ role.name }}</span>
+				<template v-if="detailed">
+					<span v-if="role.target === 'manual'" :class="$style.bodyUsers">{{ role.usersCount }} users</span>
+					<span v-else-if="role.target === 'conditional'" :class="$style.bodyUsers">? users</span>
+				</template>
+			</div>
+			<div :class="$style.bodyDescription">{{ role.description }}</div>
 		</div>
-		<div :class="$style.bodyDescription">{{ role.description }}</div>
-	</div>
-</MkA>
+	</MkA>
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import {} from 'vue';
 import * as Misskey from 'misskey-js';
-import { i18n } from '@/i18n.js';
+import {i18n} from '@/i18n.js';
 
 const props = withDefaults(defineProps<{
 	role: Misskey.entities.Role;

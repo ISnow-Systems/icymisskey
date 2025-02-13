@@ -4,15 +4,15 @@
  */
 
 import ms from 'ms';
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { FollowingsRepository } from '@/models/_.js';
-import { IdentifiableError } from '@/misc/identifiable-error.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { UserFollowingService } from '@/core/UserFollowingService.js';
-import { DI } from '@/di-symbols.js';
-import { GetterService } from '@/server/api/GetterService.js';
-import { ApiError } from '../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {FollowingsRepository} from '@/models/_.js';
+import {IdentifiableError} from '@/misc/identifiable-error.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {UserFollowingService} from '@/core/UserFollowingService.js';
+import {DI} from '@/di-symbols.js';
+import {GetterService} from '@/server/api/GetterService.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['following', 'users'],
@@ -70,8 +70,8 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		userId: { type: 'string', format: 'misskey:id' },
-		withReplies: { type: 'boolean' },
+		userId: {type: 'string', format: 'misskey:id'},
+		withReplies: {type: 'boolean'},
 	},
 	required: ['userId'],
 } as const;
@@ -81,7 +81,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.followingsRepository)
 		private followingsRepository: FollowingsRepository,
-
 		private userEntityService: UserEntityService,
 		private getterService: GetterService,
 		private userFollowingService: UserFollowingService,
@@ -101,7 +100,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			});
 
 			try {
-				await this.userFollowingService.follow(follower, followee, { withReplies: ps.withReplies });
+				await this.userFollowingService.follow(follower, followee, {withReplies: ps.withReplies});
 			} catch (e) {
 				if (e instanceof IdentifiableError) {
 					if (e.id === 'ec3f65c0-a9d1-47d9-8791-b2e7b9dcdced') throw new ApiError(meta.errors.alreadyFollowing);

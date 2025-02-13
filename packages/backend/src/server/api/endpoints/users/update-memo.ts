@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { IdService } from '@/core/IdService.js';
-import type { UserMemoRepository } from '@/models/_.js';
-import { DI } from '@/di-symbols.js';
-import { GetterService } from '@/server/api/GetterService.js';
-import { ApiError } from '../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {IdService} from '@/core/IdService.js';
+import type {UserMemoRepository} from '@/models/_.js';
+import {DI} from '@/di-symbols.js';
+import {GetterService} from '@/server/api/GetterService.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['account'],
@@ -30,7 +30,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		userId: { type: 'string', format: 'misskey:id' },
+		userId: {type: 'string', format: 'misskey:id'},
 		memo: {
 			type: 'string',
 			nullable: true,

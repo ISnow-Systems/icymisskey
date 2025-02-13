@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { EventEmitter } from 'eventemitter3';
-import type { CellValue, GridCellSetting } from '@/components/grid/cell.js';
-import type { GridColumnSetting } from '@/components/grid/column.js';
-import type { GridRowSetting } from '@/components/grid/row.js';
+import {EventEmitter} from 'eventemitter3';
+import type {CellValue, GridCellSetting} from '@/components/grid/cell.js';
+import type {GridColumnSetting} from '@/components/grid/column.js';
+import type {GridRowSetting} from '@/components/grid/row.js';
 
 export type GridSetting = {
 	root?: {

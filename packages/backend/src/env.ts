@@ -21,4 +21,4 @@ if (process.env.NODE_ENV === 'test') envOption.disableClustering = true;
 if (process.env.NODE_ENV === 'test') envOption.quiet = true;
 if (process.env.NODE_ENV === 'test') envOption.noDaemons = true;
 
-export { envOption };
+export {envOption};

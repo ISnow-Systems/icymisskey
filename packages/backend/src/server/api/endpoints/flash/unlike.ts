@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import type { FlashsRepository, FlashLikesRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {FlashsRepository, FlashLikesRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {DI} from '@/di-symbols.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['flash'],
@@ -36,7 +36,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		flashId: { type: 'string', format: 'misskey:id' },
+		flashId: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['flashId'],
 } as const;
@@ -46,12 +46,11 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.flashsRepository)
 		private flashsRepository: FlashsRepository,
-
 		@Inject(DI.flashLikesRepository)
 		private flashLikesRepository: FlashLikesRepository,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const flash = await this.flashsRepository.findOneBy({ id: ps.flashId });
+			const flash = await this.flashsRepository.findOneBy({id: ps.flashId});
 			if (flash == null) {
 				throw new ApiError(meta.errors.noSuchFlash);
 			}
@@ -68,7 +67,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			// Delete like
 			await this.flashLikesRepository.delete(exist.id);
 
-			this.flashsRepository.decrement({ id: flash.id }, 'likedCount', 1);
+			this.flashsRepository.decrement({id: flash.id}, 'likedCount', 1);
 		});
 	}
 }

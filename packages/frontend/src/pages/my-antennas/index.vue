@@ -4,36 +4,38 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="700">
-		<div>
-			<div v-if="antennas.length === 0" class="empty">
-				<div class="_fullinfo">
-					<img :src="infoImageUrl" class="_ghost"/>
-					<div>{{ i18n.ts.nothing }}</div>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs"/>
+		</template>
+		<MkSpacer :contentMax="700">
+			<div>
+				<div v-if="antennas.length === 0" class="empty">
+					<div class="_fullinfo">
+						<img :src="infoImageUrl" class="_ghost"/>
+						<div>{{ i18n.ts.nothing }}</div>
+					</div>
+				</div>
+
+				<MkButton :class="$style.add" :link="true" primary to="/my/antennas/create"><i class="ti ti-plus"></i> {{ i18n.ts.add }}</MkButton>
+
+				<div v-if="antennas.length > 0" class="_gaps">
+					<MkA v-for="antenna in antennas" :key="antenna.id" :class="$style.antenna" :to="`/my/antennas/${antenna.id}`">
+						<div class="name">{{ antenna.name }}</div>
+					</MkA>
 				</div>
 			</div>
-
-			<MkButton :link="true" to="/my/antennas/create" primary :class="$style.add"><i class="ti ti-plus"></i> {{ i18n.ts.add }}</MkButton>
-
-			<div v-if="antennas.length > 0" class="_gaps">
-				<MkA v-for="antenna in antennas" :key="antenna.id" :class="$style.antenna" :to="`/my/antennas/${antenna.id}`">
-					<div class="name">{{ antenna.name }}</div>
-				</MkA>
-			</div>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { onActivated, computed } from 'vue';
+import {onActivated, computed} from 'vue';
 import MkButton from '@/components/MkButton.vue';
-import { i18n } from '@/i18n.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
-import { antennasCache } from '@/cache.js';
-import { infoImageUrl } from '@/instance.js';
+import {i18n} from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
+import {antennasCache} from '@/cache.js';
+import {infoImageUrl} from '@/instance.js';
 
 const antennas = computed(() => antennasCache.value.value ?? []);
 

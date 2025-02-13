@@ -4,73 +4,75 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="_gaps">
-	<MkSelect v-model="sortModeSelect">
-		<template #label>{{ i18n.ts.sort }}</template>
-		<option v-for="x in sortOptions" :key="x.value" :value="x.value">{{ x.displayName }}</option>
-	</MkSelect>
-	<div v-if="!fetching">
-		<MkPagination v-slot="{items}" :pagination="pagination">
-			<div class="_gaps">
-				<div
-					v-for="file in items" :key="file.id"
-					class="_button"
-					@click="$event => onClick($event, file)"
-					@contextmenu.stop="$event => onContextMenu($event, file)"
-				>
-					<div :class="$style.file">
-						<div v-if="file.isSensitive" class="sensitive-label">{{ i18n.ts.sensitive }}</div>
-						<MkDriveFileThumbnail :class="$style.fileThumbnail" :file="file" fit="contain"/>
-						<div :class="$style.fileBody">
-							<div style="margin-bottom: 4px;">
-								{{ file.name }}
-							</div>
-							<div>
-								<span style="margin-right: 1em;">{{ file.type }}</span>
-								<span>{{ bytes(file.size) }}</span>
-							</div>
-							<div>
-								<span>{{ i18n.ts.registeredDate }}: <MkTime :time="file.createdAt" mode="detail"/></span>
-							</div>
-							<div v-if="sortModeSelect === 'sizeDesc'">
-								<div :class="$style.meter"><div :class="$style.meterValue" :style="genUsageBar(file.size)"></div></div>
+	<div class="_gaps">
+		<MkSelect v-model="sortModeSelect">
+			<template #label>{{ i18n.ts.sort }}</template>
+			<option v-for="x in sortOptions" :key="x.value" :value="x.value">{{ x.displayName }}</option>
+		</MkSelect>
+		<div v-if="!fetching">
+			<MkPagination v-slot="{items}" :pagination="pagination">
+				<div class="_gaps">
+					<div
+						v-for="file in items" :key="file.id"
+						class="_button"
+						@click="$event => onClick($event, file)"
+						@contextmenu.stop="$event => onContextMenu($event, file)"
+					>
+						<div :class="$style.file">
+							<div v-if="file.isSensitive" class="sensitive-label">{{ i18n.ts.sensitive }}</div>
+							<MkDriveFileThumbnail :class="$style.fileThumbnail" :file="file" fit="contain"/>
+							<div :class="$style.fileBody">
+								<div style="margin-bottom: 4px;">
+									{{ file.name }}
+								</div>
+								<div>
+									<span style="margin-right: 1em;">{{ file.type }}</span>
+									<span>{{ bytes(file.size) }}</span>
+								</div>
+								<div>
+									<span>{{ i18n.ts.registeredDate }}: <MkTime :time="file.createdAt" mode="detail"/></span>
+								</div>
+								<div v-if="sortModeSelect === 'sizeDesc'">
+									<div :class="$style.meter">
+										<div :class="$style.meterValue" :style="genUsageBar(file.size)"></div>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-		</MkPagination>
+			</MkPagination>
+		</div>
+		<div v-else>
+			<MkLoading/>
+		</div>
 	</div>
-	<div v-else>
-		<MkLoading/>
-	</div>
-</div>
 </template>
 
-<script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import type { StyleValue } from 'vue';
+<script lang="ts" setup>
+import {computed, ref, watch} from 'vue';
+import type {StyleValue} from 'vue';
 import tinycolor from 'tinycolor2';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
 import MkPagination from '@/components/MkPagination.vue';
 import MkDriveFileThumbnail from '@/components/MkDriveFileThumbnail.vue';
-import { i18n } from '@/i18n.js';
+import {i18n} from '@/i18n.js';
 import bytes from '@/filters/bytes.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
 import MkSelect from '@/components/MkSelect.vue';
-import { getDriveFileMenu } from '@/scripts/get-drive-file-menu.js';
+import {getDriveFileMenu} from '@/scripts/get-drive-file-menu.js';
 
 const sortMode = ref('+size');
 const pagination = {
 	endpoint: 'drive/files' as const,
 	limit: 10,
-	params: computed(() => ({ sort: sortMode.value })),
+	params: computed(() => ({sort: sortMode.value})),
 };
 
 const sortOptions = [
-	{ value: 'sizeDesc', displayName: i18n.ts._drivecleaner.orderBySizeDesc },
-	{ value: 'createdAtAsc', displayName: i18n.ts._drivecleaner.orderByCreatedAtAsc },
+	{value: 'sizeDesc', displayName: i18n.ts._drivecleaner.orderBySizeDesc},
+	{value: 'createdAtAsc', displayName: i18n.ts._drivecleaner.orderByCreatedAtAsc},
 ];
 
 const capacity = ref<number>(0);
@@ -106,7 +108,7 @@ function fetchDriveInfo(): void {
 function genUsageBar(fsize: number): StyleValue {
 	return {
 		width: `${fsize / usage.value * 100}%`,
-		background: tinycolor({ h: 180 - (fsize / usage.value * 180), s: 0.7, l: 0.5 }).toHslString(),
+		background: tinycolor({h: 180 - (fsize / usage.value * 180), s: 0.7, l: 0.5}).toHslString(),
 	};
 }
 

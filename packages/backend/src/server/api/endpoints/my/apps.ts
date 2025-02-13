@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { AppsRepository } from '@/models/_.js';
-import { AppEntityService } from '@/core/entities/AppEntityService.js';
-import { DI } from '@/di-symbols.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {AppsRepository} from '@/models/_.js';
+import {AppEntityService} from '@/core/entities/AppEntityService.js';
+import {DI} from '@/di-symbols.js';
 
 export const meta = {
 	tags: ['account', 'app'],
@@ -29,8 +29,8 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
-		offset: { type: 'integer', default: 0 },
+		limit: {type: 'integer', minimum: 1, maximum: 100, default: 10},
+		offset: {type: 'integer', default: 0},
 	},
 	required: [],
 } as const;
@@ -40,7 +40,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.appsRepository)
 		private appsRepository: AppsRepository,
-
 		private appEntityService: AppEntityService,
 	) {
 		super(meta, paramDef, async (ps, me) => {

@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { Repository } from "typeorm";
+import type {Repository} from "typeorm";
 
 process.env.NODE_ENV = 'test';
 
 import * as assert from 'assert';
-import { MiNote } from '@/models/Note.js';
-import { MAX_NOTE_TEXT_LENGTH } from '@/const.js';
-import { api, castAsError, initTestDb, post, role, signup, uploadFile, uploadUrl } from '../utils.js';
+import {MiNote} from '@/models/Note.js';
+import {MAX_NOTE_TEXT_LENGTH} from '@/const.js';
+import {api, castAsError, initTestDb, post, role, signup, uploadFile, uploadUrl} from '../utils.js';
 import type * as misskey from 'misskey-js';
 
 describe('Note', () => {
@@ -24,10 +24,10 @@ describe('Note', () => {
 	beforeAll(async () => {
 		const connection = await initTestDb(true);
 		Notes = connection.getRepository(MiNote);
-		root = await signup({ username: 'root' });
-		alice = await signup({ username: 'alice' });
-		bob = await signup({ username: 'bob' });
-		tom = await signup({ username: 'tom', host: 'example.com' });
+		root = await signup({username: 'root'});
+		alice = await signup({username: 'alice'});
+		bob = await signup({username: 'bob'});
+		tom = await signup({username: 'tom', host: 'example.com'});
 	}, 1000 * 60 * 2);
 
 	test('投稿できる', async () => {
@@ -337,7 +337,7 @@ describe('Note', () => {
 		assert.strictEqual(typeof res.body === 'object' && !Array.isArray(res.body), true);
 		assert.strictEqual(res.body.createdNote.text, post.text);
 
-		const noteDoc = await Notes.findOneBy({ id: res.body.createdNote.id });
+		const noteDoc = await Notes.findOneBy({id: res.body.createdNote.id});
 		assert.ok(noteDoc);
 		assert.deepStrictEqual(noteDoc.mentions, [bob.id]);
 	});
@@ -574,7 +574,7 @@ describe('Note', () => {
 		});
 
 		test('投票できる', async () => {
-			const { body } = await api('notes/create', {
+			const {body} = await api('notes/create', {
 				text: 'test',
 				poll: {
 					choices: ['sakura', 'izumi', 'ako'],
@@ -590,7 +590,7 @@ describe('Note', () => {
 		});
 
 		test('複数投票できない', async () => {
-			const { body } = await api('notes/create', {
+			const {body} = await api('notes/create', {
 				text: 'test',
 				poll: {
 					choices: ['sakura', 'izumi', 'ako'],
@@ -611,7 +611,7 @@ describe('Note', () => {
 		});
 
 		test('許可されている場合は複数投票できる', async () => {
-			const { body } = await api('notes/create', {
+			const {body} = await api('notes/create', {
 				text: 'test',
 				poll: {
 					choices: ['sakura', 'izumi', 'ako'],
@@ -638,7 +638,7 @@ describe('Note', () => {
 		});
 
 		test('締め切られている場合は投票できない', async () => {
-			const { body } = await api('notes/create', {
+			const {body} = await api('notes/create', {
 				text: 'test',
 				poll: {
 					choices: ['sakura', 'izumi', 'ako'],
@@ -965,7 +965,7 @@ describe('Note', () => {
 			}, alice);
 
 			assert.strictEqual(deleteOneRes.status, 204);
-			let mainNote = await Notes.findOneBy({ id: mainNoteRes.body.createdNote.id });
+			let mainNote = await Notes.findOneBy({id: mainNoteRes.body.createdNote.id});
 			assert.ok(mainNote);
 			assert.strictEqual(mainNote.repliesCount, 1);
 
@@ -974,7 +974,7 @@ describe('Note', () => {
 			}, alice);
 
 			assert.strictEqual(deleteTwoRes.status, 204);
-			mainNote = await Notes.findOneBy({ id: mainNoteRes.body.createdNote.id });
+			mainNote = await Notes.findOneBy({id: mainNoteRes.body.createdNote.id});
 			assert.ok(mainNote);
 			assert.strictEqual(mainNote.repliesCount, 0);
 		});
@@ -985,12 +985,12 @@ describe('Note', () => {
 			let cannotTranslateRole: misskey.entities.Role;
 
 			beforeAll(async () => {
-				cannotTranslateRole = await role(root, {}, { canUseTranslator: false });
-				await api('admin/roles/assign', { roleId: cannotTranslateRole.id, userId: alice.id }, root);
+				cannotTranslateRole = await role(root, {}, {canUseTranslator: false});
+				await api('admin/roles/assign', {roleId: cannotTranslateRole.id, userId: alice.id}, root);
 			});
 
 			test('翻訳機能の利用が許可されていない場合翻訳できない', async () => {
-				const aliceNote = await post(alice, { text: 'Hello' });
+				const aliceNote = await post(alice, {text: 'Hello'});
 				const res = await api('notes/translate', {
 					noteId: aliceNote.id,
 					targetLang: 'ja',
@@ -1001,35 +1001,35 @@ describe('Note', () => {
 			});
 
 			afterAll(async () => {
-				await api('admin/roles/unassign', { roleId: cannotTranslateRole.id, userId: alice.id }, root);
+				await api('admin/roles/unassign', {roleId: cannotTranslateRole.id, userId: alice.id}, root);
 			});
 		});
 
 		test('存在しないノートは翻訳できない', async () => {
-			const res = await api('notes/translate', { noteId: 'foo', targetLang: 'ja' }, alice);
+			const res = await api('notes/translate', {noteId: 'foo', targetLang: 'ja'}, alice);
 
 			assert.strictEqual(res.status, 400);
 			assert.strictEqual(castAsError(res.body).error.code, 'NO_SUCH_NOTE');
 		});
 
 		test('不可視なノートは翻訳できない', async () => {
-			const aliceNote = await post(alice, { visibility: 'followers', text: 'Hello' });
-			const bobTranslateAttempt = await api('notes/translate', { noteId: aliceNote.id, targetLang: 'ja' }, bob);
+			const aliceNote = await post(alice, {visibility: 'followers', text: 'Hello'});
+			const bobTranslateAttempt = await api('notes/translate', {noteId: aliceNote.id, targetLang: 'ja'}, bob);
 
 			assert.strictEqual(bobTranslateAttempt.status, 400);
 			assert.strictEqual(castAsError(bobTranslateAttempt.body).error.code, 'CANNOT_TRANSLATE_INVISIBLE_NOTE');
 		});
 
 		test('text: null なノートを翻訳すると空のレスポンスが返ってくる', async () => {
-			const aliceNote = await post(alice, { text: null, poll: { choices: ['kinoko', 'takenoko'] } });
-			const res = await api('notes/translate', { noteId: aliceNote.id, targetLang: 'ja' }, alice);
+			const aliceNote = await post(alice, {text: null, poll: {choices: ['kinoko', 'takenoko']}});
+			const res = await api('notes/translate', {noteId: aliceNote.id, targetLang: 'ja'}, alice);
 
 			assert.strictEqual(res.status, 204);
 		});
 
 		test('サーバーに DeepL 認証キーが登録されていない場合翻訳できない', async () => {
-			const aliceNote = await post(alice, { text: 'Hello' });
-			const res = await api('notes/translate', { noteId: aliceNote.id, targetLang: 'ja' }, alice);
+			const aliceNote = await post(alice, {text: 'Hello'});
+			const res = await api('notes/translate', {noteId: aliceNote.id, targetLang: 'ja'}, alice);
 
 			// NOTE: デフォルトでは登録されていないので落ちる
 			assert.strictEqual(res.status, 400);

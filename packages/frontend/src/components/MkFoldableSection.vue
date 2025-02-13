@@ -4,37 +4,41 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div ref="rootEl" :class="$style.root">
-	<header :class="$style.header" class="_button" @click="showBody = !showBody">
-		<div :class="$style.title"><div><slot name="header"></slot></div></div>
-		<div :class="$style.divider"></div>
-		<button class="_button" :class="$style.button">
-			<template v-if="showBody"><i class="ti ti-chevron-up"></i></template>
-			<template v-else><i class="ti ti-chevron-down"></i></template>
-		</button>
-	</header>
-	<Transition
-		:enterActiveClass="defaultStore.state.animation ? $style.folderToggleEnterActive : ''"
-		:leaveActiveClass="defaultStore.state.animation ? $style.folderToggleLeaveActive : ''"
-		:enterFromClass="defaultStore.state.animation ? $style.folderToggleEnterFrom : ''"
-		:leaveToClass="defaultStore.state.animation ? $style.folderToggleLeaveTo : ''"
-		@enter="enter"
-		@afterEnter="afterEnter"
-		@leave="leave"
-		@afterLeave="afterLeave"
-	>
-		<div v-show="showBody">
-			<slot></slot>
-		</div>
-	</Transition>
-</div>
+	<div ref="rootEl" :class="$style.root">
+		<header :class="$style.header" class="_button" @click="showBody = !showBody">
+			<div :class="$style.title">
+				<div>
+					<slot name="header"></slot>
+				</div>
+			</div>
+			<div :class="$style.divider"></div>
+			<button :class="$style.button" class="_button">
+				<template v-if="showBody"><i class="ti ti-chevron-up"></i></template>
+				<template v-else><i class="ti ti-chevron-down"></i></template>
+			</button>
+		</header>
+		<Transition
+			:enterActiveClass="defaultStore.state.animation ? $style.folderToggleEnterActive : ''"
+			:enterFromClass="defaultStore.state.animation ? $style.folderToggleEnterFrom : ''"
+			:leaveActiveClass="defaultStore.state.animation ? $style.folderToggleLeaveActive : ''"
+			:leaveToClass="defaultStore.state.animation ? $style.folderToggleLeaveTo : ''"
+			@afterEnter="afterEnter"
+			@afterLeave="afterLeave"
+			@enter="enter"
+			@leave="leave"
+		>
+			<div v-show="showBody">
+				<slot></slot>
+			</div>
+		</Transition>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, shallowRef, watch } from 'vue';
-import { miLocalStorage } from '@/local-storage.js';
-import { defaultStore } from '@/store.js';
-import { getBgColor } from '@/scripts/get-bg-color.js';
+import {onMounted, ref, shallowRef, watch} from 'vue';
+import {miLocalStorage} from '@/local-storage.js';
+import {defaultStore} from '@/store.js';
+import {getBgColor} from '@/scripts/get-bg-color.js';
 
 const miLocalStoragePrefix = 'ui:folder:' as const;
 

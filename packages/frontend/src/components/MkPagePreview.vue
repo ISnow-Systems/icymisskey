@@ -4,33 +4,33 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkA :to="`/@${page.user.username}/pages/${page.name}`" class="vhpxefrj">
-	<div v-if="page.eyeCatchingImage" class="thumbnail">
-		<MediaImage
-			:image="page.eyeCatchingImage"
-			:disableImageLink="true"
-			:controls="false"
-			:cover="true"
-			:class="$style.eyeCatchingImageRoot"
-		/>
-	</div>
-	<article>
-		<header>
-			<h1 :title="page.title">{{ page.title }}</h1>
-		</header>
-		<p v-if="page.summary" :title="page.summary">{{ page.summary.length > 85 ? page.summary.slice(0, 85) + '…' : page.summary }}</p>
-		<footer>
-			<img v-if="page.user.avatarUrl" class="icon" :src="page.user.avatarUrl"/>
-			<p>{{ userName(page.user) }}</p>
-		</footer>
-	</article>
-</MkA>
+	<MkA :to="`/@${page.user.username}/pages/${page.name}`" class="vhpxefrj">
+		<div v-if="page.eyeCatchingImage" class="thumbnail">
+			<MediaImage
+				:class="$style.eyeCatchingImageRoot"
+				:controls="false"
+				:cover="true"
+				:disableImageLink="true"
+				:image="page.eyeCatchingImage"
+			/>
+		</div>
+		<article>
+			<header>
+				<h1 :title="page.title">{{ page.title }}</h1>
+			</header>
+			<p v-if="page.summary" :title="page.summary">{{ page.summary.length > 85 ? page.summary.slice(0, 85) + '…' : page.summary }}</p>
+			<footer>
+				<img v-if="page.user.avatarUrl" :src="page.user.avatarUrl" class="icon"/>
+				<p>{{ userName(page.user) }}</p>
+			</footer>
+		</article>
+	</MkA>
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import {} from 'vue';
 import * as Misskey from 'misskey-js';
-import { userName } from '@/filters/user.js';
+import {userName} from '@/filters/user.js';
 import MediaImage from '@/components/MkMediaImage.vue';
 
 const props = defineProps<{

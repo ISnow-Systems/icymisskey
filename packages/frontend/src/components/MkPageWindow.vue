@@ -4,46 +4,46 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkWindow
-	ref="windowEl"
-	:initialWidth="500"
-	:initialHeight="500"
-	:canResize="true"
-	:closeButton="true"
-	:buttonsLeft="buttonsLeft"
-	:buttonsRight="buttonsRight"
-	:contextmenu="contextmenu"
-	@closed="emit('closed')"
->
-	<template #header>
-		<template v-if="pageMetadata">
-			<i v-if="pageMetadata.icon" :class="pageMetadata.icon" style="margin-right: 0.5em;"></i>
-			<span>{{ pageMetadata.title }}</span>
+	<MkWindow
+		ref="windowEl"
+		:buttonsLeft="buttonsLeft"
+		:buttonsRight="buttonsRight"
+		:canResize="true"
+		:closeButton="true"
+		:contextmenu="contextmenu"
+		:initialHeight="500"
+		:initialWidth="500"
+		@closed="emit('closed')"
+	>
+		<template #header>
+			<template v-if="pageMetadata">
+				<i v-if="pageMetadata.icon" :class="pageMetadata.icon" style="margin-right: 0.5em;"></i>
+				<span>{{ pageMetadata.title }}</span>
+			</template>
 		</template>
-	</template>
 
-	<div ref="contents" :class="$style.root" style="container-type: inline-size;">
-		<RouterView :key="reloadCount" :router="windowRouter"/>
-	</div>
-</MkWindow>
+		<div ref="contents" :class="$style.root" style="container-type: inline-size;">
+			<RouterView :key="reloadCount" :router="windowRouter"/>
+		</div>
+	</MkWindow>
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, onUnmounted, provide, ref, shallowRef } from 'vue';
-import { url } from '@@/js/config.js';
-import { getScrollContainer } from '@@/js/scroll.js';
+import {computed, onMounted, onUnmounted, provide, ref, shallowRef} from 'vue';
+import {url} from '@@/js/config.js';
+import {getScrollContainer} from '@@/js/scroll.js';
 import RouterView from '@/components/global/RouterView.vue';
 import MkWindow from '@/components/MkWindow.vue';
-import { popout as _popout } from '@/scripts/popout.js';
-import { copyToClipboard } from '@/scripts/copy-to-clipboard.js';
-import { useScrollPositionManager } from '@/nirax.js';
-import { i18n } from '@/i18n.js';
-import { provideMetadataReceiver, provideReactiveMetadata } from '@/scripts/page-metadata.js';
-import type { PageMetadata } from '@/scripts/page-metadata.js';
-import { openingWindowsCount } from '@/os.js';
-import { claimAchievement } from '@/scripts/achievements.js';
-import { useRouterFactory } from '@/router/supplier.js';
-import { mainRouter } from '@/router/main.js';
+import {popout as _popout} from '@/scripts/popout.js';
+import {copyToClipboard} from '@/scripts/copy-to-clipboard.js';
+import {useScrollPositionManager} from '@/nirax.js';
+import {i18n} from '@/i18n.js';
+import {provideMetadataReceiver, provideReactiveMetadata} from '@/scripts/page-metadata.js';
+import type {PageMetadata} from '@/scripts/page-metadata.js';
+import {openingWindowsCount} from '@/os.js';
+import {claimAchievement} from '@/scripts/achievements.js';
+import {useRouterFactory} from '@/router/supplier.js';
+import {mainRouter} from '@/router/main.js';
 
 const props = defineProps<{
 	initialPath: string;
@@ -91,12 +91,12 @@ const buttonsRight = computed(() => {
 const reloadCount = ref(0);
 
 windowRouter.addListener('push', ctx => {
-	history.value.push({ path: ctx.path, key: ctx.key });
+	history.value.push({path: ctx.path, key: ctx.key});
 });
 
 windowRouter.addListener('replace', ctx => {
 	history.value.pop();
-	history.value.push({ path: ctx.path, key: ctx.key });
+	history.value.push({path: ctx.path, key: ctx.key});
 });
 
 windowRouter.init();

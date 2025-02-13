@@ -4,56 +4,58 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="700">
-		<div class="_gaps">
-			<MkInput v-model="title">
-				<template #label>{{ i18n.ts._play.title }}</template>
-			</MkInput>
-			<MkSelect v-model="visibility">
-				<template #label>{{ i18n.ts.visibility }}</template>
-				<template #caption>{{ i18n.ts._play.visibilityDescription }}</template>
-				<option :key="'public'" :value="'public'">{{ i18n.ts.public }}</option>
-				<option :key="'private'" :value="'private'">{{ i18n.ts.private }}</option>
-			</MkSelect>
-			<MkTextarea v-model="summary" :mfmAutocomplete="true" :mfmPreview="true">
-				<template #label>{{ i18n.ts._play.summary }}</template>
-			</MkTextarea>
-			<MkButton primary @click="selectPreset">{{ i18n.ts.selectFromPresets }}<i class="ti ti-chevron-down"></i></MkButton>
-			<MkCodeEditor v-model="script" lang="is">
-				<template #label>{{ i18n.ts._play.script }}</template>
-			</MkCodeEditor>
-		</div>
-	</MkSpacer>
-	<template #footer>
-		<div :class="$style.footer">
-			<MkSpacer>
-				<div class="_buttons">
-					<MkButton primary @click="save"><i class="ti ti-check"></i> {{ i18n.ts.save }}</MkButton>
-					<MkButton @click="show"><i class="ti ti-eye"></i> {{ i18n.ts.show }}</MkButton>
-					<MkButton v-if="flash" danger @click="del"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
-				</div>
-			</MkSpacer>
-		</div>
-	</template>
-</MkStickyContainer>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs"/>
+		</template>
+		<MkSpacer :contentMax="700">
+			<div class="_gaps">
+				<MkInput v-model="title">
+					<template #label>{{ i18n.ts._play.title }}</template>
+				</MkInput>
+				<MkSelect v-model="visibility">
+					<template #label>{{ i18n.ts.visibility }}</template>
+					<template #caption>{{ i18n.ts._play.visibilityDescription }}</template>
+					<option :key="'public'" :value="'public'">{{ i18n.ts.public }}</option>
+					<option :key="'private'" :value="'private'">{{ i18n.ts.private }}</option>
+				</MkSelect>
+				<MkTextarea v-model="summary" :mfmAutocomplete="true" :mfmPreview="true">
+					<template #label>{{ i18n.ts._play.summary }}</template>
+				</MkTextarea>
+				<MkButton primary @click="selectPreset">{{ i18n.ts.selectFromPresets }}<i class="ti ti-chevron-down"></i></MkButton>
+				<MkCodeEditor v-model="script" lang="is">
+					<template #label>{{ i18n.ts._play.script }}</template>
+				</MkCodeEditor>
+			</div>
+		</MkSpacer>
+		<template #footer>
+			<div :class="$style.footer">
+				<MkSpacer>
+					<div class="_buttons">
+						<MkButton primary @click="save"><i class="ti ti-check"></i> {{ i18n.ts.save }}</MkButton>
+						<MkButton @click="show"><i class="ti ti-eye"></i> {{ i18n.ts.show }}</MkButton>
+						<MkButton v-if="flash" danger @click="del"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
+					</div>
+				</MkSpacer>
+			</div>
+		</template>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
+import {computed, ref} from 'vue';
 import * as Misskey from 'misskey-js';
-import { AISCRIPT_VERSION } from '@syuilo/aiscript';
+import {AISCRIPT_VERSION} from '@syuilo/aiscript';
 import MkButton from '@/components/MkButton.vue';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { i18n } from '@/i18n.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {i18n} from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
 import MkTextarea from '@/components/MkTextarea.vue';
 import MkCodeEditor from '@/components/MkCodeEditor.vue';
 import MkInput from '@/components/MkInput.vue';
 import MkSelect from '@/components/MkSelect.vue';
-import { useRouter } from '@/router/supplier.js';
+import {useRouter} from '@/router/supplier.js';
 
 const PRESET_DEFAULT = `/// @ ${AISCRIPT_VERSION}
 
@@ -445,9 +447,9 @@ function show() {
 }
 
 async function del() {
-	const { canceled } = await os.confirm({
+	const {canceled} = await os.confirm({
 		type: 'warning',
-		text: i18n.tsx.deleteAreYouSure({ x: flash.value.title }),
+		text: i18n.tsx.deleteAreYouSure({x: flash.value.title}),
 	});
 	if (canceled) return;
 

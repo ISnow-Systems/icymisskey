@@ -4,116 +4,116 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="$style.root">
-	<XSidebar v-if="!isMobile" :class="$style.sidebar"/>
+	<div :class="$style.root">
+		<XSidebar v-if="!isMobile" :class="$style.sidebar"/>
 
-	<MkStickyContainer ref="contents" :class="$style.contents" style="container-type: inline-size;" @contextmenu.stop="onContextmenu">
-		<template #header>
-			<div>
-				<XAnnouncements v-if="$i"/>
-				<XStatusBars :class="$style.statusbars"/>
-			</div>
-		</template>
-		<RouterView/>
-		<div :class="$style.spacer"></div>
-	</MkStickyContainer>
+		<MkStickyContainer ref="contents" :class="$style.contents" style="container-type: inline-size;" @contextmenu.stop="onContextmenu">
+			<template #header>
+				<div>
+					<XAnnouncements v-if="$i"/>
+					<XStatusBars :class="$style.statusbars"/>
+				</div>
+			</template>
+			<RouterView/>
+			<div :class="$style.spacer"></div>
+		</MkStickyContainer>
 
-	<div v-if="isDesktop && !pageMetadata?.needWideArea" :class="$style.widgets">
-		<XWidgets/>
-	</div>
-
-	<button v-if="!isDesktop && !pageMetadata?.needWideArea && !isMobile" :class="$style.widgetButton" class="_button" @click="widgetsShowing = true"><i class="ti ti-apps"></i></button>
-
-	<div v-if="isMobile" ref="navFooter" :class="$style.nav">
-		<button :class="$style.navButton" class="_button" @click="drawerMenuShowing = true"><i :class="$style.navButtonIcon" class="ti ti-menu-2"></i><span v-if="menuIndicated" :class="$style.navButtonIndicator" class="_blink"><i class="_indicatorCircle"></i></span></button>
-		<button :class="$style.navButton" class="_button" @click="isRoot ? top() : mainRouter.push('/')"><i :class="$style.navButtonIcon" class="ti ti-home"></i></button>
-		<button :class="$style.navButton" class="_button" @click="mainRouter.push('/my/notifications')">
-			<i :class="$style.navButtonIcon" class="ti ti-bell"></i>
-			<span v-if="$i?.hasUnreadNotification" :class="$style.navButtonIndicator" class="_blink">
-				<span class="_indicateCounter" :class="$style.itemIndicateValueIcon">{{ $i.unreadNotificationsCount > 99 ? '99+' : $i.unreadNotificationsCount }}</span>
-			</span>
-		</button>
-		<button :class="$style.navButton" class="_button" @click="widgetsShowing = true"><i :class="$style.navButtonIcon" class="ti ti-apps"></i></button>
-		<button :class="$style.postButton" class="_button" @click="os.post()"><i :class="$style.navButtonIcon" class="ti ti-pencil"></i></button>
-	</div>
-
-	<Transition
-		:enterActiveClass="defaultStore.state.animation ? $style.transition_menuDrawerBg_enterActive : ''"
-		:leaveActiveClass="defaultStore.state.animation ? $style.transition_menuDrawerBg_leaveActive : ''"
-		:enterFromClass="defaultStore.state.animation ? $style.transition_menuDrawerBg_enterFrom : ''"
-		:leaveToClass="defaultStore.state.animation ? $style.transition_menuDrawerBg_leaveTo : ''"
-	>
-		<div
-			v-if="drawerMenuShowing"
-			:class="$style.menuDrawerBg"
-			class="_modalBg"
-			@click="drawerMenuShowing = false"
-			@touchstart.passive="drawerMenuShowing = false"
-		></div>
-	</Transition>
-
-	<Transition
-		:enterActiveClass="defaultStore.state.animation ? $style.transition_menuDrawer_enterActive : ''"
-		:leaveActiveClass="defaultStore.state.animation ? $style.transition_menuDrawer_leaveActive : ''"
-		:enterFromClass="defaultStore.state.animation ? $style.transition_menuDrawer_enterFrom : ''"
-		:leaveToClass="defaultStore.state.animation ? $style.transition_menuDrawer_leaveTo : ''"
-	>
-		<div v-if="drawerMenuShowing" :class="$style.menuDrawer">
-			<XDrawerMenu/>
-		</div>
-	</Transition>
-
-	<Transition
-		:enterActiveClass="defaultStore.state.animation ? $style.transition_widgetsDrawerBg_enterActive : ''"
-		:leaveActiveClass="defaultStore.state.animation ? $style.transition_widgetsDrawerBg_leaveActive : ''"
-		:enterFromClass="defaultStore.state.animation ? $style.transition_widgetsDrawerBg_enterFrom : ''"
-		:leaveToClass="defaultStore.state.animation ? $style.transition_widgetsDrawerBg_leaveTo : ''"
-	>
-		<div
-			v-if="widgetsShowing"
-			:class="$style.widgetsDrawerBg"
-			class="_modalBg"
-			@click="widgetsShowing = false"
-			@touchstart.passive="widgetsShowing = false"
-		></div>
-	</Transition>
-
-	<Transition
-		:enterActiveClass="defaultStore.state.animation ? $style.transition_widgetsDrawer_enterActive : ''"
-		:leaveActiveClass="defaultStore.state.animation ? $style.transition_widgetsDrawer_leaveActive : ''"
-		:enterFromClass="defaultStore.state.animation ? $style.transition_widgetsDrawer_enterFrom : ''"
-		:leaveToClass="defaultStore.state.animation ? $style.transition_widgetsDrawer_leaveTo : ''"
-	>
-		<div v-if="widgetsShowing" :class="$style.widgetsDrawer">
-			<button class="_button" :class="$style.widgetsCloseButton" @click="widgetsShowing = false"><i class="ti ti-x"></i></button>
+		<div v-if="isDesktop && !pageMetadata?.needWideArea" :class="$style.widgets">
 			<XWidgets/>
 		</div>
-	</Transition>
 
-	<XCommon/>
-</div>
+		<button v-if="!isDesktop && !pageMetadata?.needWideArea && !isMobile" :class="$style.widgetButton" class="_button" @click="widgetsShowing = true"><i class="ti ti-apps"></i></button>
+
+		<div v-if="isMobile" ref="navFooter" :class="$style.nav">
+			<button :class="$style.navButton" class="_button" @click="drawerMenuShowing = true"><i :class="$style.navButtonIcon" class="ti ti-menu-2"></i><span v-if="menuIndicated" :class="$style.navButtonIndicator" class="_blink"><i class="_indicatorCircle"></i></span></button>
+			<button :class="$style.navButton" class="_button" @click="isRoot ? top() : mainRouter.push('/')"><i :class="$style.navButtonIcon" class="ti ti-home"></i></button>
+			<button :class="$style.navButton" class="_button" @click="mainRouter.push('/my/notifications')">
+				<i :class="$style.navButtonIcon" class="ti ti-bell"></i>
+				<span v-if="$i?.hasUnreadNotification" :class="$style.navButtonIndicator" class="_blink">
+				<span :class="$style.itemIndicateValueIcon" class="_indicateCounter">{{ $i.unreadNotificationsCount > 99 ? '99+' : $i.unreadNotificationsCount }}</span>
+			</span>
+			</button>
+			<button :class="$style.navButton" class="_button" @click="widgetsShowing = true"><i :class="$style.navButtonIcon" class="ti ti-apps"></i></button>
+			<button :class="$style.postButton" class="_button" @click="os.post()"><i :class="$style.navButtonIcon" class="ti ti-pencil"></i></button>
+		</div>
+
+		<Transition
+			:enterActiveClass="defaultStore.state.animation ? $style.transition_menuDrawerBg_enterActive : ''"
+			:enterFromClass="defaultStore.state.animation ? $style.transition_menuDrawerBg_enterFrom : ''"
+			:leaveActiveClass="defaultStore.state.animation ? $style.transition_menuDrawerBg_leaveActive : ''"
+			:leaveToClass="defaultStore.state.animation ? $style.transition_menuDrawerBg_leaveTo : ''"
+		>
+			<div
+				v-if="drawerMenuShowing"
+				:class="$style.menuDrawerBg"
+				class="_modalBg"
+				@click="drawerMenuShowing = false"
+				@touchstart.passive="drawerMenuShowing = false"
+			></div>
+		</Transition>
+
+		<Transition
+			:enterActiveClass="defaultStore.state.animation ? $style.transition_menuDrawer_enterActive : ''"
+			:enterFromClass="defaultStore.state.animation ? $style.transition_menuDrawer_enterFrom : ''"
+			:leaveActiveClass="defaultStore.state.animation ? $style.transition_menuDrawer_leaveActive : ''"
+			:leaveToClass="defaultStore.state.animation ? $style.transition_menuDrawer_leaveTo : ''"
+		>
+			<div v-if="drawerMenuShowing" :class="$style.menuDrawer">
+				<XDrawerMenu/>
+			</div>
+		</Transition>
+
+		<Transition
+			:enterActiveClass="defaultStore.state.animation ? $style.transition_widgetsDrawerBg_enterActive : ''"
+			:enterFromClass="defaultStore.state.animation ? $style.transition_widgetsDrawerBg_enterFrom : ''"
+			:leaveActiveClass="defaultStore.state.animation ? $style.transition_widgetsDrawerBg_leaveActive : ''"
+			:leaveToClass="defaultStore.state.animation ? $style.transition_widgetsDrawerBg_leaveTo : ''"
+		>
+			<div
+				v-if="widgetsShowing"
+				:class="$style.widgetsDrawerBg"
+				class="_modalBg"
+				@click="widgetsShowing = false"
+				@touchstart.passive="widgetsShowing = false"
+			></div>
+		</Transition>
+
+		<Transition
+			:enterActiveClass="defaultStore.state.animation ? $style.transition_widgetsDrawer_enterActive : ''"
+			:enterFromClass="defaultStore.state.animation ? $style.transition_widgetsDrawer_enterFrom : ''"
+			:leaveActiveClass="defaultStore.state.animation ? $style.transition_widgetsDrawer_leaveActive : ''"
+			:leaveToClass="defaultStore.state.animation ? $style.transition_widgetsDrawer_leaveTo : ''"
+		>
+			<div v-if="widgetsShowing" :class="$style.widgetsDrawer">
+				<button :class="$style.widgetsCloseButton" class="_button" @click="widgetsShowing = false"><i class="ti ti-x"></i></button>
+				<XWidgets/>
+			</div>
+		</Transition>
+
+		<XCommon/>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, provide, onMounted, computed, ref, watch, shallowRef } from 'vue';
-import type { Ref } from 'vue';
-import { instanceName } from '@@/js/config.js';
-import { CURRENT_STICKY_BOTTOM } from '@@/js/const.js';
-import { isLink } from '@@/js/is-link.js';
+import {defineAsyncComponent, provide, onMounted, computed, ref, watch, shallowRef} from 'vue';
+import type {Ref} from 'vue';
+import {instanceName} from '@@/js/config.js';
+import {CURRENT_STICKY_BOTTOM} from '@@/js/const.js';
+import {isLink} from '@@/js/is-link.js';
 import XCommon from './_common_/common.vue';
 import type MkStickyContainer from '@/components/global/MkStickyContainer.vue';
 import XDrawerMenu from '@/ui/_common_/navbar-for-mobile.vue';
 import * as os from '@/os.js';
-import { defaultStore } from '@/store.js';
-import { navbarItemDef } from '@/navbar.js';
-import { i18n } from '@/i18n.js';
-import { $i } from '@/account.js';
-import { provideMetadataReceiver, provideReactiveMetadata } from '@/scripts/page-metadata.js';
-import type { PageMetadata } from '@/scripts/page-metadata.js';
-import { deviceKind } from '@/scripts/device-kind.js';
-import { miLocalStorage } from '@/local-storage.js';
-import { useScrollPositionManager } from '@/nirax.js';
-import { mainRouter } from '@/router/main.js';
+import {defaultStore} from '@/store.js';
+import {navbarItemDef} from '@/navbar.js';
+import {i18n} from '@/i18n.js';
+import {$i} from '@/account.js';
+import {provideMetadataReceiver, provideReactiveMetadata} from '@/scripts/page-metadata.js';
+import type {PageMetadata} from '@/scripts/page-metadata.js';
+import {deviceKind} from '@/scripts/device-kind.js';
+import {miLocalStorage} from '@/local-storage.js';
+import {useScrollPositionManager} from '@/nirax.js';
+import {mainRouter} from '@/router/main.js';
 
 const XWidgets = defineAsyncComponent(() => import('./universal.widgets.vue'));
 const XSidebar = defineAsyncComponent(() => import('@/ui/_common_/navbar.vue'));
@@ -193,7 +193,7 @@ onMounted(() => {
 	if (!isDesktop.value) {
 		window.addEventListener('resize', () => {
 			if (window.innerWidth >= DESKTOP_THRESHOLD) isDesktop.value = true;
-		}, { passive: true });
+		}, {passive: true});
 	}
 });
 
@@ -272,6 +272,7 @@ $widgets-hide-threshold: 1090px;
 	opacity: 1;
 	transition: opacity 300ms cubic-bezier(0.23, 1, 0.32, 1);
 }
+
 .transition_menuDrawerBg_enterFrom,
 .transition_menuDrawerBg_leaveTo {
 	opacity: 0;
@@ -283,6 +284,7 @@ $widgets-hide-threshold: 1090px;
 	transform: translateX(0);
 	transition: transform 300ms cubic-bezier(0.23, 1, 0.32, 1), opacity 300ms cubic-bezier(0.23, 1, 0.32, 1);
 }
+
 .transition_menuDrawer_enterFrom,
 .transition_menuDrawer_leaveTo {
 	opacity: 0;
@@ -294,6 +296,7 @@ $widgets-hide-threshold: 1090px;
 	opacity: 1;
 	transition: opacity 300ms cubic-bezier(0.23, 1, 0.32, 1);
 }
+
 .transition_widgetsDrawerBg_enterFrom,
 .transition_widgetsDrawerBg_leaveTo {
 	opacity: 0;
@@ -305,6 +308,7 @@ $widgets-hide-threshold: 1090px;
 	transform: translateX(0);
 	transition: transform 300ms cubic-bezier(0.23, 1, 0.32, 1), opacity 300ms cubic-bezier(0.23, 1, 0.32, 1);
 }
+
 .transition_widgetsDrawer_enterFrom,
 .transition_widgetsDrawer_leaveTo {
 	opacity: 0;

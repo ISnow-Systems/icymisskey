@@ -4,88 +4,88 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<template #header>
-		<XHeader :actions="headerActions" :tabs="headerTabs"/>
-	</template>
-	<MkSpacer :contentMax="900">
-		<MkSelect v-model="filterType" :class="$style.input" @update:modelValue="filterItems">
-			<template #label>{{ i18n.ts.state }}</template>
-			<option value="all">{{ i18n.ts.all }}</option>
-			<option value="publishing">{{ i18n.ts.publishing }}</option>
-			<option value="expired">{{ i18n.ts.expired }}</option>
-		</MkSelect>
-		<div>
-			<div v-for="ad in ads" class="_panel _gaps_m" :class="$style.ad">
-				<MkAd v-if="ad.url" :key="ad.id" :specify="ad"/>
-				<MkInput v-model="ad.url" type="url">
-					<template #label>URL</template>
-				</MkInput>
-				<MkInput v-model="ad.imageUrl" type="url">
-					<template #label>{{ i18n.ts.imageUrl }}</template>
-				</MkInput>
-				<MkRadios v-model="ad.place">
-					<template #label>Form</template>
-					<option value="square">square</option>
-					<option value="horizontal">horizontal</option>
-					<option value="horizontal-big">horizontal-big</option>
-				</MkRadios>
-				<!--
-			<div style="margin: 32px 0;">
-				{{ i18n.ts.priority }}
-				<MkRadio v-model="ad.priority" value="high">{{ i18n.ts.high }}</MkRadio>
-				<MkRadio v-model="ad.priority" value="middle">{{ i18n.ts.middle }}</MkRadio>
-				<MkRadio v-model="ad.priority" value="low">{{ i18n.ts.low }}</MkRadio>
-			</div>
-			-->
-				<FormSplit>
-					<MkInput v-model="ad.ratio" type="number">
-						<template #label>{{ i18n.ts.ratio }}</template>
+	<MkStickyContainer>
+		<template #header>
+			<XHeader :actions="headerActions" :tabs="headerTabs"/>
+		</template>
+		<MkSpacer :contentMax="900">
+			<MkSelect v-model="filterType" :class="$style.input" @update:modelValue="filterItems">
+				<template #label>{{ i18n.ts.state }}</template>
+				<option value="all">{{ i18n.ts.all }}</option>
+				<option value="publishing">{{ i18n.ts.publishing }}</option>
+				<option value="expired">{{ i18n.ts.expired }}</option>
+			</MkSelect>
+			<div>
+				<div v-for="ad in ads" :class="$style.ad" class="_panel _gaps_m">
+					<MkAd v-if="ad.url" :key="ad.id" :specify="ad"/>
+					<MkInput v-model="ad.url" type="url">
+						<template #label>URL</template>
 					</MkInput>
-					<MkInput v-model="ad.startsAt" type="datetime-local">
-						<template #label>{{ i18n.ts.startingperiod }}</template>
+					<MkInput v-model="ad.imageUrl" type="url">
+						<template #label>{{ i18n.ts.imageUrl }}</template>
 					</MkInput>
-					<MkInput v-model="ad.expiresAt" type="datetime-local">
-						<template #label>{{ i18n.ts.expiration }}</template>
-					</MkInput>
-				</FormSplit>
-				<MkFolder>
-					<template #label>{{ i18n.ts.advancedSettings }}</template>
-					<span>
+					<MkRadios v-model="ad.place">
+						<template #label>Form</template>
+						<option value="square">square</option>
+						<option value="horizontal">horizontal</option>
+						<option value="horizontal-big">horizontal-big</option>
+					</MkRadios>
+					<!--
+				<div style="margin: 32px 0;">
+					{{ i18n.ts.priority }}
+					<MkRadio v-model="ad.priority" value="high">{{ i18n.ts.high }}</MkRadio>
+					<MkRadio v-model="ad.priority" value="middle">{{ i18n.ts.middle }}</MkRadio>
+					<MkRadio v-model="ad.priority" value="low">{{ i18n.ts.low }}</MkRadio>
+				</div>
+				-->
+					<FormSplit>
+						<MkInput v-model="ad.ratio" type="number">
+							<template #label>{{ i18n.ts.ratio }}</template>
+						</MkInput>
+						<MkInput v-model="ad.startsAt" type="datetime-local">
+							<template #label>{{ i18n.ts.startingperiod }}</template>
+						</MkInput>
+						<MkInput v-model="ad.expiresAt" type="datetime-local">
+							<template #label>{{ i18n.ts.expiration }}</template>
+						</MkInput>
+					</FormSplit>
+					<MkFolder>
+						<template #label>{{ i18n.ts.advancedSettings }}</template>
+						<span>
 						{{ i18n.ts._ad.timezoneinfo }}
 						<div v-for="(day, index) in daysOfWeek" :key="index">
 							<input
-								:id="`ad${ad.id}-${index}`" type="checkbox" :checked="(ad.dayOfWeek & (1 << index)) !== 0"
+								:id="`ad${ad.id}-${index}`" :checked="(ad.dayOfWeek & (1 << index)) !== 0" type="checkbox"
 								@change="toggleDayOfWeek(ad, index)"
 							>
 							<label :for="`ad${ad.id}-${index}`">{{ day }}</label>
 						</div>
 					</span>
-				</MkFolder>
-				<MkTextarea v-model="ad.memo">
-					<template #label>{{ i18n.ts.memo }}</template>
-				</MkTextarea>
-				<div class="_buttons">
-					<MkButton inline primary style="margin-right: 12px;" @click="save(ad)">
-						<i
-							class="ti ti-device-floppy"
-						></i> {{ i18n.ts.save }}
-					</MkButton>
-					<MkButton inline danger @click="remove(ad)">
-						<i class="ti ti-trash"></i> {{ i18n.ts.remove }}
-					</MkButton>
+					</MkFolder>
+					<MkTextarea v-model="ad.memo">
+						<template #label>{{ i18n.ts.memo }}</template>
+					</MkTextarea>
+					<div class="_buttons">
+						<MkButton inline primary style="margin-right: 12px;" @click="save(ad)">
+							<i
+								class="ti ti-device-floppy"
+							></i> {{ i18n.ts.save }}
+						</MkButton>
+						<MkButton danger inline @click="remove(ad)">
+							<i class="ti ti-trash"></i> {{ i18n.ts.remove }}
+						</MkButton>
+					</div>
 				</div>
+				<MkButton @click="more()">
+					<i class="ti ti-reload"></i>{{ i18n.ts.more }}
+				</MkButton>
 			</div>
-			<MkButton @click="more()">
-				<i class="ti ti-reload"></i>{{ i18n.ts.more }}
-			</MkButton>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
+import {ref, computed} from 'vue';
 import * as Misskey from 'misskey-js';
 import XHeader from './_header_.vue';
 import MkButton from '@/components/MkButton.vue';
@@ -96,9 +96,9 @@ import MkFolder from '@/components/MkFolder.vue';
 import MkSelect from '@/components/MkSelect.vue';
 import FormSplit from '@/components/form/split.vue';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { i18n } from '@/i18n.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {i18n} from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
 
 const ads = ref<Misskey.entities.Ad[]>([]);
 
@@ -109,7 +109,7 @@ const daysOfWeek: string[] = [i18n.ts._weekday.sunday, i18n.ts._weekday.monday, 
 const filterType = ref('all');
 let publishing: boolean | null = null;
 
-misskeyApi('admin/ad/list', { publishing: publishing }).then(adsResponse => {
+misskeyApi('admin/ad/list', {publishing: publishing}).then(adsResponse => {
 	if (adsResponse != null) {
 		ads.value = adsResponse.map(r => {
 			const exdate = new Date(r.expiresAt);
@@ -160,8 +160,8 @@ function add() {
 function remove(ad) {
 	os.confirm({
 		type: 'warning',
-		text: i18n.tsx.removeAreYouSure({ x: ad.url }),
-	}).then(({ canceled }) => {
+		text: i18n.tsx.removeAreYouSure({x: ad.url}),
+	}).then(({canceled}) => {
 		if (canceled) return;
 		ads.value = ads.value.filter(x => x !== ad);
 		if (ad.id == null) return;
@@ -211,7 +211,7 @@ function save(ad) {
 }
 
 function more() {
-	misskeyApi('admin/ad/list', { untilId: ads.value.reduce((acc, ad) => ad.id != null ? ad : acc).id, publishing: publishing }).then(adsResponse => {
+	misskeyApi('admin/ad/list', {untilId: ads.value.reduce((acc, ad) => ad.id != null ? ad : acc).id, publishing: publishing}).then(adsResponse => {
 		if (adsResponse == null) return;
 		ads.value = ads.value.concat(adsResponse.map(r => {
 			const exdate = new Date(r.expiresAt);
@@ -228,7 +228,7 @@ function more() {
 }
 
 function refresh() {
-	misskeyApi('admin/ad/list', { publishing: publishing }).then(adsResponse => {
+	misskeyApi('admin/ad/list', {publishing: publishing}).then(adsResponse => {
 		if (adsResponse == null) return;
 		ads.value = adsResponse.map(r => {
 			const exdate = new Date(r.expiresAt);
@@ -269,6 +269,7 @@ definePageMetadata(() => ({
 		margin-bottom: var(--MI-margin);
 	}
 }
+
 .input {
 	margin-bottom: 32px;
 }

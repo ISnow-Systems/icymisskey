@@ -4,48 +4,48 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkModal ref="modal" v-slot="{ type }" :zPriority="'high'" :src="src" @click="modal?.close()" @closed="emit('closed')" @esc="modal?.close()">
-	<div class="_popup" :class="{ [$style.root]: true, [$style.asDrawer]: type === 'drawer' }">
-		<div :class="[$style.label, $style.item]">
-			{{ i18n.ts.visibility }}
+	<MkModal ref="modal" v-slot="{ type }" :src="src" :zPriority="'high'" @click="modal?.close()" @closed="emit('closed')" @esc="modal?.close()">
+		<div :class="{ [$style.root]: true, [$style.asDrawer]: type === 'drawer' }" class="_popup">
+			<div :class="[$style.label, $style.item]">
+				{{ i18n.ts.visibility }}
+			</div>
+			<button key="public" :class="[$style.item, { [$style.active]: v === 'public' }]" :disabled="isSilenced || isReplyVisibilitySpecified" class="_button" data-index="1" @click="choose('public')">
+				<div :class="$style.icon"><i class="ti ti-world"></i></div>
+				<div :class="$style.body">
+					<span :class="$style.itemTitle">{{ i18n.ts._visibility.public }}</span>
+					<span :class="$style.itemDescription">{{ i18n.ts._visibility.publicDescription }}</span>
+				</div>
+			</button>
+			<button key="home" :class="[$style.item, { [$style.active]: v === 'home' }]" :disabled="isReplyVisibilitySpecified" class="_button" data-index="2" @click="choose('home')">
+				<div :class="$style.icon"><i class="ti ti-home"></i></div>
+				<div :class="$style.body">
+					<span :class="$style.itemTitle">{{ i18n.ts._visibility.home }}</span>
+					<span :class="$style.itemDescription">{{ i18n.ts._visibility.homeDescription }}</span>
+				</div>
+			</button>
+			<button key="followers" :class="[$style.item, { [$style.active]: v === 'followers' }]" :disabled="isReplyVisibilitySpecified" class="_button" data-index="3" @click="choose('followers')">
+				<div :class="$style.icon"><i class="ti ti-lock"></i></div>
+				<div :class="$style.body">
+					<span :class="$style.itemTitle">{{ i18n.ts._visibility.followers }}</span>
+					<span :class="$style.itemDescription">{{ i18n.ts._visibility.followersDescription }}</span>
+				</div>
+			</button>
+			<button key="specified" :class="[$style.item, { [$style.active]: v === 'specified' }]" :disabled="localOnly" class="_button" data-index="4" @click="choose('specified')">
+				<div :class="$style.icon"><i class="ti ti-mail"></i></div>
+				<div :class="$style.body">
+					<span :class="$style.itemTitle">{{ i18n.ts._visibility.specified }}</span>
+					<span :class="$style.itemDescription">{{ i18n.ts._visibility.specifiedDescription }}</span>
+				</div>
+			</button>
 		</div>
-		<button key="public" :disabled="isSilenced || isReplyVisibilitySpecified" class="_button" :class="[$style.item, { [$style.active]: v === 'public' }]" data-index="1" @click="choose('public')">
-			<div :class="$style.icon"><i class="ti ti-world"></i></div>
-			<div :class="$style.body">
-				<span :class="$style.itemTitle">{{ i18n.ts._visibility.public }}</span>
-				<span :class="$style.itemDescription">{{ i18n.ts._visibility.publicDescription }}</span>
-			</div>
-		</button>
-		<button key="home" :disabled="isReplyVisibilitySpecified" class="_button" :class="[$style.item, { [$style.active]: v === 'home' }]" data-index="2" @click="choose('home')">
-			<div :class="$style.icon"><i class="ti ti-home"></i></div>
-			<div :class="$style.body">
-				<span :class="$style.itemTitle">{{ i18n.ts._visibility.home }}</span>
-				<span :class="$style.itemDescription">{{ i18n.ts._visibility.homeDescription }}</span>
-			</div>
-		</button>
-		<button key="followers" :disabled="isReplyVisibilitySpecified" class="_button" :class="[$style.item, { [$style.active]: v === 'followers' }]" data-index="3" @click="choose('followers')">
-			<div :class="$style.icon"><i class="ti ti-lock"></i></div>
-			<div :class="$style.body">
-				<span :class="$style.itemTitle">{{ i18n.ts._visibility.followers }}</span>
-				<span :class="$style.itemDescription">{{ i18n.ts._visibility.followersDescription }}</span>
-			</div>
-		</button>
-		<button key="specified" :disabled="localOnly" class="_button" :class="[$style.item, { [$style.active]: v === 'specified' }]" data-index="4" @click="choose('specified')">
-			<div :class="$style.icon"><i class="ti ti-mail"></i></div>
-			<div :class="$style.body">
-				<span :class="$style.itemTitle">{{ i18n.ts._visibility.specified }}</span>
-				<span :class="$style.itemDescription">{{ i18n.ts._visibility.specifiedDescription }}</span>
-			</div>
-		</button>
-	</div>
-</MkModal>
+	</MkModal>
 </template>
 
 <script lang="ts" setup>
-import { nextTick, shallowRef, ref } from 'vue';
+import {nextTick, shallowRef, ref} from 'vue';
 import * as Misskey from 'misskey-js';
 import MkModal from '@/components/MkModal.vue';
-import { i18n } from '@/i18n.js';
+import {i18n} from '@/i18n.js';
 
 const modal = shallowRef<InstanceType<typeof MkModal>>();
 
@@ -55,8 +55,7 @@ const props = withDefaults(defineProps<{
 	localOnly: boolean;
 	src?: HTMLElement;
 	isReplyVisibilitySpecified?: boolean;
-}>(), {
-});
+}>(), {});
 
 const emit = defineEmits<{
 	(ev: 'changeVisibility', v: typeof Misskey.noteVisibilities[number]): void;

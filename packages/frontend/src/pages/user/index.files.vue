@@ -4,25 +4,25 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkContainer :max-height="300" :foldable="true" :onUnfold="unfoldContainer">
-	<template #icon><i class="ti ti-photo"></i></template>
-	<template #header>{{ i18n.ts.files }}</template>
-	<div :class="$style.root">
-		<MkLoading v-if="fetching"/>
-		<div v-if="!fetching && notes.length > 0" :class="$style.stream">
-			<MkNoteMediaGrid v-for="note in notes" :note="note"/>
+	<MkContainer :foldable="true" :max-height="300" :onUnfold="unfoldContainer">
+		<template #icon><i class="ti ti-photo"></i></template>
+		<template #header>{{ i18n.ts.files }}</template>
+		<div :class="$style.root">
+			<MkLoading v-if="fetching"/>
+			<div v-if="!fetching && notes.length > 0" :class="$style.stream">
+				<MkNoteMediaGrid v-for="note in notes" :note="note"/>
+			</div>
+			<p v-if="!fetching && notes.length == 0" :class="$style.empty">{{ i18n.ts.nothing }}</p>
 		</div>
-		<p v-if="!fetching && notes.length == 0" :class="$style.empty">{{ i18n.ts.nothing }}</p>
-	</div>
-</MkContainer>
+	</MkContainer>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import * as Misskey from 'misskey-js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
 import MkContainer from '@/components/MkContainer.vue';
-import { i18n } from '@/i18n.js';
+import {i18n} from '@/i18n.js';
 import MkNoteMediaGrid from '@/components/MkNoteMediaGrid.vue';
 
 const props = defineProps<{
@@ -85,6 +85,7 @@ onMounted(() => {
 	height: 100%;
 	filter: brightness(0.7);
 }
+
 .sensitive {
 	position: absolute;
 	top: 0;
@@ -92,7 +93,7 @@ onMounted(() => {
 	width: 100%;
 	height: 100%;
 	display: grid;
-  place-items: center;
+	place-items: center;
 	font-size: 0.8em;
 	color: #fff;
 	cursor: pointer;

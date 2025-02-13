@@ -1,4 +1,4 @@
-import { expectType } from 'tsd';
+import {expectType} from 'tsd';
 import * as Misskey from '../src/index.js';
 
 describe('API', () => {
@@ -7,7 +7,7 @@ describe('API', () => {
 			origin: 'https://misskey.test',
 			credential: 'TOKEN'
 		});
-		const res = await cli.request('meta', { detail: true });
+		const res = await cli.request('meta', {detail: true});
 		expectType<Misskey.entities.MetaResponse>(res);
 	});
 
@@ -17,16 +17,16 @@ describe('API', () => {
 			credential: 'TOKEN'
 		});
 
-		const res = await cli.request('meta', { detail: true });
+		const res = await cli.request('meta', {detail: true});
 		expectType<Misskey.entities.MetaResponse>(res);
 
-		const res2 = await cli.request('meta', { detail: false });
+		const res2 = await cli.request('meta', {detail: false});
 		expectType<Misskey.entities.MetaResponse>(res2);
 
-		const res3 = await cli.request('meta', { });
+		const res3 = await cli.request('meta', {});
 		expectType<Misskey.entities.MetaResponse>(res3);
 
-		const res4 = await cli.request('meta', { detail: true as boolean });
+		const res4 = await cli.request('meta', {detail: true as boolean});
 		expectType<Misskey.entities.MetaResponse>(res4);
 	});
 
@@ -36,10 +36,10 @@ describe('API', () => {
 			credential: 'TOKEN'
 		});
 
-		const res = await cli.request('users/show', { userId: 'xxxxxxxx' });
+		const res = await cli.request('users/show', {userId: 'xxxxxxxx'});
 		expectType<Misskey.entities.UserDetailed>(res);
 
-		const res2 = await cli.request('users/show', { userIds: ['xxxxxxxx'] });
+		const res2 = await cli.request('users/show', {userIds: ['xxxxxxxx']});
 		expectType<Misskey.entities.UserDetailed[]>(res2);
 	});
 });

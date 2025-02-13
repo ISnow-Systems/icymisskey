@@ -4,9 +4,10 @@
  */
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import type { StoryObj } from '@storybook/vue3';
-import { userDetailed } from '../../../.storybook/fakes.js';
+import type {StoryObj} from '@storybook/vue3';
+import {userDetailed} from '../../../.storybook/fakes.js';
 import MkAvatar from './MkAvatar.vue';
+
 const common = {
 	render(args) {
 		return {

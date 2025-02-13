@@ -4,42 +4,42 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="_gaps">
-	<MkInfo>{{ i18n.ts._initialAccountSetting.theseSettingsCanEditLater }}</MkInfo>
+	<div class="_gaps">
+		<MkInfo>{{ i18n.ts._initialAccountSetting.theseSettingsCanEditLater }}</MkInfo>
 
-	<FormSlot>
-		<template #label>{{ i18n.ts.avatar }}</template>
-		<div v-adaptive-bg :class="$style.avatarSection" class="_panel">
-			<MkAvatar :class="$style.avatar" :user="$i" @click="setAvatar"/>
-			<div style="margin-top: 16px;">
-				<MkButton primary rounded inline @click="setAvatar">{{ i18n.ts._profile.changeAvatar }}</MkButton>
+		<FormSlot>
+			<template #label>{{ i18n.ts.avatar }}</template>
+			<div v-adaptive-bg :class="$style.avatarSection" class="_panel">
+				<MkAvatar :class="$style.avatar" :user="$i" @click="setAvatar"/>
+				<div style="margin-top: 16px;">
+					<MkButton inline primary rounded @click="setAvatar">{{ i18n.ts._profile.changeAvatar }}</MkButton>
+				</div>
 			</div>
-		</div>
-	</FormSlot>
+		</FormSlot>
 
-	<MkInput v-model="name" :max="30" manualSave data-cy-user-setup-user-name>
-		<template #label>{{ i18n.ts._profile.name }}</template>
-	</MkInput>
+		<MkInput v-model="name" :max="30" data-cy-user-setup-user-name manualSave>
+			<template #label>{{ i18n.ts._profile.name }}</template>
+		</MkInput>
 
-	<MkTextarea v-model="description" :max="500" tall manualSave data-cy-user-setup-user-description>
-		<template #label>{{ i18n.ts._profile.description }}</template>
-	</MkTextarea>
+		<MkTextarea v-model="description" :max="500" data-cy-user-setup-user-description manualSave tall>
+			<template #label>{{ i18n.ts._profile.description }}</template>
+		</MkTextarea>
 
-	<MkInfo>{{ i18n.ts._initialAccountSetting.youCanEditMoreSettingsInSettingsPageLater }}</MkInfo>
-</div>
+		<MkInfo>{{ i18n.ts._initialAccountSetting.youCanEditMoreSettingsInSettingsPageLater }}</MkInfo>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
-import { i18n } from '@/i18n.js';
+import {ref, watch} from 'vue';
+import {i18n} from '@/i18n.js';
 import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/MkInput.vue';
 import MkTextarea from '@/components/MkTextarea.vue';
 import FormSlot from '@/components/form/slot.vue';
 import MkInfo from '@/components/MkInfo.vue';
-import { chooseFileFromPc } from '@/scripts/select-file.js';
+import {chooseFileFromPc} from '@/scripts/select-file.js';
 import * as os from '@/os.js';
-import { signinRequired } from '@/account.js';
+import {signinRequired} from '@/account.js';
 
 const $i = signinRequired();
 
@@ -73,7 +73,7 @@ function setAvatar(ev) {
 
 		let originalOrCropped = file;
 
-		const { canceled } = await os.confirm({
+		const {canceled} = await os.confirm({
 			type: 'question',
 			text: i18n.ts.cropImageAsk,
 			okText: i18n.ts.cropYes,

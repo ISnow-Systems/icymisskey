@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { defineAsyncComponent, ref } from 'vue';
-import type { Directive } from 'vue';
-import { popup } from '@/os.js';
+import {defineAsyncComponent, ref} from 'vue';
+import type {Directive} from 'vue';
+import {popup} from '@/os.js';
 
 export class UserPreview {
 	private el;
@@ -30,13 +30,25 @@ export class UserPreview {
 		this.attach();
 	}
 
+	public attach() {
+		this.el.addEventListener('mouseover', this.onMouseover);
+		this.el.addEventListener('mouseleave', this.onMouseleave);
+		this.el.addEventListener('click', this.onClick);
+	}
+
+	public detach() {
+		this.el.removeEventListener('mouseover', this.onMouseover);
+		this.el.removeEventListener('mouseleave', this.onMouseleave);
+		this.el.removeEventListener('click', this.onClick);
+	}
+
 	private show() {
 		if (!document.body.contains(this.el)) return;
 		if (this.promise) return;
 
 		const showing = ref(true);
 
-		const { dispose } = popup(defineAsyncComponent(() => import('@/components/MkUserPopup.vue')), {
+		const {dispose} = popup(defineAsyncComponent(() => import('@/components/MkUserPopup.vue')), {
 			showing,
 			q: this.user,
 			source: this.el,
@@ -89,18 +101,6 @@ export class UserPreview {
 	private onClick() {
 		window.clearTimeout(this.showTimer);
 		this.close();
-	}
-
-	public attach() {
-		this.el.addEventListener('mouseover', this.onMouseover);
-		this.el.addEventListener('mouseleave', this.onMouseleave);
-		this.el.addEventListener('click', this.onClick);
-	}
-
-	public detach() {
-		this.el.removeEventListener('mouseover', this.onMouseover);
-		this.el.removeEventListener('mouseleave', this.onMouseleave);
-		this.el.removeEventListener('click', this.onClick);
 	}
 }
 

@@ -8,11 +8,11 @@ import Chart from '../../core.js';
 export const name = 'perUserDrive';
 
 export const schema = {
-	'totalCount': { accumulate: true },
-	'totalSize': { accumulate: true }, // in kilobyte
-	'incCount': { range: 'small' },
+	'totalCount': {accumulate: true},
+	'totalSize': {accumulate: true}, // in kilobyte
+	'incCount': {range: 'small'},
 	'incSize': {}, // in kilobyte
-	'decCount': { range: 'small' },
+	'decCount': {range: 'small'},
 	'decSize': {}, // in kilobyte
 } as const;
 

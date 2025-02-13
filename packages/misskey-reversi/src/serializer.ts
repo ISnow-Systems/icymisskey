@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Game } from './game.js';
+import {Game} from './game.js';
 
 export type Log = {
 	time: number;

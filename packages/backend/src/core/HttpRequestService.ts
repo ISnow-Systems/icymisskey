@@ -9,17 +9,17 @@ import * as net from 'node:net';
 import ipaddr from 'ipaddr.js';
 import CacheableLookup from 'cacheable-lookup';
 import fetch from 'node-fetch';
-import { HttpProxyAgent, HttpsProxyAgent } from 'hpagent';
-import { Inject, Injectable } from '@nestjs/common';
-import { DI } from '@/di-symbols.js';
-import type { Config } from '@/config.js';
-import { StatusError } from '@/misc/status-error.js';
-import { bindThis } from '@/decorators.js';
-import { validateContentTypeSetAsActivityPub } from '@/core/activitypub/misc/validator.js';
-import { assertActivityMatchesUrls } from '@/core/activitypub/misc/check-against-url.js';
-import type { IObject } from '@/core/activitypub/type.js';
-import type { Response } from 'node-fetch';
-import type { URL } from 'node:url';
+import {HttpProxyAgent, HttpsProxyAgent} from 'hpagent';
+import {Inject, Injectable} from '@nestjs/common';
+import {DI} from '@/di-symbols.js';
+import type {Config} from '@/config.js';
+import {StatusError} from '@/misc/status-error.js';
+import {bindThis} from '@/decorators.js';
+import {validateContentTypeSetAsActivityPub} from '@/core/activitypub/misc/validator.js';
+import {assertActivityMatchesUrls} from '@/core/activitypub/misc/check-against-url.js';
+import type {IObject} from '@/core/activitypub/type.js';
+import type {Response} from 'node-fetch';
+import type {URL} from 'node:url';
 
 export type HttpRequestSendOptions = {
 	throwErrorWhenResponseNotOk: boolean;
@@ -113,34 +113,29 @@ class HttpsRequestServiceAgent extends https.Agent {
 @Injectable()
 export class HttpRequestService {
 	/**
-	 * Get http non-proxy agent (without local address filtering)
-	 */
-	private httpNative: http.Agent;
-
-	/**
-	 * Get https non-proxy agent (without local address filtering)
-	 */
-	private httpsNative: https.Agent;
-
-	/**
-	 * Get http non-proxy agent
-	 */
-	private http: http.Agent;
-
-	/**
-	 * Get https non-proxy agent
-	 */
-	private https: https.Agent;
-
-	/**
 	 * Get http proxy or non-proxy agent
 	 */
 	public httpAgent: http.Agent;
-
 	/**
 	 * Get https proxy or non-proxy agent
 	 */
 	public httpsAgent: https.Agent;
+	/**
+	 * Get http non-proxy agent (without local address filtering)
+	 */
+	private httpNative: http.Agent;
+	/**
+	 * Get https non-proxy agent (without local address filtering)
+	 */
+	private httpsNative: https.Agent;
+	/**
+	 * Get http non-proxy agent
+	 */
+	private http: http.Agent;
+	/**
+	 * Get https non-proxy agent
+	 */
+	private https: https.Agent;
 
 	constructor(
 		@Inject(DI.config)

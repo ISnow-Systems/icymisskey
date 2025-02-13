@@ -1,6 +1,6 @@
-import { EventEmitter } from 'eventemitter3';
-import _ReconnectingWebSocket, { Options } from 'reconnecting-websocket';
-import type { BroadcastEvents, Channels } from './streaming.types.js';
+import {EventEmitter} from 'eventemitter3';
+import _ReconnectingWebSocket, {Options} from 'reconnecting-websocket';
+import type {BroadcastEvents, Channels} from './streaming.types.js';
 
 // コンストラクタとクラスそのものの定義が上手く解決出来ないため再定義
 const ReconnectingWebSocketConstructor = _ReconnectingWebSocket as unknown as typeof _ReconnectingWebSocket.default;
@@ -28,15 +28,25 @@ export interface IStream extends EventEmitter<StreamEvents> {
 	state: 'initializing' | 'reconnecting' | 'connected';
 
 	useChannel<C extends keyof Channels>(channel: C, params?: Channels[C]['params'], name?: string): IChannelConnection<Channels[C]>;
+
 	removeSharedConnection(connection: SharedConnection): void;
+
 	removeSharedConnectionPool(pool: Pool): void;
+
 	disconnectToChannel(connection: NonSharedConnection): void;
+
 	send(typeOrPayload: string): void;
+
 	send(typeOrPayload: string, payload: unknown): void;
+
 	send(typeOrPayload: Record<string, unknown> | unknown[]): void;
+
 	send(typeOrPayload: string | Record<string, unknown> | unknown[], payload?: unknown): void;
+
 	ping(): void;
+
 	heartbeat(): void;
+
 	close(): void;
 }
 
@@ -45,8 +55,8 @@ export interface IStream extends EventEmitter<StreamEvents> {
  */
 // eslint-disable-next-line import/no-default-export
 export default class Stream extends EventEmitter<StreamEvents> implements IStream {
-	private stream: ReconnectingWebSocket;
 	public state: 'initializing' | 'reconnecting' | 'connected' = 'initializing';
+	private stream: ReconnectingWebSocket;
 	private sharedConnectionPools: Pool[] = [];
 	private sharedConnections: SharedConnection[] = [];
 	private nonSharedConnections: NonSharedConnection[] = [];
@@ -72,7 +82,7 @@ export default class Stream extends EventEmitter<StreamEvents> implements IStrea
 		this.close = this.close.bind(this);
 
 		// eslint-disable-next-line no-param-reassign
-		options = options ?? { };
+		options = options ?? {};
 
 		const query = urlQuery({
 			i: user?.token,
@@ -95,16 +105,65 @@ export default class Stream extends EventEmitter<StreamEvents> implements IStrea
 		this.stream.addEventListener('message', this.onMessage);
 	}
 
-	private genId(): string {
-		return (++this.idCounter).toString();
-	}
-
 	public useChannel<C extends keyof Channels>(channel: C, params?: Channels[C]['params'], name?: string): Connection<Channels[C]> {
 		if (params) {
 			return this.connectToChannel(channel, params);
 		} else {
 			return this.useSharedConnection(channel, name);
 		}
+	}
+
+	public removeSharedConnection(connection: SharedConnection): void {
+		this.sharedConnections = this.sharedConnections.filter(c => c !== connection);
+	}
+
+	public removeSharedConnectionPool(pool: Pool): void {
+		this.sharedConnectionPools = this.sharedConnectionPools.filter(p => p !== pool);
+	}
+
+	public disconnectToChannel(connection: NonSharedConnection): void {
+		this.nonSharedConnections = this.nonSharedConnections.filter(c => c !== connection);
+	}
+
+	/**
+	 * Send a message to connection
+	 * ! ストリーム上のやり取りはすべてJSONで行われます !
+	 */
+	public send(typeOrPayload: string): void
+
+	public send(typeOrPayload: string, payload: unknown): void
+
+	public send(typeOrPayload: Record<string, unknown> | unknown[]): void
+
+	public send(typeOrPayload: string | Record<string, unknown> | unknown[], payload?: unknown): void {
+		if (typeof typeOrPayload === 'string') {
+			this.stream.send(JSON.stringify({
+				type: typeOrPayload,
+				...(payload === undefined ? {} : {body: payload}),
+			}));
+			return;
+		}
+
+		this.stream.send(JSON.stringify(typeOrPayload));
+	}
+
+	public ping(): void {
+		this.stream.send('ping');
+	}
+
+	public heartbeat(): void {
+		this.stream.send('h');
+	}
+
+	/**
+	 * Close this connection
+	 */
+	public close(): void {
+		this.stream.close();
+	}
+
+	private genId(): string {
+		return (++this.idCounter).toString();
 	}
 
 	private useSharedConnection<C extends keyof Channels>(channel: C, name?: string): SharedConnection<Channels[C]> {
@@ -120,22 +179,10 @@ export default class Stream extends EventEmitter<StreamEvents> implements IStrea
 		return connection;
 	}
 
-	public removeSharedConnection(connection: SharedConnection): void {
-		this.sharedConnections = this.sharedConnections.filter(c => c !== connection);
-	}
-
-	public removeSharedConnectionPool(pool: Pool): void {
-		this.sharedConnectionPools = this.sharedConnectionPools.filter(p => p !== pool);
-	}
-
 	private connectToChannel<C extends keyof Channels>(channel: C, params: Channels[C]['params']): NonSharedConnection<Channels[C]> {
 		const connection = new NonSharedConnection(this, channel, this.genId(), params);
 		this.nonSharedConnections.push(connection as unknown as NonSharedConnection);
 		return connection;
-	}
-
-	public disconnectToChannel(connection: NonSharedConnection): void {
-		this.nonSharedConnections = this.nonSharedConnections.filter(c => c !== connection);
 	}
 
 	/**
@@ -168,7 +215,7 @@ export default class Stream extends EventEmitter<StreamEvents> implements IStrea
 	 * Callback of when received a message from connection
 	 */
 	private onMessage(message: { data: string; }): void {
-		const { type, body } = JSON.parse(message.data);
+		const {type, body} = JSON.parse(message.data);
 
 		if (type === 'channel') {
 			const id = body.id;
@@ -192,40 +239,6 @@ export default class Stream extends EventEmitter<StreamEvents> implements IStrea
 			this.emit(type, body);
 		}
 	}
-
-	/**
-	 * Send a message to connection
-	 * ! ストリーム上のやり取りはすべてJSONで行われます !
-	 */
-	public send(typeOrPayload: string): void
-	public send(typeOrPayload: string, payload: unknown): void
-	public send(typeOrPayload: Record<string, unknown> | unknown[]): void
-	public send(typeOrPayload: string | Record<string, unknown> | unknown[], payload?: unknown): void {
-		if (typeof typeOrPayload === 'string') {
-			this.stream.send(JSON.stringify({
-				type: typeOrPayload,
-				...(payload === undefined ? {} : { body: payload }),
-			}));
-			return;
-		}
-
-		this.stream.send(JSON.stringify(typeOrPayload));
-	}
-
-	public ping(): void {
-		this.stream.send('ping');
-	}
-
-	public heartbeat(): void {
-		this.stream.send('h');
-	}
-
-	/**
-	 * Close this connection
-	 */
-	public close(): void {
-		this.stream.close();
-	}
 }
 
 // TODO: これらのクラスを Stream クラスの内部クラスにすれば余計なメンバをpublicにしないで済むかも？
@@ -233,8 +246,8 @@ export default class Stream extends EventEmitter<StreamEvents> implements IStrea
 class Pool {
 	public channel: string;
 	public id: string;
-	protected stream: Stream;
 	public users = 0;
+	protected stream: Stream;
 	private disposeTimerId: ReturnType<typeof setTimeout> | null = null;
 	private isConnected = false;
 
@@ -250,10 +263,6 @@ class Pool {
 		this.id = id;
 
 		this.stream.on('_disconnected_', this.onStreamDisconnected);
-	}
-
-	private onStreamDisconnected(): void {
-		this.isConnected = false;
 	}
 
 	public inc(): void {
@@ -292,9 +301,13 @@ class Pool {
 		});
 	}
 
+	private onStreamDisconnected(): void {
+		this.isConnected = false;
+	}
+
 	private disconnect(): void {
 		this.stream.off('_disconnected_', this.onStreamDisconnected);
-		this.stream.send('disconnect', { id: this.id });
+		this.stream.send('disconnect', {id: this.id});
 		this.stream.removeSharedConnectionPool(this);
 	}
 }
@@ -307,17 +320,17 @@ export interface IChannelConnection<Channel extends AnyOf<Channels> = AnyOf<Chan
 	channel: string;
 
 	send<T extends keyof Channel['receives']>(type: T, body: Channel['receives'][T]): void;
+
 	dispose(): void;
 }
 
 export abstract class Connection<Channel extends AnyOf<Channels> = AnyOf<Channels>> extends EventEmitter<Channel['events']> implements IChannelConnection<Channel> {
 	public channel: string;
-	protected stream: Stream;
 	public abstract id: string;
-
 	public name?: string; // for debug
 	public inCount = 0; // for debug
 	public outCount = 0; // for debug
+	protected stream: Stream;
 
 	constructor(stream: Stream, channel: string, name?: string) {
 		super();
@@ -347,10 +360,6 @@ export abstract class Connection<Channel extends AnyOf<Channels> = AnyOf<Channel
 class SharedConnection<Channel extends AnyOf<Channels> = AnyOf<Channels>> extends Connection<Channel> {
 	private pool: Pool;
 
-	public get id(): string {
-		return this.pool.id;
-	}
-
 	constructor(stream: Stream, channel: string, pool: Pool, name?: string) {
 		super(stream, channel, name);
 
@@ -358,6 +367,10 @@ class SharedConnection<Channel extends AnyOf<Channels> = AnyOf<Channels>> extend
 
 		this.pool = pool;
 		this.pool.inc();
+	}
+
+	public get id(): string {
+		return this.pool.id;
 	}
 
 	public dispose(): void {
@@ -393,7 +406,7 @@ class NonSharedConnection<Channel extends AnyOf<Channels> = AnyOf<Channels>> ext
 
 	public dispose(): void {
 		this.removeAllListeners();
-		this.stream.send('disconnect', { id: this.id });
+		this.stream.send('disconnect', {id: this.id});
 		this.stream.disconnectToChannel(this as unknown as NonSharedConnection);
 	}
 }

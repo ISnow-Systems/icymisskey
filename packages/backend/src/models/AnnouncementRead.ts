@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne } from 'typeorm';
-import { id } from './util/id.js';
-import { MiUser } from './User.js';
-import { MiAnnouncement } from './Announcement.js';
+import {PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne} from 'typeorm';
+import {id} from './util/id.js';
+import {MiUser} from './User.js';
+import {MiAnnouncement} from './Announcement.js';
 
 @Entity('announcement_read')
-@Index(['userId', 'announcementId'], { unique: true })
+@Index(['userId', 'announcementId'], {unique: true})
 export class MiAnnouncementRead {
 	@PrimaryColumn(id())
 	public id: string;

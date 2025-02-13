@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { AbuseUserReportsRepository } from '@/models/_.js';
-import { QueryService } from '@/core/QueryService.js';
-import { DI } from '@/di-symbols.js';
-import { AbuseUserReportEntityService } from '@/core/entities/AbuseUserReportEntityService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {AbuseUserReportsRepository} from '@/models/_.js';
+import {QueryService} from '@/core/QueryService.js';
+import {DI} from '@/di-symbols.js';
+import {AbuseUserReportEntityService} from '@/core/entities/AbuseUserReportEntityService.js';
 
 export const meta = {
 	tags: ['admin'],
@@ -95,12 +95,12 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
-		state: { type: 'string', nullable: true, default: null },
-		reporterOrigin: { type: 'string', enum: ['combined', 'local', 'remote'], default: 'combined' },
-		targetUserOrigin: { type: 'string', enum: ['combined', 'local', 'remote'], default: 'combined' },
+		limit: {type: 'integer', minimum: 1, maximum: 100, default: 10},
+		sinceId: {type: 'string', format: 'misskey:id'},
+		untilId: {type: 'string', format: 'misskey:id'},
+		state: {type: 'string', nullable: true, default: null},
+		reporterOrigin: {type: 'string', enum: ['combined', 'local', 'remote'], default: 'combined'},
+		targetUserOrigin: {type: 'string', enum: ['combined', 'local', 'remote'], default: 'combined'},
 	},
 	required: [],
 } as const;
@@ -110,7 +110,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.abuseUserReportsRepository)
 		private abuseUserReportsRepository: AbuseUserReportsRepository,
-
 		private abuseUserReportEntityService: AbuseUserReportEntityService,
 		private queryService: QueryService,
 	) {
@@ -118,18 +117,30 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			const query = this.queryService.makePaginationQuery(this.abuseUserReportsRepository.createQueryBuilder('report'), ps.sinceId, ps.untilId);
 
 			switch (ps.state) {
-				case 'resolved': query.andWhere('report.resolved = TRUE'); break;
-				case 'unresolved': query.andWhere('report.resolved = FALSE'); break;
+				case 'resolved':
+					query.andWhere('report.resolved = TRUE');
+					break;
+				case 'unresolved':
+					query.andWhere('report.resolved = FALSE');
+					break;
 			}
 
 			switch (ps.reporterOrigin) {
-				case 'local': query.andWhere('report.reporterHost IS NULL'); break;
-				case 'remote': query.andWhere('report.reporterHost IS NOT NULL'); break;
+				case 'local':
+					query.andWhere('report.reporterHost IS NULL');
+					break;
+				case 'remote':
+					query.andWhere('report.reporterHost IS NOT NULL');
+					break;
 			}
 
 			switch (ps.targetUserOrigin) {
-				case 'local': query.andWhere('report.targetUserHost IS NULL'); break;
-				case 'remote': query.andWhere('report.targetUserHost IS NOT NULL'); break;
+				case 'local':
+					query.andWhere('report.targetUserHost IS NULL');
+					break;
+				case 'remote':
+					query.andWhere('report.targetUserHost IS NOT NULL');
+					break;
 			}
 
 			const reports = await query.limit(ps.limit).getMany();

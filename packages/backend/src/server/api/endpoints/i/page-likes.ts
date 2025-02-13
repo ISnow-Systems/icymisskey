@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { PageLikesRepository } from '@/models/_.js';
-import { QueryService } from '@/core/QueryService.js';
-import { PageLikeEntityService } from '@/core/entities/PageLikeEntityService.js';
-import { DI } from '@/di-symbols.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {PageLikesRepository} from '@/models/_.js';
+import {QueryService} from '@/core/QueryService.js';
+import {PageLikeEntityService} from '@/core/entities/PageLikeEntityService.js';
+import {DI} from '@/di-symbols.js';
 
 export const meta = {
 	tags: ['account', 'pages'],
@@ -41,9 +41,9 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
+		limit: {type: 'integer', minimum: 1, maximum: 100, default: 10},
+		sinceId: {type: 'string', format: 'misskey:id'},
+		untilId: {type: 'string', format: 'misskey:id'},
 	},
 	required: [],
 } as const;
@@ -53,13 +53,12 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.pageLikesRepository)
 		private pageLikesRepository: PageLikesRepository,
-
 		private pageLikeEntityService: PageLikeEntityService,
 		private queryService: QueryService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			const query = this.queryService.makePaginationQuery(this.pageLikesRepository.createQueryBuilder('like'), ps.sinceId, ps.untilId)
-				.andWhere('like.userId = :meId', { meId: me.id })
+				.andWhere('like.userId = :meId', {meId: me.id})
 				.leftJoinAndSelect('like.page', 'page');
 
 			const likes = await query

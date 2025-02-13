@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { ApiError } from '@/server/api/error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {ApiError} from '@/server/api/error.js';
 import {
 	AbuseReportNotificationRecipientEntityService,
 } from '@/core/entities/AbuseReportNotificationRecipientEntityService.js';
-import { AbuseReportNotificationService } from '@/core/AbuseReportNotificationService.js';
-import { DI } from '@/di-symbols.js';
-import type { UserProfilesRepository } from '@/models/_.js';
+import {AbuseReportNotificationService} from '@/core/AbuseReportNotificationService.js';
+import {DI} from '@/di-symbols.js';
+import type {UserProfilesRepository} from '@/models/_.js';
 
 export const meta = {
 	tags: ['admin', 'abuse-report', 'notification-recipient'],
@@ -89,7 +89,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			if (ps.method === 'email') {
-				const userProfile = await this.userProfilesRepository.findOneBy({ userId: ps.userId });
+				const userProfile = await this.userProfilesRepository.findOneBy({userId: ps.userId});
 				if (!ps.userId || !userProfile) {
 					throw new ApiError(meta.errors.correlationCheckEmail);
 				}

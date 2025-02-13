@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Entity, PrimaryColumn, Index, Column } from 'typeorm';
-import { id } from './util/id.js';
+import {Entity, PrimaryColumn, Index, Column} from 'typeorm';
+import {id} from './util/id.js';
 
 @Entity('instance')
 export class MiInstance {
@@ -23,7 +23,7 @@ export class MiInstance {
 	/**
 	 * ホスト
 	 */
-	@Index({ unique: true })
+	@Index({unique: true})
 	@Column('varchar', {
 		length: 128,
 		comment: 'The host of the Instance.',

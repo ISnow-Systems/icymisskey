@@ -333,8 +333,7 @@ suite('checkNewTopic', () => {
 					'feat2',
 				]),
 			]),
-			new Release('2024.12.0', [
-			])
+			new Release('2024.12.0', [])
 		]
 
 		const result = checkNewTopic(base, head)

@@ -3,26 +3,26 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { randomUUID } from 'node:crypto';
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { Inject, Injectable } from '@nestjs/common';
-import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter.js';
-import { FastifyAdapter as BullBoardFastifyAdapter } from '@bull-board/fastify';
+import {randomUUID} from 'node:crypto';
+import {dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {Inject, Injectable} from '@nestjs/common';
+import {createBullBoard} from '@bull-board/api';
+import {BullMQAdapter} from '@bull-board/api/bullMQAdapter.js';
+import {FastifyAdapter as BullBoardFastifyAdapter} from '@bull-board/fastify';
 import ms from 'ms';
 import sharp from 'sharp';
 import pug from 'pug';
-import { In, IsNull } from 'typeorm';
+import {In, IsNull} from 'typeorm';
 import fastifyStatic from '@fastify/static';
 import fastifyView from '@fastify/view';
 import fastifyCookie from '@fastify/cookie';
 import fastifyProxy from '@fastify/http-proxy';
 import vary from 'vary';
 import htmlSafeJsonStringify from 'htmlescape';
-import type { Config } from '@/config.js';
-import { getNoteSummary } from '@/misc/get-note-summary.js';
-import { DI } from '@/di-symbols.js';
+import type {Config} from '@/config.js';
+import {getNoteSummary} from '@/misc/get-note-summary.js';
+import {DI} from '@/di-symbols.js';
 import * as Acct from '@/misc/acct.js';
 import type {
 	DbQueue,
@@ -35,13 +35,13 @@ import type {
 	UserWebhookDeliverQueue,
 	SystemWebhookDeliverQueue,
 } from '@/core/QueueModule.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { PageEntityService } from '@/core/entities/PageEntityService.js';
-import { MetaEntityService } from '@/core/entities/MetaEntityService.js';
-import { GalleryPostEntityService } from '@/core/entities/GalleryPostEntityService.js';
-import { ClipEntityService } from '@/core/entities/ClipEntityService.js';
-import { ChannelEntityService } from '@/core/entities/ChannelEntityService.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
+import {PageEntityService} from '@/core/entities/PageEntityService.js';
+import {MetaEntityService} from '@/core/entities/MetaEntityService.js';
+import {GalleryPostEntityService} from '@/core/entities/GalleryPostEntityService.js';
+import {ClipEntityService} from '@/core/entities/ClipEntityService.js';
+import {ChannelEntityService} from '@/core/entities/ChannelEntityService.js';
 import type {
 	AnnouncementsRepository,
 	ChannelsRepository,
@@ -56,16 +56,16 @@ import type {
 	UsersRepository,
 } from '@/models/_.js';
 import type Logger from '@/logger.js';
-import { handleRequestRedirectToOmitSearch } from '@/misc/fastify-hook-handlers.js';
-import { bindThis } from '@/decorators.js';
-import { FlashEntityService } from '@/core/entities/FlashEntityService.js';
-import { RoleService } from '@/core/RoleService.js';
-import { ReversiGameEntityService } from '@/core/entities/ReversiGameEntityService.js';
-import { AnnouncementEntityService } from '@/core/entities/AnnouncementEntityService.js';
-import { FeedService } from './FeedService.js';
-import { UrlPreviewService } from './UrlPreviewService.js';
-import { ClientLoggerService } from './ClientLoggerService.js';
-import type { FastifyInstance, FastifyPluginOptions, FastifyReply } from 'fastify';
+import {handleRequestRedirectToOmitSearch} from '@/misc/fastify-hook-handlers.js';
+import {bindThis} from '@/decorators.js';
+import {FlashEntityService} from '@/core/entities/FlashEntityService.js';
+import {RoleService} from '@/core/RoleService.js';
+import {ReversiGameEntityService} from '@/core/entities/ReversiGameEntityService.js';
+import {AnnouncementEntityService} from '@/core/entities/AnnouncementEntityService.js';
+import {FeedService} from './FeedService.js';
+import {UrlPreviewService} from './UrlPreviewService.js';
+import {ClientLoggerService} from './ClientLoggerService.js';
+import type {FastifyInstance, FastifyPluginOptions, FastifyReply} from 'fastify';
 
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
@@ -85,40 +85,28 @@ export class ClientServerService {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.meta)
 		private meta: MiMeta,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
-
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		@Inject(DI.galleryPostsRepository)
 		private galleryPostsRepository: GalleryPostsRepository,
-
 		@Inject(DI.channelsRepository)
 		private channelsRepository: ChannelsRepository,
-
 		@Inject(DI.clipsRepository)
 		private clipsRepository: ClipsRepository,
-
 		@Inject(DI.pagesRepository)
 		private pagesRepository: PagesRepository,
-
 		@Inject(DI.flashsRepository)
 		private flashsRepository: FlashsRepository,
-
 		@Inject(DI.reversiGamesRepository)
 		private reversiGamesRepository: ReversiGamesRepository,
-
 		@Inject(DI.announcementsRepository)
 		private announcementsRepository: AnnouncementsRepository,
-
 		private flashEntityService: FlashEntityService,
 		private userEntityService: UserEntityService,
 		private noteEntityService: NoteEntityService,
@@ -133,7 +121,6 @@ export class ClientServerService {
 		private feedService: FeedService,
 		private roleService: RoleService,
 		private clientLoggerService: ClientLoggerService,
-
 		@Inject('queue:system') public systemQueue: SystemQueue,
 		@Inject('queue:endedPollNotification') public endedPollNotificationQueue: EndedPollNotificationQueue,
 		@Inject('queue:deliver') public deliverQueue: DeliverQueue,
@@ -145,78 +132,6 @@ export class ClientServerService {
 		@Inject('queue:systemWebhookDeliver') public systemWebhookDeliverQueue: SystemWebhookDeliverQueue,
 	) {
 		//this.createServer = this.createServer.bind(this);
-	}
-
-	@bindThis
-	private async manifestHandler(reply: FastifyReply) {
-		let manifest = {
-			// 空文字列の場合右辺を使いたいため
-			// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-			'short_name': this.meta.shortName || this.meta.name || this.config.host,
-			// 空文字列の場合右辺を使いたいため
-			// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-			'name': this.meta.name || this.config.host,
-			'start_url': '/',
-			'display': 'standalone',
-			'background_color': '#313a42',
-			// 空文字列の場合右辺を使いたいため
-			// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-			'theme_color': this.meta.themeColor || '#86b300',
-			'icons': [{
-				// 空文字列の場合右辺を使いたいため
-				// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-				'src': this.meta.app192IconUrl || '/static-assets/icons/192.png',
-				'sizes': '192x192',
-				'type': 'image/png',
-				'purpose': 'maskable',
-			}, {
-				// 空文字列の場合右辺を使いたいため
-				// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-				'src': this.meta.app512IconUrl || '/static-assets/icons/512.png',
-				'sizes': '512x512',
-				'type': 'image/png',
-				'purpose': 'maskable',
-			}, {
-				'src': '/static-assets/splash.png',
-				'sizes': '300x300',
-				'type': 'image/png',
-				'purpose': 'any',
-			}],
-			'share_target': {
-				'action': '/share/',
-				'method': 'GET',
-				'enctype': 'application/x-www-form-urlencoded',
-				'params': {
-					'title': 'title',
-					'text': 'text',
-					'url': 'url',
-				},
-			},
-		};
-
-		manifest = {
-			...manifest,
-			...JSON.parse(this.meta.manifestJsonOverride === '' ? '{}' : this.meta.manifestJsonOverride),
-		};
-
-		reply.header('Cache-Control', 'max-age=300');
-		return (manifest);
-	}
-
-	@bindThis
-	private async generateCommonPugData(meta: MiMeta) {
-		return {
-			instanceName: meta.name ?? 'IcyMisskey',
-			icon: meta.iconUrl,
-			appleTouchIcon: meta.app512IconUrl,
-			themeColor: meta.themeColor,
-			serverErrorImageUrl: meta.serverErrorImageUrl ?? 'https://xn--931a.moe/assets/error.jpg',
-			infoImageUrl: meta.infoImageUrl ?? 'https://xn--931a.moe/assets/info.jpg',
-			notFoundImageUrl: meta.notFoundImageUrl ?? 'https://xn--931a.moe/assets/not-found.jpg',
-			instanceUrl: this.config.url,
-			metaJson: htmlSafeJsonStringify(await this.metaEntityService.packDetailed(meta)),
-			now: Date.now(),
-		};
 	}
 
 	@bindThis
@@ -245,7 +160,7 @@ export class ClientServerService {
 					reply.code(401).send('Login required');
 					return;
 				}
-				const user = await this.usersRepository.findOneBy({ token });
+				const user = await this.usersRepository.findOneBy({token});
 				if (user == null) {
 					reply.code(403).send('No such user');
 					return;
@@ -276,7 +191,7 @@ export class ClientServerService {
 		});
 
 		bullBoardServerAdapter.setBasePath(bullBoardPath);
-		(fastify.register as any)(bullBoardServerAdapter.registerPlugin(), { prefix: bullBoardPath });
+		(fastify.register as any)(bullBoardServerAdapter.registerPlugin(), {prefix: bullBoardPath});
 		//#endregion
 
 		fastify.register(fastifyView, {
@@ -419,13 +334,13 @@ export class ClientServerService {
 
 			const mask = await sharp(
 				`${_dirname}/../../../node_modules/@discordapp/twemoji/dist/svg/${path.replace('.png', '')}.svg`,
-				{ density: 1000 },
+				{density: 1000},
 			)
 				.resize(488, 488)
 				.greyscale()
 				.normalise()
 				.linear(1.75, -(128 * 1.75) + 128) // 1.75x contrast
-				.flatten({ background: '#000' })
+				.flatten({background: '#000'})
 				.extend({
 					top: 12,
 					bottom: 12,
@@ -438,7 +353,7 @@ export class ClientServerService {
 				.toBuffer();
 
 			const buffer = await sharp({
-				create: { width: 512, height: 512, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } },
+				create: {width: 512, height: 512, channels: 4, background: {r: 0, g: 0, b: 0, alpha: 0}},
 			})
 				.pipelineColorspace('b-w')
 				.boolean(mask, 'eor')
@@ -507,7 +422,7 @@ export class ClientServerService {
 		fastify.get<{ Querystring: { url: string; lang: string; } }>('/url', (request, reply) => this.urlPreviewService.handle(request, reply));
 
 		const getFeed = async (acct: string) => {
-			const { username, host } = Acct.parse(acct);
+			const {username, host} = Acct.parse(acct);
 			const user = await this.usersRepository.findOneBy({
 				usernameLower: username.toLowerCase(),
 				host: host ?? IsNull(),
@@ -566,7 +481,7 @@ export class ClientServerService {
 		//#region SSR
 		// User
 		fastify.get<{ Params: { user: string; sub?: string; } }>('/@:user/:sub?', async (request, reply) => {
-			const { username, host } = Acct.parse(request.params.user);
+			const {username, host} = Acct.parse(request.params.user);
 			const user = await this.usersRepository.findOneBy({
 				usernameLower: username.toLowerCase(),
 				host: host ?? IsNull(),
@@ -576,7 +491,7 @@ export class ClientServerService {
 			vary(reply.raw, 'Accept');
 
 			if (user != null) {
-				const profile = await this.userProfilesRepository.findOneByOrFail({ userId: user.id });
+				const profile = await this.userProfilesRepository.findOneByOrFail({userId: user.id});
 				const me = profile.fields
 					? profile.fields
 						.filter(filed => filed.value != null && filed.value.match(/^https?:/))
@@ -624,7 +539,7 @@ export class ClientServerService {
 
 			vary(reply.raw, 'Accept');
 
-			reply.redirect(`/@${user.username}${ user.host == null ? '' : '@' + user.host}`);
+			reply.redirect(`/@${user.username}${user.host == null ? '' : '@' + user.host}`);
 		});
 
 		// Note
@@ -641,7 +556,7 @@ export class ClientServerService {
 
 			if (note && !note.user!.requireSigninToViewContents) {
 				const _note = await this.noteEntityService.pack(note);
-				const profile = await this.userProfilesRepository.findOneByOrFail({ userId: note.userId });
+				const profile = await this.userProfilesRepository.findOneByOrFail({userId: note.userId});
 				reply.header('Cache-Control', 'public, max-age=15');
 				if (profile.preventAiLearning) {
 					reply.header('X-Robots-Tag', 'noimageai');
@@ -665,7 +580,7 @@ export class ClientServerService {
 
 		// Page
 		fastify.get<{ Params: { user: string; page: string; } }>('/@:user/pages/:page', async (request, reply) => {
-			const { username, host } = Acct.parse(request.params.user);
+			const {username, host} = Acct.parse(request.params.user);
 			const user = await this.usersRepository.findOneBy({
 				usernameLower: username.toLowerCase(),
 				host: host ?? IsNull(),
@@ -680,7 +595,7 @@ export class ClientServerService {
 
 			if (page) {
 				const _page = await this.pageEntityService.pack(page);
-				const profile = await this.userProfilesRepository.findOneByOrFail({ userId: page.userId });
+				const profile = await this.userProfilesRepository.findOneByOrFail({userId: page.userId});
 				if (['public'].includes(page.visibility)) {
 					reply.header('Cache-Control', 'public, max-age=15');
 				} else {
@@ -709,7 +624,7 @@ export class ClientServerService {
 
 			if (flash) {
 				const _flash = await this.flashEntityService.pack(flash);
-				const profile = await this.userProfilesRepository.findOneByOrFail({ userId: flash.userId });
+				const profile = await this.userProfilesRepository.findOneByOrFail({userId: flash.userId});
 				reply.header('Cache-Control', 'public, max-age=15');
 				if (profile.preventAiLearning) {
 					reply.header('X-Robots-Tag', 'noimageai');
@@ -734,7 +649,7 @@ export class ClientServerService {
 
 			if (clip && clip.isPublic) {
 				const _clip = await this.clipEntityService.pack(clip);
-				const profile = await this.userProfilesRepository.findOneByOrFail({ userId: clip.userId });
+				const profile = await this.userProfilesRepository.findOneByOrFail({userId: clip.userId});
 				reply.header('Cache-Control', 'public, max-age=15');
 				if (profile.preventAiLearning) {
 					reply.header('X-Robots-Tag', 'noimageai');
@@ -756,11 +671,11 @@ export class ClientServerService {
 
 		// Gallery post
 		fastify.get<{ Params: { post: string; } }>('/gallery/:post', async (request, reply) => {
-			const post = await this.galleryPostsRepository.findOneBy({ id: request.params.post });
+			const post = await this.galleryPostsRepository.findOneBy({id: request.params.post});
 
 			if (post) {
 				const _post = await this.galleryPostEntityService.pack(post);
-				const profile = await this.userProfilesRepository.findOneByOrFail({ userId: post.userId });
+				const profile = await this.userProfilesRepository.findOneByOrFail({userId: post.userId});
 				reply.header('Cache-Control', 'public, max-age=15');
 				if (profile.preventAiLearning) {
 					reply.header('X-Robots-Tag', 'noimageai');
@@ -836,12 +751,12 @@ export class ClientServerService {
 		//#region noindex pages
 		// Tags
 		fastify.get<{ Params: { clip: string; } }>('/tags/:tag', async (request, reply) => {
-			return await renderBase(reply, { noindex: true });
+			return await renderBase(reply, {noindex: true});
 		});
 
 		// User with Tags
 		fastify.get<{ Params: { clip: string; } }>('/user-tags/:tag', async (request, reply) => {
-			return await renderBase(reply, { noindex: true });
+			return await renderBase(reply, {noindex: true});
 		});
 		//#endregion
 
@@ -879,7 +794,7 @@ export class ClientServerService {
 			if (['specified', 'followers'].includes(note.visibility)) return;
 			if (note.userHost != null) return;
 
-			const _note = await this.noteEntityService.pack(note, null, { detail: true });
+			const _note = await this.noteEntityService.pack(note, null, {detail: true});
 
 			reply.header('Cache-Control', 'public, max-age=3600');
 			return await reply.view('base-embed', {
@@ -929,8 +844,8 @@ export class ClientServerService {
 				version: this.config.version,
 				host: this.config.host,
 				meta: this.meta,
-				originalUsersCount: await this.usersRepository.countBy({ host: IsNull() }),
-				originalNotesCount: await this.notesRepository.countBy({ userHost: IsNull() }),
+				originalUsersCount: await this.usersRepository.countBy({host: IsNull()}),
+				originalNotesCount: await this.notesRepository.countBy({userHost: IsNull()}),
 			});
 		});
 		//#endregion
@@ -984,5 +899,77 @@ export class ClientServerService {
 		});
 
 		done();
+	}
+
+	@bindThis
+	private async manifestHandler(reply: FastifyReply) {
+		let manifest = {
+			// 空文字列の場合右辺を使いたいため
+			// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+			'short_name': this.meta.shortName || this.meta.name || this.config.host,
+			// 空文字列の場合右辺を使いたいため
+			// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+			'name': this.meta.name || this.config.host,
+			'start_url': '/',
+			'display': 'standalone',
+			'background_color': '#313a42',
+			// 空文字列の場合右辺を使いたいため
+			// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+			'theme_color': this.meta.themeColor || '#86b300',
+			'icons': [{
+				// 空文字列の場合右辺を使いたいため
+				// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+				'src': this.meta.app192IconUrl || '/static-assets/icons/192.png',
+				'sizes': '192x192',
+				'type': 'image/png',
+				'purpose': 'maskable',
+			}, {
+				// 空文字列の場合右辺を使いたいため
+				// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+				'src': this.meta.app512IconUrl || '/static-assets/icons/512.png',
+				'sizes': '512x512',
+				'type': 'image/png',
+				'purpose': 'maskable',
+			}, {
+				'src': '/static-assets/splash.png',
+				'sizes': '300x300',
+				'type': 'image/png',
+				'purpose': 'any',
+			}],
+			'share_target': {
+				'action': '/share/',
+				'method': 'GET',
+				'enctype': 'application/x-www-form-urlencoded',
+				'params': {
+					'title': 'title',
+					'text': 'text',
+					'url': 'url',
+				},
+			},
+		};
+
+		manifest = {
+			...manifest,
+			...JSON.parse(this.meta.manifestJsonOverride === '' ? '{}' : this.meta.manifestJsonOverride),
+		};
+
+		reply.header('Cache-Control', 'max-age=300');
+		return (manifest);
+	}
+
+	@bindThis
+	private async generateCommonPugData(meta: MiMeta) {
+		return {
+			instanceName: meta.name ?? 'IcyMisskey',
+			icon: meta.iconUrl,
+			appleTouchIcon: meta.app512IconUrl,
+			themeColor: meta.themeColor,
+			serverErrorImageUrl: meta.serverErrorImageUrl ?? 'https://xn--931a.moe/assets/error.jpg',
+			infoImageUrl: meta.infoImageUrl ?? 'https://xn--931a.moe/assets/info.jpg',
+			notFoundImageUrl: meta.notFoundImageUrl ?? 'https://xn--931a.moe/assets/not-found.jpg',
+			instanceUrl: this.config.url,
+			metaJson: htmlSafeJsonStringify(await this.metaEntityService.packDetailed(meta)),
+			now: Date.now(),
+		};
 	}
 }

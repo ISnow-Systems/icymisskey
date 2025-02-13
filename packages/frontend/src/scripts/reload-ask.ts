@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { i18n } from '@/i18n.js';
+import {i18n} from '@/i18n.js';
 import * as os from '@/os.js';
-import { unisonReload } from '@/scripts/unison-reload.js';
+import {unisonReload} from '@/scripts/unison-reload.js';
 
 let isReloadConfirming = false;
 
@@ -19,7 +19,7 @@ export async function reloadAsk(opts: {
 
 	isReloadConfirming = true;
 
-	const { canceled } = await os.confirm(opts.reason == null ? {
+	const {canceled} = await os.confirm(opts.reason == null ? {
 		type: 'info',
 		text: i18n.ts.reloadConfirm,
 	} : {

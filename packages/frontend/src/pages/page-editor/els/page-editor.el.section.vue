@@ -4,33 +4,33 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<!-- eslint-disable vue/no-mutating-props -->
-<XContainer :draggable="true" @remove="() => emit('remove')">
-	<template #header><i class="ti ti-note"></i> {{ props.modelValue.title }}</template>
-	<template #func>
-		<button class="_button" @click="rename()">
-			<i class="ti ti-pencil"></i>
-		</button>
-	</template>
+	<!-- eslint-disable vue/no-mutating-props -->
+	<XContainer :draggable="true" @remove="() => emit('remove')">
+		<template #header><i class="ti ti-note"></i> {{ props.modelValue.title }}</template>
+		<template #func>
+			<button class="_button" @click="rename()">
+				<i class="ti ti-pencil"></i>
+			</button>
+		</template>
 
-	<section class="ilrvjyvi">
-		<XBlocks v-model="children" class="children"/>
-		<MkButton rounded class="add" @click="add()"><i class="ti ti-plus"></i></MkButton>
-	</section>
-</XContainer>
+		<section class="ilrvjyvi">
+			<XBlocks v-model="children" class="children"/>
+			<MkButton class="add" rounded @click="add()"><i class="ti ti-plus"></i></MkButton>
+		</section>
+	</XContainer>
 </template>
 
 <script lang="ts" setup>
- 
-import { defineAsyncComponent, inject, onMounted, watch, ref } from 'vue';
+
+import {defineAsyncComponent, inject, onMounted, watch, ref} from 'vue';
 import * as Misskey from 'misskey-js';
-import { v4 as uuid } from 'uuid';
+import {v4 as uuid} from 'uuid';
 import XContainer from '../page-editor.container.vue';
 import * as os from '@/os.js';
-import { i18n } from '@/i18n.js';
-import { deepClone } from '@/scripts/clone.js';
+import {i18n} from '@/i18n.js';
+import {deepClone} from '@/scripts/clone.js';
 import MkButton from '@/components/MkButton.vue';
-import { getPageBlockList } from '@/pages/page-editor/common.js';
+import {getPageBlockList} from '@/pages/page-editor/common.js';
 
 const XBlocks = defineAsyncComponent(() => import('../page-editor.blocks.vue'));
 
@@ -55,7 +55,7 @@ watch(children, () => {
 });
 
 async function rename() {
-	const { canceled, result: title } = await os.inputText({
+	const {canceled, result: title} = await os.inputText({
 		title: i18n.ts._pages.enterSectionTitle,
 		default: props.modelValue.title,
 	});
@@ -67,14 +67,14 @@ async function rename() {
 }
 
 async function add() {
-	const { canceled, result: type } = await os.select({
+	const {canceled, result: type} = await os.select({
 		title: i18n.ts._pages.chooseBlock,
 		items: getPageBlockList(),
 	});
 	if (canceled) return;
 
 	const id = uuid();
-	children.value.push({ id, type });
+	children.value.push({id, type});
 }
 
 onMounted(() => {

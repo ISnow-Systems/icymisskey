@@ -4,14 +4,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<canvas ref="chartEl"></canvas>
+	<canvas ref="chartEl"></canvas>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, shallowRef } from 'vue';
-import { Chart } from 'chart.js';
-import { useChartTooltip } from '@/scripts/use-chart-tooltip.js';
-import { initChart } from '@/scripts/init-chart.js';
+import {onMounted, shallowRef} from 'vue';
+import {Chart} from 'chart.js';
+import {useChartTooltip} from '@/scripts/use-chart-tooltip.js';
+import {initChart} from '@/scripts/init-chart.js';
 
 export type InstanceForPie = {
 	name: string,
@@ -28,7 +28,7 @@ const props = defineProps<{
 
 const chartEl = shallowRef<HTMLCanvasElement>(null);
 
-const { handler: externalTooltipHandler } = useChartTooltip({
+const {handler: externalTooltipHandler} = useChartTooltip({
 	position: 'middle',
 });
 
@@ -57,7 +57,7 @@ onMounted(() => {
 				},
 			},
 			onClick: (ev) => {
-				const hit = chartInstance.getElementsAtEventForMode(ev, 'nearest', { intersect: true }, false)[0];
+				const hit = chartInstance.getElementsAtEventForMode(ev, 'nearest', {intersect: true}, false)[0];
 				if (hit && props.data[hit.index].onClick) {
 					props.data[hit.index].onClick();
 				}

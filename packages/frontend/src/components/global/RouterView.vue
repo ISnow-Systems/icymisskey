@@ -4,25 +4,25 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<KeepAlive
-	:max="defaultStore.state.numberOfPageCache"
-	:exclude="pageCacheController"
->
-	<Suspense :timeout="0">
-		<component :is="currentPageComponent" :key="key" v-bind="Object.fromEntries(currentPageProps)"/>
+	<KeepAlive
+		:exclude="pageCacheController"
+		:max="defaultStore.state.numberOfPageCache"
+	>
+		<Suspense :timeout="0">
+			<component :is="currentPageComponent" :key="key" v-bind="Object.fromEntries(currentPageProps)"/>
 
-		<template #fallback>
-			<MkLoading/>
-		</template>
-	</Suspense>
-</KeepAlive>
+			<template #fallback>
+				<MkLoading/>
+			</template>
+		</Suspense>
+	</KeepAlive>
 </template>
 
 <script lang="ts" setup>
-import { inject, onBeforeUnmount, provide, ref, shallowRef, computed, nextTick } from 'vue';
-import type { IRouter, Resolved, RouteDef } from '@/nirax.js';
-import { defaultStore } from '@/store.js';
-import { globalEvents } from '@/events.js';
+import {inject, onBeforeUnmount, provide, ref, shallowRef, computed, nextTick} from 'vue';
+import type {IRouter, Resolved, RouteDef} from '@/nirax.js';
+import {defaultStore} from '@/store.js';
+import {globalEvents} from '@/events.js';
 import MkLoadingPage from '@/pages/_loading_.vue';
 
 const props = defineProps<{
@@ -58,7 +58,7 @@ const currentPageComponent = shallowRef('component' in current.route ? current.r
 const currentPageProps = ref(current.props);
 const key = ref(router.getCurrentKey() + JSON.stringify(Object.fromEntries(current.props)));
 
-function onChange({ resolved, key: newKey }) {
+function onChange({resolved, key: newKey}) {
 	const current = resolveNested(resolved);
 	if (current == null || 'redirect' in current.route) return;
 	currentPageComponent.value = current.route.component;

@@ -3,40 +3,36 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { generateKeyPair } from 'node:crypto';
-import { Inject, Injectable } from '@nestjs/common';
+import {generateKeyPair} from 'node:crypto';
+import {Inject, Injectable} from '@nestjs/common';
 import bcrypt from 'bcryptjs';
-import { DataSource, IsNull } from 'typeorm';
-import { DI } from '@/di-symbols.js';
-import type { MiMeta, UsedUsernamesRepository, UsersRepository } from '@/models/_.js';
-import { MiUser } from '@/models/User.js';
-import { MiUserProfile } from '@/models/UserProfile.js';
-import { IdService } from '@/core/IdService.js';
-import { MiUserKeypair } from '@/models/UserKeypair.js';
-import { MiUsedUsername } from '@/models/UsedUsername.js';
+import {DataSource, IsNull} from 'typeorm';
+import {DI} from '@/di-symbols.js';
+import type {MiMeta, UsedUsernamesRepository, UsersRepository} from '@/models/_.js';
+import {MiUser} from '@/models/User.js';
+import {MiUserProfile} from '@/models/UserProfile.js';
+import {IdService} from '@/core/IdService.js';
+import {MiUserKeypair} from '@/models/UserKeypair.js';
+import {MiUsedUsername} from '@/models/UsedUsername.js';
 import generateUserToken from '@/misc/generate-native-user-token.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { InstanceActorService } from '@/core/InstanceActorService.js';
-import { bindThis } from '@/decorators.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {InstanceActorService} from '@/core/InstanceActorService.js';
+import {bindThis} from '@/decorators.js';
 import UsersChart from '@/core/chart/charts/users.js';
-import { UtilityService } from '@/core/UtilityService.js';
-import { UserService } from '@/core/UserService.js';
+import {UtilityService} from '@/core/UtilityService.js';
+import {UserService} from '@/core/UserService.js';
 
 @Injectable()
 export class SignupService {
 	constructor(
 		@Inject(DI.db)
 		private db: DataSource,
-
 		@Inject(DI.meta)
 		private meta: MiMeta,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.usedUsernamesRepository)
 		private usedUsernamesRepository: UsedUsernamesRepository,
-
 		private utilityService: UtilityService,
 		private userService: UserService,
 		private userEntityService: UserEntityService,
@@ -54,7 +50,7 @@ export class SignupService {
 		host?: string | null;
 		ignorePreservedUsernames?: boolean;
 	}) {
-		const { username, password, passwordHash, host } = opts;
+		const {username, password, passwordHash, host} = opts;
 		let hash = passwordHash;
 
 		// Validate username
@@ -77,12 +73,12 @@ export class SignupService {
 		const secret = generateUserToken();
 
 		// Check username duplication
-		if (await this.usersRepository.exists({ where: { usernameLower: username.toLowerCase(), host: IsNull() } })) {
+		if (await this.usersRepository.exists({where: {usernameLower: username.toLowerCase(), host: IsNull()}})) {
 			throw new Error('DUPLICATED_USERNAME');
 		}
 
 		// Check deleted username duplication
-		if (await this.usedUsernamesRepository.exists({ where: { username: username.toLowerCase() } })) {
+		if (await this.usedUsernamesRepository.exists({where: {username: username.toLowerCase()}})) {
 			throw new Error('USED_USERNAME');
 		}
 
@@ -97,19 +93,19 @@ export class SignupService {
 
 		const keyPair = await new Promise<string[]>((res, rej) =>
 			generateKeyPair('rsa', {
-				modulusLength: 2048,
-				publicKeyEncoding: {
-					type: 'spki',
-					format: 'pem',
-				},
-				privateKeyEncoding: {
-					type: 'pkcs8',
-					format: 'pem',
-					cipher: undefined,
-					passphrase: undefined,
-				},
-			}, (err, publicKey, privateKey) =>
-				err ? rej(err) : res([publicKey, privateKey]),
+					modulusLength: 2048,
+					publicKeyEncoding: {
+						type: 'spki',
+						format: 'pem',
+					},
+					privateKeyEncoding: {
+						type: 'pkcs8',
+						format: 'pem',
+						cipher: undefined,
+						passphrase: undefined,
+					},
+				}, (err, publicKey, privateKey) =>
+					err ? rej(err) : res([publicKey, privateKey]),
 			));
 
 		let account!: MiUser;
@@ -153,7 +149,7 @@ export class SignupService {
 		this.usersChart.update(account, true);
 		this.userService.notifySystemWebhook(account, 'userCreated');
 
-		return { account, secret };
+		return {account, secret};
 	}
 }
 

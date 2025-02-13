@@ -4,8 +4,8 @@
  */
 
 import * as Misskey from 'misskey-js';
-import { ref } from 'vue';
-import { apiUrl } from '@@/js/config.js';
+import {ref} from 'vue';
+import {apiUrl} from '@@/js/config.js';
 
 export const pendingApiRequestsCount = ref(0);
 

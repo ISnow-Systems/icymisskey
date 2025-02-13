@@ -6,8 +6,8 @@
 process.env.NODE_ENV = 'test';
 
 import * as assert from 'assert';
-import { api, port, post, signup, startJobQueue } from '../utils.js';
-import type { INestApplicationContext } from '@nestjs/common';
+import {api, port, post, signup, startJobQueue} from '../utils.js';
+import type {INestApplicationContext} from '@nestjs/common';
 import type * as misskey from 'misskey-js';
 
 describe('export-clips', () => {
@@ -26,7 +26,7 @@ describe('export-clips', () => {
 			if (files.length > 1) {
 				throw new Error('Too many files?');
 			}
-			const file = (await api('drive/files/show', { fileId: files[0].id }, alice)).body;
+			const file = (await api('drive/files/show', {fileId: files[0].id}, alice)).body;
 			const res = await fetch(new URL(new URL(file.url).pathname, `http://127.0.0.1:${port}`));
 			return await res.json();
 		}
@@ -34,8 +34,8 @@ describe('export-clips', () => {
 
 	beforeAll(async () => {
 		queue = await startJobQueue();
-		alice = await signup({ username: 'alice' });
-		bob = await signup({ username: 'bob' });
+		alice = await signup({username: 'alice'});
+		bob = await signup({username: 'bob'});
 	}, 1000 * 60 * 2);
 
 	afterAll(async () => {
@@ -46,14 +46,14 @@ describe('export-clips', () => {
 		// Clean all clips and files of alice
 		const clips = (await api('clips/list', {}, alice)).body;
 		for (const clip of clips) {
-			const res = await api('clips/delete', { clipId: clip.id }, alice);
+			const res = await api('clips/delete', {clipId: clip.id}, alice);
 			if (res.status !== 204) {
 				throw new Error('Failed to delete clip');
 			}
 		}
 		const files = (await api('drive/files', {}, alice)).body;
 		for (const file of files) {
-			const res = await api('drive/files/delete', { fileId: file.id }, alice);
+			const res = await api('drive/files/delete', {fileId: file.id}, alice);
 			if (res.status !== 204) {
 				throw new Error('Failed to delete file');
 			}

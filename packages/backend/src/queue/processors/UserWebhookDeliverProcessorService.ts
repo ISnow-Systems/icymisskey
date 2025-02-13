@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import * as Bull from 'bullmq';
-import { DI } from '@/di-symbols.js';
-import type { WebhooksRepository } from '@/models/_.js';
-import type { Config } from '@/config.js';
+import {DI} from '@/di-symbols.js';
+import type {WebhooksRepository} from '@/models/_.js';
+import type {Config} from '@/config.js';
 import type Logger from '@/logger.js';
-import { HttpRequestService } from '@/core/HttpRequestService.js';
-import { StatusError } from '@/misc/status-error.js';
-import { bindThis } from '@/decorators.js';
-import { QueueLoggerService } from '../QueueLoggerService.js';
-import { UserWebhookDeliverJobData } from '../types.js';
+import {HttpRequestService} from '@/core/HttpRequestService.js';
+import {StatusError} from '@/misc/status-error.js';
+import {bindThis} from '@/decorators.js';
+import {QueueLoggerService} from '../QueueLoggerService.js';
+import {UserWebhookDeliverJobData} from '../types.js';
 
 @Injectable()
 export class UserWebhookDeliverProcessorService {
@@ -22,10 +22,8 @@ export class UserWebhookDeliverProcessorService {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.webhooksRepository)
 		private webhooksRepository: WebhooksRepository,
-
 		private httpRequestService: HttpRequestService,
 		private queueLoggerService: QueueLoggerService,
 	) {
@@ -57,14 +55,14 @@ export class UserWebhookDeliverProcessorService {
 				}),
 			});
 
-			this.webhooksRepository.update({ id: job.data.webhookId }, {
+			this.webhooksRepository.update({id: job.data.webhookId}, {
 				latestSentAt: new Date(),
 				latestStatus: res.status,
 			});
 
 			return 'Success';
 		} catch (res) {
-			this.webhooksRepository.update({ id: job.data.webhookId }, {
+			this.webhooksRepository.update({id: job.data.webhookId}, {
 				latestSentAt: new Date(),
 				latestStatus: res instanceof StatusError ? res.statusCode : 1,
 			});

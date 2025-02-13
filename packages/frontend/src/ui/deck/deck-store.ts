@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { throttle } from 'throttle-debounce';
-import { markRaw } from 'vue';
-import { notificationTypes } from 'misskey-js';
-import type { BasicTimelineType } from '@/timelines.js';
-import { Storage } from '@/pizzax.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { deepClone } from '@/scripts/clone.js';
-import type { SoundStore } from '@/store.js';
+import {throttle} from 'throttle-debounce';
+import {markRaw} from 'vue';
+import {notificationTypes} from 'misskey-js';
+import type {BasicTimelineType} from '@/timelines.js';
+import {Storage} from '@/pizzax.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {deepClone} from '@/scripts/clone.js';
+import type {SoundStore} from '@/store.js';
 
 type ColumnWidget = {
 	name: string;

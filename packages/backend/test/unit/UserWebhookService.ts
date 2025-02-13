@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { afterEach, beforeEach, describe, expect, jest } from '@jest/globals';
-import { Test, TestingModule } from '@nestjs/testing';
-import { randomString } from '../utils.js';
-import { MiUser } from '@/models/User.js';
-import { MiWebhook, UsersRepository, WebhooksRepository } from '@/models/_.js';
-import { IdService } from '@/core/IdService.js';
-import { GlobalModule } from '@/GlobalModule.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { DI } from '@/di-symbols.js';
-import { QueueService } from '@/core/QueueService.js';
-import { LoggerService } from '@/core/LoggerService.js';
-import { UserWebhookService } from '@/core/UserWebhookService.js';
+import {afterEach, beforeEach, describe, expect, jest} from '@jest/globals';
+import {Test, TestingModule} from '@nestjs/testing';
+import {randomString} from '../utils.js';
+import {MiUser} from '@/models/User.js';
+import {MiWebhook, UsersRepository, WebhooksRepository} from '@/models/_.js';
+import {IdService} from '@/core/IdService.js';
+import {GlobalModule} from '@/GlobalModule.js';
+import {GlobalEventService} from '@/core/GlobalEventService.js';
+import {DI} from '@/di-symbols.js';
+import {QueueService} from '@/core/QueueService.js';
+import {LoggerService} from '@/core/LoggerService.js';
+import {UserWebhookService} from '@/core/UserWebhookService.js';
 
 describe('UserWebhookService', () => {
 	let app: TestingModule;
@@ -70,7 +70,7 @@ describe('UserWebhookService', () => {
 					LoggerService,
 					GlobalEventService,
 					{
-						provide: QueueService, useFactory: () => ({ userWebhookDeliver: jest.fn() }),
+						provide: QueueService, useFactory: () => ({userWebhookDeliver: jest.fn()}),
 					},
 				],
 			})
@@ -91,7 +91,7 @@ describe('UserWebhookService', () => {
 	}
 
 	async function beforeEachImpl() {
-		root = await createUser({ isRoot: true, username: 'root', usernameLower: 'root' });
+		root = await createUser({isRoot: true, username: 'root', usernameLower: 'root'});
 	}
 
 	async function afterEachImpl() {
@@ -148,7 +148,7 @@ describe('UserWebhookService', () => {
 					on: [],
 				});
 
-				const fetchedWebhooks = await service.fetchWebhooks({ isActive: true });
+				const fetchedWebhooks = await service.fetchWebhooks({isActive: true});
 				expect(fetchedWebhooks).toEqual([webhook1, webhook3]);
 			});
 
@@ -170,7 +170,7 @@ describe('UserWebhookService', () => {
 					on: [],
 				});
 
-				const fetchedWebhooks = await service.fetchWebhooks({ on: ['mention'] });
+				const fetchedWebhooks = await service.fetchWebhooks({on: ['mention']});
 				expect(fetchedWebhooks).toEqual([webhook1, webhook2]);
 			});
 
@@ -192,7 +192,7 @@ describe('UserWebhookService', () => {
 					on: [],
 				});
 
-				const fetchedWebhooks = await service.fetchWebhooks({ on: ['mention'], isActive: true });
+				const fetchedWebhooks = await service.fetchWebhooks({on: ['mention'], isActive: true});
 				expect(fetchedWebhooks).toEqual([webhook1]);
 			});
 
@@ -214,7 +214,7 @@ describe('UserWebhookService', () => {
 					on: [],
 				});
 
-				const fetchedWebhooks = await service.fetchWebhooks({ ids: [webhook1.id, webhook4.id] });
+				const fetchedWebhooks = await service.fetchWebhooks({ids: [webhook1.id, webhook4.id]});
 				expect(fetchedWebhooks).toEqual([webhook1, webhook4]);
 			});
 
@@ -236,7 +236,7 @@ describe('UserWebhookService', () => {
 					on: [],
 				});
 
-				const fetchedWebhooks = await service.fetchWebhooks({ ids: [webhook1.id, webhook4.id], isActive: false });
+				const fetchedWebhooks = await service.fetchWebhooks({ids: [webhook1.id, webhook4.id], isActive: false});
 				expect(fetchedWebhooks).toEqual([webhook4]);
 			});
 		});
@@ -259,7 +259,7 @@ describe('UserWebhookService', () => {
 					active: true,
 					on: ['note'],
 				});
-				await service.enqueueUserWebhook(webhook.userId, 'note', { foo: 'bar' } as any);
+				await service.enqueueUserWebhook(webhook.userId, 'note', {foo: 'bar'} as any);
 
 				expect(queueService.userWebhookDeliver).toHaveBeenCalledTimes(1);
 				expect(queueService.userWebhookDeliver.mock.calls[0][0] as MiWebhook).toEqual(webhook);
@@ -270,7 +270,7 @@ describe('UserWebhookService', () => {
 					active: false,
 					on: ['note'],
 				});
-				await service.enqueueUserWebhook(webhook.userId, 'note', { foo: 'bar' } as any);
+				await service.enqueueUserWebhook(webhook.userId, 'note', {foo: 'bar'} as any);
 
 				expect(queueService.userWebhookDeliver).not.toHaveBeenCalled();
 			});
@@ -284,8 +284,8 @@ describe('UserWebhookService', () => {
 					active: true,
 					on: ['note'],
 				});
-				await service.enqueueUserWebhook(webhook1.userId, 'renote', { foo: 'bar' } as any);
-				await service.enqueueUserWebhook(webhook2.userId, 'renote', { foo: 'bar' } as any);
+				await service.enqueueUserWebhook(webhook1.userId, 'renote', {foo: 'bar'} as any);
+				await service.enqueueUserWebhook(webhook2.userId, 'renote', {foo: 'bar'} as any);
 
 				expect(queueService.userWebhookDeliver).not.toHaveBeenCalled();
 			});
@@ -295,7 +295,7 @@ describe('UserWebhookService', () => {
 					active: true,
 					on: ['note'],
 				});
-				await service.enqueueUserWebhook(idService.gen(), 'note', { foo: 'bar' } as any);
+				await service.enqueueUserWebhook(idService.gen(), 'note', {foo: 'bar'} as any);
 
 				expect(queueService.userWebhookDeliver).not.toHaveBeenCalled();
 			});
@@ -322,7 +322,7 @@ describe('UserWebhookService', () => {
 					active: false,
 					on: ['renote'],
 				});
-				await service.enqueueUserWebhook(userId, 'note', { foo: 'bar' } as any);
+				await service.enqueueUserWebhook(userId, 'note', {foo: 'bar'} as any);
 
 				expect(queueService.userWebhookDeliver).toHaveBeenCalledTimes(1);
 				expect(queueService.userWebhookDeliver.mock.calls[0][0] as MiWebhook).toEqual(webhook1);

@@ -4,15 +4,16 @@
  */
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { action } from '@storybook/addon-actions';
-import { expect, userEvent, waitFor, within } from '@storybook/test';
-import type { StoryObj } from '@storybook/vue3';
-import { HttpResponse, http } from 'msw';
-import { userDetailed } from '../../.storybook/fakes.js';
-import { commonHandlers } from '../../.storybook/mocks.js';
+import {action} from '@storybook/addon-actions';
+import {expect, userEvent, waitFor, within} from '@storybook/test';
+import type {StoryObj} from '@storybook/vue3';
+import {HttpResponse, http} from 'msw';
+import {userDetailed} from '../../.storybook/fakes.js';
+import {commonHandlers} from '../../.storybook/mocks.js';
 import MkAutocomplete from './MkAutocomplete.vue';
 import MkInput from './MkInput.vue';
-import { tick } from '@/scripts/test-utils.js';
+import {tick} from '@/scripts/test-utils.js';
+
 const common = {
 	render(args) {
 		return {
@@ -81,17 +82,17 @@ export const User = {
 		...common.args,
 		type: 'user',
 	},
-	async play({ canvasElement }) {
+	async play({canvasElement}) {
 		const canvas = within(canvasElement);
 		const input = canvas.getByRole('combobox');
 		await waitFor(() => userEvent.hover(input));
 		await waitFor(() => userEvent.click(input));
 		await waitFor(() => userEvent.type(input, 'm'));
 		await waitFor(async () => {
-			await userEvent.type(input, ' ', { delay: 256 });
+			await userEvent.type(input, ' ', {delay: 256});
 			await tick();
 			return await expect(canvas.getByRole('list')).toBeInTheDocument();
-		}, { timeout: 16384 });
+		}, {timeout: 16384});
 	},
 	parameters: {
 		...common.parameters,
@@ -114,17 +115,17 @@ export const Hashtag = {
 		...common.args,
 		type: 'hashtag',
 	},
-	async play({ canvasElement }) {
+	async play({canvasElement}) {
 		const canvas = within(canvasElement);
 		const input = canvas.getByRole('combobox');
 		await waitFor(() => userEvent.hover(input));
 		await waitFor(() => userEvent.click(input));
 		await waitFor(() => userEvent.type(input, '気象'));
 		await waitFor(async () => {
-			await userEvent.type(input, ' ', { delay: 256 });
+			await userEvent.type(input, ' ', {delay: 256});
 			await tick();
 			return await expect(canvas.getByRole('list')).toBeInTheDocument();
-		}, { interval: 256, timeout: 16384 });
+		}, {interval: 256, timeout: 16384});
 	},
 	parameters: {
 		...common.parameters,
@@ -148,17 +149,17 @@ export const Emoji = {
 		...common.args,
 		type: 'emoji',
 	},
-	async play({ canvasElement }) {
+	async play({canvasElement}) {
 		const canvas = within(canvasElement);
 		const input = canvas.getByRole('combobox');
 		await waitFor(() => userEvent.hover(input));
 		await waitFor(() => userEvent.click(input));
 		await waitFor(() => userEvent.type(input, 'smile'));
 		await waitFor(async () => {
-			await userEvent.type(input, ' ', { delay: 256 });
+			await userEvent.type(input, ' ', {delay: 256});
 			await tick();
 			return await expect(canvas.getByRole('list')).toBeInTheDocument();
-		}, { interval: 256, timeout: 16384 });
+		}, {interval: 256, timeout: 16384});
 	},
 } satisfies StoryObj<typeof MkAutocomplete>;
 export const MfmTag = {
@@ -167,7 +168,7 @@ export const MfmTag = {
 		...common.args,
 		type: 'mfmTag',
 	},
-	async play({ canvasElement }) {
+	async play({canvasElement}) {
 		const canvas = within(canvasElement);
 		const input = canvas.getByRole('combobox');
 		await waitFor(() => userEvent.hover(input));
@@ -175,6 +176,6 @@ export const MfmTag = {
 		await waitFor(async () => {
 			await tick();
 			return await expect(canvas.getByRole('list')).toBeInTheDocument();
-		}, { interval: 256, timeout: 16384 });
+		}, {interval: 256, timeout: 16384});
 	},
 } satisfies StoryObj<typeof MkAutocomplete>;

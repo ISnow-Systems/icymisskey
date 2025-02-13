@@ -9,7 +9,7 @@
 		"strictNullChecks": true,
 		"esModuleInterop": true,
 		"lib": [
-			"esnext",
+			"esnext"
 		]
 	},
 	"include": [

@@ -4,21 +4,21 @@
  */
 
 import * as crypto from 'node:crypto';
-import { URL } from 'node:url';
-import { Inject, Injectable } from '@nestjs/common';
-import { Window } from 'happy-dom';
-import { DI } from '@/di-symbols.js';
-import type { Config } from '@/config.js';
-import type { MiUser } from '@/models/User.js';
-import { UserKeypairService } from '@/core/UserKeypairService.js';
-import { UtilityService } from '@/core/UtilityService.js';
-import { HttpRequestService } from '@/core/HttpRequestService.js';
-import { LoggerService } from '@/core/LoggerService.js';
-import { bindThis } from '@/decorators.js';
+import {URL} from 'node:url';
+import {Inject, Injectable} from '@nestjs/common';
+import {Window} from 'happy-dom';
+import {DI} from '@/di-symbols.js';
+import type {Config} from '@/config.js';
+import type {MiUser} from '@/models/User.js';
+import {UserKeypairService} from '@/core/UserKeypairService.js';
+import {UtilityService} from '@/core/UtilityService.js';
+import {HttpRequestService} from '@/core/HttpRequestService.js';
+import {LoggerService} from '@/core/LoggerService.js';
+import {bindThis} from '@/decorators.js';
 import type Logger from '@/logger.js';
-import { validateContentTypeSetAsActivityPub } from '@/core/activitypub/misc/validator.js';
-import { assertActivityMatchesUrls } from '@/core/activitypub/misc/check-against-url.js';
-import type { IObject } from './type.js';
+import {validateContentTypeSetAsActivityPub} from '@/core/activitypub/misc/validator.js';
+import {assertActivityMatchesUrls} from '@/core/activitypub/misc/check-against-url.js';
+import type {IObject} from './type.js';
 
 type Request = {
 	url: string;
@@ -144,7 +144,6 @@ export class ApRequestService {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		private userKeypairService: UserKeypairService,
 		private httpRequestService: HttpRequestService,
 		private loggerService: LoggerService,
@@ -168,8 +167,7 @@ export class ApRequestService {
 			url,
 			body,
 			digest,
-			additionalHeaders: {
-			},
+			additionalHeaders: {},
 		});
 
 		await this.httpRequestService.send(url, {
@@ -195,8 +193,7 @@ export class ApRequestService {
 				keyId: `${this.config.url}/users/${user.id}#main-key`,
 			},
 			url,
-			additionalHeaders: {
-			},
+			additionalHeaders: {},
 		});
 
 		const res = await this.httpRequestService.send(url, {
@@ -215,7 +212,7 @@ export class ApRequestService {
 			_followAlternate === true
 		) {
 			const html = await res.text();
-			const { window, happyDOM } = new Window({
+			const {window, happyDOM} = new Window({
 				settings: {
 					disableJavaScriptEvaluation: true,
 					disableJavaScriptFileLoading: true,
@@ -249,7 +246,8 @@ export class ApRequestService {
 			} catch (e) {
 				// something went wrong parsing the HTML, ignore the whole thing
 			} finally {
-				happyDOM.close().catch(err => {});
+				happyDOM.close().catch(err => {
+				});
 			}
 		}
 		//#endregion

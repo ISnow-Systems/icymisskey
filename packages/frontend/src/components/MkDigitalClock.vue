@@ -16,8 +16,8 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref, watch } from 'vue';
-import { defaultIdlingRenderScheduler } from '@/scripts/idle-render.js';
+import {onMounted, onUnmounted, ref, watch} from 'vue';
+import {defaultIdlingRenderScheduler} from '@/scripts/idle-render.js';
 
 const props = withDefaults(defineProps<{
 	showS?: boolean;

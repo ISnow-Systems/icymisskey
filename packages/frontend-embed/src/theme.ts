@@ -6,7 +6,7 @@
 import tinycolor from 'tinycolor2';
 import lightTheme from '@@/themes/_light.json5';
 import darkTheme from '@@/themes/_dark.json5';
-import type { BundledTheme } from 'shiki/themes';
+import type {BundledTheme} from 'shiki/themes';
 
 export type Theme = {
 	id: string;
@@ -84,11 +84,16 @@ function compile(theme: Theme): Record<string, string> {
 				const color = getColor(parts.join('<'));
 
 				switch (func) {
-					case 'darken': return color.darken(arg);
-					case 'lighten': return color.lighten(arg);
-					case 'alpha': return color.setAlpha(arg);
-					case 'hue': return color.spin(arg);
-					case 'saturate': return color.saturate(arg);
+					case 'darken':
+						return color.darken(arg);
+					case 'lighten':
+						return color.lighten(arg);
+					case 'alpha':
+						return color.setAlpha(arg);
+					case 'hue':
+						return color.spin(arg);
+					case 'saturate':
+						return color.saturate(arg);
 				}
 			}
 		}

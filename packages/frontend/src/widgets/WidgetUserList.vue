@@ -4,36 +4,38 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkContainer :showHeader="widgetProps.showHeader" class="mkw-userList">
-	<template #icon><i class="ti ti-users"></i></template>
-	<template #header>{{ list ? list.name : i18n.ts._widgets.userList }}</template>
-	<template #func="{ buttonStyleClass }"><button class="_button" :class="buttonStyleClass" @click="configure()"><i class="ti ti-settings"></i></button></template>
+	<MkContainer :showHeader="widgetProps.showHeader" class="mkw-userList">
+		<template #icon><i class="ti ti-users"></i></template>
+		<template #header>{{ list ? list.name : i18n.ts._widgets.userList }}</template>
+		<template #func="{ buttonStyleClass }">
+			<button :class="buttonStyleClass" class="_button" @click="configure()"><i class="ti ti-settings"></i></button>
+		</template>
 
-	<div :class="$style.root">
-		<div v-if="widgetProps.listId == null" class="init">
-			<MkButton primary @click="chooseList">{{ i18n.ts._widgets._userList.chooseList }}</MkButton>
-		</div>
-		<MkLoading v-else-if="fetching"/>
-		<div v-else class="users">
+		<div :class="$style.root">
+			<div v-if="widgetProps.listId == null" class="init">
+				<MkButton primary @click="chooseList">{{ i18n.ts._widgets._userList.chooseList }}</MkButton>
+			</div>
+			<MkLoading v-else-if="fetching"/>
+			<div v-else class="users">
 			<span v-for="user in users" :key="user.id" class="user">
 				<MkAvatar :user="user" class="avatar" indicator link preview/>
 			</span>
+			</div>
 		</div>
-	</div>
-</MkContainer>
+	</MkContainer>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import {ref} from 'vue';
 import * as Misskey from 'misskey-js';
-import { useWidgetPropsManager } from './widget.js';
-import type { WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget.js';
-import type { GetFormResultType } from '@/scripts/form.js';
+import {useWidgetPropsManager} from './widget.js';
+import type {WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps} from './widget.js';
+import type {GetFormResultType} from '@/scripts/form.js';
 import MkContainer from '@/components/MkContainer.vue';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { useInterval } from '@@/js/use-interval.js';
-import { i18n } from '@/i18n.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {useInterval} from '@@/js/use-interval.js';
+import {i18n} from '@/i18n.js';
 import MkButton from '@/components/MkButton.vue';
 
 const name = 'userList';
@@ -55,7 +57,7 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 const props = defineProps<WidgetComponentProps<WidgetProps>>();
 const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 
-const { widgetProps, configure, save } = useWidgetPropsManager(name,
+const {widgetProps, configure, save} = useWidgetPropsManager(name,
 	widgetPropsDef,
 	props,
 	emit,
@@ -67,7 +69,7 @@ const fetching = ref(true);
 
 async function chooseList() {
 	const lists = await misskeyApi('users/lists/list');
-	const { canceled, result: list } = await os.select({
+	const {canceled, result: list} = await os.select({
 		title: i18n.ts.selectList,
 		items: lists.map(x => ({
 			value: x, text: x.name,

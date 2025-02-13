@@ -4,14 +4,14 @@
  */
 
 import ms from 'ms';
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { FollowingsRepository } from '@/models/_.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { UserFollowingService } from '@/core/UserFollowingService.js';
-import { DI } from '@/di-symbols.js';
-import { GetterService } from '@/server/api/GetterService.js';
-import { ApiError } from '../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {FollowingsRepository} from '@/models/_.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {UserFollowingService} from '@/core/UserFollowingService.js';
+import {DI} from '@/di-symbols.js';
+import {GetterService} from '@/server/api/GetterService.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['following', 'users'],
@@ -55,7 +55,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		userId: { type: 'string', format: 'misskey:id' },
+		userId: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['userId'],
 } as const;
@@ -65,7 +65,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.followingsRepository)
 		private followingsRepository: FollowingsRepository,
-
 		private userEntityService: UserEntityService,
 		private getterService: GetterService,
 		private userFollowingService: UserFollowingService,

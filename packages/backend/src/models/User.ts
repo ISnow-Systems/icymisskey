@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Entity, Column, Index, OneToOne, JoinColumn, PrimaryColumn } from 'typeorm';
-import { id } from './util/id.js';
-import { MiDriveFile } from './DriveFile.js';
+import {Entity, Column, Index, OneToOne, JoinColumn, PrimaryColumn} from 'typeorm';
+import {id} from './util/id.js';
+import {MiDriveFile} from './DriveFile.js';
 
 @Entity('user')
-@Index(['usernameLower', 'host'], { unique: true })
+@Index(['usernameLower', 'host'], {unique: true})
 export class MiUser {
 	@PrimaryColumn(id())
 	public id: string;
@@ -269,7 +269,7 @@ export class MiUser {
 	})
 	public followersUri: string | null;
 
-	@Index({ unique: true })
+	@Index({unique: true})
 	@Column('char', {
 		length: 16, nullable: true, unique: true,
 		comment: 'The native access token of the User. It will be null if the origin of the user is local.',
@@ -307,10 +307,10 @@ export type MiPartialRemoteUser = Partial<MiUser> & {
 	uri: string;
 }
 
-export const localUsernameSchema = { type: 'string', pattern: /^\w{1,20}$/.toString().slice(1, -1) } as const;
-export const passwordSchema = { type: 'string', minLength: 1 } as const;
-export const nameSchema = { type: 'string', minLength: 1, maxLength: 50 } as const;
-export const descriptionSchema = { type: 'string', minLength: 1, maxLength: 1500 } as const;
-export const followedMessageSchema = { type: 'string', minLength: 1, maxLength: 256 } as const;
-export const locationSchema = { type: 'string', minLength: 1, maxLength: 50 } as const;
-export const birthdaySchema = { type: 'string', pattern: /^([0-9]{4})-([0-9]{2})-([0-9]{2})$/.toString().slice(1, -1) } as const;
+export const localUsernameSchema = {type: 'string', pattern: /^\w{1,20}$/.toString().slice(1, -1)} as const;
+export const passwordSchema = {type: 'string', minLength: 1} as const;
+export const nameSchema = {type: 'string', minLength: 1, maxLength: 50} as const;
+export const descriptionSchema = {type: 'string', minLength: 1, maxLength: 1500} as const;
+export const followedMessageSchema = {type: 'string', minLength: 1, maxLength: 256} as const;
+export const locationSchema = {type: 'string', minLength: 1, maxLength: 50} as const;
+export const birthdaySchema = {type: 'string', pattern: /^([0-9]{4})-([0-9]{2})-([0-9]{2})$/.toString().slice(1, -1)} as const;

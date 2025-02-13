@@ -4,47 +4,47 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="_panel _shadow" :class="$style.root">
-	<div :class="$style.icon">
-		<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-open-source" width="40" height="40" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-			<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-			<path d="M12 3a9 9 0 0 1 3.618 17.243l-2.193 -5.602a3 3 0 1 0 -2.849 0l-2.193 5.603a9 9 0 0 1 3.617 -17.244z"/>
-		</svg>
+	<div :class="$style.root" class="_panel _shadow">
+		<div :class="$style.icon">
+			<svg class="icon icon-tabler icon-tabler-brand-open-source" fill="none" height="40" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" viewBox="0 0 24 24" width="40" xmlns="http://www.w3.org/2000/svg">
+				<path d="M0 0h24v24H0z" fill="none" stroke="none"/>
+				<path d="M12 3a9 9 0 0 1 3.618 17.243l-2.193 -5.602a3 3 0 1 0 -2.849 0l-2.193 5.603a9 9 0 0 1 3.617 -17.244z"/>
+			</svg>
+		</div>
+		<div :class="$style.main">
+			<div :class="$style.title">
+				<I18n :src="i18n.ts.aboutX" tag="span">
+					<template #x>
+						{{ instance.name ?? host }}
+					</template>
+				</I18n>
+			</div>
+			<div :class="$style.text">
+				<I18n :src="i18n.ts._aboutMisskey.thisIsModifiedVersion" tag="span">
+					<template #name>
+						{{ instance.name ?? host }}
+					</template>
+				</I18n>
+				<I18n :src="i18n.ts.correspondingSourceIsAvailable" tag="span">
+					<template #anchor>
+						<MkA class="_link" to="/about-misskey">{{ i18n.ts.aboutMisskey }}</MkA>
+					</template>
+				</I18n>
+			</div>
+			<div class="_buttons">
+				<MkButton @click="close">{{ i18n.ts.gotIt }}</MkButton>
+			</div>
+		</div>
+		<button :class="$style.close" class="_button" @click="close"><i class="ti ti-x"></i></button>
 	</div>
-	<div :class="$style.main">
-		<div :class="$style.title">
-			<I18n :src="i18n.ts.aboutX" tag="span">
-				<template #x>
-					{{ instance.name ?? host }}
-				</template>
-			</I18n>
-		</div>
-		<div :class="$style.text">
-			<I18n :src="i18n.ts._aboutMisskey.thisIsModifiedVersion" tag="span">
-				<template #name>
-					{{ instance.name ?? host }}
-				</template>
-			</I18n>
-			<I18n :src="i18n.ts.correspondingSourceIsAvailable" tag="span">
-				<template #anchor>
-					<MkA to="/about-misskey" class="_link">{{ i18n.ts.aboutMisskey }}</MkA>
-				</template>
-			</I18n>
-		</div>
-		<div class="_buttons">
-			<MkButton @click="close">{{ i18n.ts.gotIt }}</MkButton>
-		</div>
-	</div>
-	<button class="_button" :class="$style.close" @click="close"><i class="ti ti-x"></i></button>
-</div>
 </template>
 
 <script lang="ts" setup>
 import MkButton from '@/components/MkButton.vue';
-import { host } from '@@/js/config.js';
-import { i18n } from '@/i18n.js';
-import { instance } from '@/instance.js';
-import { miLocalStorage } from '@/local-storage.js';
+import {host} from '@@/js/config.js';
+import {i18n} from '@/i18n.js';
+import {instance} from '@/instance.js';
+import {miLocalStorage} from '@/local-storage.js';
 import * as os from '@/os.js';
 
 const emit = defineEmits<{
@@ -79,11 +79,13 @@ function close() {
 	width: 100px;
 	color: var(--MI_THEME-accent);
 }
+
 @media (max-width: 500px) {
 	.icon {
 		width: 80px;
 	}
 }
+
 @media (max-width: 450px) {
 	.icon {
 		width: 70px;

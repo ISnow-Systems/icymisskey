@@ -4,37 +4,37 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div
-	ref="rootEl"
-	class="mk_grid_th"
-	:class="$style.cell"
-	:style="[{ maxWidth: column.width, minWidth: column.width, width: column.width }]"
-	data-grid-cell
-	:data-grid-cell-row="-1"
-	:data-grid-cell-col="column.index"
->
-	<div :class="$style.root">
-		<div :class="$style.left"></div>
-		<div :class="$style.wrapper">
-			<div ref="contentEl" :class="$style.contentArea">
-				<span v-if="column.setting.icon" class="ti" :class="column.setting.icon" style="line-height: normal"></span>
-				<span v-else>{{ text }}</span>
+	<div
+		ref="rootEl"
+		:class="$style.cell"
+		:data-grid-cell-col="column.index"
+		:data-grid-cell-row="-1"
+		:style="[{ maxWidth: column.width, minWidth: column.width, width: column.width }]"
+		class="mk_grid_th"
+		data-grid-cell
+	>
+		<div :class="$style.root">
+			<div :class="$style.left"></div>
+			<div :class="$style.wrapper">
+				<div ref="contentEl" :class="$style.contentArea">
+					<span v-if="column.setting.icon" :class="column.setting.icon" class="ti" style="line-height: normal"></span>
+					<span v-else>{{ text }}</span>
+				</div>
 			</div>
+			<div
+				:class="$style.right"
+				@dblclick="onHandleDoubleClick"
+				@mousedown="onHandleMouseDown"
+			></div>
 		</div>
-		<div
-			:class="$style.right"
-			@mousedown="onHandleMouseDown"
-			@dblclick="onHandleDoubleClick"
-		></div>
 	</div>
-</div>
 </template>
 
-<script setup lang="ts">
-import { computed, nextTick, onMounted, onUnmounted, ref, toRefs, watch } from 'vue';
-import { GridEventEmitter } from '@/components/grid/grid.js';
-import type { Size } from '@/components/grid/grid.js';
-import type { GridColumn } from '@/components/grid/column.js';
+<script lang="ts" setup>
+import {computed, nextTick, onMounted, onUnmounted, ref, toRefs, watch} from 'vue';
+import {GridEventEmitter} from '@/components/grid/grid.js';
+import type {Size} from '@/components/grid/grid.js';
+import type {GridColumn} from '@/components/grid/column.js';
 
 const emit = defineEmits<{
 	(ev: 'operation:beginWidthChange', sender: GridColumn): void;
@@ -48,7 +48,7 @@ const props = defineProps<{
 	bus: GridEventEmitter,
 }>();
 
-const { column, bus } = toRefs(props);
+const {column, bus} = toRefs(props);
 
 const rootEl = ref<InstanceType<typeof HTMLTableCellElement>>();
 const contentEl = ref<InstanceType<typeof HTMLDivElement>>();
@@ -63,7 +63,7 @@ const text = computed(() => {
 watch(column, () => {
 	// 中身がセットされた直後はサイズが分からないので、次のタイミングで更新する
 	nextTick(emitContentSizeChanged);
-}, { immediate: true });
+}, {immediate: true});
 
 function onHandleDoubleClick(ev: MouseEvent) {
 	switch (ev.type) {
@@ -164,7 +164,7 @@ onUnmounted(() => {
 
 </script>
 
-<style module lang="scss">
+<style lang="scss" module>
 $handleWidth: 5px;
 $cellHeight: 28px;
 

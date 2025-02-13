@@ -4,27 +4,27 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<template #header>
-		<MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/>
-	</template>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/>
+		</template>
 
-	<MkHorizontalSwipe v-model:tab="tab" :tabs="headerTabs">
-		<MkSpacer v-if="tab === 'info'" key="info" :contentMax="800">
-			<XFileInfo :fileId="fileId"/>
-		</MkSpacer>
+		<MkHorizontalSwipe v-model:tab="tab" :tabs="headerTabs">
+			<MkSpacer v-if="tab === 'info'" key="info" :contentMax="800">
+				<XFileInfo :fileId="fileId"/>
+			</MkSpacer>
 
-		<MkSpacer v-else-if="tab === 'notes'" key="notes" :contentMax="800">
-			<XNotes :fileId="fileId"/>
-		</MkSpacer>
-	</MkHorizontalSwipe>
-</MkStickyContainer>
+			<MkSpacer v-else-if="tab === 'notes'" key="notes" :contentMax="800">
+				<XNotes :fileId="fileId"/>
+			</MkSpacer>
+		</MkHorizontalSwipe>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, defineAsyncComponent } from 'vue';
-import { i18n } from '@/i18n.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
+import {computed, ref, defineAsyncComponent} from 'vue';
+import {i18n} from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
 import MkHorizontalSwipe from '@/components/MkHorizontalSwipe.vue';
 
 const props = defineProps<{

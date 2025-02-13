@@ -9,8 +9,8 @@ import * as assert from 'assert';
 import * as crypto from 'node:crypto';
 import cbor from 'cbor';
 import * as OTPAuth from 'otpauth';
-import { loadConfig } from '@/config.js';
-import { api, signup } from '../utils.js';
+import {loadConfig} from '@/config.js';
+import {api, signup} from '../utils.js';
 import type {
 	AuthenticationResponseJSON,
 	AuthenticatorAssertionResponseJSON,
@@ -177,7 +177,7 @@ describe('2要素認証', () => {
 	};
 
 	beforeAll(async () => {
-		alice = await signup({ username, password });
+		alice = await signup({username, password});
 	}, 1000 * 60 * 2);
 
 	test('が設定でき、OTPでログインできる。', async () => {
@@ -376,8 +376,7 @@ describe('2要素認証', () => {
 		}, alice);
 		assert.strictEqual(updateKeyResponse.status, 200);
 
-		const iResponse = await api('i', {
-		}, alice);
+		const iResponse = await api('i', {}, alice);
 		assert.strictEqual(iResponse.status, 200);
 		assert.ok(iResponse.body.securityKeysList);
 		const securityKeys = iResponse.body.securityKeysList.filter((s: { id: string; }) => s.id === credentialId.toString('base64url'));
@@ -420,8 +419,7 @@ describe('2要素認証', () => {
 		assert.strictEqual(keyDoneResponse.status, 200);
 
 		// テストの実行順によっては複数残ってるので全部消す
-		const beforeIResponse = await api('i', {
-		}, alice);
+		const beforeIResponse = await api('i', {}, alice);
 		assert.strictEqual(beforeIResponse.status, 200);
 		assert.ok(beforeIResponse.body.securityKeysList);
 		for (const key of beforeIResponse.body.securityKeysList) {

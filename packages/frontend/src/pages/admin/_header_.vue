@@ -4,42 +4,42 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div ref="el" class="fdidabkc" :style="{ background: bg }" @click="onClick">
-	<template v-if="pageMetadata">
-		<div class="titleContainer" @click="showTabsPopup">
-			<i v-if="pageMetadata.icon" class="icon" :class="pageMetadata.icon"></i>
+	<div ref="el" :style="{ background: bg }" class="fdidabkc" @click="onClick">
+		<template v-if="pageMetadata">
+			<div class="titleContainer" @click="showTabsPopup">
+				<i v-if="pageMetadata.icon" :class="pageMetadata.icon" class="icon"></i>
 
-			<div class="title">
-				<div class="title">{{ pageMetadata.title }}</div>
+				<div class="title">
+					<div class="title">{{ pageMetadata.title }}</div>
+				</div>
 			</div>
-		</div>
-		<div class="tabs">
-			<button v-for="tab in tabs" :ref="(el) => tabRefs[tab.key] = el" v-tooltip.noDelay="tab.title" class="tab _button" :class="{ active: tab.key != null && tab.key === props.tab }" @mousedown="(ev) => onTabMousedown(tab, ev)" @click="(ev) => onTabClick(tab, ev)">
-				<i v-if="tab.icon" class="icon" :class="tab.icon"></i>
-				<span v-if="!tab.iconOnly" class="title">{{ tab.title }}</span>
-			</button>
-			<div ref="tabHighlightEl" class="highlight"></div>
-		</div>
-	</template>
-	<div class="buttons right">
-		<template v-if="actions">
-			<template v-for="action in actions">
-				<MkButton v-if="action.asFullButton" class="fullButton" primary :disabled="action.disabled" @click.stop="action.handler"><i :class="action.icon" style="margin-right: 6px;"></i>{{ action.text }}</MkButton>
-				<button v-else v-tooltip.noDelay="action.text" class="_button button" :class="{ highlighted: action.highlighted }" :disabled="action.disabled" @click.stop="action.handler" @touchstart="preventDrag"><i :class="action.icon"></i></button>
-			</template>
+			<div class="tabs">
+				<button v-for="tab in tabs" :ref="(el) => tabRefs[tab.key] = el" v-tooltip.noDelay="tab.title" :class="{ active: tab.key != null && tab.key === props.tab }" class="tab _button" @click="(ev) => onTabClick(tab, ev)" @mousedown="(ev) => onTabMousedown(tab, ev)">
+					<i v-if="tab.icon" :class="tab.icon" class="icon"></i>
+					<span v-if="!tab.iconOnly" class="title">{{ tab.title }}</span>
+				</button>
+				<div ref="tabHighlightEl" class="highlight"></div>
+			</div>
 		</template>
+		<div class="buttons right">
+			<template v-if="actions">
+				<template v-for="action in actions">
+					<MkButton v-if="action.asFullButton" :disabled="action.disabled" class="fullButton" primary @click.stop="action.handler"><i :class="action.icon" style="margin-right: 6px;"></i>{{ action.text }}</MkButton>
+					<button v-else v-tooltip.noDelay="action.text" :class="{ highlighted: action.highlighted }" :disabled="action.disabled" class="_button button" @touchstart="preventDrag" @click.stop="action.handler"><i :class="action.icon"></i></button>
+				</template>
+			</template>
+		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, onUnmounted, ref, shallowRef, watch, nextTick } from 'vue';
+import {computed, onMounted, onUnmounted, ref, shallowRef, watch, nextTick} from 'vue';
 import tinycolor from 'tinycolor2';
-import { popupMenu } from '@/os.js';
-import { scrollToTop } from '@@/js/scroll.js';
+import {popupMenu} from '@/os.js';
+import {scrollToTop} from '@@/js/scroll.js';
 import MkButton from '@/components/MkButton.vue';
-import { globalEvents } from '@/events.js';
-import { injectReactiveMetadata } from '@/scripts/page-metadata.js';
+import {globalEvents} from '@/events.js';
+import {injectReactiveMetadata} from '@/scripts/page-metadata.js';
 
 type Tab = {
 	key?: string | null;
@@ -97,7 +97,7 @@ const preventDrag = (ev: TouchEvent) => {
 };
 
 const onClick = () => {
-	scrollToTop(el.value, { behavior: 'smooth' });
+	scrollToTop(el.value, {behavior: 'smooth'});
 };
 
 function onTabMousedown(tab: Tab, ev: MouseEvent): void {
@@ -162,7 +162,7 @@ onUnmounted(() => {
 	> .buttons {
 		--margin: 8px;
 		display: flex;
-    align-items: center;
+		align-items: center;
 		height: var(--height);
 		margin: 0 var(--margin);
 

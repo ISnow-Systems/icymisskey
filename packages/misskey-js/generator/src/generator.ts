@@ -1,9 +1,9 @@
 import assert from 'assert';
-import { mkdir, readFile, writeFile } from 'fs/promises';
-import { OpenAPIV3_1 } from 'openapi-types';
-import { toPascal } from 'ts-case-convert';
+import {mkdir, readFile, writeFile} from 'fs/promises';
+import {OpenAPIV3_1} from 'openapi-types';
+import {toPascal} from 'ts-case-convert';
 import OpenAPIParser from '@readme/openapi-parser';
-import openapiTS, { OpenAPI3, OperationObject, PathItemObject } from 'openapi-typescript';
+import openapiTS, {OpenAPI3, OperationObject, PathItemObject} from 'openapi-typescript';
 
 async function generateBaseTypes(
 	openApiDocs: OpenAPIV3_1.Document,
@@ -267,7 +267,7 @@ function isRequestBodyObject(value: unknown): value is OpenAPIV3_1.RequestBodyOb
 		return false;
 	}
 
-	const { content } = value as Record<keyof OpenAPIV3_1.RequestBodyObject, unknown>;
+	const {content} = value as Record<keyof OpenAPIV3_1.RequestBodyObject, unknown>;
 	return content !== undefined;
 }
 
@@ -276,7 +276,7 @@ function isResponseObject(value: unknown): value is OpenAPIV3_1.ResponseObject {
 		return false;
 	}
 
-	const { description } = value as Record<keyof OpenAPIV3_1.ResponseObject, unknown>;
+	const {description} = value as Record<keyof OpenAPIV3_1.ResponseObject, unknown>;
 	return description !== undefined;
 }
 
@@ -391,7 +391,7 @@ class EndpointReqMediaType {
 
 async function main() {
 	const generatePath = './built/autogen';
-	await mkdir(generatePath, { recursive: true });
+	await mkdir(generatePath, {recursive: true});
 
 	const openApiJsonPath = './api.json';
 	const openApiDocs = await OpenAPIParser.parse(openApiJsonPath) as OpenAPIV3_1.Document;

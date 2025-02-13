@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable, OnApplicationShutdown } from '@nestjs/common';
+import {Inject, Injectable, OnApplicationShutdown} from '@nestjs/common';
 import push from 'web-push';
 import * as Redis from 'ioredis';
-import { DI } from '@/di-symbols.js';
-import type { Config } from '@/config.js';
-import type { Packed } from '@/misc/json-schema.js';
-import { getNoteSummary } from '@/misc/get-note-summary.js';
-import type { MiMeta, MiSwSubscription, SwSubscriptionsRepository } from '@/models/_.js';
-import { bindThis } from '@/decorators.js';
-import { RedisKVCache } from '@/misc/cache.js';
+import {DI} from '@/di-symbols.js';
+import type {Config} from '@/config.js';
+import type {Packed} from '@/misc/json-schema.js';
+import {getNoteSummary} from '@/misc/get-note-summary.js';
+import type {MiMeta, MiSwSubscription, SwSubscriptionsRepository} from '@/models/_.js';
+import {bindThis} from '@/decorators.js';
+import {RedisKVCache} from '@/misc/cache.js';
 
 // Defined also packages/sw/types.ts#L13
 type PushNotificationsTypes = {
@@ -52,20 +52,17 @@ export class PushNotificationService implements OnApplicationShutdown {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.meta)
 		private meta: MiMeta,
-
 		@Inject(DI.redis)
 		private redisClient: Redis.Redis,
-
 		@Inject(DI.swSubscriptionsRepository)
 		private swSubscriptionsRepository: SwSubscriptionsRepository,
 	) {
 		this.subscriptionsCache = new RedisKVCache<MiSwSubscription[]>(this.redisClient, 'userSwSubscriptions', {
 			lifetime: 1000 * 60 * 60 * 1, // 1h
 			memoryCacheLifetime: 1000 * 60 * 3, // 3m
-			fetcher: (key) => this.swSubscriptionsRepository.findBy({ userId: key }),
+			fetcher: (key) => this.swSubscriptionsRepository.findBy({userId: key}),
 			toRedisConverter: (value) => JSON.stringify(value),
 			fromRedisConverter: (value) => JSON.parse(value),
 		});

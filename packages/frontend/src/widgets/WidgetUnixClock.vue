@@ -4,22 +4,22 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="mkw-unixClock _monospace" :class="{ _panel: !widgetProps.transparent }" :style="{ fontSize: `${widgetProps.fontSize}em` }">
-	<div v-if="widgetProps.showLabel" class="label">UNIX Epoch</div>
-	<div class="time">
-		<span v-text="ss"></span>
-		<span v-if="widgetProps.showMs" class="colon" :class="{ showColon }">:</span>
-		<span v-if="widgetProps.showMs" v-text="ms"></span>
+	<div :class="{ _panel: !widgetProps.transparent }" :style="{ fontSize: `${widgetProps.fontSize}em` }" class="mkw-unixClock _monospace">
+		<div v-if="widgetProps.showLabel" class="label">UNIX Epoch</div>
+		<div class="time">
+			<span v-text="ss"></span>
+			<span v-if="widgetProps.showMs" :class="{ showColon }" class="colon">:</span>
+			<span v-if="widgetProps.showMs" v-text="ms"></span>
+		</div>
+		<div v-if="widgetProps.showLabel" class="label">UTC</div>
 	</div>
-	<div v-if="widgetProps.showLabel" class="label">UTC</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { onUnmounted, ref, watch } from 'vue';
-import { useWidgetPropsManager } from './widget.js';
-import type { WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget.js';
-import type { GetFormResultType } from '@/scripts/form.js';
+import {onUnmounted, ref, watch} from 'vue';
+import {useWidgetPropsManager} from './widget.js';
+import type {WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps} from './widget.js';
+import type {GetFormResultType} from '@/scripts/form.js';
 
 const name = 'unixClock';
 
@@ -48,7 +48,7 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 const props = defineProps<WidgetComponentProps<WidgetProps>>();
 const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 
-const { widgetProps, configure } = useWidgetPropsManager(name,
+const {widgetProps, configure} = useWidgetPropsManager(name,
 	widgetPropsDef,
 	props,
 	emit,
@@ -81,7 +81,7 @@ tick();
 watch(() => widgetProps.showMs, () => {
 	if (intervalId) window.clearInterval(intervalId);
 	intervalId = window.setInterval(tick, widgetProps.showMs ? 10 : 1000);
-}, { immediate: true });
+}, {immediate: true});
 
 onUnmounted(() => {
 	window.clearInterval(intervalId);

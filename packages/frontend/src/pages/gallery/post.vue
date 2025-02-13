@@ -4,83 +4,88 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="1000" :marginMin="16" :marginMax="32">
-		<div class="_root">
-			<Transition :name="defaultStore.state.animation ? 'fade' : ''" mode="out-in">
-				<div v-if="post" class="rkxwuolj">
-					<div class="files">
-						<div v-for="file in post.files" :key="file.id" class="file">
-							<img :src="file.url"/>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs"/>
+		</template>
+		<MkSpacer :contentMax="1000" :marginMax="32" :marginMin="16">
+			<div class="_root">
+				<Transition :name="defaultStore.state.animation ? 'fade' : ''" mode="out-in">
+					<div v-if="post" class="rkxwuolj">
+						<div class="files">
+							<div v-for="file in post.files" :key="file.id" class="file">
+								<img :src="file.url"/>
+							</div>
 						</div>
+						<div class="body">
+							<div class="title">{{ post.title }}</div>
+							<div class="description">
+								<Mfm :text="post.description"/>
+							</div>
+							<div class="info">
+								<i class="ti ti-clock"></i>
+								<MkTime :time="post.createdAt" mode="detail"/>
+							</div>
+							<div class="actions">
+								<div class="like">
+									<MkButton v-if="post.isLiked" v-tooltip="i18n.ts._gallery.unlike" class="button" primary @click="unlike()"><i class="ti ti-heart-off"></i><span v-if="post.likedCount > 0" class="count">{{ post.likedCount }}</span></MkButton>
+									<MkButton v-else v-tooltip="i18n.ts._gallery.like" class="button" @click="like()"><i class="ti ti-heart"></i><span v-if="post.likedCount > 0" class="count">{{ post.likedCount }}</span></MkButton>
+								</div>
+								<div class="other">
+									<button v-if="$i && $i.id === post.user.id" v-click-anime v-tooltip="i18n.ts.edit" class="_button" @click="edit"><i class="ti ti-pencil ti-fw"></i></button>
+									<button v-click-anime v-tooltip="i18n.ts.shareWithNote" class="_button" @click="shareWithNote"><i class="ti ti-repeat ti-fw"></i></button>
+									<button v-click-anime v-tooltip="i18n.ts.copyLink" class="_button" @click="copyLink"><i class="ti ti-link ti-fw"></i></button>
+									<button v-if="isSupportShare()" v-click-anime v-tooltip="i18n.ts.share" class="_button" @click="share"><i class="ti ti-share ti-fw"></i></button>
+									<button v-if="$i && $i.id !== post.user.id" v-click-anime class="_button" @mousedown="showMenu"><i class="ti ti-dots ti-fw"></i></button>
+								</div>
+							</div>
+							<div class="user">
+								<MkAvatar :user="post.user" class="avatar" link preview/>
+								<div class="name">
+									<MkUserName :user="post.user" style="display: block;"/>
+									<MkAcct :user="post.user"/>
+								</div>
+								<MkFollowButton v-if="!$i || $i.id != post.user.id" v-model:user="post.user" :full="true" :inline="true" :transparent="false" class="koudoku" large/>
+							</div>
+						</div>
+						<MkAd :prefer="['horizontal', 'horizontal-big']"/>
+						<MkContainer :foldable="true" :max-height="300" class="other">
+							<template #icon><i class="ti ti-clock"></i></template>
+							<template #header>{{ i18n.ts.recentPosts }}</template>
+							<MkPagination v-slot="{items}" :pagination="otherPostsPagination">
+								<div class="sdrarzaf">
+									<MkGalleryPostPreview v-for="post in items" :key="post.id" :post="post" class="post"/>
+								</div>
+							</MkPagination>
+						</MkContainer>
 					</div>
-					<div class="body">
-						<div class="title">{{ post.title }}</div>
-						<div class="description"><Mfm :text="post.description"/></div>
-						<div class="info">
-							<i class="ti ti-clock"></i> <MkTime :time="post.createdAt" mode="detail"/>
-						</div>
-						<div class="actions">
-							<div class="like">
-								<MkButton v-if="post.isLiked" v-tooltip="i18n.ts._gallery.unlike" class="button" primary @click="unlike()"><i class="ti ti-heart-off"></i><span v-if="post.likedCount > 0" class="count">{{ post.likedCount }}</span></MkButton>
-								<MkButton v-else v-tooltip="i18n.ts._gallery.like" class="button" @click="like()"><i class="ti ti-heart"></i><span v-if="post.likedCount > 0" class="count">{{ post.likedCount }}</span></MkButton>
-							</div>
-							<div class="other">
-								<button v-if="$i && $i.id === post.user.id" v-tooltip="i18n.ts.edit" v-click-anime class="_button" @click="edit"><i class="ti ti-pencil ti-fw"></i></button>
-								<button v-tooltip="i18n.ts.shareWithNote" v-click-anime class="_button" @click="shareWithNote"><i class="ti ti-repeat ti-fw"></i></button>
-								<button v-tooltip="i18n.ts.copyLink" v-click-anime class="_button" @click="copyLink"><i class="ti ti-link ti-fw"></i></button>
-								<button v-if="isSupportShare()" v-tooltip="i18n.ts.share" v-click-anime class="_button" @click="share"><i class="ti ti-share ti-fw"></i></button>
-								<button v-if="$i && $i.id !== post.user.id" v-click-anime class="_button" @mousedown="showMenu"><i class="ti ti-dots ti-fw"></i></button>
-							</div>
-						</div>
-						<div class="user">
-							<MkAvatar :user="post.user" class="avatar" link preview/>
-							<div class="name">
-								<MkUserName :user="post.user" style="display: block;"/>
-								<MkAcct :user="post.user"/>
-							</div>
-							<MkFollowButton v-if="!$i || $i.id != post.user.id" v-model:user="post.user" :inline="true" :transparent="false" :full="true" large class="koudoku"/>
-						</div>
-					</div>
-					<MkAd :prefer="['horizontal', 'horizontal-big']"/>
-					<MkContainer :max-height="300" :foldable="true" class="other">
-						<template #icon><i class="ti ti-clock"></i></template>
-						<template #header>{{ i18n.ts.recentPosts }}</template>
-						<MkPagination v-slot="{items}" :pagination="otherPostsPagination">
-							<div class="sdrarzaf">
-								<MkGalleryPostPreview v-for="post in items" :key="post.id" :post="post" class="post"/>
-							</div>
-						</MkPagination>
-					</MkContainer>
-				</div>
-				<MkError v-else-if="error" @retry="fetchPost()"/>
-				<MkLoading v-else/>
-			</Transition>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+					<MkError v-else-if="error" @retry="fetchPost()"/>
+					<MkLoading v-else/>
+				</Transition>
+			</div>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { computed, watch, ref, defineAsyncComponent } from 'vue';
+import {computed, watch, ref, defineAsyncComponent} from 'vue';
 import * as Misskey from 'misskey-js';
 import MkButton from '@/components/MkButton.vue';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
 import MkContainer from '@/components/MkContainer.vue';
 import MkPagination from '@/components/MkPagination.vue';
 import MkGalleryPostPreview from '@/components/MkGalleryPostPreview.vue';
 import MkFollowButton from '@/components/MkFollowButton.vue';
-import { url } from '@@/js/config.js';
-import { i18n } from '@/i18n.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
-import { defaultStore } from '@/store.js';
-import { $i } from '@/account.js';
-import { isSupportShare } from '@/scripts/navigator.js';
-import { copyToClipboard } from '@/scripts/copy-to-clipboard.js';
-import { useRouter } from '@/router/supplier.js';
-import type { MenuItem } from '@/types/menu.js';
+import {url} from '@@/js/config.js';
+import {i18n} from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
+import {defaultStore} from '@/store.js';
+import {$i} from '@/account.js';
+import {isSupportShare} from '@/scripts/navigator.js';
+import {copyToClipboard} from '@/scripts/copy-to-clipboard.js';
+import {useRouter} from '@/router/supplier.js';
+import type {MenuItem} from '@/types/menu.js';
 
 const router = useRouter();
 
@@ -160,7 +165,7 @@ function reportAbuse() {
 
 	const pageUrl = `${url}/gallery/${post.value.id}`;
 
-	const { dispose } = os.popup(defineAsyncComponent(() => import('@/components/MkAbuseReportWindow.vue')), {
+	const {dispose} = os.popup(defineAsyncComponent(() => import('@/components/MkAbuseReportWindow.vue')), {
 		user: post.value.user,
 		initialComment: `Post: ${pageUrl}\n-----\n`,
 	}, {
@@ -190,10 +195,10 @@ function showMenu(ev: MouseEvent) {
 				action: () => os.confirm({
 					type: 'warning',
 					text: i18n.ts.deleteConfirm,
-				}).then(({ canceled }) => {
+				}).then(({canceled}) => {
 					if (canceled || !post.value) return;
 
-					os.apiWithDialog('gallery/posts/delete', { postId: post.value.id });
+					os.apiWithDialog('gallery/posts/delete', {postId: post.value.id});
 				}),
 			});
 		}
@@ -202,7 +207,7 @@ function showMenu(ev: MouseEvent) {
 	os.popupMenu(menuItems, ev.currentTarget ?? ev.target);
 }
 
-watch(() => props.postId, fetchPost, { immediate: true });
+watch(() => props.postId, fetchPost, {immediate: true});
 
 const headerActions = computed(() => []);
 
@@ -221,6 +226,7 @@ definePageMetadata(() => ({
 .fade-leave-active {
 	transition: opacity 0.125s ease;
 }
+
 .fade-enter-from,
 .fade-leave-to {
 	opacity: 0;

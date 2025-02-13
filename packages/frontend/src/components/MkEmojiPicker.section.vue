@@ -4,69 +4,73 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<!-- このコンポーネントの要素のclassは親から利用されるのでむやみに弄らないこと -->
-<!-- フォルダの中にはカスタム絵文字だけ（Unicode絵文字もこっち） -->
-<section v-if="!hasChildSection" v-panel style="border-radius: 6px; border-bottom: 0.5px solid var(--MI_THEME-divider);">
-	<header class="_acrylic" @click="shown = !shown">
-		<i class="toggle ti-fw" :class="shown ? 'ti ti-chevron-down' : 'ti ti-chevron-up'"></i> <slot></slot> (<i class="ti ti-icons"></i>:{{ emojis.length }})
-	</header>
-	<div v-if="shown" class="body">
-		<button
-			v-for="emoji in emojis"
-			:key="emoji"
-			:data-emoji="emoji"
-			class="_button item"
-			:disabled="disabledEmojis?.value.includes(emoji)"
-			@pointerenter="computeButtonTitle"
-			@click="emit('chosen', emoji, $event)"
-		>
-			<MkCustomEmoji v-if="emoji[0] === ':'" class="emoji" :name="emoji" :normal="true" :fallbackToImage="true"/>
-			<MkEmoji v-else class="emoji" :emoji="emoji" :normal="true"/>
-		</button>
-	</div>
-</section>
-<!-- フォルダの中にはカスタム絵文字やフォルダがある -->
-<section v-else v-panel style="border-radius: 6px; border-bottom: 0.5px solid var(--MI_THEME-divider);">
-	<header class="_acrylic" @click="shown = !shown">
-		<i class="toggle ti-fw" :class="shown ? 'ti ti-chevron-down' : 'ti ti-chevron-up'"></i> <slot></slot> (<i class="ti ti-folder ti-fw"></i>:{{ customEmojiTree?.length }} <i class="ti ti-icons ti-fw"></i>:{{ emojis.length }})
-	</header>
-	<div v-if="shown" style="padding-left: 9px;">
-		<MkEmojiPickerSection
-			v-for="child in customEmojiTree"
-			:key="`custom:${child.value}`"
-			:initialShown="initialShown"
-			:emojis="computed(() => customEmojis.filter(e => e.category === child.category).map(e => `:${e.name}:`))"
-			:hasChildSection="child.children.length !== 0"
-			:customEmojiTree="child.children"
-			@chosen="nestedChosen"
-		>
-			{{ child.value || i18n.ts.other }}
-		</MkEmojiPickerSection>
-	</div>
-	<div v-if="shown" class="body">
-		<button
-			v-for="emoji in emojis"
-			:key="emoji"
-			:data-emoji="emoji"
-			class="_button item"
-			:disabled="disabledEmojis?.value.includes(emoji)"
-			@pointerenter="computeButtonTitle"
-			@click="emit('chosen', emoji, $event)"
-		>
-			<MkCustomEmoji v-if="emoji[0] === ':'" class="emoji" :name="emoji" :normal="true"/>
-			<MkEmoji v-else class="emoji" :emoji="emoji" :normal="true"/>
-		</button>
-	</div>
-</section>
+	<!-- このコンポーネントの要素のclassは親から利用されるのでむやみに弄らないこと -->
+	<!-- フォルダの中にはカスタム絵文字だけ（Unicode絵文字もこっち） -->
+	<section v-if="!hasChildSection" v-panel style="border-radius: 6px; border-bottom: 0.5px solid var(--MI_THEME-divider);">
+		<header class="_acrylic" @click="shown = !shown">
+			<i :class="shown ? 'ti ti-chevron-down' : 'ti ti-chevron-up'" class="toggle ti-fw"></i>
+			<slot></slot>
+			(<i class="ti ti-icons"></i>:{{ emojis.length }})
+		</header>
+		<div v-if="shown" class="body">
+			<button
+				v-for="emoji in emojis"
+				:key="emoji"
+				:data-emoji="emoji"
+				:disabled="disabledEmojis?.value.includes(emoji)"
+				class="_button item"
+				@click="emit('chosen', emoji, $event)"
+				@pointerenter="computeButtonTitle"
+			>
+				<MkCustomEmoji v-if="emoji[0] === ':'" :fallbackToImage="true" :name="emoji" :normal="true" class="emoji"/>
+				<MkEmoji v-else :emoji="emoji" :normal="true" class="emoji"/>
+			</button>
+		</div>
+	</section>
+	<!-- フォルダの中にはカスタム絵文字やフォルダがある -->
+	<section v-else v-panel style="border-radius: 6px; border-bottom: 0.5px solid var(--MI_THEME-divider);">
+		<header class="_acrylic" @click="shown = !shown">
+			<i :class="shown ? 'ti ti-chevron-down' : 'ti ti-chevron-up'" class="toggle ti-fw"></i>
+			<slot></slot>
+			(<i class="ti ti-folder ti-fw"></i>:{{ customEmojiTree?.length }} <i class="ti ti-icons ti-fw"></i>:{{ emojis.length }})
+		</header>
+		<div v-if="shown" style="padding-left: 9px;">
+			<MkEmojiPickerSection
+				v-for="child in customEmojiTree"
+				:key="`custom:${child.value}`"
+				:customEmojiTree="child.children"
+				:emojis="computed(() => customEmojis.filter(e => e.category === child.category).map(e => `:${e.name}:`))"
+				:hasChildSection="child.children.length !== 0"
+				:initialShown="initialShown"
+				@chosen="nestedChosen"
+			>
+				{{ child.value || i18n.ts.other }}
+			</MkEmojiPickerSection>
+		</div>
+		<div v-if="shown" class="body">
+			<button
+				v-for="emoji in emojis"
+				:key="emoji"
+				:data-emoji="emoji"
+				:disabled="disabledEmojis?.value.includes(emoji)"
+				class="_button item"
+				@click="emit('chosen', emoji, $event)"
+				@pointerenter="computeButtonTitle"
+			>
+				<MkCustomEmoji v-if="emoji[0] === ':'" :name="emoji" :normal="true" class="emoji"/>
+				<MkEmoji v-else :emoji="emoji" :normal="true" class="emoji"/>
+			</button>
+		</div>
+	</section>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
-import type { Ref } from 'vue';
-import { getEmojiName } from '@@/js/emojilist.js';
-import type { CustomEmojiFolderTree } from '@@/js/emojilist.js';
-import { i18n } from '@/i18n.js';
-import { customEmojis } from '@/custom-emojis.js';
+import {ref, computed} from 'vue';
+import type {Ref} from 'vue';
+import {getEmojiName} from '@@/js/emojilist.js';
+import type {CustomEmojiFolderTree} from '@@/js/emojilist.js';
+import {i18n} from '@/i18n.js';
+import {customEmojis} from '@/custom-emojis.js';
 import MkEmojiPickerSection from '@/components/MkEmojiPicker.section.vue';
 
 const props = defineProps<{

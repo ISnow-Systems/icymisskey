@@ -1,11 +1,8 @@
 {
 	id: '504debaf-4912-6a4c-5059-1db08a76b737',
-
 	name: 'Mi Botanical Dark',
 	author: 'syuilo',
-
 	base: 'dark',
-
 	props: {
 		accent: 'rgb(148, 179, 0)',
 		bg: 'rgb(37, 38, 36)',

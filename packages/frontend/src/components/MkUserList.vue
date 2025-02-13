@@ -4,28 +4,28 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkPagination :pagination="pagination">
-	<template #empty>
-		<div class="_fullinfo">
-			<img :src="infoImageUrl" class="_ghost"/>
-			<div>{{ i18n.ts.noUsers }}</div>
-		</div>
-	</template>
+	<MkPagination :pagination="pagination">
+		<template #empty>
+			<div class="_fullinfo">
+				<img :src="infoImageUrl" class="_ghost"/>
+				<div>{{ i18n.ts.noUsers }}</div>
+			</div>
+		</template>
 
-	<template #default="{ items }">
-		<div :class="$style.root">
-			<MkUserInfo v-for="item in items" :key="item.id" class="user" :user="extractor(item)"/>
-		</div>
-	</template>
-</MkPagination>
+		<template #default="{ items }">
+			<div :class="$style.root">
+				<MkUserInfo v-for="item in items" :key="item.id" :user="extractor(item)" class="user"/>
+			</div>
+		</template>
+	</MkPagination>
 </template>
 
 <script lang="ts" setup>
 import MkUserInfo from '@/components/MkUserInfo.vue';
 import MkPagination from '@/components/MkPagination.vue';
-import type { Paging } from '@/components/MkPagination.vue';
-import { i18n } from '@/i18n.js';
-import { infoImageUrl } from '@/instance.js';
+import type {Paging} from '@/components/MkPagination.vue';
+import {i18n} from '@/i18n.js';
+import {infoImageUrl} from '@/instance.js';
 
 const props = withDefaults(defineProps<{
 	pagination: Paging;

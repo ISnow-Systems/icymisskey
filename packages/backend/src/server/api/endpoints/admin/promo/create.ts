@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { PromoNotesRepository } from '@/models/_.js';
-import { GetterService } from '@/server/api/GetterService.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {PromoNotesRepository} from '@/models/_.js';
+import {GetterService} from '@/server/api/GetterService.js';
+import {DI} from '@/di-symbols.js';
+import {ApiError} from '../../../error.js';
 
 export const meta = {
 	tags: ['admin'],
@@ -35,8 +35,8 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		noteId: { type: 'string', format: 'misskey:id' },
-		expiresAt: { type: 'integer' },
+		noteId: {type: 'string', format: 'misskey:id'},
+		expiresAt: {type: 'integer'},
 	},
 	required: ['noteId', 'expiresAt'],
 } as const;
@@ -46,7 +46,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.promoNotesRepository)
 		private promoNotesRepository: PromoNotesRepository,
-
 		private getterService: GetterService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
@@ -55,7 +54,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				throw e;
 			});
 
-			const exist = await this.promoNotesRepository.exists({ where: { noteId: note.id } });
+			const exist = await this.promoNotesRepository.exists({where: {noteId: note.id}});
 
 			if (exist) {
 				throw new ApiError(meta.errors.alreadyPromoted);

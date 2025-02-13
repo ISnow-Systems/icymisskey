@@ -4,50 +4,50 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div v-if="chosen && !shouldHide">
-	<div
-		v-if="!showMenu"
-		:class="[$style.main, {
+	<div v-if="chosen && !shouldHide">
+		<div
+			v-if="!showMenu"
+			:class="[$style.main, {
 			[$style.form_square]: chosen.place === 'square',
 			[$style.form_horizontal]: chosen.place === 'horizontal',
 			[$style.form_horizontalBig]: chosen.place === 'horizontal-big',
 			[$style.form_vertical]: chosen.place === 'vertical',
 		}]"
-	>
-		<component
-			:is="self ? 'MkA' : 'a'"
-			:class="$style.link"
-			v-bind="self ? {
+		>
+			<component
+				:is="self ? 'MkA' : 'a'"
+				:class="$style.link"
+				v-bind="self ? {
 				to: chosen.url.substring(local.length),
 			} : {
 				href: chosen.url,
 				rel: 'nofollow noopener',
 				target: '_blank',
 			}"
-		>
-			<img :src="chosen.imageUrl" :class="$style.img">
-			<button class="_button" :class="$style.i" @click.prevent.stop="toggleMenu"><i :class="$style.iIcon" class="ti ti-info-circle"></i></button>
-		</component>
+			>
+				<img :class="$style.img" :src="chosen.imageUrl">
+				<button :class="$style.i" class="_button" @click.prevent.stop="toggleMenu"><i :class="$style.iIcon" class="ti ti-info-circle"></i></button>
+			</component>
+		</div>
+		<div v-else :class="$style.menu">
+			<div>Ads by {{ host }}</div>
+			<!--<MkButton class="button" primary>{{ i18n.ts._ad.like }}</MkButton>-->
+			<MkButton v-if="chosen.ratio !== 0" :class="$style.menuButton" @click="reduceFrequency">{{ i18n.ts._ad.reduceFrequencyOfThisAd }}</MkButton>
+			<button class="_textButton" @click="toggleMenu">{{ i18n.ts._ad.back }}</button>
+		</div>
 	</div>
-	<div v-else :class="$style.menu">
-		<div>Ads by {{ host }}</div>
-		<!--<MkButton class="button" primary>{{ i18n.ts._ad.like }}</MkButton>-->
-		<MkButton v-if="chosen.ratio !== 0" :class="$style.menuButton" @click="reduceFrequency">{{ i18n.ts._ad.reduceFrequencyOfThisAd }}</MkButton>
-		<button class="_textButton" @click="toggleMenu">{{ i18n.ts._ad.back }}</button>
-	</div>
-</div>
-<div v-else></div>
+	<div v-else></div>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
-import { url as local, host } from '@@/js/config.js';
-import { i18n } from '@/i18n.js';
-import { instance } from '@/instance.js';
+import {ref, computed} from 'vue';
+import {url as local, host} from '@@/js/config.js';
+import {i18n} from '@/i18n.js';
+import {instance} from '@/instance.js';
 import MkButton from '@/components/MkButton.vue';
-import { defaultStore } from '@/store.js';
+import {defaultStore} from '@/store.js';
 import * as os from '@/os.js';
-import { $i } from '@/account.js';
+import {$i} from '@/account.js';
 
 type Ad = (typeof instance)['ads'][number];
 

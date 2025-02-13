@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { getScrollPosition, getScrollContainer, getStickyBottom, getStickyTop } from '@@/js/scroll.js';
-import { getElementOrNull, getNodeOrNull } from '@/scripts/get-dom-node-or-null.js';
+import {getScrollPosition, getScrollContainer, getStickyBottom, getStickyTop} from '@@/js/scroll.js';
+import {getElementOrNull, getNodeOrNull} from '@/scripts/get-dom-node-or-null.js';
 
 type MaybeHTMLElement = EventTarget | Node | Element | HTMLElement;
 
@@ -71,10 +71,10 @@ const focusOrScroll = (element: HTMLElement, scroll: boolean) => {
 		} else if (bottom > window.innerHeight - stickyBottom) {
 			scrollTo += bottom - window.innerHeight + stickyBottom;
 		}
-		scrollContainer.scrollTo({ top: scrollTo, behavior: 'instant' });
+		scrollContainer.scrollTo({top: scrollTo, behavior: 'instant'});
 	}
 
 	if (document.activeElement !== element) {
-		element.focus({ preventScroll: true });
+		element.focus({preventScroll: true});
 	}
 };

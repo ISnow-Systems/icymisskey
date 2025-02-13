@@ -3,60 +3,60 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { setImmediate } from 'node:timers/promises';
+import {setImmediate} from 'node:timers/promises';
 import * as mfm from 'mfm-js';
-import { In, DataSource, IsNull, LessThan } from 'typeorm';
+import {In, DataSource, IsNull, LessThan} from 'typeorm';
 import * as Redis from 'ioredis';
-import { Inject, Injectable, OnApplicationShutdown } from '@nestjs/common';
-import { extractMentions } from '@/misc/extract-mentions.js';
-import { extractCustomEmojisFromMfm } from '@/misc/extract-custom-emojis-from-mfm.js';
-import { extractHashtags } from '@/misc/extract-hashtags.js';
-import type { IMentionedRemoteUsers } from '@/models/Note.js';
-import { MiNote } from '@/models/Note.js';
-import type { ChannelFollowingsRepository, ChannelsRepository, FollowingsRepository, InstancesRepository, MiFollowing, MiMeta, MutingsRepository, NotesRepository, NoteThreadMutingsRepository, UserListMembershipsRepository, UserProfilesRepository, UsersRepository } from '@/models/_.js';
-import type { MiDriveFile } from '@/models/DriveFile.js';
-import type { MiApp } from '@/models/App.js';
-import { concat } from '@/misc/prelude/array.js';
-import { IdService } from '@/core/IdService.js';
-import type { MiUser, MiLocalUser, MiRemoteUser } from '@/models/User.js';
-import type { IPoll } from '@/models/Poll.js';
-import { MiPoll } from '@/models/Poll.js';
-import { isDuplicateKeyValueError } from '@/misc/is-duplicate-key-value-error.js';
-import type { MiChannel } from '@/models/Channel.js';
-import { normalizeForSearch } from '@/misc/normalize-for-search.js';
-import { RelayService } from '@/core/RelayService.js';
-import { FederatedInstanceService } from '@/core/FederatedInstanceService.js';
-import { DI } from '@/di-symbols.js';
-import type { Config } from '@/config.js';
+import {Inject, Injectable, OnApplicationShutdown} from '@nestjs/common';
+import {extractMentions} from '@/misc/extract-mentions.js';
+import {extractCustomEmojisFromMfm} from '@/misc/extract-custom-emojis-from-mfm.js';
+import {extractHashtags} from '@/misc/extract-hashtags.js';
+import type {IMentionedRemoteUsers} from '@/models/Note.js';
+import {MiNote} from '@/models/Note.js';
+import type {ChannelFollowingsRepository, ChannelsRepository, FollowingsRepository, InstancesRepository, MiFollowing, MiMeta, MutingsRepository, NotesRepository, NoteThreadMutingsRepository, UserListMembershipsRepository, UserProfilesRepository, UsersRepository} from '@/models/_.js';
+import type {MiDriveFile} from '@/models/DriveFile.js';
+import type {MiApp} from '@/models/App.js';
+import {concat} from '@/misc/prelude/array.js';
+import {IdService} from '@/core/IdService.js';
+import type {MiUser, MiLocalUser, MiRemoteUser} from '@/models/User.js';
+import type {IPoll} from '@/models/Poll.js';
+import {MiPoll} from '@/models/Poll.js';
+import {isDuplicateKeyValueError} from '@/misc/is-duplicate-key-value-error.js';
+import type {MiChannel} from '@/models/Channel.js';
+import {normalizeForSearch} from '@/misc/normalize-for-search.js';
+import {RelayService} from '@/core/RelayService.js';
+import {FederatedInstanceService} from '@/core/FederatedInstanceService.js';
+import {DI} from '@/di-symbols.js';
+import type {Config} from '@/config.js';
 import NotesChart from '@/core/chart/charts/notes.js';
 import PerUserNotesChart from '@/core/chart/charts/per-user-notes.js';
 import InstanceChart from '@/core/chart/charts/instance.js';
 import ActiveUsersChart from '@/core/chart/charts/active-users.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { NotificationService } from '@/core/NotificationService.js';
-import { UserWebhookService } from '@/core/UserWebhookService.js';
-import { HashtagService } from '@/core/HashtagService.js';
-import { AntennaService } from '@/core/AntennaService.js';
-import { QueueService } from '@/core/QueueService.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { ApRendererService } from '@/core/activitypub/ApRendererService.js';
-import { ApDeliverManagerService } from '@/core/activitypub/ApDeliverManagerService.js';
-import { NoteReadService } from '@/core/NoteReadService.js';
-import { RemoteUserResolveService } from '@/core/RemoteUserResolveService.js';
-import { bindThis } from '@/decorators.js';
-import { DB_MAX_NOTE_TEXT_LENGTH } from '@/const.js';
-import { RoleService } from '@/core/RoleService.js';
-import { SearchService } from '@/core/SearchService.js';
-import { FeaturedService } from '@/core/FeaturedService.js';
-import { FanoutTimelineService } from '@/core/FanoutTimelineService.js';
-import { UtilityService } from '@/core/UtilityService.js';
-import { UserBlockingService } from '@/core/UserBlockingService.js';
-import { isReply } from '@/misc/is-reply.js';
-import { trackPromise } from '@/misc/promise-tracker.js';
-import { IdentifiableError } from '@/misc/identifiable-error.js';
-import { CollapsedQueue } from '@/misc/collapsed-queue.js';
-import { CacheService } from '@/core/CacheService.js';
+import {GlobalEventService} from '@/core/GlobalEventService.js';
+import {NotificationService} from '@/core/NotificationService.js';
+import {UserWebhookService} from '@/core/UserWebhookService.js';
+import {HashtagService} from '@/core/HashtagService.js';
+import {AntennaService} from '@/core/AntennaService.js';
+import {QueueService} from '@/core/QueueService.js';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {ApRendererService} from '@/core/activitypub/ApRendererService.js';
+import {ApDeliverManagerService} from '@/core/activitypub/ApDeliverManagerService.js';
+import {NoteReadService} from '@/core/NoteReadService.js';
+import {RemoteUserResolveService} from '@/core/RemoteUserResolveService.js';
+import {bindThis} from '@/decorators.js';
+import {DB_MAX_NOTE_TEXT_LENGTH} from '@/const.js';
+import {RoleService} from '@/core/RoleService.js';
+import {SearchService} from '@/core/SearchService.js';
+import {FeaturedService} from '@/core/FeaturedService.js';
+import {FanoutTimelineService} from '@/core/FanoutTimelineService.js';
+import {UtilityService} from '@/core/UtilityService.js';
+import {UserBlockingService} from '@/core/UserBlockingService.js';
+import {isReply} from '@/misc/is-reply.js';
+import {trackPromise} from '@/misc/promise-tracker.js';
+import {IdentifiableError} from '@/misc/identifiable-error.js';
+import {CollapsedQueue} from '@/misc/collapsed-queue.js';
+import {CacheService} from '@/core/CacheService.js';
 
 type NotificationType = 'reply' | 'renote' | 'quote' | 'mention';
 
@@ -153,46 +153,32 @@ export class NoteCreateService implements OnApplicationShutdown {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.meta)
 		private meta: MiMeta,
-
 		@Inject(DI.db)
 		private db: DataSource,
-
 		@Inject(DI.redisForTimelines)
 		private redisForTimelines: Redis.Redis,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		@Inject(DI.mutingsRepository)
 		private mutingsRepository: MutingsRepository,
-
 		@Inject(DI.instancesRepository)
 		private instancesRepository: InstancesRepository,
-
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
-
 		@Inject(DI.userListMembershipsRepository)
 		private userListMembershipsRepository: UserListMembershipsRepository,
-
 		@Inject(DI.channelsRepository)
 		private channelsRepository: ChannelsRepository,
-
 		@Inject(DI.noteThreadMutingsRepository)
 		private noteThreadMutingsRepository: NoteThreadMutingsRepository,
-
 		@Inject(DI.followingsRepository)
 		private followingsRepository: FollowingsRepository,
-
 		@Inject(DI.channelFollowingsRepository)
 		private channelFollowingsRepository: ChannelFollowingsRepository,
-
 		private userEntityService: UserEntityService,
 		private noteEntityService: NoteEntityService,
 		private idService: IdService,
@@ -235,7 +221,7 @@ export class NoteCreateService implements OnApplicationShutdown {
 		// (クライアントサイドでやっても良い処理だと思うけどとりあえずサーバーサイドで)
 		if (data.reply && data.channel && data.reply.channelId !== data.channel.id) {
 			if (data.reply.channelId) {
-				data.channel = await this.channelsRepository.findOneBy({ id: data.reply.channelId });
+				data.channel = await this.channelsRepository.findOneBy({id: data.reply.channelId});
 			} else {
 				data.channel = null;
 			}
@@ -244,7 +230,7 @@ export class NoteCreateService implements OnApplicationShutdown {
 		// チャンネル内にリプライしたら対象のスコープに合わせる
 		// (クライアントサイドでやっても良い処理だと思うけどとりあえずサーバーサイドで)
 		if (data.reply && (data.channel == null) && data.reply.channelId) {
-			data.channel = await this.channelsRepository.findOneBy({ id: data.reply.channelId });
+			data.channel = await this.channelsRepository.findOneBy({id: data.reply.channelId});
 		}
 
 		if (data.createdAt == null) data.createdAt = new Date();
@@ -371,7 +357,7 @@ export class NoteCreateService implements OnApplicationShutdown {
 		tags = tags.filter(tag => Array.from(tag).length <= 128).splice(0, 32);
 
 		if (data.reply && (user.id !== data.reply.userId) && !mentionedUsers.some(u => u.id === data.reply!.userId)) {
-			mentionedUsers.push(await this.usersRepository.findOneByOrFail({ id: data.reply!.userId }));
+			mentionedUsers.push(await this.usersRepository.findOneByOrFail({id: data.reply!.userId}));
 		}
 
 		if (data.visibility === 'specified') {
@@ -384,7 +370,7 @@ export class NoteCreateService implements OnApplicationShutdown {
 			}
 
 			if (data.reply && !data.visibleUsers.some(x => x.id === data.reply!.userId)) {
-				data.visibleUsers.push(await this.usersRepository.findOneByOrFail({ id: data.reply!.userId }));
+				data.visibleUsers.push(await this.usersRepository.findOneByOrFail({id: data.reply!.userId}));
 			}
 		}
 
@@ -394,12 +380,79 @@ export class NoteCreateService implements OnApplicationShutdown {
 
 		const note = await this.insertNote(user, data, tags, emojis, mentionedUsers);
 
-		setImmediate('post created', { signal: this.#shutdownController.signal }).then(
+		setImmediate('post created', {signal: this.#shutdownController.signal}).then(
 			() => this.postNoteCreated(note, user, data, silent, tags!, mentionedUsers!),
-			() => { /* aborted, ignore this */ },
+			() => { /* aborted, ignore this */
+			},
 		);
 
 		return note;
+	}
+
+	@bindThis
+	public async checkHibernation(followings: MiFollowing[]) {
+		if (followings.length === 0) return;
+
+		const shuffle = (array: MiFollowing[]) => {
+			for (let i = array.length - 1; i > 0; i--) {
+				const j = Math.floor(Math.random() * (i + 1));
+				[array[i], array[j]] = [array[j], array[i]];
+			}
+			return array;
+		};
+
+		// ランダムに最大1000件サンプリング
+		const samples = shuffle(followings).slice(0, Math.min(followings.length, 1000));
+
+		const hibernatedUsers = await this.usersRepository.find({
+			where: {
+				id: In(samples.map(x => x.followerId)),
+				lastActiveDate: LessThan(new Date(Date.now() - (1000 * 60 * 60 * 24 * 50))),
+			},
+			select: ['id'],
+		});
+
+		if (hibernatedUsers.length > 0) {
+			this.usersRepository.update({
+				id: In(hibernatedUsers.map(x => x.id)),
+			}, {
+				isHibernated: true,
+			});
+
+			this.followingsRepository.update({
+				followerId: In(hibernatedUsers.map(x => x.id)),
+			}, {
+				isFollowerHibernated: true,
+			});
+		}
+	}
+
+	public checkProhibitedWordsContain(content: Parameters<UtilityService['concatNoteContentsForKeyWordCheck']>[0], prohibitedWords?: string[]) {
+		if (prohibitedWords == null) {
+			prohibitedWords = this.meta.prohibitedWords;
+		}
+
+		if (
+			this.utilityService.isKeyWordIncluded(
+				this.utilityService.concatNoteContentsForKeyWordCheck(content),
+				prohibitedWords,
+			)
+		) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@bindThis
+	public async dispose(): Promise<void> {
+		this.#shutdownController.abort();
+		await this.updateNotesCountQueue.performAllNow();
+	}
+
+	@bindThis
+	public async onApplicationShutdown(signal?: string | undefined): Promise<void> {
+		await this.dispose();
 	}
 
 	@bindThis
@@ -447,7 +500,7 @@ export class NoteCreateService implements OnApplicationShutdown {
 		// Append mentions data
 		if (mentionedUsers.length > 0) {
 			insert.mentions = mentionedUsers.map(u => u.id);
-			const profiles = await this.userProfilesRepository.findBy({ userId: In(insert.mentions) });
+			const profiles = await this.userProfilesRepository.findBy({userId: In(insert.mentions)});
 			insert.mentionedRemoteUsers = JSON.stringify(mentionedUsers.filter(u => this.userEntityService.isRemoteUser(u)).map(u => {
 				const profile = profiles.find(p => p.userId === u.id);
 				const url = profile != null ? profile.url : null;
@@ -608,13 +661,13 @@ export class NoteCreateService implements OnApplicationShutdown {
 			}
 
 			// Pack the note
-			const noteObj = await this.noteEntityService.pack(note, null, { skipHide: true, withReactionAndUserPairCache: true });
+			const noteObj = await this.noteEntityService.pack(note, null, {skipHide: true, withReactionAndUserPairCache: true});
 
 			this.globalEventService.publishNotesStream(noteObj);
 
 			this.roleService.addNoteToRoleTimeline(noteObj);
 
-			this.webhookService.enqueueUserWebhook(user.id, 'note', { note: noteObj });
+			this.webhookService.enqueueUserWebhook(user.id, 'note', {note: noteObj});
 
 			const nm = new NotificationManager(this.mutingsRepository, this.notificationService, user, note);
 
@@ -634,7 +687,7 @@ export class NoteCreateService implements OnApplicationShutdown {
 					if (!isThreadMuted) {
 						nm.push(data.reply.userId, 'reply');
 						this.globalEventService.publishMainStream(data.reply.userId, 'reply', noteObj);
-						this.webhookService.enqueueUserWebhook(data.reply.userId, 'reply', { note: noteObj });
+						this.webhookService.enqueueUserWebhook(data.reply.userId, 'reply', {note: noteObj});
 					}
 				}
 			}
@@ -651,7 +704,7 @@ export class NoteCreateService implements OnApplicationShutdown {
 				// Publish event
 				if ((user.id !== data.renote.userId) && data.renote.userHost === null) {
 					this.globalEventService.publishMainStream(data.renote.userId, 'renote', noteObj);
-					this.webhookService.enqueueUserWebhook(data.renote.userId, 'renote', { note: noteObj });
+					this.webhookService.enqueueUserWebhook(data.renote.userId, 'renote', {note: noteObj});
 				}
 			}
 
@@ -670,13 +723,13 @@ export class NoteCreateService implements OnApplicationShutdown {
 
 					// 投稿がリプライかつ投稿者がローカルユーザーかつリプライ先の投稿の投稿者がリモートユーザーなら配送
 					if (data.reply && data.reply.userHost !== null) {
-						const u = await this.usersRepository.findOneBy({ id: data.reply.userId });
+						const u = await this.usersRepository.findOneBy({id: data.reply.userId});
 						if (u && this.userEntityService.isRemoteUser(u)) dm.addDirectRecipe(u);
 					}
 
 					// 投稿がRenoteかつ投稿者がローカルユーザーかつRenote元の投稿の投稿者がリモートユーザーなら配送
 					if (data.renote && data.renote.userHost !== null) {
-						const u = await this.usersRepository.findOneBy({ id: data.renote.userId });
+						const u = await this.usersRepository.findOneBy({id: data.renote.userId});
 						if (u && this.userEntityService.isRemoteUser(u)) dm.addDirectRecipe(u);
 					}
 
@@ -696,7 +749,7 @@ export class NoteCreateService implements OnApplicationShutdown {
 		}
 
 		if (data.channel) {
-			this.channelsRepository.increment({ id: data.channel.id }, 'notesCount', 1);
+			this.channelsRepository.increment({id: data.channel.id}, 'notesCount', 1);
 			this.channelsRepository.update(data.channel.id, {
 				lastNotedAt: new Date(),
 			});
@@ -708,7 +761,7 @@ export class NoteCreateService implements OnApplicationShutdown {
 				// この処理が行われるのはノート作成後なので、ノートが一つしかなかったら最初の投稿だと判断できる
 				// TODO: とはいえノートを削除して何回も投稿すればその分だけインクリメントされる雑さもあるのでどうにかしたい
 				if (count === 1) {
-					this.channelsRepository.increment({ id: data.channel!.id }, 'usersCount', 1);
+					this.channelsRepository.increment({id: data.channel!.id}, 'usersCount', 1);
 				}
 			});
 		}
@@ -725,7 +778,7 @@ export class NoteCreateService implements OnApplicationShutdown {
 	@bindThis
 	private isQuote(note: Option & { renote: MiNote }): note is Option & { renote: MiNote } & (
 		{ text: string } | { cw: string } | { reply: MiNote } | { poll: IPoll } | { files: MiDriveFile[] }
-	) {
+		) {
 		// NOTE: SYNC WITH misc/is-quote.ts
 		return note.text != null ||
 			note.reply != null ||
@@ -740,7 +793,7 @@ export class NoteCreateService implements OnApplicationShutdown {
 			.set({
 				renoteCount: () => '"renoteCount" + 1',
 			})
-			.where('id = :id', { id: renote.id })
+			.where('id = :id', {id: renote.id})
 			.execute();
 
 		// 30%の確率、3日以内に投稿されたノートの場合ハイライト用ランキング更新
@@ -777,7 +830,7 @@ export class NoteCreateService implements OnApplicationShutdown {
 			});
 
 			this.globalEventService.publishMainStream(u.id, 'mention', detailPackedNote);
-			this.webhookService.enqueueUserWebhook(u.id, 'mention', { note: detailPackedNote });
+			this.webhookService.enqueueUserWebhook(u.id, 'mention', {note: detailPackedNote});
 
 			// Create notification
 			nm.push(u.id, 'mention');
@@ -786,7 +839,7 @@ export class NoteCreateService implements OnApplicationShutdown {
 
 	@bindThis
 	private saveReply(reply: MiNote, note: MiNote) {
-		this.notesRepository.increment({ id: reply.id }, 'repliesCount', 1);
+		this.notesRepository.increment({id: reply.id}, 'repliesCount', 1);
 	}
 
 	@bindThis
@@ -814,7 +867,7 @@ export class NoteCreateService implements OnApplicationShutdown {
 				updatedAt: new Date(),
 				notesCount: () => '"notesCount" + 1',
 			})
-			.where('id = :id', { id: user.id })
+			.where('id = :id', {id: user.id})
 			.execute();
 	}
 
@@ -964,78 +1017,12 @@ export class NoteCreateService implements OnApplicationShutdown {
 	}
 
 	@bindThis
-	public async checkHibernation(followings: MiFollowing[]) {
-		if (followings.length === 0) return;
-
-		const shuffle = (array: MiFollowing[]) => {
-			for (let i = array.length - 1; i > 0; i--) {
-				const j = Math.floor(Math.random() * (i + 1));
-				[array[i], array[j]] = [array[j], array[i]];
-			}
-			return array;
-		};
-
-		// ランダムに最大1000件サンプリング
-		const samples = shuffle(followings).slice(0, Math.min(followings.length, 1000));
-
-		const hibernatedUsers = await this.usersRepository.find({
-			where: {
-				id: In(samples.map(x => x.followerId)),
-				lastActiveDate: LessThan(new Date(Date.now() - (1000 * 60 * 60 * 24 * 50))),
-			},
-			select: ['id'],
-		});
-
-		if (hibernatedUsers.length > 0) {
-			this.usersRepository.update({
-				id: In(hibernatedUsers.map(x => x.id)),
-			}, {
-				isHibernated: true,
-			});
-
-			this.followingsRepository.update({
-				followerId: In(hibernatedUsers.map(x => x.id)),
-			}, {
-				isFollowerHibernated: true,
-			});
-		}
-	}
-
-	public checkProhibitedWordsContain(content: Parameters<UtilityService['concatNoteContentsForKeyWordCheck']>[0], prohibitedWords?: string[]) {
-		if (prohibitedWords == null) {
-			prohibitedWords = this.meta.prohibitedWords;
-		}
-
-		if (
-			this.utilityService.isKeyWordIncluded(
-				this.utilityService.concatNoteContentsForKeyWordCheck(content),
-				prohibitedWords,
-			)
-		) {
-			return true;
-		}
-
-		return false;
-	}
-
-	@bindThis
 	private collapseNotesCount(oldValue: number, newValue: number) {
 		return oldValue + newValue;
 	}
 
 	@bindThis
 	private async performUpdateNotesCount(id: MiNote['id'], incrBy: number) {
-		await this.instancesRepository.increment({ id: id }, 'notesCount', incrBy);
-	}
-
-	@bindThis
-	public async dispose(): Promise<void> {
-		this.#shutdownController.abort();
-		await this.updateNotesCountQueue.performAllNow();
-	}
-
-	@bindThis
-	public async onApplicationShutdown(signal?: string | undefined): Promise<void> {
-		await this.dispose();
+		await this.instancesRepository.increment({id: id}, 'notesCount', incrBy);
 	}
 }

@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Entity, Index, JoinColumn, Column, PrimaryColumn, ManyToOne } from 'typeorm';
-import { id } from './util/id.js';
-import { MiUser } from './User.js';
+import {Entity, Index, JoinColumn, Column, PrimaryColumn, ManyToOne} from 'typeorm';
+import {id} from './util/id.js';
+import {MiUser} from './User.js';
 
 export const flashVisibility = ['public', 'private'] as const;
 export type FlashVisibility = typeof flashVisibility[number];

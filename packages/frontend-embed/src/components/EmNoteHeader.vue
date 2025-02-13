@@ -4,35 +4,37 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<header :class="$style.root">
-	<EmA :class="$style.name" :to="userPage(note.user)">
-		<EmUserName :user="note.user"/>
-	</EmA>
-	<div v-if="note.user.isBot" :class="$style.isBot">bot</div>
-	<div :class="$style.username"><EmAcct :user="note.user"/></div>
-	<div v-if="note.user.badgeRoles" :class="$style.badgeRoles">
-		<img v-for="(role, i) in note.user.badgeRoles" :key="i" :class="$style.badgeRole" :src="role.iconUrl!"/>
-	</div>
-	<div :class="$style.info">
-		<EmA :to="notePage(note)">
-			<EmTime :time="note.createdAt" colored/>
+	<header :class="$style.root">
+		<EmA :class="$style.name" :to="userPage(note.user)">
+			<EmUserName :user="note.user"/>
 		</EmA>
-		<span v-if="note.visibility !== 'public'" style="margin-left: 0.5em;">
+		<div v-if="note.user.isBot" :class="$style.isBot">bot</div>
+		<div :class="$style.username">
+			<EmAcct :user="note.user"/>
+		</div>
+		<div v-if="note.user.badgeRoles" :class="$style.badgeRoles">
+			<img v-for="(role, i) in note.user.badgeRoles" :key="i" :class="$style.badgeRole" :src="role.iconUrl!"/>
+		</div>
+		<div :class="$style.info">
+			<EmA :to="notePage(note)">
+				<EmTime :time="note.createdAt" colored/>
+			</EmA>
+			<span v-if="note.visibility !== 'public'" style="margin-left: 0.5em;">
 			<i v-if="note.visibility === 'home'" class="ti ti-home"></i>
 			<i v-else-if="note.visibility === 'followers'" class="ti ti-lock"></i>
 			<i v-else-if="note.visibility === 'specified'" ref="specified" class="ti ti-mail"></i>
 		</span>
-		<span v-if="note.localOnly" style="margin-left: 0.5em;"><i class="ti ti-rocket-off"></i></span>
-		<span v-if="note.channel" style="margin-left: 0.5em;" :title="note.channel.name"><i class="ti ti-device-tv"></i></span>
-	</div>
-</header>
+			<span v-if="note.localOnly" style="margin-left: 0.5em;"><i class="ti ti-rocket-off"></i></span>
+			<span v-if="note.channel" :title="note.channel.name" style="margin-left: 0.5em;"><i class="ti ti-device-tv"></i></span>
+		</div>
+	</header>
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import {} from 'vue';
 import * as Misskey from 'misskey-js';
-import { notePage } from '@/utils.js';
-import { userPage } from '@/utils.js';
+import {notePage} from '@/utils.js';
+import {userPage} from '@/utils.js';
 import EmA from '@/components/EmA.vue';
 import EmUserName from '@/components/EmUserName.vue';
 import EmAcct from '@/components/EmAcct.vue';

@@ -4,95 +4,95 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkModalWindow
-	ref="dialogEl"
-	:width="450"
-	:height="590"
-	:canClose="true"
-	:withOkButton="false"
-	:okButtonDisabled="false"
-	@click="onCancelClicked"
-	@close="onCancelClicked"
-	@closed="emit('closed')"
->
-	<template #header>
-		{{ mode === 'create' ? i18n.ts._webhookSettings.createWebhook : i18n.ts._webhookSettings.modifyWebhook }}
-	</template>
+	<MkModalWindow
+		ref="dialogEl"
+		:canClose="true"
+		:height="590"
+		:okButtonDisabled="false"
+		:width="450"
+		:withOkButton="false"
+		@click="onCancelClicked"
+		@close="onCancelClicked"
+		@closed="emit('closed')"
+	>
+		<template #header>
+			{{ mode === 'create' ? i18n.ts._webhookSettings.createWebhook : i18n.ts._webhookSettings.modifyWebhook }}
+		</template>
 
-	<div style="display: flex; flex-direction: column; min-height: 100%;">
-		<MkSpacer :marginMin="20" :marginMax="28" style="flex-grow: 1;">
-			<MkLoading v-if="loading !== 0"/>
-			<div v-else :class="$style.root" class="_gaps_m">
-				<MkInput v-model="title">
-					<template #label>{{ i18n.ts._webhookSettings.name }}</template>
-				</MkInput>
-				<MkInput v-model="url">
-					<template #label>URL</template>
-				</MkInput>
-				<MkInput v-model="secret">
-					<template #label>{{ i18n.ts._webhookSettings.secret }}</template>
-				</MkInput>
-				<MkFolder :defaultOpen="true">
-					<template #label>{{ i18n.ts._webhookSettings.trigger }}</template>
+		<div style="display: flex; flex-direction: column; min-height: 100%;">
+			<MkSpacer :marginMax="28" :marginMin="20" style="flex-grow: 1;">
+				<MkLoading v-if="loading !== 0"/>
+				<div v-else :class="$style.root" class="_gaps_m">
+					<MkInput v-model="title">
+						<template #label>{{ i18n.ts._webhookSettings.name }}</template>
+					</MkInput>
+					<MkInput v-model="url">
+						<template #label>URL</template>
+					</MkInput>
+					<MkInput v-model="secret">
+						<template #label>{{ i18n.ts._webhookSettings.secret }}</template>
+					</MkInput>
+					<MkFolder :defaultOpen="true">
+						<template #label>{{ i18n.ts._webhookSettings.trigger }}</template>
 
-					<div class="_gaps">
-						<div class="_gaps_s">
-							<div :class="$style.switchBox">
-								<MkSwitch v-model="events.abuseReport" :disabled="disabledEvents.abuseReport">
-									<template #label>{{ i18n.ts._webhookSettings._systemEvents.abuseReport }}</template>
-								</MkSwitch>
-								<MkButton v-show="mode === 'edit'" transparent :class="$style.testButton" :disabled="!(isActive && events.abuseReport)" @click="test('abuseReport')"><i class="ti ti-send"></i></MkButton>
+						<div class="_gaps">
+							<div class="_gaps_s">
+								<div :class="$style.switchBox">
+									<MkSwitch v-model="events.abuseReport" :disabled="disabledEvents.abuseReport">
+										<template #label>{{ i18n.ts._webhookSettings._systemEvents.abuseReport }}</template>
+									</MkSwitch>
+									<MkButton v-show="mode === 'edit'" :class="$style.testButton" :disabled="!(isActive && events.abuseReport)" transparent @click="test('abuseReport')"><i class="ti ti-send"></i></MkButton>
+								</div>
+								<div :class="$style.switchBox">
+									<MkSwitch v-model="events.abuseReportResolved" :disabled="disabledEvents.abuseReportResolved">
+										<template #label>{{ i18n.ts._webhookSettings._systemEvents.abuseReportResolved }}</template>
+									</MkSwitch>
+									<MkButton v-show="mode === 'edit'" :class="$style.testButton" :disabled="!(isActive && events.abuseReportResolved)" transparent @click="test('abuseReportResolved')"><i class="ti ti-send"></i></MkButton>
+								</div>
+								<div :class="$style.switchBox">
+									<MkSwitch v-model="events.userCreated" :disabled="disabledEvents.userCreated">
+										<template #label>{{ i18n.ts._webhookSettings._systemEvents.userCreated }}</template>
+									</MkSwitch>
+									<MkButton v-show="mode === 'edit'" :class="$style.testButton" :disabled="!(isActive && events.userCreated)" transparent @click="test('userCreated')"><i class="ti ti-send"></i></MkButton>
+								</div>
+								<div :class="$style.switchBox">
+									<MkSwitch v-model="events.inactiveModeratorsWarning" :disabled="disabledEvents.inactiveModeratorsWarning">
+										<template #label>{{ i18n.ts._webhookSettings._systemEvents.inactiveModeratorsWarning }}</template>
+									</MkSwitch>
+									<MkButton v-show="mode === 'edit'" :class="$style.testButton" :disabled="!(isActive && events.inactiveModeratorsWarning)" transparent @click="test('inactiveModeratorsWarning')"><i class="ti ti-send"></i></MkButton>
+								</div>
+								<div :class="$style.switchBox">
+									<MkSwitch v-model="events.inactiveModeratorsInvitationOnlyChanged" :disabled="disabledEvents.inactiveModeratorsInvitationOnlyChanged">
+										<template #label>{{ i18n.ts._webhookSettings._systemEvents.inactiveModeratorsInvitationOnlyChanged }}</template>
+									</MkSwitch>
+									<MkButton v-show="mode === 'edit'" :class="$style.testButton" :disabled="!(isActive && events.inactiveModeratorsInvitationOnlyChanged)" transparent @click="test('inactiveModeratorsInvitationOnlyChanged')"><i class="ti ti-send"></i></MkButton>
+								</div>
 							</div>
-							<div :class="$style.switchBox">
-								<MkSwitch v-model="events.abuseReportResolved" :disabled="disabledEvents.abuseReportResolved">
-									<template #label>{{ i18n.ts._webhookSettings._systemEvents.abuseReportResolved }}</template>
-								</MkSwitch>
-								<MkButton v-show="mode === 'edit'" transparent :class="$style.testButton" :disabled="!(isActive && events.abuseReportResolved)" @click="test('abuseReportResolved')"><i class="ti ti-send"></i></MkButton>
-							</div>
-							<div :class="$style.switchBox">
-								<MkSwitch v-model="events.userCreated" :disabled="disabledEvents.userCreated">
-									<template #label>{{ i18n.ts._webhookSettings._systemEvents.userCreated }}</template>
-								</MkSwitch>
-								<MkButton v-show="mode === 'edit'" transparent :class="$style.testButton" :disabled="!(isActive && events.userCreated)" @click="test('userCreated')"><i class="ti ti-send"></i></MkButton>
-							</div>
-							<div :class="$style.switchBox">
-								<MkSwitch v-model="events.inactiveModeratorsWarning" :disabled="disabledEvents.inactiveModeratorsWarning">
-									<template #label>{{ i18n.ts._webhookSettings._systemEvents.inactiveModeratorsWarning }}</template>
-								</MkSwitch>
-								<MkButton v-show="mode === 'edit'" transparent :class="$style.testButton" :disabled="!(isActive && events.inactiveModeratorsWarning)" @click="test('inactiveModeratorsWarning')"><i class="ti ti-send"></i></MkButton>
-							</div>
-							<div :class="$style.switchBox">
-								<MkSwitch v-model="events.inactiveModeratorsInvitationOnlyChanged" :disabled="disabledEvents.inactiveModeratorsInvitationOnlyChanged">
-									<template #label>{{ i18n.ts._webhookSettings._systemEvents.inactiveModeratorsInvitationOnlyChanged }}</template>
-								</MkSwitch>
-								<MkButton v-show="mode === 'edit'" transparent :class="$style.testButton" :disabled="!(isActive && events.inactiveModeratorsInvitationOnlyChanged)" @click="test('inactiveModeratorsInvitationOnlyChanged')"><i class="ti ti-send"></i></MkButton>
+
+							<div v-show="mode === 'edit'" :class="$style.description">
+								{{ i18n.ts._webhookSettings.testRemarks }}
 							</div>
 						</div>
+					</MkFolder>
 
-						<div v-show="mode === 'edit'" :class="$style.description">
-							{{ i18n.ts._webhookSettings.testRemarks }}
-						</div>
-					</div>
-				</MkFolder>
-
-				<MkSwitch v-model="isActive">
-					<template #label>{{ i18n.ts.enable }}</template>
-				</MkSwitch>
+					<MkSwitch v-model="isActive">
+						<template #label>{{ i18n.ts.enable }}</template>
+					</MkSwitch>
+				</div>
+			</MkSpacer>
+			<div :class="$style.footer" class="_buttonsCenter">
+				<MkButton :disabled="disableSubmitButton" primary rounded @click="onSubmitClicked">
+					<i class="ti ti-check"></i>
+					{{ i18n.ts.ok }}
+				</MkButton>
+				<MkButton rounded @click="onCancelClicked"><i class="ti ti-x"></i> {{ i18n.ts.cancel }}</MkButton>
 			</div>
-		</MkSpacer>
-		<div :class="$style.footer" class="_buttonsCenter">
-			<MkButton primary rounded :disabled="disableSubmitButton" @click="onSubmitClicked">
-				<i class="ti ti-check"></i>
-				{{ i18n.ts.ok }}
-			</MkButton>
-			<MkButton rounded @click="onCancelClicked"><i class="ti ti-x"></i> {{ i18n.ts.cancel }}</MkButton>
 		</div>
-	</div>
-</MkModalWindow>
+	</MkModalWindow>
 </template>
 
-<script setup lang="ts">
-import { computed, onMounted, ref, shallowRef, toRefs } from 'vue';
+<script lang="ts" setup>
+import {computed, onMounted, ref, shallowRef, toRefs} from 'vue';
 import * as Misskey from 'misskey-js';
 import MkInput from '@/components/MkInput.vue';
 import MkSwitch from '@/components/MkSwitch.vue';
@@ -101,9 +101,9 @@ import type {
 	MkSystemWebhookResult,
 	SystemWebhookEventType,
 } from '@/components/MkSystemWebhookEditor.impl.js';
-import { i18n } from '@/i18n.js';
+import {i18n} from '@/i18n.js';
 import MkButton from '@/components/MkButton.vue';
-import { misskeyApi } from '@/scripts/misskey-api.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
 import MkModalWindow from '@/components/MkModalWindow.vue';
 import MkFolder from '@/components/MkFolder.vue';
 import * as os from '@/os.js';
@@ -126,7 +126,7 @@ const dialogEl = shallowRef<InstanceType<typeof MkModalWindow>>();
 
 const props = defineProps<MkSystemWebhookEditorProps>();
 
-const { mode, id, requiredEvents } = toRefs(props);
+const {mode, id, requiredEvents} = toRefs(props);
 
 const loading = ref<number>(0);
 
@@ -184,7 +184,7 @@ async function onSubmitClicked() {
 				}
 				case 'edit': {
 					// eslint-disable-next-line
-					const result = await misskeyApi('admin/system-webhook/update', { id: id.value!, ...params });
+					const result = await misskeyApi('admin/system-webhook/update', {id: id.value!, ...params});
 					dialogEl.value?.close();
 					emit('submitted', result);
 					break;
@@ -193,7 +193,7 @@ async function onSubmitClicked() {
 			// eslint-disable-next-line
 		} catch (ex: any) {
 			const msg = ex.message ?? i18n.ts.internalServerErrorDescription;
-			await os.alert({ type: 'error', title: i18n.ts.error, text: msg });
+			await os.alert({type: 'error', title: i18n.ts.error, text: msg});
 			dialogEl.value?.close();
 			emit('canceled');
 		}
@@ -238,7 +238,7 @@ onMounted(async () => {
 				}
 
 				try {
-					const res = await misskeyApi('admin/system-webhook/show', { id: id.value });
+					const res = await misskeyApi('admin/system-webhook/show', {id: id.value});
 
 					title.value = res.name;
 					url.value = res.url;
@@ -250,7 +250,7 @@ onMounted(async () => {
 					// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				} catch (ex: any) {
 					const msg = ex.message ?? i18n.ts.internalServerErrorDescription;
-					await os.alert({ type: 'error', title: i18n.ts.error, text: msg });
+					await os.alert({type: 'error', title: i18n.ts.error, text: msg});
 					dialogEl.value?.close();
 					emit('canceled');
 				}
@@ -265,7 +265,7 @@ onMounted(async () => {
 });
 </script>
 
-<style module lang="scss">
+<style lang="scss" module>
 .root {
 	display: flex;
 	flex-direction: column;

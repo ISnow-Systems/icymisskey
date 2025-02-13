@@ -4,27 +4,27 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="$style.root">
-	<MkA
-		v-for="announcement in $i.unreadAnnouncements.filter(x => x.display === 'banner')"
-		:key="announcement.id"
-		:class="$style.item"
-		:to="`/announcements/${announcement.id}`"
-	>
+	<div :class="$style.root">
+		<MkA
+			v-for="announcement in $i.unreadAnnouncements.filter(x => x.display === 'banner')"
+			:key="announcement.id"
+			:class="$style.item"
+			:to="`/announcements/${announcement.id}`"
+		>
 		<span :class="$style.icon">
 			<i v-if="announcement.icon === 'info'" class="ti ti-info-circle"></i>
 			<i v-else-if="announcement.icon === 'warning'" class="ti ti-alert-triangle" style="color: var(--MI_THEME-warn);"></i>
 			<i v-else-if="announcement.icon === 'error'" class="ti ti-circle-x" style="color: var(--MI_THEME-error);"></i>
 			<i v-else-if="announcement.icon === 'success'" class="ti ti-check" style="color: var(--MI_THEME-success);"></i>
 		</span>
-		<span :class="$style.title">{{ announcement.title }}</span>
-		<span :class="$style.body">{{ announcement.text }}</span>
-	</MkA>
-</div>
+			<span :class="$style.title">{{ announcement.title }}</span>
+			<span :class="$style.body">{{ announcement.text }}</span>
+		</MkA>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { $i } from '@/account.js';
+import {$i} from '@/account.js';
 </script>
 
 <style lang="scss" module>

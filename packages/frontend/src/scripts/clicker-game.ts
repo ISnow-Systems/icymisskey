@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { ref, computed } from 'vue';
-import { misskeyApi } from '@/scripts/misskey-api.js';
+import {ref, computed} from 'vue';
+import {misskeyApi} from '@/scripts/misskey-api.js';
 
 type SaveData = {
 	gameVersion: number;

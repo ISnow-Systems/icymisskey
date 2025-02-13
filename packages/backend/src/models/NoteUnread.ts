@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne } from 'typeorm';
-import { id } from './util/id.js';
-import { MiUser } from './User.js';
-import { MiNote } from './Note.js';
-import type { MiChannel } from './Channel.js';
+import {PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne} from 'typeorm';
+import {id} from './util/id.js';
+import {MiUser} from './User.js';
+import {MiNote} from './Note.js';
+import type {MiChannel} from './Channel.js';
 
 @Entity('note_unread')
-@Index(['userId', 'noteId'], { unique: true })
+@Index(['userId', 'noteId'], {unique: true})
 export class MiNoteUnread {
 	@PrimaryColumn(id())
 	public id: string;

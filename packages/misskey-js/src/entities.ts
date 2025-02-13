@@ -1,4 +1,4 @@
-import { ModerationLogPayloads } from './consts.js';
+import {ModerationLogPayloads} from './consts.js';
 import {
 	Announcement,
 	EmojiDetailed,
@@ -10,7 +10,7 @@ import {
 	User,
 	UserDetailedNotMe,
 } from './autogen/models.js';
-import type { AuthenticationResponseJSON, PublicKeyCredentialRequestOptionsJSON } from '@simplewebauthn/types';
+import type {AuthenticationResponseJSON, PublicKeyCredentialRequestOptionsJSON} from '@simplewebauthn/types';
 
 export * from './autogen/entities.js';
 export * from './autogen/models.js';
@@ -313,4 +313,4 @@ export type SigninWithPasskeyResponse = {
 
 type Values<T extends Record<PropertyKey, unknown>> = T[keyof T];
 
-export type PartialRolePolicyOverride = Partial<{[k in keyof RolePolicies]: Omit<Values<Role['policies']>, 'value'> & { value: RolePolicies[k] }}>;
+export type PartialRolePolicyOverride = Partial<{ [k in keyof RolePolicies]: Omit<Values<Role['policies']>, 'value'> & { value: RolePolicies[k] } }>;

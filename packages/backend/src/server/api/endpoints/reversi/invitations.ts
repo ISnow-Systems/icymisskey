@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { ReversiService } from '@/core/ReversiService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {DI} from '@/di-symbols.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {ReversiService} from '@/core/ReversiService.js';
 
 export const meta = {
 	requireCredential: true,
@@ -17,12 +17,11 @@ export const meta = {
 	res: {
 		type: 'array',
 		optional: false, nullable: false,
-		items: { ref: 'UserLite' },
+		items: {ref: 'UserLite'},
 	},
 } as const;
 
-export const paramDef = {
-} as const;
+export const paramDef = {} as const;
 
 @Injectable()
 export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-disable-line import/no-default-export

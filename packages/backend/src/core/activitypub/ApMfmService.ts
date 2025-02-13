@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import * as mfm from 'mfm-js';
-import { MfmService } from '@/core/MfmService.js';
-import type { MiNote } from '@/models/Note.js';
-import { bindThis } from '@/decorators.js';
-import { extractApHashtagObjects } from './models/tag.js';
-import type { IObject } from './type.js';
+import {MfmService} from '@/core/MfmService.js';
+import type {MiNote} from '@/models/Note.js';
+import {bindThis} from '@/decorators.js';
+import {extractApHashtagObjects} from './models/tag.js';
+import type {IObject} from './type.js';
 
 @Injectable()
 export class ApMfmService {

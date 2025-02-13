@@ -5,37 +5,37 @@
 
 import RE2 from 're2';
 import * as mfm from 'mfm-js';
-import { Inject, Injectable } from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import ms from 'ms';
-import { JSDOM } from 'jsdom';
-import { extractCustomEmojisFromMfm } from '@/misc/extract-custom-emojis-from-mfm.js';
-import { extractHashtags } from '@/misc/extract-hashtags.js';
+import {JSDOM} from 'jsdom';
+import {extractCustomEmojisFromMfm} from '@/misc/extract-custom-emojis-from-mfm.js';
+import {extractHashtags} from '@/misc/extract-hashtags.js';
 import * as Acct from '@/misc/acct.js';
-import type { UsersRepository, DriveFilesRepository, MiMeta, UserProfilesRepository, PagesRepository } from '@/models/_.js';
-import type { MiLocalUser, MiUser } from '@/models/User.js';
-import { birthdaySchema, descriptionSchema, followedMessageSchema, locationSchema, nameSchema } from '@/models/User.js';
-import type { MiUserProfile } from '@/models/UserProfile.js';
-import { normalizeForSearch } from '@/misc/normalize-for-search.js';
-import { langmap } from '@/misc/langmap.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { UserFollowingService } from '@/core/UserFollowingService.js';
-import { AccountUpdateService } from '@/core/AccountUpdateService.js';
-import { UtilityService } from '@/core/UtilityService.js';
-import { HashtagService } from '@/core/HashtagService.js';
-import { DI } from '@/di-symbols.js';
-import { RolePolicies, RoleService } from '@/core/RoleService.js';
-import { CacheService } from '@/core/CacheService.js';
-import { RemoteUserResolveService } from '@/core/RemoteUserResolveService.js';
-import { DriveFileEntityService } from '@/core/entities/DriveFileEntityService.js';
-import { HttpRequestService } from '@/core/HttpRequestService.js';
-import type { Config } from '@/config.js';
-import { safeForSql } from '@/misc/safe-for-sql.js';
-import { AvatarDecorationService } from '@/core/AvatarDecorationService.js';
-import { notificationRecieveConfig } from '@/models/json-schema/user.js';
-import { ApiLoggerService } from '../../ApiLoggerService.js';
-import { ApiError } from '../../error.js';
+import type {UsersRepository, DriveFilesRepository, MiMeta, UserProfilesRepository, PagesRepository} from '@/models/_.js';
+import type {MiLocalUser, MiUser} from '@/models/User.js';
+import {birthdaySchema, descriptionSchema, followedMessageSchema, locationSchema, nameSchema} from '@/models/User.js';
+import type {MiUserProfile} from '@/models/UserProfile.js';
+import {normalizeForSearch} from '@/misc/normalize-for-search.js';
+import {langmap} from '@/misc/langmap.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {GlobalEventService} from '@/core/GlobalEventService.js';
+import {UserFollowingService} from '@/core/UserFollowingService.js';
+import {AccountUpdateService} from '@/core/AccountUpdateService.js';
+import {UtilityService} from '@/core/UtilityService.js';
+import {HashtagService} from '@/core/HashtagService.js';
+import {DI} from '@/di-symbols.js';
+import {RolePolicies, RoleService} from '@/core/RoleService.js';
+import {CacheService} from '@/core/CacheService.js';
+import {RemoteUserResolveService} from '@/core/RemoteUserResolveService.js';
+import {DriveFileEntityService} from '@/core/entities/DriveFileEntityService.js';
+import {HttpRequestService} from '@/core/HttpRequestService.js';
+import type {Config} from '@/config.js';
+import {safeForSql} from '@/misc/safe-for-sql.js';
+import {AvatarDecorationService} from '@/core/AvatarDecorationService.js';
+import {notificationRecieveConfig} from '@/models/json-schema/user.js';
+import {ApiLoggerService} from '../../ApiLoggerService.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['account'],
@@ -131,33 +131,39 @@ export const meta = {
 	},
 } as const;
 
-const muteWords = { type: 'array', items: { oneOf: [
-	{ type: 'array', items: { type: 'string' } },
-	{ type: 'string' },
-] } } as const;
+const muteWords = {
+	type: 'array', items: {
+		oneOf: [
+			{type: 'array', items: {type: 'string'}},
+			{type: 'string'},
+		]
+	}
+} as const;
 
 export const paramDef = {
 	type: 'object',
 	properties: {
-		name: { ...nameSchema, nullable: true },
-		description: { ...descriptionSchema, nullable: true },
-		followedMessage: { ...followedMessageSchema, nullable: true },
-		location: { ...locationSchema, nullable: true },
-		birthday: { ...birthdaySchema, nullable: true },
-		lang: { type: 'string', enum: [null, ...Object.keys(langmap)] as string[], nullable: true },
-		avatarId: { type: 'string', format: 'misskey:id', nullable: true },
-		avatarDecorations: { type: 'array', maxItems: 16, items: {
-			type: 'object',
-			properties: {
-				id: { type: 'string', format: 'misskey:id' },
-				angle: { type: 'number', nullable: true, maximum: 0.5, minimum: -0.5 },
-				flipH: { type: 'boolean', nullable: true },
-				offsetX: { type: 'number', nullable: true, maximum: 0.25, minimum: -0.25 },
-				offsetY: { type: 'number', nullable: true, maximum: 0.25, minimum: -0.25 },
-			},
-			required: ['id'],
-		} },
-		bannerId: { type: 'string', format: 'misskey:id', nullable: true },
+		name: {...nameSchema, nullable: true},
+		description: {...descriptionSchema, nullable: true},
+		followedMessage: {...followedMessageSchema, nullable: true},
+		location: {...locationSchema, nullable: true},
+		birthday: {...birthdaySchema, nullable: true},
+		lang: {type: 'string', enum: [null, ...Object.keys(langmap)] as string[], nullable: true},
+		avatarId: {type: 'string', format: 'misskey:id', nullable: true},
+		avatarDecorations: {
+			type: 'array', maxItems: 16, items: {
+				type: 'object',
+				properties: {
+					id: {type: 'string', format: 'misskey:id'},
+					angle: {type: 'number', nullable: true, maximum: 0.5, minimum: -0.5},
+					flipH: {type: 'boolean', nullable: true},
+					offsetX: {type: 'number', nullable: true, maximum: 0.25, minimum: -0.25},
+					offsetY: {type: 'number', nullable: true, maximum: 0.25, minimum: -0.25},
+				},
+				required: ['id'],
+			}
+		},
+		bannerId: {type: 'string', format: 'misskey:id', nullable: true},
 		fields: {
 			type: 'array',
 			minItems: 0,
@@ -165,37 +171,39 @@ export const paramDef = {
 			items: {
 				type: 'object',
 				properties: {
-					name: { type: 'string' },
-					value: { type: 'string' },
+					name: {type: 'string'},
+					value: {type: 'string'},
 				},
 				required: ['name', 'value'],
 			},
 		},
-		isLocked: { type: 'boolean' },
-		isExplorable: { type: 'boolean' },
-		hideOnlineStatus: { type: 'boolean' },
-		publicReactions: { type: 'boolean' },
-		carefulBot: { type: 'boolean' },
-		autoAcceptFollowed: { type: 'boolean' },
-		noCrawle: { type: 'boolean' },
-		preventAiLearning: { type: 'boolean' },
-		requireSigninToViewContents: { type: 'boolean' },
-		makeNotesFollowersOnlyBefore: { type: 'integer', nullable: true },
-		makeNotesHiddenBefore: { type: 'integer', nullable: true },
-		isBot: { type: 'boolean' },
-		isCat: { type: 'boolean' },
-		injectFeaturedNote: { type: 'boolean' },
-		receiveAnnouncementEmail: { type: 'boolean' },
-		alwaysMarkNsfw: { type: 'boolean' },
-		autoSensitive: { type: 'boolean' },
-		followingVisibility: { type: 'string', enum: ['public', 'followers', 'private'] },
-		followersVisibility: { type: 'string', enum: ['public', 'followers', 'private'] },
-		pinnedPageId: { type: 'string', format: 'misskey:id', nullable: true },
+		isLocked: {type: 'boolean'},
+		isExplorable: {type: 'boolean'},
+		hideOnlineStatus: {type: 'boolean'},
+		publicReactions: {type: 'boolean'},
+		carefulBot: {type: 'boolean'},
+		autoAcceptFollowed: {type: 'boolean'},
+		noCrawle: {type: 'boolean'},
+		preventAiLearning: {type: 'boolean'},
+		requireSigninToViewContents: {type: 'boolean'},
+		makeNotesFollowersOnlyBefore: {type: 'integer', nullable: true},
+		makeNotesHiddenBefore: {type: 'integer', nullable: true},
+		isBot: {type: 'boolean'},
+		isCat: {type: 'boolean'},
+		injectFeaturedNote: {type: 'boolean'},
+		receiveAnnouncementEmail: {type: 'boolean'},
+		alwaysMarkNsfw: {type: 'boolean'},
+		autoSensitive: {type: 'boolean'},
+		followingVisibility: {type: 'string', enum: ['public', 'followers', 'private']},
+		followersVisibility: {type: 'string', enum: ['public', 'followers', 'private']},
+		pinnedPageId: {type: 'string', format: 'misskey:id', nullable: true},
 		mutedWords: muteWords,
 		hardMutedWords: muteWords,
-		mutedInstances: { type: 'array', items: {
-			type: 'string',
-		} },
+		mutedInstances: {
+			type: 'array', items: {
+				type: 'string',
+			}
+		},
 		notificationRecieveConfig: {
 			type: 'object',
 			nullable: false,
@@ -216,14 +224,16 @@ export const paramDef = {
 				test: notificationRecieveConfig,
 			},
 		},
-		emailNotificationTypes: { type: 'array', items: {
-			type: 'string',
-		} },
+		emailNotificationTypes: {
+			type: 'array', items: {
+				type: 'string',
+			}
+		},
 		alsoKnownAs: {
 			type: 'array',
 			maxItems: 10,
 			uniqueItems: true,
-			items: { type: 'string' },
+			items: {type: 'string'},
 		},
 	},
 } as const;
@@ -233,22 +243,16 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.meta)
 		private instanceMeta: MiMeta,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
-
 		@Inject(DI.driveFilesRepository)
 		private driveFilesRepository: DriveFilesRepository,
-
 		@Inject(DI.pagesRepository)
 		private pagesRepository: PagesRepository,
-
 		private userEntityService: UserEntityService,
 		private driveFileEntityService: DriveFileEntityService,
 		private globalEventService: GlobalEventService,
@@ -264,13 +268,13 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		private utilityService: UtilityService,
 	) {
 		super(meta, paramDef, async (ps, _user, token) => {
-			const user = await this.usersRepository.findOneByOrFail({ id: _user.id }) as MiLocalUser;
+			const user = await this.usersRepository.findOneByOrFail({id: _user.id}) as MiLocalUser;
 			const isSecure = token == null;
 
 			const updates = {} as Partial<MiUser>;
 			const profileUpdates = {} as Partial<MiUserProfile>;
 
-			const profile = await this.userProfilesRepository.findOneByOrFail({ userId: user.id });
+			const profile = await this.userProfilesRepository.findOneByOrFail({userId: user.id});
 			let policies: RolePolicies | null = null;
 
 			if (ps.name !== undefined) {
@@ -355,7 +359,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				policies ??= await this.roleService.getUserPolicies(user.id);
 				if (!policies.canUpdateBioMedia) throw new ApiError(meta.errors.restrictedByRole);
 
-				const avatar = await this.driveFilesRepository.findOneBy({ id: ps.avatarId });
+				const avatar = await this.driveFilesRepository.findOneBy({id: ps.avatarId});
 
 				if (avatar == null || avatar.userId !== user.id) throw new ApiError(meta.errors.noSuchAvatar);
 				if (!avatar.type.startsWith('image/')) throw new ApiError(meta.errors.avatarNotAnImage);
@@ -373,7 +377,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				policies ??= await this.roleService.getUserPolicies(user.id);
 				if (!policies.canUpdateBioMedia) throw new ApiError(meta.errors.restrictedByRole);
 
-				const banner = await this.driveFilesRepository.findOneBy({ id: ps.bannerId });
+				const banner = await this.driveFilesRepository.findOneBy({id: ps.bannerId});
 
 				if (banner == null || banner.userId !== user.id) throw new ApiError(meta.errors.noSuchBanner);
 				if (!banner.type.startsWith('image/')) throw new ApiError(meta.errors.bannerNotAnImage);
@@ -408,7 +412,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			}
 
 			if (ps.pinnedPageId) {
-				const page = await this.pagesRepository.findOneBy({ id: ps.pinnedPageId });
+				const page = await this.pagesRepository.findOneBy({id: ps.pinnedPageId});
 
 				if (page == null || page.userId !== user.id) throw new ApiError(meta.errors.noSuchPage);
 
@@ -421,7 +425,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				profileUpdates.fields = ps.fields
 					.filter(x => typeof x.name === 'string' && x.name.trim() !== '' && typeof x.value === 'string' && x.value.trim() !== '')
 					.map(x => {
-						return { name: x.name.trim(), value: x.value.trim() };
+						return {name: x.name.trim(), value: x.value.trim()};
 					});
 			}
 
@@ -439,7 +443,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				const newAlsoKnownAs = new Set<string>();
 				for (const line of ps.alsoKnownAs) {
 					if (!line) throw new ApiError(meta.errors.noSuchUser);
-					const { username, host } = Acct.parse(line);
+					const {username, host} = Acct.parse(line);
 
 					// Retrieve the old account
 					const knownAs = await this.remoteUserResolveService.resolveUser(username, host).catch((e) => {
@@ -509,7 +513,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			if (Object.keys(updates).length > 0) {
 				await this.usersRepository.update(user.id, updates);
-				this.globalEventService.publishInternalEvent('localUserUpdated', { id: user.id });
+				this.globalEventService.publishInternalEvent('localUserUpdated', {id: user.id});
 			}
 
 			await this.userProfilesRepository.update(user.id, {
@@ -522,7 +526,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				includeSecrets: isSecure,
 			});
 
-			const updatedProfile = await this.userProfilesRepository.findOneByOrFail({ userId: user.id });
+			const updatedProfile = await this.userProfilesRepository.findOneByOrFail({userId: user.id});
 
 			this.cacheService.userProfileCache.set(user.id, updatedProfile);
 
@@ -552,7 +556,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		try {
 			const html = await this.httpRequestService.getHtml(url);
 
-			const { window } = new JSDOM(html);
+			const {window} = new JSDOM(html);
 			const doc: Document = window.document;
 
 			const myLink = `${this.config.url}/@${user.username}`;
@@ -565,7 +569,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			if (includesMyLink || includesRelMeLinks) {
 				await this.userProfilesRepository.createQueryBuilder('profile').update()
-					.where('userId = :userId', { userId: user.id })
+					.where('userId = :userId', {userId: user.id})
 					.set({
 						verifiedLinks: () => `array_append("verifiedLinks", '${url}')`, // ここでSQLインジェクションされそうなのでとりあえず safeForSql で弾いている
 					})

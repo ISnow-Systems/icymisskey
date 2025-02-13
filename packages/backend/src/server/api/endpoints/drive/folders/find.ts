@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { IsNull } from 'typeorm';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { DriveFoldersRepository } from '@/models/_.js';
-import { DriveFolderEntityService } from '@/core/entities/DriveFolderEntityService.js';
-import { DI } from '@/di-symbols.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {IsNull} from 'typeorm';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {DriveFoldersRepository} from '@/models/_.js';
+import {DriveFolderEntityService} from '@/core/entities/DriveFolderEntityService.js';
+import {DI} from '@/di-symbols.js';
 
 export const meta = {
 	tags: ['drive'],
@@ -31,8 +31,8 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		name: { type: 'string' },
-		parentId: { type: 'string', format: 'misskey:id', nullable: true, default: null },
+		name: {type: 'string'},
+		parentId: {type: 'string', format: 'misskey:id', nullable: true, default: null},
 	},
 	required: ['name'],
 } as const;
@@ -42,7 +42,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.driveFoldersRepository)
 		private driveFoldersRepository: DriveFoldersRepository,
-
 		private driveFolderEntityService: DriveFolderEntityService,
 	) {
 		super(meta, paramDef, async (ps, me) => {

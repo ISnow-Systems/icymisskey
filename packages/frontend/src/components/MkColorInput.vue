@@ -4,27 +4,31 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div>
-	<div :class="$style.label"><slot name="label"></slot></div>
-	<div :class="[$style.input, { disabled }]">
-		<input
-			ref="inputEl"
-			v-model="v"
-			v-adaptive-border
-			:class="$style.inputCore"
-			type="color"
-			:disabled="disabled"
-			:required="required"
-			:readonly="readonly"
-			@input="onInput"
-		>
+	<div>
+		<div :class="$style.label">
+			<slot name="label"></slot>
+		</div>
+		<div :class="[$style.input, { disabled }]">
+			<input
+				ref="inputEl"
+				v-model="v"
+				v-adaptive-border
+				:class="$style.inputCore"
+				:disabled="disabled"
+				:readonly="readonly"
+				:required="required"
+				type="color"
+				@input="onInput"
+			>
+		</div>
+		<div :class="$style.caption">
+			<slot name="caption"></slot>
+		</div>
 	</div>
-	<div :class="$style.caption"><slot name="caption"></slot></div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { ref, shallowRef, toRefs } from 'vue';
+import {ref, shallowRef, toRefs} from 'vue';
 
 const props = defineProps<{
 	modelValue: string | null;
@@ -37,7 +41,7 @@ const emit = defineEmits<{
 	(ev: 'update:modelValue', value: string): void;
 }>();
 
-const { modelValue } = toRefs(props);
+const {modelValue} = toRefs(props);
 const v = ref(modelValue.value);
 const inputEl = shallowRef<HTMLElement>();
 

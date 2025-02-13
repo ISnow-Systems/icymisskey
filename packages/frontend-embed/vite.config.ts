@@ -1,12 +1,12 @@
 import path from 'path';
 import pluginVue from '@vitejs/plugin-vue';
-import { type UserConfig, defineConfig } from 'vite';
+import {type UserConfig, defineConfig} from 'vite';
 import * as yaml from 'js-yaml';
-import { promises as fsp } from 'fs';
+import {promises as fsp} from 'fs';
 
 import locales from '../../locales/index.js';
 import meta from '../../package.json';
-import packageInfo from './package.json' with { type: 'json' };
+import packageInfo from './package.json' with {type: 'json'};
 import pluginJson5 from './vite.json5.js';
 
 const url = process.env.NODE_ENV === 'development' ? yaml.load(await fsp.readFile('../../.config/default.yml', 'utf-8')).url : null;
@@ -168,6 +168,6 @@ export function getConfig(): UserConfig {
 	};
 }
 
-const config = defineConfig(({ command, mode }) => getConfig());
+const config = defineConfig(({command, mode}) => getConfig());
 
 export default config;

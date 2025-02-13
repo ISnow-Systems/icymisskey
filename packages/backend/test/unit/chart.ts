@@ -6,25 +6,26 @@
 process.env.NODE_ENV = 'test';
 
 import * as assert from 'assert';
-import { jest } from '@jest/globals';
+import {jest} from '@jest/globals';
 import * as lolex from '@sinonjs/fake-timers';
-import { DataSource } from 'typeorm';
+import {DataSource} from 'typeorm';
 import TestChart from '@/core/chart/charts/test.js';
 import TestGroupedChart from '@/core/chart/charts/test-grouped.js';
 import TestUniqueChart from '@/core/chart/charts/test-unique.js';
 import TestIntersectionChart from '@/core/chart/charts/test-intersection.js';
-import { entity as TestChartEntity } from '@/core/chart/charts/entities/test.js';
-import { entity as TestGroupedChartEntity } from '@/core/chart/charts/entities/test-grouped.js';
-import { entity as TestUniqueChartEntity } from '@/core/chart/charts/entities/test-unique.js';
-import { entity as TestIntersectionChartEntity } from '@/core/chart/charts/entities/test-intersection.js';
-import { loadConfig } from '@/config.js';
-import type { AppLockService } from '@/core/AppLockService.js';
+import {entity as TestChartEntity} from '@/core/chart/charts/entities/test.js';
+import {entity as TestGroupedChartEntity} from '@/core/chart/charts/entities/test-grouped.js';
+import {entity as TestUniqueChartEntity} from '@/core/chart/charts/entities/test-unique.js';
+import {entity as TestIntersectionChartEntity} from '@/core/chart/charts/entities/test-intersection.js';
+import {loadConfig} from '@/config.js';
+import type {AppLockService} from '@/core/AppLockService.js';
 import Logger from '@/logger.js';
 
 describe('Chart', () => {
 	const config = loadConfig();
 	const appLockService = {
-		getChartInsertLock: () => () => Promise.resolve(() => {}),
+		getChartInsertLock: () => () => Promise.resolve(() => {
+		}),
 	} as unknown as jest.Mocked<AppLockService>;
 
 	let db: DataSource | undefined;

@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import type { SwSubscriptionsRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
-import { PushNotificationService } from '@/core/PushNotificationService.js';
-import { ApiError } from '../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {SwSubscriptionsRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {DI} from '@/di-symbols.js';
+import {PushNotificationService} from '@/core/PushNotificationService.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['account'],
@@ -48,8 +48,8 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		endpoint: { type: 'string' },
-		sendReadMessage: { type: 'boolean' },
+		endpoint: {type: 'string'},
+		sendReadMessage: {type: 'boolean'},
 	},
 	required: ['endpoint'],
 } as const;
@@ -59,7 +59,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.swSubscriptionsRepository)
 		private swSubscriptionsRepository: SwSubscriptionsRepository,
-
 		private pushNotificationService: PushNotificationService,
 	) {
 		super(meta, paramDef, async (ps, me) => {

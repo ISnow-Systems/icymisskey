@@ -4,29 +4,29 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div ref="rootEl">
-	<div v-if="isPullStart" :class="$style.frame" :style="`--frame-min-height: ${pullDistance / (PULL_BRAKE_BASE + (pullDistance / PULL_BRAKE_FACTOR))}px;`">
-		<div :class="$style.frameContent">
-			<MkLoading v-if="isRefreshing" :class="$style.loader" :em="true"/>
-			<i v-else class="ti ti-arrow-bar-to-down" :class="[$style.icon, { [$style.refresh]: isPullEnd }]"></i>
-			<div :class="$style.text">
-				<template v-if="isPullEnd">{{ i18n.ts.releaseToRefresh }}</template>
-				<template v-else-if="isRefreshing">{{ i18n.ts.refreshing }}</template>
-				<template v-else>{{ i18n.ts.pullDownToRefresh }}</template>
+	<div ref="rootEl">
+		<div v-if="isPullStart" :class="$style.frame" :style="`--frame-min-height: ${pullDistance / (PULL_BRAKE_BASE + (pullDistance / PULL_BRAKE_FACTOR))}px;`">
+			<div :class="$style.frameContent">
+				<MkLoading v-if="isRefreshing" :class="$style.loader" :em="true"/>
+				<i v-else :class="[$style.icon, { [$style.refresh]: isPullEnd }]" class="ti ti-arrow-bar-to-down"></i>
+				<div :class="$style.text">
+					<template v-if="isPullEnd">{{ i18n.ts.releaseToRefresh }}</template>
+					<template v-else-if="isRefreshing">{{ i18n.ts.refreshing }}</template>
+					<template v-else>{{ i18n.ts.pullDownToRefresh }}</template>
+				</div>
 			</div>
 		</div>
+		<div :class="{ [$style.slotClip]: isPullStart }">
+			<slot/>
+		</div>
 	</div>
-	<div :class="{ [$style.slotClip]: isPullStart }">
-		<slot/>
-	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref, shallowRef } from 'vue';
-import { i18n } from '@/i18n.js';
-import { getScrollContainer } from '@@/js/scroll.js';
-import { isHorizontalSwipeSwiping } from '@/scripts/touch.js';
+import {onMounted, onUnmounted, ref, shallowRef} from 'vue';
+import {i18n} from '@/i18n.js';
+import {getScrollContainer} from '@@/js/scroll.js';
+import {isHorizontalSwipeSwiping} from '@/scripts/touch.js';
 
 const SCROLL_STOP = 10;
 const MAX_PULL_DISTANCE = Infinity;
@@ -187,8 +187,8 @@ function onScrollContainerScroll() {
 
 function registerEventListenersForReadyToPull() {
 	if (rootEl.value == null) return;
-	rootEl.value.addEventListener('touchstart', moveStart, { passive: true });
-	rootEl.value.addEventListener('touchmove', moving, { passive: false }); // passive: falseにしないとpreventDefaultが使えない
+	rootEl.value.addEventListener('touchstart', moveStart, {passive: true});
+	rootEl.value.addEventListener('touchmove', moving, {passive: false}); // passive: falseにしないとpreventDefaultが使えない
 }
 
 function unregisterEventListenersForReadyToPull() {
@@ -203,9 +203,9 @@ onMounted(() => {
 	scrollEl = getScrollContainer(rootEl.value);
 	if (scrollEl == null) return;
 
-	scrollEl.addEventListener('scroll', onScrollContainerScroll, { passive: true });
+	scrollEl.addEventListener('scroll', onScrollContainerScroll, {passive: true});
 
-	rootEl.value.addEventListener('touchend', moveEnd, { passive: true });
+	rootEl.value.addEventListener('touchend', moveEnd, {passive: true});
 
 	registerEventListenersForReadyToPull();
 });

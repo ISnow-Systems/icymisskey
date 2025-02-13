@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import type { MiNote } from '@/models/Note.js';
-import type { NotesRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { DI } from '@/di-symbols.js';
-import { GetterService } from '@/server/api/GetterService.js';
-import { ApiError } from '../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {MiNote} from '@/models/Note.js';
+import type {NotesRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
+import {DI} from '@/di-symbols.js';
+import {GetterService} from '@/server/api/GetterService.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['notes'],
@@ -39,9 +39,9 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		noteId: { type: 'string', format: 'misskey:id' },
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
-		offset: { type: 'integer', default: 0 },
+		noteId: {type: 'string', format: 'misskey:id'},
+		limit: {type: 'integer', minimum: 1, maximum: 100, default: 10},
+		offset: {type: 'integer', default: 0},
 	},
 	required: ['noteId'],
 } as const;
@@ -51,7 +51,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		private noteEntityService: NoteEntityService,
 		private getterService: GetterService,
 	) {
@@ -66,7 +65,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			const get = async (id: any) => {
 				i++;
-				const p = await this.notesRepository.findOneBy({ id });
+				const p = await this.notesRepository.findOneBy({id});
 				if (p == null) return;
 
 				if (i > ps.offset!) {

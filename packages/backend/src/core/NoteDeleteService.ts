@@ -3,45 +3,40 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Brackets, In } from 'typeorm';
-import { Injectable, Inject } from '@nestjs/common';
-import type { MiUser, MiLocalUser, MiRemoteUser } from '@/models/User.js';
-import type { MiNote, IMentionedRemoteUsers } from '@/models/Note.js';
-import type { InstancesRepository, MiMeta, NotesRepository, UsersRepository } from '@/models/_.js';
-import { RelayService } from '@/core/RelayService.js';
-import { FederatedInstanceService } from '@/core/FederatedInstanceService.js';
-import { DI } from '@/di-symbols.js';
-import type { Config } from '@/config.js';
+import {Brackets, In} from 'typeorm';
+import {Injectable, Inject} from '@nestjs/common';
+import type {MiUser, MiLocalUser, MiRemoteUser} from '@/models/User.js';
+import type {MiNote, IMentionedRemoteUsers} from '@/models/Note.js';
+import type {InstancesRepository, MiMeta, NotesRepository, UsersRepository} from '@/models/_.js';
+import {RelayService} from '@/core/RelayService.js';
+import {FederatedInstanceService} from '@/core/FederatedInstanceService.js';
+import {DI} from '@/di-symbols.js';
+import type {Config} from '@/config.js';
 import NotesChart from '@/core/chart/charts/notes.js';
 import PerUserNotesChart from '@/core/chart/charts/per-user-notes.js';
 import InstanceChart from '@/core/chart/charts/instance.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { ApRendererService } from '@/core/activitypub/ApRendererService.js';
-import { ApDeliverManagerService } from '@/core/activitypub/ApDeliverManagerService.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { bindThis } from '@/decorators.js';
-import { SearchService } from '@/core/SearchService.js';
-import { ModerationLogService } from '@/core/ModerationLogService.js';
-import { isQuote, isRenote } from '@/misc/is-renote.js';
+import {GlobalEventService} from '@/core/GlobalEventService.js';
+import {ApRendererService} from '@/core/activitypub/ApRendererService.js';
+import {ApDeliverManagerService} from '@/core/activitypub/ApDeliverManagerService.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {bindThis} from '@/decorators.js';
+import {SearchService} from '@/core/SearchService.js';
+import {ModerationLogService} from '@/core/ModerationLogService.js';
+import {isQuote, isRenote} from '@/misc/is-renote.js';
 
 @Injectable()
 export class NoteDeleteService {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.meta)
 		private meta: MiMeta,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		@Inject(DI.instancesRepository)
 		private instancesRepository: InstancesRepository,
-
 		private userEntityService: UserEntityService,
 		private globalEventService: GlobalEventService,
 		private relayService: RelayService,
@@ -53,7 +48,8 @@ export class NoteDeleteService {
 		private notesChart: NotesChart,
 		private perUserNotesChart: PerUserNotesChart,
 		private instanceChart: InstanceChart,
-	) {}
+	) {
+	}
 
 	/**
 	 * 投稿を削除します。
@@ -65,7 +61,7 @@ export class NoteDeleteService {
 		const cascadingNotes = await this.findCascadingNotes(note);
 
 		if (note.replyId) {
-			await this.notesRepository.decrement({ id: note.replyId }, 'repliesCount', 1);
+			await this.notesRepository.decrement({id: note.replyId}, 'repliesCount', 1);
 		}
 
 		if (!quiet) {
@@ -109,7 +105,7 @@ export class NoteDeleteService {
 			if (this.meta.enableStatsForFederatedInstances) {
 				if (this.userEntityService.isRemoteUser(user)) {
 					this.federatedInstanceService.fetchOrRegister(user.host).then(async i => {
-						this.instancesRepository.decrement({ id: i.id }, 'notesCount', 1);
+						this.instancesRepository.decrement({id: i.id}, 'notesCount', 1);
 						if (this.meta.enableChartsForFederatedInstances) {
 							this.instanceChart.updateNote(i.host, note, false);
 						}
@@ -129,7 +125,7 @@ export class NoteDeleteService {
 		});
 
 		if (deleter && (note.userId !== deleter.id)) {
-			const user = await this.usersRepository.findOneByOrFail({ id: note.userId });
+			const user = await this.usersRepository.findOneByOrFail({id: note.userId});
 			this.moderationLogService.log(deleter, 'deleteNote', {
 				noteId: note.id,
 				noteUserId: note.userId,
@@ -144,9 +140,9 @@ export class NoteDeleteService {
 	private async findCascadingNotes(note: MiNote): Promise<MiNote[]> {
 		const recursive = async (noteId: string): Promise<MiNote[]> => {
 			const query = this.notesRepository.createQueryBuilder('note')
-				.where('note.replyId = :noteId', { noteId })
+				.where('note.replyId = :noteId', {noteId})
 				.orWhere(new Brackets(q => {
-					q.where('note.renoteId = :noteId', { noteId })
+					q.where('note.renoteId = :noteId', {noteId})
 						.andWhere('note.text IS NOT NULL');
 				}))
 				.leftJoinAndSelect('note.user', 'user');
@@ -171,7 +167,7 @@ export class NoteDeleteService {
 		const uris = (JSON.parse(note.mentionedRemoteUsers) as IMentionedRemoteUsers).map(x => x.uri);
 		if (uris.length > 0) {
 			where.push(
-				{ uri: In(uris) },
+				{uri: In(uris)},
 			);
 		}
 

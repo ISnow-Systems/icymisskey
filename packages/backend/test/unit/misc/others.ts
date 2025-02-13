@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { describe, expect, test } from '@jest/globals';
-import { contentDisposition } from '@/misc/content-disposition.js';
+import {describe, expect, test} from '@jest/globals';
+import {contentDisposition} from '@/misc/content-disposition.js';
 
 describe('misc:content-disposition', () => {
 	test('inline', () => {

@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { RegistryApiService } from '@/core/RegistryApiService.js';
-import { ApiError } from '../../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {RegistryApiService} from '@/core/RegistryApiService.js';
+import {ApiError} from '../../../error.js';
 
 export const meta = {
 	requireCredential: true,
@@ -28,11 +28,13 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		key: { type: 'string' },
-		scope: { type: 'array', default: [], items: {
-			type: 'string', pattern: /^[a-zA-Z0-9_]+$/.toString().slice(1, -1),
-		} },
-		domain: { type: 'string', nullable: true },
+		key: {type: 'string'},
+		scope: {
+			type: 'array', default: [], items: {
+				type: 'string', pattern: /^[a-zA-Z0-9_]+$/.toString().slice(1, -1),
+			}
+		},
+		domain: {type: 'string', nullable: true},
 	},
 	required: ['key', 'scope'],
 } as const;

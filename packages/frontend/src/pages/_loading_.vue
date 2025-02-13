@@ -4,7 +4,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkLoading/>
+	<MkLoading/>
 </template>
 
 <script lang="ts" setup>

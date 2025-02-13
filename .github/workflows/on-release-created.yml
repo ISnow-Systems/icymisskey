@@ -2,7 +2,7 @@ name: On Release Created (Publish misskey-js)
 
 on:
   release:
-    types: [created]
+    types: [ created ]
 
   workflow_dispatch:
 
@@ -20,7 +20,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [22.11.0]
+        node-version: [ 22.11.0 ]
 
     steps:
       - uses: actions/checkout@v4.1.1

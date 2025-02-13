@@ -4,80 +4,84 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="lcfyofjk">
-	<svg :viewBox="`0 0 ${ viewBoxX } ${ viewBoxY }`">
-		<defs>
-			<linearGradient :id="cpuGradientId" x1="0" x2="0" y1="1" y2="0">
-				<stop offset="0%" stop-color="hsl(180, 80%, 70%)"></stop>
-				<stop offset="100%" stop-color="hsl(0, 80%, 70%)"></stop>
-			</linearGradient>
-			<mask :id="cpuMaskId" x="0" y="0" :width="viewBoxX" :height="viewBoxY">
-				<polygon
-					:points="cpuPolygonPoints"
-					fill="#fff"
-					fill-opacity="0.5"
-				/>
-				<polyline
-					:points="cpuPolylinePoints"
-					fill="none"
-					stroke="#fff"
-					stroke-width="1"
-				/>
-				<circle
-					:cx="cpuHeadX"
-					:cy="cpuHeadY"
-					r="1.5"
-					fill="#fff"
-				/>
-			</mask>
-		</defs>
-		<rect
-			x="-2" y="-2"
-			:width="viewBoxX + 4" :height="viewBoxY + 4"
-			:style="`stroke: none; fill: url(#${ cpuGradientId }); mask: url(#${ cpuMaskId })`"
-		/>
-		<text x="1" y="5">CPU <tspan>{{ cpuP }}%</tspan></text>
-	</svg>
-	<svg :viewBox="`0 0 ${ viewBoxX } ${ viewBoxY }`">
-		<defs>
-			<linearGradient :id="memGradientId" x1="0" x2="0" y1="1" y2="0">
-				<stop offset="0%" stop-color="hsl(180, 80%, 70%)"></stop>
-				<stop offset="100%" stop-color="hsl(0, 80%, 70%)"></stop>
-			</linearGradient>
-			<mask :id="memMaskId" x="0" y="0" :width="viewBoxX" :height="viewBoxY">
-				<polygon
-					:points="memPolygonPoints"
-					fill="#fff"
-					fill-opacity="0.5"
-				/>
-				<polyline
-					:points="memPolylinePoints"
-					fill="none"
-					stroke="#fff"
-					stroke-width="1"
-				/>
-				<circle
-					:cx="memHeadX"
-					:cy="memHeadY"
-					r="1.5"
-					fill="#fff"
-				/>
-			</mask>
-		</defs>
-		<rect
-			x="-2" y="-2"
-			:width="viewBoxX + 4" :height="viewBoxY + 4"
-			:style="`stroke: none; fill: url(#${ memGradientId }); mask: url(#${ memMaskId })`"
-		/>
-		<text x="1" y="5">MEM <tspan>{{ memP }}%</tspan></text>
-	</svg>
-</div>
+	<div class="lcfyofjk">
+		<svg :viewBox="`0 0 ${ viewBoxX } ${ viewBoxY }`">
+			<defs>
+				<linearGradient :id="cpuGradientId" x1="0" x2="0" y1="1" y2="0">
+					<stop offset="0%" stop-color="hsl(180, 80%, 70%)"></stop>
+					<stop offset="100%" stop-color="hsl(0, 80%, 70%)"></stop>
+				</linearGradient>
+				<mask :id="cpuMaskId" :height="viewBoxY" :width="viewBoxX" x="0" y="0">
+					<polygon
+						:points="cpuPolygonPoints"
+						fill="#fff"
+						fill-opacity="0.5"
+					/>
+					<polyline
+						:points="cpuPolylinePoints"
+						fill="none"
+						stroke="#fff"
+						stroke-width="1"
+					/>
+					<circle
+						:cx="cpuHeadX"
+						:cy="cpuHeadY"
+						fill="#fff"
+						r="1.5"
+					/>
+				</mask>
+			</defs>
+			<rect
+				:height="viewBoxY + 4" :style="`stroke: none; fill: url(#${ cpuGradientId }); mask: url(#${ cpuMaskId })`"
+				:width="viewBoxX + 4" x="-2"
+				y="-2"
+			/>
+			<text x="1" y="5">CPU
+				<tspan>{{ cpuP }}%</tspan>
+			</text>
+		</svg>
+		<svg :viewBox="`0 0 ${ viewBoxX } ${ viewBoxY }`">
+			<defs>
+				<linearGradient :id="memGradientId" x1="0" x2="0" y1="1" y2="0">
+					<stop offset="0%" stop-color="hsl(180, 80%, 70%)"></stop>
+					<stop offset="100%" stop-color="hsl(0, 80%, 70%)"></stop>
+				</linearGradient>
+				<mask :id="memMaskId" :height="viewBoxY" :width="viewBoxX" x="0" y="0">
+					<polygon
+						:points="memPolygonPoints"
+						fill="#fff"
+						fill-opacity="0.5"
+					/>
+					<polyline
+						:points="memPolylinePoints"
+						fill="none"
+						stroke="#fff"
+						stroke-width="1"
+					/>
+					<circle
+						:cx="memHeadX"
+						:cy="memHeadY"
+						fill="#fff"
+						r="1.5"
+					/>
+				</mask>
+			</defs>
+			<rect
+				:height="viewBoxY + 4" :style="`stroke: none; fill: url(#${ memGradientId }); mask: url(#${ memMaskId })`"
+				:width="viewBoxX + 4" x="-2"
+				y="-2"
+			/>
+			<text x="1" y="5">MEM
+				<tspan>{{ memP }}%</tspan>
+			</text>
+		</svg>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onBeforeUnmount, ref } from 'vue';
+import {onMounted, onBeforeUnmount, ref} from 'vue';
 import * as Misskey from 'misskey-js';
-import { v4 as uuid } from 'uuid';
+import {v4 as uuid} from 'uuid';
 
 const props = defineProps<{
 	connection: Misskey.ChannelConnection<Misskey.Channels['serverStats']>,

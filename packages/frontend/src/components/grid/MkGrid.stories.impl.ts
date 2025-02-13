@@ -4,15 +4,15 @@
  */
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { action } from '@storybook/addon-actions';
-import type { StoryObj } from '@storybook/vue3';
-import { ref } from 'vue';
-import { commonHandlers } from '../../../.storybook/mocks.js';
-import { boolean, choose, country, date, firstName, integer, lastName, text } from '../../../.storybook/fake-utils.js';
+import {action} from '@storybook/addon-actions';
+import type {StoryObj} from '@storybook/vue3';
+import {ref} from 'vue';
+import {commonHandlers} from '../../../.storybook/mocks.js';
+import {boolean, choose, country, date, firstName, integer, lastName, text} from '../../../.storybook/fake-utils.js';
 import MkGrid from './MkGrid.vue';
-import type { GridContext, GridEvent } from '@/components/grid/grid-event.js';
-import type { DataSource, GridSetting } from '@/components/grid/grid.js';
-import type { GridColumnSetting } from '@/components/grid/column.js';
+import type {GridContext, GridEvent} from '@/components/grid/grid-event.js';
+import type {DataSource, GridSetting} from '@/components/grid/grid.js';
+import type {GridColumnSetting} from '@/components/grid/column.js';
 
 function d(p: {
 	check?: boolean,
@@ -41,15 +41,15 @@ function d(p: {
 }
 
 const defaultCols: GridColumnSetting[] = [
-	{ bindTo: 'check', icon: 'ti-check', type: 'boolean', width: 50 },
-	{ bindTo: 'name', title: 'Name', type: 'text', width: 'auto' },
-	{ bindTo: 'email', title: 'Email', type: 'text', width: 'auto' },
-	{ bindTo: 'age', title: 'Age', type: 'number', width: 50 },
-	{ bindTo: 'birthday', title: 'Birthday', type: 'date', width: 'auto' },
-	{ bindTo: 'gender', title: 'Gender', type: 'text', width: 80 },
-	{ bindTo: 'country', title: 'Country', type: 'text', width: 120 },
-	{ bindTo: 'reportCount', title: 'ReportCount', type: 'number', width: 'auto' },
-	{ bindTo: 'createdAt', title: 'CreatedAt', type: 'date', width: 'auto' },
+	{bindTo: 'check', icon: 'ti-check', type: 'boolean', width: 50},
+	{bindTo: 'name', title: 'Name', type: 'text', width: 'auto'},
+	{bindTo: 'email', title: 'Email', type: 'text', width: 'auto'},
+	{bindTo: 'age', title: 'Age', type: 'number', width: 50},
+	{bindTo: 'birthday', title: 'Birthday', type: 'date', width: 'auto'},
+	{bindTo: 'gender', title: 'Gender', type: 'text', width: 80},
+	{bindTo: 'country', title: 'Country', type: 'text', width: 120},
+	{bindTo: 'reportCount', title: 'ReportCount', type: 'number', width: 'auto'},
+	{bindTo: 'createdAt', title: 'CreatedAt', type: 'date', width: 'auto'},
 ];
 
 function createArgs(overrides?: { settings?: Partial<GridSetting>, data?: DataSource[] }) {
@@ -143,17 +143,17 @@ export const NoSelectable = createRender(createArgs({
 
 export const Editable = createRender(createArgs({
 	settings: {
-		cols: defaultCols.map(col => ({ ...col, editable: true })),
+		cols: defaultCols.map(col => ({...col, editable: true})),
 	},
 }));
 
 export const AdditionalRowStyle = createRender(createArgs({
 	settings: {
-		cols: defaultCols.map(col => ({ ...col, editable: true })),
+		cols: defaultCols.map(col => ({...col, editable: true})),
 		row: {
 			styleRules: [
 				{
-					condition: ({ row }) => AdditionalRowStyle.args.data[row.index].check as boolean,
+					condition: ({row}) => AdditionalRowStyle.args.data[row.index].check as boolean,
 					applyStyle: {
 						style: {
 							backgroundColor: 'lightgray',

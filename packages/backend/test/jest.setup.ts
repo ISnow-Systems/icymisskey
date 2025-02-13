@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { initTestDb, sendEnvResetRequest } from './utils.js';
+import {initTestDb, sendEnvResetRequest} from './utils.js';
 
 beforeAll(async () => {
-		await initTestDb(false);
-		await sendEnvResetRequest();
+	await initTestDb(false);
+	await sendEnvResetRequest();
 });

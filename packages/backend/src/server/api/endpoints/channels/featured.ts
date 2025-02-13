@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { ChannelsRepository } from '@/models/_.js';
-import { ChannelEntityService } from '@/core/entities/ChannelEntityService.js';
-import { DI } from '@/di-symbols.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {ChannelsRepository} from '@/models/_.js';
+import {ChannelEntityService} from '@/core/entities/ChannelEntityService.js';
+import {DI} from '@/di-symbols.js';
 
 export const meta = {
 	tags: ['channels'],
@@ -36,7 +36,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.channelsRepository)
 		private channelsRepository: ChannelsRepository,
-
 		private channelEntityService: ChannelEntityService,
 	) {
 		super(meta, paramDef, async (ps, me) => {

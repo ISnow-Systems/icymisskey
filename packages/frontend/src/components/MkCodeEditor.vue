@@ -4,38 +4,42 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div>
-	<div :class="$style.label" @click="focus"><slot name="label"></slot></div>
-	<div :class="[$style.codeEditorRoot, { [$style.focused]: focused }]">
-		<div :class="$style.codeEditorScroller">
+	<div>
+		<div :class="$style.label" @click="focus">
+			<slot name="label"></slot>
+		</div>
+		<div :class="[$style.codeEditorRoot, { [$style.focused]: focused }]">
+			<div :class="$style.codeEditorScroller">
 			<textarea
 				ref="inputEl"
 				v-model="v"
 				:class="[$style.textarea]"
 				:disabled="disabled"
-				:required="required"
 				:readonly="readonly"
+				:required="required"
 				autocomplete="off"
-				wrap="off"
 				spellcheck="false"
-				@focus="focused = true"
+				wrap="off"
 				@blur="focused = false"
-				@keydown="onKeydown($event)"
+				@focus="focused = true"
 				@input="onInput"
+				@keydown="onKeydown($event)"
 			></textarea>
-			<XCode :class="$style.codeEditorHighlighter" :codeEditor="true" :code="v" :lang="lang"/>
+				<XCode :class="$style.codeEditorHighlighter" :code="v" :codeEditor="true" :lang="lang"/>
+			</div>
 		</div>
+		<div :class="$style.caption">
+			<slot name="caption"></slot>
+		</div>
+		<MkButton v-if="manualSave && changed" :class="$style.save" primary @click="updated"><i class="ti ti-device-floppy"></i> {{ i18n.ts.save }}</MkButton>
 	</div>
-	<div :class="$style.caption"><slot name="caption"></slot></div>
-	<MkButton v-if="manualSave && changed" primary :class="$style.save" @click="updated"><i class="ti ti-device-floppy"></i> {{ i18n.ts.save }}</MkButton>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, toRefs, shallowRef, nextTick } from 'vue';
-import { debounce } from 'throttle-debounce';
+import {ref, watch, toRefs, shallowRef, nextTick} from 'vue';
+import {debounce} from 'throttle-debounce';
 import MkButton from '@/components/MkButton.vue';
-import { i18n } from '@/i18n.js';
+import {i18n} from '@/i18n.js';
 import XCode from '@/components/MkCode.core.vue';
 
 const props = withDefaults(defineProps<{
@@ -57,7 +61,7 @@ const emit = defineEmits<{
 	(ev: 'update:modelValue', value: string): void;
 }>();
 
-const { modelValue } = toRefs(props);
+const {modelValue} = toRefs(props);
 const v = ref<string>(modelValue.value ?? '');
 const focused = ref(false);
 const changed = ref(false);
@@ -164,6 +168,7 @@ watch(v, newValue => {
 	border: solid 1px var(--MI_THEME-panel);
 	transition: border-color 0.1s ease-out;
 	font-family: Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace;
+
 	&:hover {
 		border-color: var(--MI_THEME-inputBorderHover) !important;
 	}

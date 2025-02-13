@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { SystemWebhookService } from '@/core/SystemWebhookService.js';
+import {Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {SystemWebhookService} from '@/core/SystemWebhookService.js';
 
 export const meta = {
 	tags: ['admin', 'system-webhook'],

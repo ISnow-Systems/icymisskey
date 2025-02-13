@@ -4,30 +4,30 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<img
-	v-if="errored && fallbackToImage"
-	:class="[$style.root, { [$style.normal]: normal, [$style.noStyle]: noStyle }]"
-	src="/client-assets/dummy.png"
-	:title="alt"
-/>
-<span v-else-if="errored">:{{ customEmojiName }}:</span>
-<img
-	v-else
-	:class="[$style.root, { [$style.normal]: normal, [$style.noStyle]: noStyle }]"
-	:src="url"
-	:alt="alt"
-	:title="alt"
-	decoding="async"
-	@error="errored = true"
-	@load="errored = false"
-/>
+	<img
+		v-if="errored && fallbackToImage"
+		:class="[$style.root, { [$style.normal]: normal, [$style.noStyle]: noStyle }]"
+		:title="alt"
+		src="/client-assets/dummy.png"
+	/>
+	<span v-else-if="errored">:{{ customEmojiName }}:</span>
+	<img
+		v-else
+		:alt="alt"
+		:class="[$style.root, { [$style.normal]: normal, [$style.noStyle]: noStyle }]"
+		:src="url"
+		:title="alt"
+		decoding="async"
+		@error="errored = true"
+		@load="errored = false"
+	/>
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, ref } from 'vue';
-import { customEmojisMap } from '@/custom-emojis.js';
+import {computed, inject, ref} from 'vue';
+import {customEmojisMap} from '@/custom-emojis.js';
 
-import { DI } from '@/di.js';
+import {DI} from '@/di.js';
 
 const mediaProxy = inject(DI.mediaProxy)!;
 

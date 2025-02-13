@@ -3,28 +3,26 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import * as Misskey from 'misskey-js';
-import { DI } from '@/di-symbols.js';
-import type { SigninsRepository, UserProfilesRepository } from '@/models/_.js';
-import { IdService } from '@/core/IdService.js';
-import type { MiLocalUser } from '@/models/User.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { SigninEntityService } from '@/core/entities/SigninEntityService.js';
-import { bindThis } from '@/decorators.js';
-import { EmailService } from '@/core/EmailService.js';
-import { NotificationService } from '@/core/NotificationService.js';
-import type { FastifyRequest, FastifyReply } from 'fastify';
+import {DI} from '@/di-symbols.js';
+import type {SigninsRepository, UserProfilesRepository} from '@/models/_.js';
+import {IdService} from '@/core/IdService.js';
+import type {MiLocalUser} from '@/models/User.js';
+import {GlobalEventService} from '@/core/GlobalEventService.js';
+import {SigninEntityService} from '@/core/entities/SigninEntityService.js';
+import {bindThis} from '@/decorators.js';
+import {EmailService} from '@/core/EmailService.js';
+import {NotificationService} from '@/core/NotificationService.js';
+import type {FastifyRequest, FastifyReply} from 'fastify';
 
 @Injectable()
 export class SigninService {
 	constructor(
 		@Inject(DI.signinsRepository)
 		private signinsRepository: SigninsRepository,
-
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
-
 		private signinEntityService: SigninEntityService,
 		private emailService: EmailService,
 		private notificationService: NotificationService,
@@ -48,7 +46,7 @@ export class SigninService {
 
 			this.globalEventService.publishMainStream(user.id, 'signin', await this.signinEntityService.pack(record));
 
-			const profile = await this.userProfilesRepository.findOneByOrFail({ userId: user.id });
+			const profile = await this.userProfilesRepository.findOneByOrFail({userId: user.id});
 			if (profile.email && profile.emailVerified) {
 				this.emailService.sendEmail(profile.email, 'New login / ログインがありました',
 					'There is a new login. If you do not recognize this login, update the security status of your account, including changing your password. / 新しいログインがありました。このログインに心当たりがない場合は、パスワードを変更するなど、アカウントのセキュリティ状態を更新してください。',

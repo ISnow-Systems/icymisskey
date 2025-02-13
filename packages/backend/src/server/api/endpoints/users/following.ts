@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { IsNull } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
-import type { UsersRepository, FollowingsRepository, UserProfilesRepository } from '@/models/_.js';
-import { birthdaySchema } from '@/models/User.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { QueryService } from '@/core/QueryService.js';
-import { FollowingEntityService } from '@/core/entities/FollowingEntityService.js';
-import { UtilityService } from '@/core/UtilityService.js';
-import { DI } from '@/di-symbols.js';
-import { RoleService } from '@/core/RoleService.js';
-import { ApiError } from '../../error.js';
+import {IsNull} from 'typeorm';
+import {Inject, Injectable} from '@nestjs/common';
+import type {UsersRepository, FollowingsRepository, UserProfilesRepository} from '@/models/_.js';
+import {birthdaySchema} from '@/models/User.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {QueryService} from '@/core/QueryService.js';
+import {FollowingEntityService} from '@/core/entities/FollowingEntityService.js';
+import {UtilityService} from '@/core/UtilityService.js';
+import {DI} from '@/di-symbols.js';
+import {RoleService} from '@/core/RoleService.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['users'],
@@ -56,23 +56,23 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
+		sinceId: {type: 'string', format: 'misskey:id'},
+		untilId: {type: 'string', format: 'misskey:id'},
+		limit: {type: 'integer', minimum: 1, maximum: 100, default: 10},
 
-		userId: { type: 'string', format: 'misskey:id' },
-		username: { type: 'string' },
+		userId: {type: 'string', format: 'misskey:id'},
+		username: {type: 'string'},
 		host: {
 			type: 'string',
 			nullable: true,
 			description: 'The local host is represented with `null`.',
 		},
 
-		birthday: { ...birthdaySchema, nullable: true },
+		birthday: {...birthdaySchema, nullable: true},
 	},
 	anyOf: [
-		{ required: ['userId'] },
-		{ required: ['username', 'host'] },
+		{required: ['userId']},
+		{required: ['username', 'host']},
 	],
 } as const;
 
@@ -81,13 +81,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
-
 		@Inject(DI.followingsRepository)
 		private followingsRepository: FollowingsRepository,
-
 		private utilityService: UtilityService,
 		private followingEntityService: FollowingEntityService,
 		private queryService: QueryService,
@@ -95,14 +92,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			const user = await this.usersRepository.findOneBy(ps.userId != null
-				? { id: ps.userId }
-				: { usernameLower: ps.username!.toLowerCase(), host: this.utilityService.toPunyNullable(ps.host) ?? IsNull() });
+				? {id: ps.userId}
+				: {usernameLower: ps.username!.toLowerCase(), host: this.utilityService.toPunyNullable(ps.host) ?? IsNull()});
 
 			if (user == null) {
 				throw new ApiError(meta.errors.noSuchUser);
 			}
 
-			const profile = await this.userProfilesRepository.findOneByOrFail({ userId: user.id });
+			const profile = await this.userProfilesRepository.findOneByOrFail({userId: user.id});
 
 			if (profile.followingVisibility !== 'public' && !await this.roleService.isModerator(me)) {
 				if (profile.followingVisibility === 'private') {
@@ -127,7 +124,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			}
 
 			const query = this.queryService.makePaginationQuery(this.followingsRepository.createQueryBuilder('following'), ps.sinceId, ps.untilId)
-				.andWhere('following.followerId = :userId', { userId: user.id })
+				.andWhere('following.followerId = :userId', {userId: user.id})
 				.innerJoinAndSelect('following.followee', 'followee');
 
 			if (ps.birthday) {
@@ -137,7 +134,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 					birthdayUserQuery.select('user_profile.userId')
 						.where(`SUBSTR(user_profile.birthday, 6, 5) = '${birthday}'`);
 
-					query.andWhere(`following.followeeId IN (${ birthdayUserQuery.getQuery() })`);
+					query.andWhere(`following.followeeId IN (${birthdayUserQuery.getQuery()})`);
 				} catch (err) {
 					throw new ApiError(meta.errors.birthdayInvalid);
 				}
@@ -147,7 +144,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				.limit(ps.limit)
 				.getMany();
 
-			return await this.followingEntityService.packMany(followings, me, { populateFollowee: true });
+			return await this.followingEntityService.packMany(followings, me, {populateFollowee: true});
 		});
 	}
 }

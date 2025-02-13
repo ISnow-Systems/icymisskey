@@ -4,9 +4,9 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div></div>
+	<div></div>
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import {} from 'vue';
 </script>

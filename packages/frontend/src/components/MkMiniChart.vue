@@ -4,37 +4,37 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<svg :viewBox="`0 0 ${ viewBoxX } ${ viewBoxY }`" style="overflow:visible">
-	<defs>
-		<linearGradient :id="gradientId" x1="0" x2="0" y1="1" y2="0">
-			<stop offset="0%" :stop-color="color" stop-opacity="0"></stop>
-			<stop offset="100%" :stop-color="color" stop-opacity="0.65"></stop>
-		</linearGradient>
-	</defs>
-	<polygon
-		:points="polygonPoints"
-		:style="`stroke: none; fill: url(#${ gradientId });`"
-	/>
-	<polyline
-		:points="polylinePoints"
-		fill="none"
-		:stroke="color"
-		stroke-width="2"
-	/>
-	<circle
-		:cx="headX ?? undefined"
-		:cy="headY ?? undefined"
-		r="3"
-		:fill="color"
-	/>
-</svg>
+	<svg :viewBox="`0 0 ${ viewBoxX } ${ viewBoxY }`" style="overflow:visible">
+		<defs>
+			<linearGradient :id="gradientId" x1="0" x2="0" y1="1" y2="0">
+				<stop :stop-color="color" offset="0%" stop-opacity="0"></stop>
+				<stop :stop-color="color" offset="100%" stop-opacity="0.65"></stop>
+			</linearGradient>
+		</defs>
+		<polygon
+			:points="polygonPoints"
+			:style="`stroke: none; fill: url(#${ gradientId });`"
+		/>
+		<polyline
+			:points="polylinePoints"
+			:stroke="color"
+			fill="none"
+			stroke-width="2"
+		/>
+		<circle
+			:cx="headX ?? undefined"
+			:cy="headY ?? undefined"
+			:fill="color"
+			r="3"
+		/>
+	</svg>
 </template>
 
 <script lang="ts" setup>
-import { watch, ref } from 'vue';
-import { v4 as uuid } from 'uuid';
+import {watch, ref} from 'vue';
+import {v4 as uuid} from 'uuid';
 import tinycolor from 'tinycolor2';
-import { useInterval } from '@@/js/use-interval.js';
+import {useInterval} from '@@/js/use-interval.js';
 
 const props = defineProps<{
 	src: number[];
@@ -62,13 +62,13 @@ function draw(): void {
 
 	polylinePoints.value = _polylinePoints.map(xy => `${xy[0]},${xy[1]}`).join(' ');
 
-	polygonPoints.value = `0,${ viewBoxY } ${ polylinePoints.value } ${ viewBoxX },${ viewBoxY }`;
+	polygonPoints.value = `0,${viewBoxY} ${polylinePoints.value} ${viewBoxX},${viewBoxY}`;
 
 	headX.value = _polylinePoints.at(-1)![0];
 	headY.value = _polylinePoints.at(-1)![1];
 }
 
-watch(() => props.src, draw, { immediate: true });
+watch(() => props.src, draw, {immediate: true});
 
 // Vueが何故かWatchを発動させない場合があるので
 useInterval(draw, 1000, {

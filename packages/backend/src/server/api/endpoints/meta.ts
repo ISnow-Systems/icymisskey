@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { MetaEntityService } from '@/core/entities/MetaEntityService.js';
+import {Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {MetaEntityService} from '@/core/entities/MetaEntityService.js';
 
 export const meta = {
 	tags: ['meta'],
@@ -15,8 +15,8 @@ export const meta = {
 	res: {
 		type: 'object',
 		oneOf: [
-			{ type: 'object', ref: 'MetaLite' },
-			{ type: 'object', ref: 'MetaDetailed' },
+			{type: 'object', ref: 'MetaLite'},
+			{type: 'object', ref: 'MetaDetailed'},
 		],
 	},
 } as const;
@@ -24,7 +24,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		detail: { type: 'boolean', default: true },
+		detail: {type: 'boolean', default: true},
 	},
 	required: [],
 } as const;

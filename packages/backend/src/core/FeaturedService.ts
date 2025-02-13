@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import * as Redis from 'ioredis';
-import type { MiGalleryPost, MiNote, MiUser } from '@/models/_.js';
-import { DI } from '@/di-symbols.js';
-import { bindThis } from '@/decorators.js';
+import type {MiGalleryPost, MiNote, MiUser} from '@/models/_.js';
+import {DI} from '@/di-symbols.js';
+import {bindThis} from '@/decorators.js';
 
 const GLOBAL_NOTES_RANKING_WINDOW = 1000 * 60 * 60 * 24 * 3; // 3日ごと
 export const GALLERY_POSTS_RANKING_WINDOW = 1000 * 60 * 60 * 24 * 3; // 3日ごと
@@ -22,6 +22,61 @@ export class FeaturedService {
 		@Inject(DI.redis)
 		private redisClient: Redis.Redis, // TODO: 専用のRedisサーバーを設定できるようにする
 	) {
+	}
+
+	@bindThis
+	public updateGlobalNotesRanking(noteId: MiNote['id'], score = 1): Promise<void> {
+		return this.updateRankingOf('featuredGlobalNotesRanking', GLOBAL_NOTES_RANKING_WINDOW, noteId, score);
+	}
+
+	@bindThis
+	public updateGalleryPostsRanking(galleryPostId: MiGalleryPost['id'], score = 1): Promise<void> {
+		return this.updateRankingOf('featuredGalleryPostsRanking', GALLERY_POSTS_RANKING_WINDOW, galleryPostId, score);
+	}
+
+	@bindThis
+	public updateInChannelNotesRanking(channelId: MiNote['channelId'], noteId: MiNote['id'], score = 1): Promise<void> {
+		return this.updateRankingOf(`featuredInChannelNotesRanking:${channelId}`, GLOBAL_NOTES_RANKING_WINDOW, noteId, score);
+	}
+
+	@bindThis
+	public updatePerUserNotesRanking(userId: MiUser['id'], noteId: MiNote['id'], score = 1): Promise<void> {
+		return this.updateRankingOf(`featuredPerUserNotesRanking:${userId}`, PER_USER_NOTES_RANKING_WINDOW, noteId, score);
+	}
+
+	@bindThis
+	public updateHashtagsRanking(hashtag: string, score = 1): Promise<void> {
+		return this.updateRankingOf('featuredHashtagsRanking', HASHTAG_RANKING_WINDOW, hashtag, score);
+	}
+
+	@bindThis
+	public getGlobalNotesRanking(threshold: number): Promise<MiNote['id'][]> {
+		return this.getRankingOf('featuredGlobalNotesRanking', GLOBAL_NOTES_RANKING_WINDOW, threshold);
+	}
+
+	@bindThis
+	public getGalleryPostsRanking(threshold: number): Promise<MiGalleryPost['id'][]> {
+		return this.getRankingOf('featuredGalleryPostsRanking', GALLERY_POSTS_RANKING_WINDOW, threshold);
+	}
+
+	@bindThis
+	public getInChannelNotesRanking(channelId: MiNote['channelId'], threshold: number): Promise<MiNote['id'][]> {
+		return this.getRankingOf(`featuredInChannelNotesRanking:${channelId}`, GLOBAL_NOTES_RANKING_WINDOW, threshold);
+	}
+
+	@bindThis
+	public getPerUserNotesRanking(userId: MiUser['id'], threshold: number): Promise<MiNote['id'][]> {
+		return this.getRankingOf(`featuredPerUserNotesRanking:${userId}`, PER_USER_NOTES_RANKING_WINDOW, threshold);
+	}
+
+	@bindThis
+	public getHashtagsRanking(threshold: number): Promise<string[]> {
+		return this.getRankingOf('featuredHashtagsRanking', HASHTAG_RANKING_WINDOW, threshold);
+	}
+
+	@bindThis
+	public removeHashtagsFromRanking(hashtag: string): Promise<void> {
+		return this.removeFromRanking('featuredHashtagsRanking', HASHTAG_RANKING_WINDOW, hashtag);
 	}
 
 	@bindThis
@@ -86,60 +141,5 @@ export class FeaturedService {
 		redisPipeline.zrem(`${name}:${currentWindow}`, element);
 		redisPipeline.zrem(`${name}:${previousWindow}`, element);
 		await redisPipeline.exec();
-	}
-
-	@bindThis
-	public updateGlobalNotesRanking(noteId: MiNote['id'], score = 1): Promise<void> {
-		return this.updateRankingOf('featuredGlobalNotesRanking', GLOBAL_NOTES_RANKING_WINDOW, noteId, score);
-	}
-
-	@bindThis
-	public updateGalleryPostsRanking(galleryPostId: MiGalleryPost['id'], score = 1): Promise<void> {
-		return this.updateRankingOf('featuredGalleryPostsRanking', GALLERY_POSTS_RANKING_WINDOW, galleryPostId, score);
-	}
-
-	@bindThis
-	public updateInChannelNotesRanking(channelId: MiNote['channelId'], noteId: MiNote['id'], score = 1): Promise<void> {
-		return this.updateRankingOf(`featuredInChannelNotesRanking:${channelId}`, GLOBAL_NOTES_RANKING_WINDOW, noteId, score);
-	}
-
-	@bindThis
-	public updatePerUserNotesRanking(userId: MiUser['id'], noteId: MiNote['id'], score = 1): Promise<void> {
-		return this.updateRankingOf(`featuredPerUserNotesRanking:${userId}`, PER_USER_NOTES_RANKING_WINDOW, noteId, score);
-	}
-
-	@bindThis
-	public updateHashtagsRanking(hashtag: string, score = 1): Promise<void> {
-		return this.updateRankingOf('featuredHashtagsRanking', HASHTAG_RANKING_WINDOW, hashtag, score);
-	}
-
-	@bindThis
-	public getGlobalNotesRanking(threshold: number): Promise<MiNote['id'][]> {
-		return this.getRankingOf('featuredGlobalNotesRanking', GLOBAL_NOTES_RANKING_WINDOW, threshold);
-	}
-
-	@bindThis
-	public getGalleryPostsRanking(threshold: number): Promise<MiGalleryPost['id'][]> {
-		return this.getRankingOf('featuredGalleryPostsRanking', GALLERY_POSTS_RANKING_WINDOW, threshold);
-	}
-
-	@bindThis
-	public getInChannelNotesRanking(channelId: MiNote['channelId'], threshold: number): Promise<MiNote['id'][]> {
-		return this.getRankingOf(`featuredInChannelNotesRanking:${channelId}`, GLOBAL_NOTES_RANKING_WINDOW, threshold);
-	}
-
-	@bindThis
-	public getPerUserNotesRanking(userId: MiUser['id'], threshold: number): Promise<MiNote['id'][]> {
-		return this.getRankingOf(`featuredPerUserNotesRanking:${userId}`, PER_USER_NOTES_RANKING_WINDOW, threshold);
-	}
-
-	@bindThis
-	public getHashtagsRanking(threshold: number): Promise<string[]> {
-		return this.getRankingOf('featuredHashtagsRanking', HASHTAG_RANKING_WINDOW, threshold);
-	}
-
-	@bindThis
-	public removeHashtagsFromRanking(hashtag: string): Promise<void> {
-		return this.removeFromRanking('featuredHashtagsRanking', HASHTAG_RANKING_WINDOW, hashtag);
 	}
 }

@@ -4,18 +4,18 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<MkSpacer :contentMax="700">
-		<div>
-			<MkPagination v-slot="{items}" ref="pagingComponent" :pagination="pagination" class="lists">
-				<MkA v-for="list in items" :key="list.id" class="_panel" :class="$style.list" :to="`/list/${ list.id }`">
-					<div>{{ list.name }}</div>
-					<MkAvatars :userIds="list.userIds"/>
-				</MkA>
-			</MkPagination>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+	<MkStickyContainer>
+		<MkSpacer :contentMax="700">
+			<div>
+				<MkPagination ref="pagingComponent" v-slot="{items}" :pagination="pagination" class="lists">
+					<MkA v-for="list in items" :key="list.id" :class="$style.list" :to="`/list/${ list.id }`" class="_panel">
+						<div>{{ list.name }}</div>
+						<MkAvatars :userIds="list.userIds"/>
+					</MkA>
+				</MkPagination>
+			</div>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>

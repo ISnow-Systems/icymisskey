@@ -4,52 +4,52 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<Transition
-	:name="transitionName"
-	:enterActiveClass="normalizeClass({
+	<Transition
+		:duration="transitionDuration"
+		:enterActiveClass="normalizeClass({
 		[$style.transition_modalDrawer_enterActive]: transitionName === 'modal-drawer',
 		[$style.transition_modalPopup_enterActive]: transitionName === 'modal-popup',
 		[$style.transition_modal_enterActive]: transitionName === 'modal',
 		[$style.transition_send_enterActive]: transitionName === 'send',
 	})"
-	:leaveActiveClass="normalizeClass({
-		[$style.transition_modalDrawer_leaveActive]: transitionName === 'modal-drawer',
-		[$style.transition_modalPopup_leaveActive]: transitionName === 'modal-popup',
-		[$style.transition_modal_leaveActive]: transitionName === 'modal',
-		[$style.transition_send_leaveActive]: transitionName === 'send',
-	})"
-	:enterFromClass="normalizeClass({
+		:enterFromClass="normalizeClass({
 		[$style.transition_modalDrawer_enterFrom]: transitionName === 'modal-drawer',
 		[$style.transition_modalPopup_enterFrom]: transitionName === 'modal-popup',
 		[$style.transition_modal_enterFrom]: transitionName === 'modal',
 		[$style.transition_send_enterFrom]: transitionName === 'send',
 	})"
-	:leaveToClass="normalizeClass({
+		:leaveActiveClass="normalizeClass({
+		[$style.transition_modalDrawer_leaveActive]: transitionName === 'modal-drawer',
+		[$style.transition_modalPopup_leaveActive]: transitionName === 'modal-popup',
+		[$style.transition_modal_leaveActive]: transitionName === 'modal',
+		[$style.transition_send_leaveActive]: transitionName === 'send',
+	})"
+		:leaveToClass="normalizeClass({
 		[$style.transition_modalDrawer_leaveTo]: transitionName === 'modal-drawer',
 		[$style.transition_modalPopup_leaveTo]: transitionName === 'modal-popup',
 		[$style.transition_modal_leaveTo]: transitionName === 'modal',
 		[$style.transition_send_leaveTo]: transitionName === 'send',
 	})"
-	:duration="transitionDuration" appear @afterLeave="onClosed" @enter="emit('opening')" @afterEnter="onOpened"
->
-	<div v-show="manualShowing != null ? manualShowing : showing" ref="modalRootEl" v-hotkey.global="keymap" :class="[$style.root, { [$style.drawer]: type === 'drawer', [$style.dialog]: type === 'dialog', [$style.popup]: type === 'popup' }]" :style="{ zIndex, pointerEvents: (manualShowing != null ? manualShowing : showing) ? 'auto' : 'none', '--transformOrigin': transformOrigin }">
-		<div data-cy-bg :data-cy-transparent="isEnableBgTransparent" class="_modalBg" :class="[$style.bg, { [$style.bgTransparent]: isEnableBgTransparent }]" :style="{ zIndex }" @click="onBgClick" @mousedown="onBgClick" @contextmenu.prevent.stop="() => {}"></div>
-		<div ref="content" :class="[$style.content, { [$style.fixed]: fixed }]" :style="{ zIndex }" @click.self="onBgClick">
-			<slot :max-height="maxHeight" :type="type"></slot>
+		:name="transitionName" appear @afterEnter="onOpened" @afterLeave="onClosed" @enter="emit('opening')"
+	>
+		<div v-show="manualShowing != null ? manualShowing : showing" ref="modalRootEl" v-hotkey.global="keymap" :class="[$style.root, { [$style.drawer]: type === 'drawer', [$style.dialog]: type === 'dialog', [$style.popup]: type === 'popup' }]" :style="{ zIndex, pointerEvents: (manualShowing != null ? manualShowing : showing) ? 'auto' : 'none', '--transformOrigin': transformOrigin }">
+			<div :class="[$style.bg, { [$style.bgTransparent]: isEnableBgTransparent }]" :data-cy-transparent="isEnableBgTransparent" :style="{ zIndex }" class="_modalBg" data-cy-bg @click="onBgClick" @mousedown="onBgClick" @contextmenu.prevent.stop="() => {}"></div>
+			<div ref="content" :class="[$style.content, { [$style.fixed]: fixed }]" :style="{ zIndex }" @click.self="onBgClick">
+				<slot :max-height="maxHeight" :type="type"></slot>
+			</div>
 		</div>
-	</div>
-</Transition>
+	</Transition>
 </template>
 
 <script lang="ts" setup>
-import { nextTick, normalizeClass, onMounted, onUnmounted, provide, watch, ref, shallowRef, computed } from 'vue';
+import {nextTick, normalizeClass, onMounted, onUnmounted, provide, watch, ref, shallowRef, computed} from 'vue';
 import * as os from '@/os.js';
-import { isTouchUsing } from '@/scripts/touch.js';
-import { defaultStore } from '@/store.js';
-import { deviceKind } from '@/scripts/device-kind.js';
-import type { Keymap } from '@/scripts/hotkey.js';
-import { focusTrap } from '@/scripts/focus-trap.js';
-import { focusParent } from '@/scripts/focus.js';
+import {isTouchUsing} from '@/scripts/touch.js';
+import {defaultStore} from '@/store.js';
+import {deviceKind} from '@/scripts/device-kind.js';
+import type {Keymap} from '@/scripts/hotkey.js';
+import {focusTrap} from '@/scripts/focus-trap.js';
+import {focusParent} from '@/scripts/focus.js';
 
 function getFixedContainer(el: Element | null): Element | null {
 	if (el == null || el.tagName === 'BODY') return null;
@@ -76,7 +76,7 @@ const props = withDefaults(defineProps<{
 }>(), {
 	manualShowing: null,
 	src: null,
-	anchor: () => ({ x: 'center', y: 'bottom' }),
+	anchor: () => ({x: 'center', y: 'bottom'}),
 	preferType: 'auto',
 	zPriority: 'low',
 	noOverlap: true,
@@ -117,26 +117,26 @@ const type = computed<ModalTypes>(() => {
 });
 const isEnableBgTransparent = computed(() => props.transparentBg && (type.value === 'popup'));
 const transitionName = computed((() =>
-	defaultStore.state.animation
-		? useSendAnime.value
-			? 'send'
-			: type.value === 'drawer'
-				? 'modal-drawer'
-				: type.value === 'popup'
-					? 'modal-popup'
-					: 'modal'
-		: ''
+		defaultStore.state.animation
+			? useSendAnime.value
+				? 'send'
+				: type.value === 'drawer'
+					? 'modal-drawer'
+					: type.value === 'popup'
+						? 'modal-popup'
+						: 'modal'
+			: ''
 ));
 const transitionDuration = computed((() =>
-	transitionName.value === 'send'
-		? 400
-		: transitionName.value === 'modal-popup'
-			? 100
-			: transitionName.value === 'modal'
-				? 200
-				: transitionName.value === 'modal-drawer'
+		transitionName.value === 'send'
+			? 400
+			: transitionName.value === 'modal-popup'
+				? 100
+				: transitionName.value === 'modal'
 					? 200
-					: 0
+					: transitionName.value === 'modal-drawer'
+						? 200
+						: 0
 ));
 
 let releaseFocusTrap: (() => void) | null = null;
@@ -302,8 +302,8 @@ const onOpened = () => {
 				window.setTimeout(() => {
 					contentClicking = false;
 				}, 100);
-			}, { passive: true, once: true });
-		}, { passive: true });
+			}, {passive: true, once: true});
+		}, {passive: true});
 	});
 };
 
@@ -326,12 +326,12 @@ onMounted(() => {
 		await nextTick();
 
 		align();
-	}, { immediate: true });
+	}, {immediate: true});
 
 	watch([showing, () => props.manualShowing], ([showing, manualShowing]) => {
 		if (manualShowing === true || (manualShowing == null && showing === true)) {
 			if (modalRootEl.value != null) {
-				const { release } = focusTrap(modalRootEl.value, props.hasInteractionWithOtherFocusTrappedEls);
+				const {release} = focusTrap(modalRootEl.value, props.hasInteractionWithOtherFocusTrappedEls);
 
 				releaseFocusTrap = release;
 				modalRootEl.value.focus();
@@ -340,7 +340,7 @@ onMounted(() => {
 			releaseFocusTrap?.();
 			focusParent(props.returnFocusTo ?? props.src, true, false);
 		}
-	}, { immediate: true });
+	}, {immediate: true});
 
 	nextTick(() => {
 		alignObserver.observe(content.value!);
@@ -364,10 +364,11 @@ defineExpose({
 	}
 
 	> .content {
-    transform: translateY(0px);
-		transition: opacity 0.3s ease-in, transform 0.3s cubic-bezier(.5,-0.5,1,.5) !important;
+		transform: translateY(0px);
+		transition: opacity 0.3s ease-in, transform 0.3s cubic-bezier(.5, -0.5, 1, .5) !important;
 	}
 }
+
 .transition_send_enterFrom,
 .transition_send_leaveTo {
 	> .bg {
@@ -392,6 +393,7 @@ defineExpose({
 		transition: opacity 0.2s, transform 0.2s !important;
 	}
 }
+
 .transition_modal_enterFrom,
 .transition_modal_leaveTo {
 	> .bg {
@@ -417,6 +419,7 @@ defineExpose({
 		transition: opacity 0.1s cubic-bezier(0, 0, 0.2, 1), transform 0.1s cubic-bezier(0, 0, 0.2, 1) !important;
 	}
 }
+
 .transition_modalPopup_enterFrom,
 .transition_modalPopup_leaveTo {
 	> .bg {
@@ -437,18 +440,20 @@ defineExpose({
 	}
 
 	> .content {
-		transition: transform 0.2s cubic-bezier(0,.5,0,1) !important;
+		transition: transform 0.2s cubic-bezier(0, .5, 0, 1) !important;
 	}
 }
+
 .transition_modalDrawer_leaveActive {
 	> .bg {
 		transition: opacity 0.2s !important;
 	}
 
 	> .content {
-		transition: transform 0.2s cubic-bezier(0,.5,0,1) !important;
+		transition: transform 0.2s cubic-bezier(0, .5, 0, 1) !important;
 	}
 }
+
 .transition_modalDrawer_enterFrom,
 .transition_modalDrawer_leaveTo {
 	> .bg {

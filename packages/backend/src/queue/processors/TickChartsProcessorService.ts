@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import type Logger from '@/logger.js';
 import FederationChart from '@/core/chart/charts/federation.js';
 import NotesChart from '@/core/chart/charts/notes.js';
@@ -17,8 +17,8 @@ import PerUserReactionsChart from '@/core/chart/charts/per-user-reactions.js';
 import PerUserFollowingChart from '@/core/chart/charts/per-user-following.js';
 import PerUserDriveChart from '@/core/chart/charts/per-user-drive.js';
 import ApRequestChart from '@/core/chart/charts/ap-request.js';
-import { bindThis } from '@/decorators.js';
-import { QueueLoggerService } from '../QueueLoggerService.js';
+import {bindThis} from '@/decorators.js';
+import {QueueLoggerService} from '../QueueLoggerService.js';
 import type * as Bull from 'bullmq';
 
 @Injectable()
@@ -38,7 +38,6 @@ export class TickChartsProcessorService {
 		private perUserFollowingChart: PerUserFollowingChart,
 		private perUserDriveChart: PerUserDriveChart,
 		private apRequestChart: ApRequestChart,
-
 		private queueLoggerService: QueueLoggerService,
 	) {
 		this.logger = this.queueLoggerService.logger.createSubLogger('tick-charts');

@@ -3,19 +3,19 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { describe, test, assert, afterEach } from 'vitest';
-import { render, cleanup, type RenderResult } from '@testing-library/vue';
-import { defaultStoreState } from './init.js';
-import { getEmojiName } from '@@/js/emojilist.js';
-import { components } from '@/components/index.js';
-import { directives } from '@/directives/index.js';
+import {describe, test, assert, afterEach} from 'vitest';
+import {render, cleanup, type RenderResult} from '@testing-library/vue';
+import {defaultStoreState} from './init.js';
+import {getEmojiName} from '@@/js/emojilist.js';
+import {components} from '@/components/index.js';
+import {directives} from '@/directives/index.js';
 import MkEmoji from '@/components/global/MkEmoji.vue';
 
 describe('Emoji', () => {
 	const renderEmoji = (emoji: string): RenderResult => {
 		return render(MkEmoji, {
-			props: { emoji },
-			global: { directives, components },
+			props: {emoji},
+			global: {directives, components},
 		});
 	};
 

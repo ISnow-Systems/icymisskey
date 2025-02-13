@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Entity, PrimaryColumn, Index, Column } from 'typeorm';
-import { id } from './util/id.js';
-import type { MiUser } from './User.js';
+import {Entity, PrimaryColumn, Index, Column} from 'typeorm';
+import {id} from './util/id.js';
+import type {MiUser} from './User.js';
 
 @Entity('retention_aggregation')
 export class MiRetentionAggregation {
@@ -23,7 +23,7 @@ export class MiRetentionAggregation {
 	})
 	public updatedAt: Date;
 
-	@Index({ unique: true })
+	@Index({unique: true})
 	@Column('varchar', {
 		length: 512, nullable: false,
 	})
@@ -35,8 +35,7 @@ export class MiRetentionAggregation {
 	})
 	public userIds: MiUser['id'][];
 
-	@Column('integer', {
-	})
+	@Column('integer', {})
 	public usersCount: number;
 
 	@Column('jsonb', {

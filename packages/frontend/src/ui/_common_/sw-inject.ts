@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { post } from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { $i, login } from '@/account.js';
-import { getAccountFromId } from '@/scripts/get-account-from-id.js';
-import { deepClone } from '@/scripts/clone.js';
-import { mainRouter } from '@/router/main.js';
+import {post} from '@/os.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {$i, login} from '@/account.js';
+import {getAccountFromId} from '@/scripts/get-account-from-id.js';
+import {deepClone} from '@/scripts/clone.js';
+import {mainRouter} from '@/router/main.js';
 
 export function swInject() {
 	navigator.serviceWorker.addEventListener('message', async ev => {
@@ -31,16 +31,16 @@ export function swInject() {
 				// プッシュ通知から来たreply,renoteはtruncateBodyが通されているため、
 				// 完全なノートを取得しなおす
 				if (props.reply) {
-					props.reply = await misskeyApi('notes/show', { noteId: props.reply.id });
+					props.reply = await misskeyApi('notes/show', {noteId: props.reply.id});
 				}
 				if (props.renote) {
-					props.renote = await misskeyApi('notes/show', { noteId: props.renote.id });
+					props.renote = await misskeyApi('notes/show', {noteId: props.renote.id});
 				}
 				return post(props);
 			}
 			case 'push':
 				if (mainRouter.currentRoute.value.path === ev.data.url) {
-					return window.scroll({ top: 0, behavior: 'smooth' });
+					return window.scroll({top: 0, behavior: 'smooth'});
 				}
 				return mainRouter.push(ev.data.url);
 			default:

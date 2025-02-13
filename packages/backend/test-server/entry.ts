@@ -1,12 +1,12 @@
-import { portToPid } from 'pid-port';
+import {portToPid} from 'pid-port';
 import fkill from 'fkill';
 import Fastify from 'fastify';
-import { NestFactory } from '@nestjs/core';
-import { MainModule } from '@/MainModule.js';
-import { ServerService } from '@/server/ServerService.js';
-import { loadConfig } from '@/config.js';
-import { NestLogger } from '@/NestLogger.js';
-import { INestApplicationContext } from '@nestjs/common';
+import {NestFactory} from '@nestjs/core';
+import {MainModule} from '@/MainModule.js';
+import {ServerService} from '@/server/ServerService.js';
+import {loadConfig} from '@/config.js';
+import {NestLogger} from '@/NestLogger.js';
+import {INestApplicationContext} from '@nestjs/common';
 
 const config = loadConfig();
 const originEnv = JSON.stringify(process.env);
@@ -46,7 +46,7 @@ async function killTestServer() {
 	try {
 		const pid = await portToPid(config.port);
 		if (pid) {
-			await fkill(pid, { force: true });
+			await fkill(pid, {force: true});
 		}
 	} catch {
 		// NOP;
@@ -64,13 +64,13 @@ async function startControllerEndpoints(port = config.port + 1000) {
 		console.log(req.body);
 		const key = req.body['key'];
 		if (!key) {
-			res.code(400).send({ success: false });
+			res.code(400).send({success: false});
 			return;
 		}
 
 		process.env[key] = req.body['value'];
 
-		res.code(200).send({ success: true });
+		res.code(200).send({success: true});
 	});
 
 	fastify.post<{ Body: { key?: string, value?: string } }>('/env-reset', async (req, res) => {
@@ -89,10 +89,10 @@ async function startControllerEndpoints(port = config.port + 1000) {
 		serverService = app.get(ServerService);
 		await serverService.launch();
 
-		res.code(200).send({ success: true });
+		res.code(200).send({success: true});
 	});
 
-	await fastify.listen({ port: port, host: 'localhost' });
+	await fastify.listen({port: port, host: 'localhost'});
 }
 
 export default launch;

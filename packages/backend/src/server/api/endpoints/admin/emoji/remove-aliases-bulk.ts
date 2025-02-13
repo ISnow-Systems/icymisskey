@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { CustomEmojiService } from '@/core/CustomEmojiService.js';
+import {Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {CustomEmojiService} from '@/core/CustomEmojiService.js';
 
 export const meta = {
 	tags: ['admin'],
@@ -18,12 +18,16 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		ids: { type: 'array', items: {
-			type: 'string', format: 'misskey:id',
-		} },
-		aliases: { type: 'array', items: {
-			type: 'string',
-		} },
+		ids: {
+			type: 'array', items: {
+				type: 'string', format: 'misskey:id',
+			}
+		},
+		aliases: {
+			type: 'array', items: {
+				type: 'string',
+			}
+		},
 	},
 	required: ['ids', 'aliases'],
 } as const;

@@ -24,8 +24,12 @@
 		"verbatimModuleSyntax": true,
 		"baseUrl": ".",
 		"paths": {
-			"@/*": ["./src/*"],
-			"@@/*": ["../frontend-shared/*"]
+			"@/*": [
+				"./src/*"
+			],
+			"@@/*": [
+				"../frontend-shared/*"
+			]
 		},
 		"typeRoots": [
 			"./@types",

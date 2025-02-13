@@ -4,46 +4,48 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="_gaps_m">
-	<MkSelect v-model="selectedThemeId">
-		<template #label>{{ i18n.ts.theme }}</template>
-		<optgroup :label="i18n.ts._theme.installedThemes">
-			<option v-for="x in installedThemes" :key="x.id" :value="x.id">{{ x.name }}</option>
-		</optgroup>
-		<optgroup :label="i18n.ts._theme.builtinThemes">
-			<option v-for="x in builtinThemes" :key="x.id" :value="x.id">{{ x.name }}</option>
-		</optgroup>
-	</MkSelect>
-	<template v-if="selectedTheme">
-		<MkInput readonly :modelValue="selectedTheme.author">
-			<template #label>{{ i18n.ts.author }}</template>
-		</MkInput>
-		<MkTextarea v-if="selectedTheme.desc" readonly :modelValue="selectedTheme.desc">
-			<template #label>{{ i18n.ts._theme.description }}</template>
-		</MkTextarea>
-		<MkTextarea readonly tall :modelValue="selectedThemeCode">
-			<template #label>{{ i18n.ts._theme.code }}</template>
-			<template #caption><button class="_textButton" @click="copyThemeCode()">{{ i18n.ts.copy }}</button></template>
-		</MkTextarea>
-		<MkButton v-if="!builtinThemes.some(t => t.id == selectedTheme.id)" danger @click="uninstall()"><i class="ti ti-trash"></i> {{ i18n.ts.uninstall }}</MkButton>
-	</template>
-</div>
+	<div class="_gaps_m">
+		<MkSelect v-model="selectedThemeId">
+			<template #label>{{ i18n.ts.theme }}</template>
+			<optgroup :label="i18n.ts._theme.installedThemes">
+				<option v-for="x in installedThemes" :key="x.id" :value="x.id">{{ x.name }}</option>
+			</optgroup>
+			<optgroup :label="i18n.ts._theme.builtinThemes">
+				<option v-for="x in builtinThemes" :key="x.id" :value="x.id">{{ x.name }}</option>
+			</optgroup>
+		</MkSelect>
+		<template v-if="selectedTheme">
+			<MkInput :modelValue="selectedTheme.author" readonly>
+				<template #label>{{ i18n.ts.author }}</template>
+			</MkInput>
+			<MkTextarea v-if="selectedTheme.desc" :modelValue="selectedTheme.desc" readonly>
+				<template #label>{{ i18n.ts._theme.description }}</template>
+			</MkTextarea>
+			<MkTextarea :modelValue="selectedThemeCode" readonly tall>
+				<template #label>{{ i18n.ts._theme.code }}</template>
+				<template #caption>
+					<button class="_textButton" @click="copyThemeCode()">{{ i18n.ts.copy }}</button>
+				</template>
+			</MkTextarea>
+			<MkButton v-if="!builtinThemes.some(t => t.id == selectedTheme.id)" danger @click="uninstall()"><i class="ti ti-trash"></i> {{ i18n.ts.uninstall }}</MkButton>
+		</template>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
+import {computed, ref} from 'vue';
 import JSON5 from 'json5';
 import MkTextarea from '@/components/MkTextarea.vue';
 import MkSelect from '@/components/MkSelect.vue';
 import MkInput from '@/components/MkInput.vue';
 import MkButton from '@/components/MkButton.vue';
-import { getBuiltinThemesRef } from '@/scripts/theme.js';
-import type { Theme } from '@/scripts/theme.js';
-import { copyToClipboard } from '@/scripts/copy-to-clipboard.js';
+import {getBuiltinThemesRef} from '@/scripts/theme.js';
+import type {Theme} from '@/scripts/theme.js';
+import {copyToClipboard} from '@/scripts/copy-to-clipboard.js';
 import * as os from '@/os.js';
-import { getThemes, removeTheme } from '@/theme-store.js';
-import { i18n } from '@/i18n.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
+import {getThemes, removeTheme} from '@/theme-store.js';
+import {i18n} from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
 
 const installedThemes = ref(getThemes());
 const builtinThemes = getBuiltinThemesRef();

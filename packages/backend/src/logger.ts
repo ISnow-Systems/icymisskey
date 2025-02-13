@@ -5,11 +5,11 @@
 
 import cluster from 'node:cluster';
 import chalk from 'chalk';
-import { default as convertColor } from 'color-convert';
-import { format as dateFormat } from 'date-fns';
-import { bindThis } from '@/decorators.js';
-import { envOption } from './env.js';
-import type { KEYWORD } from 'color-convert/conversions.js';
+import {default as convertColor} from 'color-convert';
+import {format as dateFormat} from 'date-fns';
+import {bindThis} from '@/decorators.js';
+import {envOption} from './env.js';
+import type {KEYWORD} from 'color-convert/conversions.js';
 
 type Context = {
 	name: string;
@@ -35,43 +35,6 @@ export default class Logger {
 		const logger = new Logger(context, color);
 		logger.parentLogger = this;
 		return logger;
-	}
-
-	@bindThis
-	private log(level: Level, message: string, data?: Record<string, any> | null, important = false, subContexts: Context[] = []): void {
-		if (envOption.quiet) return;
-
-		if (this.parentLogger) {
-			this.parentLogger.log(level, message, data, important, [this.context].concat(subContexts));
-			return;
-		}
-
-		const time = dateFormat(new Date(), 'HH:mm:ss');
-		const worker = cluster.isPrimary ? '*' : cluster.worker!.id;
-		const l =
-			level === 'error' ? important ? chalk.bgRed.white('ERR ') : chalk.red('ERR ') :
-			level === 'warning' ? chalk.yellow('WARN') :
-			level === 'success' ? important ? chalk.bgGreen.white('DONE') : chalk.green('DONE') :
-			level === 'debug' ? chalk.gray('VERB') :
-			level === 'info' ? chalk.blue('INFO') :
-			null;
-		const contexts = [this.context].concat(subContexts).map(d => d.color ? chalk.rgb(...convertColor.keyword.rgb(d.color))(d.name) : chalk.white(d.name));
-		const m =
-			level === 'error' ? chalk.red(message) :
-			level === 'warning' ? chalk.yellow(message) :
-			level === 'success' ? chalk.green(message) :
-			level === 'debug' ? chalk.gray(message) :
-			level === 'info' ? message :
-			null;
-
-		let log = `${l} ${worker}\t[${contexts.join(' ')}]\t${m}`;
-		if (envOption.withLogTime) log = chalk.gray(time) + ' ' + log;
-
-		const args: unknown[] = [important ? chalk.bold(log) : log];
-		if (data != null) {
-			args.push(data);
-		}
-		console.log(...args);
 	}
 
 	@bindThis
@@ -107,5 +70,42 @@ export default class Logger {
 	@bindThis
 	public info(message: string, data?: Record<string, any> | null, important = false): void { // それ以外
 		this.log('info', message, data, important);
+	}
+
+	@bindThis
+	private log(level: Level, message: string, data?: Record<string, any> | null, important = false, subContexts: Context[] = []): void {
+		if (envOption.quiet) return;
+
+		if (this.parentLogger) {
+			this.parentLogger.log(level, message, data, important, [this.context].concat(subContexts));
+			return;
+		}
+
+		const time = dateFormat(new Date(), 'HH:mm:ss');
+		const worker = cluster.isPrimary ? '*' : cluster.worker!.id;
+		const l =
+			level === 'error' ? important ? chalk.bgRed.white('ERR ') : chalk.red('ERR ') :
+				level === 'warning' ? chalk.yellow('WARN') :
+					level === 'success' ? important ? chalk.bgGreen.white('DONE') : chalk.green('DONE') :
+						level === 'debug' ? chalk.gray('VERB') :
+							level === 'info' ? chalk.blue('INFO') :
+								null;
+		const contexts = [this.context].concat(subContexts).map(d => d.color ? chalk.rgb(...convertColor.keyword.rgb(d.color))(d.name) : chalk.white(d.name));
+		const m =
+			level === 'error' ? chalk.red(message) :
+				level === 'warning' ? chalk.yellow(message) :
+					level === 'success' ? chalk.green(message) :
+						level === 'debug' ? chalk.gray(message) :
+							level === 'info' ? message :
+								null;
+
+		let log = `${l} ${worker}\t[${contexts.join(' ')}]\t${m}`;
+		if (envOption.withLogTime) log = chalk.gray(time) + ' ' + log;
+
+		const args: unknown[] = [important ? chalk.bold(log) : log];
+		if (data != null) {
+			args.push(data);
+		}
+		console.log(...args);
 	}
 }

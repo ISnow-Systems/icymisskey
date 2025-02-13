@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne } from 'typeorm';
-import { id } from './util/id.js';
-import { MiUser } from './User.js';
-import { MiPage } from './Page.js';
+import {PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne} from 'typeorm';
+import {id} from './util/id.js';
+import {MiUser} from './User.js';
+import {MiPage} from './Page.js';
 
 @Entity('page_like')
-@Index(['userId', 'pageId'], { unique: true })
+@Index(['userId', 'pageId'], {unique: true})
 export class MiPageLike {
 	@PrimaryColumn(id())
 	public id: string;

@@ -3,23 +3,23 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import ms from 'ms';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { MiNote } from '@/models/Note.js';
-import type { MiLocalUser, MiUser } from '@/models/User.js';
-import { isActor, isPost, getApId } from '@/core/activitypub/type.js';
-import type { SchemaType } from '@/misc/json-schema.js';
-import { ApResolverService } from '@/core/activitypub/ApResolverService.js';
-import { ApDbResolverService } from '@/core/activitypub/ApDbResolverService.js';
-import { ApPersonService } from '@/core/activitypub/models/ApPersonService.js';
-import { ApNoteService } from '@/core/activitypub/models/ApNoteService.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { UtilityService } from '@/core/UtilityService.js';
-import { bindThis } from '@/decorators.js';
-import { ApiError } from '../../error.js';
-import { IdentifiableError } from '@/misc/identifiable-error.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {MiNote} from '@/models/Note.js';
+import type {MiLocalUser, MiUser} from '@/models/User.js';
+import {isActor, isPost, getApId} from '@/core/activitypub/type.js';
+import type {SchemaType} from '@/misc/json-schema.js';
+import {ApResolverService} from '@/core/activitypub/ApResolverService.js';
+import {ApDbResolverService} from '@/core/activitypub/ApDbResolverService.js';
+import {ApPersonService} from '@/core/activitypub/models/ApPersonService.js';
+import {ApNoteService} from '@/core/activitypub/models/ApNoteService.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
+import {UtilityService} from '@/core/UtilityService.js';
+import {bindThis} from '@/decorators.js';
+import {ApiError} from '../../error.js';
+import {IdentifiableError} from '@/misc/identifiable-error.js';
 
 export const meta = {
 	tags: ['federation'],
@@ -105,7 +105,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		uri: { type: 'string' },
+		uri: {type: 'string'},
 	},
 	required: ['uri'],
 } as const;
@@ -211,11 +211,11 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		if (user != null) {
 			return {
 				type: 'User',
-				object: await this.userEntityService.pack(user, me, { schema: 'UserDetailedNotMe' }),
+				object: await this.userEntityService.pack(user, me, {schema: 'UserDetailedNotMe'}),
 			};
 		} else if (note != null) {
 			try {
-				const object = await this.noteEntityService.pack(note, me, { detail: true });
+				const object = await this.noteEntityService.pack(note, me, {detail: true});
 
 				return {
 					type: 'Note',

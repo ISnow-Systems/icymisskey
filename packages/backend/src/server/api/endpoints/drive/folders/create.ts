@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import ms from 'ms';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { DriveFoldersRepository } from '@/models/_.js';
-import { IdService } from '@/core/IdService.js';
-import { DriveFolderEntityService } from '@/core/entities/DriveFolderEntityService.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../../error.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {DriveFoldersRepository} from '@/models/_.js';
+import {IdService} from '@/core/IdService.js';
+import {DriveFolderEntityService} from '@/core/entities/DriveFolderEntityService.js';
+import {GlobalEventService} from '@/core/GlobalEventService.js';
+import {DI} from '@/di-symbols.js';
+import {ApiError} from '../../../error.js';
 
 export const meta = {
 	tags: ['drive'],
@@ -43,8 +43,8 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		name: { type: 'string', default: 'Untitled', maxLength: 200 },
-		parentId: { type: 'string', format: 'misskey:id', nullable: true },
+		name: {type: 'string', default: 'Untitled', maxLength: 200},
+		parentId: {type: 'string', format: 'misskey:id', nullable: true},
 	},
 	required: [],
 } as const;
@@ -54,7 +54,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.driveFoldersRepository)
 		private driveFoldersRepository: DriveFoldersRepository,
-
 		private driveFolderEntityService: DriveFolderEntityService,
 		private idService: IdService,
 		private globalEventService: GlobalEventService,

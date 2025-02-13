@@ -3,19 +3,19 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import * as Redis from 'ioredis';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { NotesRepository, AntennasRepository } from '@/models/_.js';
-import { QueryService } from '@/core/QueryService.js';
-import { NoteReadService } from '@/core/NoteReadService.js';
-import { DI } from '@/di-symbols.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { IdService } from '@/core/IdService.js';
-import { FanoutTimelineService } from '@/core/FanoutTimelineService.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { trackPromise } from '@/misc/promise-tracker.js';
-import { ApiError } from '../../error.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {NotesRepository, AntennasRepository} from '@/models/_.js';
+import {QueryService} from '@/core/QueryService.js';
+import {NoteReadService} from '@/core/NoteReadService.js';
+import {DI} from '@/di-symbols.js';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
+import {IdService} from '@/core/IdService.js';
+import {FanoutTimelineService} from '@/core/FanoutTimelineService.js';
+import {GlobalEventService} from '@/core/GlobalEventService.js';
+import {trackPromise} from '@/misc/promise-tracker.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['antennas', 'account', 'notes'],
@@ -46,12 +46,12 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		antennaId: { type: 'string', format: 'misskey:id' },
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
-		sinceDate: { type: 'integer' },
-		untilDate: { type: 'integer' },
+		antennaId: {type: 'string', format: 'misskey:id'},
+		limit: {type: 'integer', minimum: 1, maximum: 100, default: 10},
+		sinceId: {type: 'string', format: 'misskey:id'},
+		untilId: {type: 'string', format: 'misskey:id'},
+		sinceDate: {type: 'integer'},
+		untilDate: {type: 'integer'},
 	},
 	required: ['antennaId'],
 } as const;
@@ -61,13 +61,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.redisForTimelines)
 		private redisForTimelines: Redis.Redis,
-
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		@Inject(DI.antennasRepository)
 		private antennasRepository: AntennasRepository,
-
 		private idService: IdService,
 		private noteEntityService: NoteEntityService,
 		private queryService: QueryService,
@@ -106,7 +103,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			}
 
 			const query = this.notesRepository.createQueryBuilder('note')
-				.where('note.id IN (:...noteIds)', { noteIds: noteIds })
+				.where('note.id IN (:...noteIds)', {noteIds: noteIds})
 				.innerJoinAndSelect('note.user', 'user')
 				.leftJoinAndSelect('note.reply', 'reply')
 				.leftJoinAndSelect('note.renote', 'renote')

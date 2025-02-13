@@ -4,13 +4,13 @@
  */
 
 import * as crypto from 'node:crypto';
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { AuthSessionsRepository, AppsRepository, AccessTokensRepository } from '@/models/_.js';
-import { IdService } from '@/core/IdService.js';
-import { secureRndstr } from '@/misc/secure-rndstr.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {AuthSessionsRepository, AppsRepository, AccessTokensRepository} from '@/models/_.js';
+import {IdService} from '@/core/IdService.js';
+import {secureRndstr} from '@/misc/secure-rndstr.js';
+import {DI} from '@/di-symbols.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['auth'],
@@ -31,7 +31,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		token: { type: 'string' },
+		token: {type: 'string'},
 	},
 	required: ['token'],
 } as const;
@@ -41,19 +41,16 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.appsRepository)
 		private appsRepository: AppsRepository,
-
 		@Inject(DI.authSessionsRepository)
 		private authSessionsRepository: AuthSessionsRepository,
-
 		@Inject(DI.accessTokensRepository)
 		private accessTokensRepository: AccessTokensRepository,
-
 		private idService: IdService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			// Fetch token
 			const session = await this.authSessionsRepository
-				.findOneBy({ token: ps.token });
+				.findOneBy({token: ps.token});
 
 			if (session == null) {
 				throw new ApiError(meta.errors.noSuchSession);
@@ -70,7 +67,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			});
 
 			if (!exist) {
-				const app = await this.appsRepository.findOneByOrFail({ id: session.appId });
+				const app = await this.appsRepository.findOneByOrFail({id: session.appId});
 
 				// Generate Hash
 				const sha256 = crypto.createHash('sha256');

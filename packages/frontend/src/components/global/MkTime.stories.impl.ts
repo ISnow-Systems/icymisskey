@@ -4,11 +4,12 @@
  */
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { expect } from '@storybook/test';
-import type { StoryObj } from '@storybook/vue3';
+import {expect} from '@storybook/test';
+import type {StoryObj} from '@storybook/vue3';
 import MkTime from './MkTime.vue';
-import { i18n } from '@/i18n.js';
-import { dateTimeFormat } from '@@/js/intl-const.js';
+import {i18n} from '@/i18n.js';
+import {dateTimeFormat} from '@@/js/intl-const.js';
+
 const now = new Date('2023-04-01T00:00:00.000Z');
 const future = new Date('2024-04-01T00:00:00.000Z');
 const oneHourAgo = new Date(now.getTime() - 3600000);
@@ -37,19 +38,18 @@ export const Empty = {
 			template: '<MkTime v-bind="props" />',
 		};
 	},
-	async play({ canvasElement }) {
+	async play({canvasElement}) {
 		await expect(canvasElement).toHaveTextContent(i18n.ts._ago.invalid);
 	},
-	args: {
-	},
+	args: {},
 	parameters: {
 		layout: 'centered',
 	},
 } satisfies StoryObj<typeof MkTime>;
 export const RelativeFuture = {
 	...Empty,
-	async play({ canvasElement }) {
-		await expect(canvasElement).toHaveTextContent(i18n.tsx._timeIn.years({ n: 1 })); // n (1) = future (2024) - now (2023)
+	async play({canvasElement}) {
+		await expect(canvasElement).toHaveTextContent(i18n.tsx._timeIn.years({n: 1})); // n (1) = future (2024) - now (2023)
 	},
 	args: {
 		...Empty.args,
@@ -59,7 +59,7 @@ export const RelativeFuture = {
 } satisfies StoryObj<typeof MkTime>;
 export const AbsoluteFuture = {
 	...Empty,
-	async play({ canvasElement, args }) {
+	async play({canvasElement, args}) {
 		await expect(canvasElement).toHaveTextContent(dateTimeFormat.format(typeof args.time === 'string' ? new Date(args.time) : args.time ?? undefined));
 	},
 	args: {
@@ -84,7 +84,7 @@ export const DetailFuture = {
 } satisfies StoryObj<typeof MkTime>;
 export const RelativeNow = {
 	...Empty,
-	async play({ canvasElement }) {
+	async play({canvasElement}) {
 		await expect(canvasElement).toHaveTextContent(i18n.ts._ago.justNow);
 	},
 	args: {
@@ -96,7 +96,7 @@ export const RelativeNow = {
 } satisfies StoryObj<typeof MkTime>;
 export const AbsoluteNow = {
 	...Empty,
-	async play({ canvasElement, args }) {
+	async play({canvasElement, args}) {
 		await expect(canvasElement).toHaveTextContent(dateTimeFormat.format(typeof args.time === 'string' ? new Date(args.time) : args.time ?? undefined));
 	},
 	args: {
@@ -123,8 +123,8 @@ export const DetailNow = {
 } satisfies StoryObj<typeof MkTime>;
 export const RelativeOneHourAgo = {
 	...Empty,
-	async play({ canvasElement }) {
-		await expect(canvasElement).toHaveTextContent(i18n.tsx._ago.hoursAgo({ n: 1 }));
+	async play({canvasElement}) {
+		await expect(canvasElement).toHaveTextContent(i18n.tsx._ago.hoursAgo({n: 1}));
 	},
 	args: {
 		...Empty.args,
@@ -135,7 +135,7 @@ export const RelativeOneHourAgo = {
 } satisfies StoryObj<typeof MkTime>;
 export const AbsoluteOneHourAgo = {
 	...Empty,
-	async play({ canvasElement, args }) {
+	async play({canvasElement, args}) {
 		await expect(canvasElement).toHaveTextContent(dateTimeFormat.format(typeof args.time === 'string' ? new Date(args.time) : args.time ?? undefined));
 	},
 	args: {
@@ -162,8 +162,8 @@ export const DetailOneHourAgo = {
 } satisfies StoryObj<typeof MkTime>;
 export const RelativeOneDayAgo = {
 	...Empty,
-	async play({ canvasElement }) {
-		await expect(canvasElement).toHaveTextContent(i18n.tsx._ago.daysAgo({ n: 1 }));
+	async play({canvasElement}) {
+		await expect(canvasElement).toHaveTextContent(i18n.tsx._ago.daysAgo({n: 1}));
 	},
 	args: {
 		...Empty.args,
@@ -174,7 +174,7 @@ export const RelativeOneDayAgo = {
 } satisfies StoryObj<typeof MkTime>;
 export const AbsoluteOneDayAgo = {
 	...Empty,
-	async play({ canvasElement, args }) {
+	async play({canvasElement, args}) {
 		await expect(canvasElement).toHaveTextContent(dateTimeFormat.format(typeof args.time === 'string' ? new Date(args.time) : args.time ?? undefined));
 	},
 	args: {
@@ -201,8 +201,8 @@ export const DetailOneDayAgo = {
 } satisfies StoryObj<typeof MkTime>;
 export const RelativeOneWeekAgo = {
 	...Empty,
-	async play({ canvasElement }) {
-		await expect(canvasElement).toHaveTextContent(i18n.tsx._ago.weeksAgo({ n: 1 }));
+	async play({canvasElement}) {
+		await expect(canvasElement).toHaveTextContent(i18n.tsx._ago.weeksAgo({n: 1}));
 	},
 	args: {
 		...Empty.args,
@@ -213,7 +213,7 @@ export const RelativeOneWeekAgo = {
 } satisfies StoryObj<typeof MkTime>;
 export const AbsoluteOneWeekAgo = {
 	...Empty,
-	async play({ canvasElement, args }) {
+	async play({canvasElement, args}) {
 		await expect(canvasElement).toHaveTextContent(dateTimeFormat.format(typeof args.time === 'string' ? new Date(args.time) : args.time ?? undefined));
 	},
 	args: {
@@ -240,8 +240,8 @@ export const DetailOneWeekAgo = {
 } satisfies StoryObj<typeof MkTime>;
 export const RelativeOneMonthAgo = {
 	...Empty,
-	async play({ canvasElement }) {
-		await expect(canvasElement).toHaveTextContent(i18n.tsx._ago.monthsAgo({ n: 1 }));
+	async play({canvasElement}) {
+		await expect(canvasElement).toHaveTextContent(i18n.tsx._ago.monthsAgo({n: 1}));
 	},
 	args: {
 		...Empty.args,
@@ -252,7 +252,7 @@ export const RelativeOneMonthAgo = {
 } satisfies StoryObj<typeof MkTime>;
 export const AbsoluteOneMonthAgo = {
 	...Empty,
-	async play({ canvasElement, args }) {
+	async play({canvasElement, args}) {
 		await expect(canvasElement).toHaveTextContent(dateTimeFormat.format(typeof args.time === 'string' ? new Date(args.time) : args.time ?? undefined));
 	},
 	args: {
@@ -279,8 +279,8 @@ export const DetailOneMonthAgo = {
 } satisfies StoryObj<typeof MkTime>;
 export const RelativeOneYearAgo = {
 	...Empty,
-	async play({ canvasElement }) {
-		await expect(canvasElement).toHaveTextContent(i18n.tsx._ago.yearsAgo({ n: 1 }));
+	async play({canvasElement}) {
+		await expect(canvasElement).toHaveTextContent(i18n.tsx._ago.yearsAgo({n: 1}));
 	},
 	args: {
 		...Empty.args,
@@ -291,7 +291,7 @@ export const RelativeOneYearAgo = {
 } satisfies StoryObj<typeof MkTime>;
 export const AbsoluteOneYearAgo = {
 	...Empty,
-	async play({ canvasElement, args }) {
+	async play({canvasElement, args}) {
 		await expect(canvasElement).toHaveTextContent(dateTimeFormat.format(typeof args.time === 'string' ? new Date(args.time) : args.time ?? undefined));
 	},
 	args: {

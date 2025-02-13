@@ -3,48 +3,41 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import bcrypt from 'bcryptjs';
-import { IsNull } from 'typeorm';
-import { DI } from '@/di-symbols.js';
-import type { RegistrationTicketsRepository, UsedUsernamesRepository, UserPendingsRepository, UserProfilesRepository, UsersRepository, MiRegistrationTicket, MiMeta } from '@/models/_.js';
-import type { Config } from '@/config.js';
-import { CaptchaService } from '@/core/CaptchaService.js';
-import { IdService } from '@/core/IdService.js';
-import { SignupService } from '@/core/SignupService.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { EmailService } from '@/core/EmailService.js';
-import { MiLocalUser } from '@/models/User.js';
-import { FastifyReplyError } from '@/misc/fastify-reply-error.js';
-import { bindThis } from '@/decorators.js';
-import { L_CHARS, secureRndstr } from '@/misc/secure-rndstr.js';
-import { SigninService } from './SigninService.js';
-import type { FastifyRequest, FastifyReply } from 'fastify';
+import {IsNull} from 'typeorm';
+import {DI} from '@/di-symbols.js';
+import type {RegistrationTicketsRepository, UsedUsernamesRepository, UserPendingsRepository, UserProfilesRepository, UsersRepository, MiRegistrationTicket, MiMeta} from '@/models/_.js';
+import type {Config} from '@/config.js';
+import {CaptchaService} from '@/core/CaptchaService.js';
+import {IdService} from '@/core/IdService.js';
+import {SignupService} from '@/core/SignupService.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {EmailService} from '@/core/EmailService.js';
+import {MiLocalUser} from '@/models/User.js';
+import {FastifyReplyError} from '@/misc/fastify-reply-error.js';
+import {bindThis} from '@/decorators.js';
+import {L_CHARS, secureRndstr} from '@/misc/secure-rndstr.js';
+import {SigninService} from './SigninService.js';
+import type {FastifyRequest, FastifyReply} from 'fastify';
 
 @Injectable()
 export class SignupApiService {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.meta)
 		private meta: MiMeta,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
-
 		@Inject(DI.userPendingsRepository)
 		private userPendingsRepository: UserPendingsRepository,
-
 		@Inject(DI.usedUsernamesRepository)
 		private usedUsernamesRepository: UsedUsernamesRepository,
-
 		@Inject(DI.registrationTicketsRepository)
 		private registrationTicketsRepository: RegistrationTicketsRepository,
-
 		private userEntityService: UserEntityService,
 		private idService: IdService,
 		private captchaService: CaptchaService,
@@ -169,12 +162,12 @@ export class SignupApiService {
 		}
 
 		if (this.meta.emailRequiredForSignup) {
-			if (await this.usersRepository.exists({ where: { usernameLower: username.toLowerCase(), host: IsNull() } })) {
+			if (await this.usersRepository.exists({where: {usernameLower: username.toLowerCase(), host: IsNull()}})) {
 				throw new FastifyReplyError(400, 'DUPLICATED_USERNAME');
 			}
 
 			// Check deleted username duplication
-			if (await this.usedUsernamesRepository.exists({ where: { username: username.toLowerCase() } })) {
+			if (await this.usedUsernamesRepository.exists({where: {username: username.toLowerCase()}})) {
 				throw new FastifyReplyError(400, 'USED_USERNAME');
 			}
 
@@ -183,7 +176,7 @@ export class SignupApiService {
 				throw new FastifyReplyError(400, 'DENIED_USERNAME');
 			}
 
-			const code = secureRndstr(16, { chars: L_CHARS });
+			const code = secureRndstr(16, {chars: L_CHARS});
 
 			// Generate hash of password
 			const salt = await bcrypt.genSalt(8);
@@ -214,7 +207,7 @@ export class SignupApiService {
 			return;
 		} else {
 			try {
-				const { account, secret } = await this.signupService.signup({
+				const {account, secret} = await this.signupService.signup({
 					username, password, host,
 				});
 
@@ -248,13 +241,13 @@ export class SignupApiService {
 		const code = body['code'];
 
 		try {
-			const pendingUser = await this.userPendingsRepository.findOneByOrFail({ code });
+			const pendingUser = await this.userPendingsRepository.findOneByOrFail({code});
 
 			if (this.idService.parse(pendingUser.id).date.getTime() + (1000 * 60 * 30) < Date.now()) {
 				throw new FastifyReplyError(400, 'EXPIRED');
 			}
 
-			const { account, secret } = await this.signupService.signup({
+			const {account, secret} = await this.signupService.signup({
 				username: pendingUser.username,
 				passwordHash: pendingUser.password,
 			});
@@ -263,15 +256,15 @@ export class SignupApiService {
 				id: pendingUser.id,
 			});
 
-			const profile = await this.userProfilesRepository.findOneByOrFail({ userId: account.id });
+			const profile = await this.userProfilesRepository.findOneByOrFail({userId: account.id});
 
-			await this.userProfilesRepository.update({ userId: profile.userId }, {
+			await this.userProfilesRepository.update({userId: profile.userId}, {
 				email: pendingUser.email,
 				emailVerified: true,
 				emailVerifyCode: null,
 			});
 
-			const ticket = await this.registrationTicketsRepository.findOneBy({ pendingUserId: pendingUser.id });
+			const ticket = await this.registrationTicketsRepository.findOneBy({pendingUserId: pendingUser.id});
 			if (ticket) {
 				await this.registrationTicketsRepository.update(ticket.id, {
 					usedBy: account,

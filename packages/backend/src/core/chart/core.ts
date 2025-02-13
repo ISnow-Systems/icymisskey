@@ -10,12 +10,12 @@
  */
 
 import * as nestedProperty from 'nested-property';
-import { EntitySchema, LessThan, Between } from 'typeorm';
-import { dateUTC, isTimeSame, isTimeBefore, subtractTime, addTime } from '@/misc/prelude/time.js';
+import {EntitySchema, LessThan, Between} from 'typeorm';
+import {dateUTC, isTimeSame, isTimeBefore, subtractTime, addTime} from '@/misc/prelude/time.js';
 import type Logger from '@/logger.js';
-import { bindThis } from '@/decorators.js';
-import { MiRepository, miRepository } from '@/models/_.js';
-import type { DataSource, Repository } from 'typeorm';
+import {bindThis} from '@/decorators.js';
+import {MiRepository, miRepository} from '@/models/_.js';
+import type {DataSource, Repository} from 'typeorm';
 
 const COLUMN_PREFIX = '___' as const;
 const UNIQUE_TEMP_COLUMN_PREFIX = 'unique_temp___' as const;
@@ -136,10 +136,8 @@ export function getJsonSchema<S extends Schema>(schema: S): ToJsonSchema<Unflatt
  */
 // eslint-disable-next-line import/no-default-export
 export default abstract class Chart<T extends Schema> {
-	private logger: Logger;
-
 	public schema: T;
-
+	private logger: Logger;
 	private name: string;
 	private buffer: {
 		diff: Commit<T>;
@@ -150,16 +148,79 @@ export default abstract class Chart<T extends Schema> {
 	//private repositoryForDay: Repository<RawRecord<T>> & MiRepository<RawRecord<T>>;
 	private repositoryForHour: Repository<{ id: number; group?: string | null; date: number; }> & MiRepository<{ id: number; group?: string | null; date: number; }>;
 	private repositoryForDay: Repository<{ id: number; group?: string | null; date: number; }> & MiRepository<{ id: number; group?: string | null; date: number; }>;
+	private lock: (key: string) => Promise<() => void>;
 
-	/**
-	 * 1日に一回程度実行されれば良いような計算処理を入れる(主にCASCADE削除などアプリケーション側で感知できない変動によるズレの修正用)
-	 */
-	protected abstract tickMajor(group: string | null): Promise<Partial<KVs<T>>>;
+	constructor(
+		db: DataSource,
+		lock: (key: string) => Promise<() => void>,
+		logger: Logger,
+		name: string,
+		schema: T,
+		grouped = false,
+	) {
+		this.name = name;
+		this.schema = schema;
+		this.lock = lock;
+		this.logger = logger;
 
-	/**
-	 * 少なくとも最小スパン内に1回は実行されて欲しい計算処理を入れる
-	 */
-	protected abstract tickMinor(group: string | null): Promise<Partial<KVs<T>>>;
+		const {hour, day} = Chart.schemaToEntity(name, schema, grouped);
+		this.repositoryForHour = db.getRepository<{ id: number; group?: string | null; date: number; }>(hour).extend(miRepository as MiRepository<{ id: number; group?: string | null; date: number; }>);
+		this.repositoryForDay = db.getRepository<{ id: number; group?: string | null; date: number; }>(day).extend(miRepository as MiRepository<{ id: number; group?: string | null; date: number; }>);
+	}
+
+	public static schemaToEntity(name: string, schema: Schema, grouped = false): {
+		hour: EntitySchema,
+		day: EntitySchema,
+	} {
+		const createEntity = (span: 'hour' | 'day'): EntitySchema => new EntitySchema({
+			name:
+				span === 'hour' ? `ChartX${name}` :
+					span === 'day' ? `ChartDayX${name}` :
+						new Error('not happen') as never,
+			tableName:
+				span === 'hour' ? `__chart__${camelToSnake(name)}` :
+					span === 'day' ? `__chart_day__${camelToSnake(name)}` :
+						new Error('not happen') as never,
+			columns: {
+				id: {
+					type: 'integer',
+					primary: true,
+					generated: true,
+				},
+				date: {
+					type: 'integer',
+				},
+				...(grouped ? {
+					group: {
+						type: 'varchar',
+						length: 128,
+					},
+				} : {}),
+				...Chart.convertSchemaToColumnDefinitions(schema),
+			},
+			indices: [{
+				columns: grouped ? ['date', 'group'] : ['date'],
+				unique: true,
+			}],
+			uniques: [{
+				columns: grouped ? ['date', 'group'] : ['date'],
+			}],
+			relations: {
+				/* TODO
+					group: {
+						target: () => Foo,
+						type: 'many-to-one',
+						onDelete: 'CASCADE',
+					},
+				*/
+			},
+		});
+
+		return {
+			hour: createEntity('hour'),
+			day: createEntity('day'),
+		};
+	}
 
 	private static convertSchemaToColumnDefinitions(schema: Schema): Record<string, { type: string; array?: boolean; default?: any; }> {
 		const columns = {} as Record<string, { type: string; array?: boolean; default?: any; }>;
@@ -204,215 +265,6 @@ export default abstract class Chart<T extends Schema> {
 
 	private static getCurrentDate() {
 		return Chart.parseDate(new Date());
-	}
-
-	public static schemaToEntity(name: string, schema: Schema, grouped = false): {
-		hour: EntitySchema,
-		day: EntitySchema,
-	} {
-		const createEntity = (span: 'hour' | 'day'): EntitySchema => new EntitySchema({
-			name:
-				span === 'hour' ? `ChartX${name}` :
-				span === 'day' ? `ChartDayX${name}` :
-				new Error('not happen') as never,
-			tableName:
-				span === 'hour' ? `__chart__${camelToSnake(name)}` :
-				span === 'day' ? `__chart_day__${camelToSnake(name)}` :
-				new Error('not happen') as never,
-			columns: {
-				id: {
-					type: 'integer',
-					primary: true,
-					generated: true,
-				},
-				date: {
-					type: 'integer',
-				},
-				...(grouped ? {
-					group: {
-						type: 'varchar',
-						length: 128,
-					},
-				} : {}),
-				...Chart.convertSchemaToColumnDefinitions(schema),
-			},
-			indices: [{
-				columns: grouped ? ['date', 'group'] : ['date'],
-				unique: true,
-			}],
-			uniques: [{
-				columns: grouped ? ['date', 'group'] : ['date'],
-			}],
-			relations: {
-				/* TODO
-					group: {
-						target: () => Foo,
-						type: 'many-to-one',
-						onDelete: 'CASCADE',
-					},
-				*/
-			},
-		});
-
-		return {
-			hour: createEntity('hour'),
-			day: createEntity('day'),
-		};
-	}
-
-	private lock: (key: string) => Promise<() => void>;
-
-	constructor(
-		db: DataSource,
-		lock: (key: string) => Promise<() => void>,
-		logger: Logger,
-		name: string,
-		schema: T,
-		grouped = false,
-	) {
-		this.name = name;
-		this.schema = schema;
-		this.lock = lock;
-		this.logger = logger;
-
-		const { hour, day } = Chart.schemaToEntity(name, schema, grouped);
-		this.repositoryForHour = db.getRepository<{ id: number; group?: string | null; date: number; }>(hour).extend(miRepository as MiRepository<{ id: number; group?: string | null; date: number; }>);
-		this.repositoryForDay = db.getRepository<{ id: number; group?: string | null; date: number; }>(day).extend(miRepository as MiRepository<{ id: number; group?: string | null; date: number; }>);
-	}
-
-	@bindThis
-	private convertRawRecord(x: RawRecord<T>): KVs<T> {
-		const kvs = {} as Record<string, number>;
-		for (const k of Object.keys(x).filter((k) => k.startsWith(COLUMN_PREFIX)) as (keyof Columns<T>)[]) {
-			kvs[(k as string).substring(COLUMN_PREFIX.length).split(COLUMN_DELIMITER).join('.')] = x[k] as unknown as number;
-		}
-		return kvs as KVs<T>;
-	}
-
-	@bindThis
-	private getNewLog(latest: KVs<T> | null): KVs<T> {
-		const log = {} as Record<keyof T, number>;
-		for (const [k, v] of Object.entries(this.schema) as ([keyof typeof this['schema'], this['schema'][string]])[]) {
-			if (v.accumulate && latest) {
-				log[k] = latest[k];
-			} else {
-				log[k] = 0;
-			}
-		}
-		return log as KVs<T>;
-	}
-
-	@bindThis
-	private getLatestLog(group: string | null, span: 'hour' | 'day'): Promise<RawRecord<T> | null> {
-		const repository =
-			span === 'hour' ? this.repositoryForHour :
-			span === 'day' ? this.repositoryForDay :
-			new Error('not happen') as never;
-
-		return repository.findOne({
-			where: group ? {
-				group: group,
-			} : {},
-			order: {
-				date: -1,
-			},
-		}).then(x => x ?? null) as Promise<RawRecord<T> | null>;
-	}
-
-	/**
-	 * 現在(=今のHour or Day)のログをデータベースから探して、あればそれを返し、なければ作成して返します。
-	 */
-	@bindThis
-	private async claimCurrentLog(group: string | null, span: 'hour' | 'day'): Promise<RawRecord<T>> {
-		const [y, m, d, h] = Chart.getCurrentDate();
-
-		const current = dateUTC(
-			span === 'hour' ? [y, m, d, h] :
-			span === 'day' ? [y, m, d] :
-			new Error('not happen') as never);
-
-		const repository =
-			span === 'hour' ? this.repositoryForHour :
-			span === 'day' ? this.repositoryForDay :
-			new Error('not happen') as never;
-
-		// 現在(=今のHour or Day)のログ
-		const currentLog = await repository.findOneBy({
-			date: Chart.dateToTimestamp(current),
-			...(group ? { group: group } : {}),
-		}) as RawRecord<T> | undefined;
-
-		// ログがあればそれを返して終了
-		if (currentLog != null) {
-			return currentLog;
-		}
-
-		let log: RawRecord<T>;
-		let data: KVs<T>;
-
-		// 集計期間が変わってから、初めてのチャート更新なら
-		// 最も最近のログを持ってくる
-		// * 例えば集計期間が「日」である場合で考えると、
-		// * 昨日何もチャートを更新するような出来事がなかった場合は、
-		// * ログがそもそも作られずドキュメントが存在しないということがあり得るため、
-		// * 「昨日の」と決め打ちせずに「もっとも最近の」とします
-		const latest = await this.getLatestLog(group, span);
-
-		if (latest != null) {
-			// 空ログデータを作成
-			data = this.getNewLog(this.convertRawRecord(latest));
-		} else {
-			// ログが存在しなかったら
-			// (Misskeyインスタンスを建てて初めてのチャート更新時など)
-
-			// 初期ログデータを作成
-			data = this.getNewLog(null);
-
-			this.logger.info(`${this.name + (group ? `:${group}` : '')}(${span}): Initial commit created`);
-		}
-
-		const date = Chart.dateToTimestamp(current);
-		const lockKey = group ? `${this.name}:${date}:${span}:${group}` : `${this.name}:${date}:${span}`;
-
-		const unlock = await this.lock(lockKey);
-		try {
-			// ロック内でもう1回チェックする
-			const currentLog = await repository.findOneBy({
-				date: date,
-				...(group ? { group: group } : {}),
-			}) as RawRecord<T> | undefined;
-
-			// ログがあればそれを返して終了
-			if (currentLog != null) return currentLog;
-
-			const columns = {} as Record<string, number | unknown[]>;
-			for (const [k, v] of Object.entries(data)) {
-				const name = k.replaceAll('.', COLUMN_DELIMITER);
-				columns[COLUMN_PREFIX + name] = v;
-			}
-
-			// 新規ログ挿入
-			log = await repository.insertOne({
-				date: date,
-				...(group ? { group: group } : {}),
-				...columns,
-			}) as RawRecord<T>;
-
-			this.logger.info(`${this.name + (group ? `:${group}` : '')}(${span}): New commit created`);
-
-			return log;
-		} finally {
-			unlock();
-		}
-	}
-
-	protected commit(diff: Commit<T>, group: string | null = null): void {
-		for (const [k, v] of Object.entries(diff)) {
-			if (v == null || v === 0 || (Array.isArray(v) && v.length === 0)) delete diff[k];
-		}
-		this.buffer.push({
-			diff, group,
-		});
 	}
 
 	@bindThis
@@ -510,12 +362,12 @@ export default abstract class Chart<T extends Schema> {
 				this.repositoryForHour.createQueryBuilder()
 					.update()
 					.set(queryForHour as any)
-					.where('id = :id', { id: logHour.id })
+					.where('id = :id', {id: logHour.id})
 					.execute(),
 				this.repositoryForDay.createQueryBuilder()
 					.update()
 					.set(queryForDay as any)
-					.where('id = :id', { id: logDay.id })
+					.where('id = :id', {id: logDay.id})
 					.execute(),
 			]);
 
@@ -555,12 +407,12 @@ export default abstract class Chart<T extends Schema> {
 				this.repositoryForHour.createQueryBuilder()
 					.update()
 					.set(columns)
-					.where('id = :id', { id: logHour.id })
+					.where('id = :id', {id: logHour.id})
 					.execute(),
 				this.repositoryForDay.createQueryBuilder()
 					.update()
 					.set(columns)
-					.where('id = :id', { id: logDay.id })
+					.where('id = :id', {id: logDay.id})
 					.execute(),
 			]);
 		};
@@ -601,14 +453,14 @@ export default abstract class Chart<T extends Schema> {
 			this.repositoryForHour.createQueryBuilder()
 				.update()
 				.set(columns)
-				.where('date > :gt', { gt })
-				.andWhere('date < :lt', { lt })
+				.where('date > :gt', {gt})
+				.andWhere('date < :lt', {lt})
 				.execute(),
 			this.repositoryForDay.createQueryBuilder()
 				.update()
 				.set(columns)
-				.where('date > :gt', { gt })
-				.andWhere('date < :lt', { lt })
+				.where('date > :gt', {gt})
+				.andWhere('date < :lt', {lt})
 				.execute(),
 		]);
 	}
@@ -622,19 +474,19 @@ export default abstract class Chart<T extends Schema> {
 
 		const gt =
 			span === 'day' ? subtractTime(cursor ? dateUTC([y2, m2, d2, 0]) : dateUTC([y, m, d, 0]), amount - 1, 'day') :
-			span === 'hour' ? subtractTime(cursor ? dateUTC([y2, m2, d2, h2]) : dateUTC([y, m, d, h]), amount - 1, 'hour') :
-			new Error('not happen') as never;
+				span === 'hour' ? subtractTime(cursor ? dateUTC([y2, m2, d2, h2]) : dateUTC([y, m, d, h]), amount - 1, 'hour') :
+					new Error('not happen') as never;
 
 		const repository =
 			span === 'hour' ? this.repositoryForHour :
-			span === 'day' ? this.repositoryForDay :
-			new Error('not happen') as never;
+				span === 'day' ? this.repositoryForDay :
+					new Error('not happen') as never;
 
 		// ログ取得
 		let logs = await repository.find({
 			where: {
 				date: Between(Chart.dateToTimestamp(gt), Chart.dateToTimestamp(lt)),
-				...(group ? { group: group } : {}),
+				...(group ? {group: group} : {}),
 			},
 			order: {
 				date: -1,
@@ -658,14 +510,14 @@ export default abstract class Chart<T extends Schema> {
 				logs = [recentLog];
 			}
 
-		// 要求された範囲の最も古い箇所に位置するログが存在しなかったら
+			// 要求された範囲の最も古い箇所に位置するログが存在しなかったら
 		} else if (!isTimeSame(new Date(logs.at(-1)!.date * 1000), gt)) {
 			// 要求された範囲の最も古い箇所時点での最も新しいログを持ってきて末尾に追加する
 			// (補間できないため)
 			const outdatedLog = await repository.findOne({
 				where: {
 					date: LessThan(Chart.dateToTimestamp(gt)),
-					...(group ? { group: group } : {}),
+					...(group ? {group: group} : {}),
 				},
 				order: {
 					date: -1,
@@ -682,8 +534,8 @@ export default abstract class Chart<T extends Schema> {
 		for (let i = (amount - 1); i >= 0; i--) {
 			const current =
 				span === 'hour' ? subtractTime(dateUTC([y, m, d, h]), i, 'hour') :
-				span === 'day' ? subtractTime(dateUTC([y, m, d]), i, 'day') :
-				new Error('not happen') as never;
+					span === 'day' ? subtractTime(dateUTC([y, m, d]), i, 'day') :
+						new Error('not happen') as never;
 
 			const log = logs.find(l => isTimeSame(new Date(l.date * 1000), current));
 
@@ -726,5 +578,150 @@ export default abstract class Chart<T extends Schema> {
 			nestedProperty.set(object, k, v);
 		}
 		return object as Unflatten<ChartResult<T>>;
+	}
+
+	/**
+	 * 1日に一回程度実行されれば良いような計算処理を入れる(主にCASCADE削除などアプリケーション側で感知できない変動によるズレの修正用)
+	 */
+	protected abstract tickMajor(group: string | null): Promise<Partial<KVs<T>>>;
+
+	/**
+	 * 少なくとも最小スパン内に1回は実行されて欲しい計算処理を入れる
+	 */
+	protected abstract tickMinor(group: string | null): Promise<Partial<KVs<T>>>;
+
+	protected commit(diff: Commit<T>, group: string | null = null): void {
+		for (const [k, v] of Object.entries(diff)) {
+			if (v == null || v === 0 || (Array.isArray(v) && v.length === 0)) delete diff[k];
+		}
+		this.buffer.push({
+			diff, group,
+		});
+	}
+
+	@bindThis
+	private convertRawRecord(x: RawRecord<T>): KVs<T> {
+		const kvs = {} as Record<string, number>;
+		for (const k of Object.keys(x).filter((k) => k.startsWith(COLUMN_PREFIX)) as (keyof Columns<T>)[]) {
+			kvs[(k as string).substring(COLUMN_PREFIX.length).split(COLUMN_DELIMITER).join('.')] = x[k] as unknown as number;
+		}
+		return kvs as KVs<T>;
+	}
+
+	@bindThis
+	private getNewLog(latest: KVs<T> | null): KVs<T> {
+		const log = {} as Record<keyof T, number>;
+		for (const [k, v] of Object.entries(this.schema) as ([keyof typeof this['schema'], this['schema'][string]])[]) {
+			if (v.accumulate && latest) {
+				log[k] = latest[k];
+			} else {
+				log[k] = 0;
+			}
+		}
+		return log as KVs<T>;
+	}
+
+	@bindThis
+	private getLatestLog(group: string | null, span: 'hour' | 'day'): Promise<RawRecord<T> | null> {
+		const repository =
+			span === 'hour' ? this.repositoryForHour :
+				span === 'day' ? this.repositoryForDay :
+					new Error('not happen') as never;
+
+		return repository.findOne({
+			where: group ? {
+				group: group,
+			} : {},
+			order: {
+				date: -1,
+			},
+		}).then(x => x ?? null) as Promise<RawRecord<T> | null>;
+	}
+
+	/**
+	 * 現在(=今のHour or Day)のログをデータベースから探して、あればそれを返し、なければ作成して返します。
+	 */
+	@bindThis
+	private async claimCurrentLog(group: string | null, span: 'hour' | 'day'): Promise<RawRecord<T>> {
+		const [y, m, d, h] = Chart.getCurrentDate();
+
+		const current = dateUTC(
+			span === 'hour' ? [y, m, d, h] :
+				span === 'day' ? [y, m, d] :
+					new Error('not happen') as never);
+
+		const repository =
+			span === 'hour' ? this.repositoryForHour :
+				span === 'day' ? this.repositoryForDay :
+					new Error('not happen') as never;
+
+		// 現在(=今のHour or Day)のログ
+		const currentLog = await repository.findOneBy({
+			date: Chart.dateToTimestamp(current),
+			...(group ? {group: group} : {}),
+		}) as RawRecord<T> | undefined;
+
+		// ログがあればそれを返して終了
+		if (currentLog != null) {
+			return currentLog;
+		}
+
+		let log: RawRecord<T>;
+		let data: KVs<T>;
+
+		// 集計期間が変わってから、初めてのチャート更新なら
+		// 最も最近のログを持ってくる
+		// * 例えば集計期間が「日」である場合で考えると、
+		// * 昨日何もチャートを更新するような出来事がなかった場合は、
+		// * ログがそもそも作られずドキュメントが存在しないということがあり得るため、
+		// * 「昨日の」と決め打ちせずに「もっとも最近の」とします
+		const latest = await this.getLatestLog(group, span);
+
+		if (latest != null) {
+			// 空ログデータを作成
+			data = this.getNewLog(this.convertRawRecord(latest));
+		} else {
+			// ログが存在しなかったら
+			// (Misskeyインスタンスを建てて初めてのチャート更新時など)
+
+			// 初期ログデータを作成
+			data = this.getNewLog(null);
+
+			this.logger.info(`${this.name + (group ? `:${group}` : '')}(${span}): Initial commit created`);
+		}
+
+		const date = Chart.dateToTimestamp(current);
+		const lockKey = group ? `${this.name}:${date}:${span}:${group}` : `${this.name}:${date}:${span}`;
+
+		const unlock = await this.lock(lockKey);
+		try {
+			// ロック内でもう1回チェックする
+			const currentLog = await repository.findOneBy({
+				date: date,
+				...(group ? {group: group} : {}),
+			}) as RawRecord<T> | undefined;
+
+			// ログがあればそれを返して終了
+			if (currentLog != null) return currentLog;
+
+			const columns = {} as Record<string, number | unknown[]>;
+			for (const [k, v] of Object.entries(data)) {
+				const name = k.replaceAll('.', COLUMN_DELIMITER);
+				columns[COLUMN_PREFIX + name] = v;
+			}
+
+			// 新規ログ挿入
+			log = await repository.insertOne({
+				date: date,
+				...(group ? {group: group} : {}),
+				...columns,
+			}) as RawRecord<T>;
+
+			this.logger.info(`${this.name + (group ? `:${group}` : '')}(${span}): New commit created`);
+
+			return log;
+		} finally {
+			unlock();
+		}
 	}
 }

@@ -5,11 +5,11 @@
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable import/no-default-export */
-import type { StoryObj } from '@storybook/vue3';
-import { HttpResponse, http } from 'msw';
-import { action } from '@storybook/addon-actions';
-import { expect, userEvent, within } from '@storybook/test';
-import { commonHandlers } from '../../.storybook/mocks.js';
+import type {StoryObj} from '@storybook/vue3';
+import {HttpResponse, http} from 'msw';
+import {action} from '@storybook/addon-actions';
+import {expect, userEvent, within} from '@storybook/test';
+import {commonHandlers} from '../../.storybook/mocks.js';
 import MkClickerGame from './MkClickerGame.vue';
 
 function sleep(ms: number) {
@@ -37,7 +37,7 @@ export const Default = {
 			template: '<MkClickerGame v-bind="props" />',
 		};
 	},
-	async play({ canvasElement }) {
+	async play({canvasElement}) {
 		await sleep(1000);
 		const canvas = within(canvasElement);
 		const count = canvas.getByTestId('count');
@@ -51,7 +51,7 @@ export const Default = {
 		msw: {
 			handlers: [
 				...commonHandlers,
-				http.post('/api/i/registry/get', async ({ request }) => {
+				http.post('/api/i/registry/get', async ({request}) => {
 					action('POST /api/i/registry/get')(await request.json());
 					return HttpResponse.json({
 						error: {
@@ -63,13 +63,13 @@ export const Default = {
 						status: 400,
 					});
 				}),
-				http.post('/api/i/registry/set', async ({ request }) => {
+				http.post('/api/i/registry/set', async ({request}) => {
 					action('POST /api/i/registry/set')(await request.json());
-					return HttpResponse.json(undefined, { status: 204 });
+					return HttpResponse.json(undefined, {status: 204});
 				}),
-				http.post('/api/i/claim-achievement', async ({ request }) => {
+				http.post('/api/i/claim-achievement', async ({request}) => {
 					action('POST /api/i/claim-achievement')(await request.json());
-					return HttpResponse.json(undefined, { status: 204 });
+					return HttpResponse.json(undefined, {status: 204});
 				}),
 			],
 		},

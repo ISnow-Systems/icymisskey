@@ -16,20 +16,21 @@ export class CollapsedQueue<K, V> {
 		private timeout: number,
 		private collapse: (oldValue: V, newValue: V) => V,
 		private perform: (key: K, value: V) => Promise<void>,
-	) {}
+	) {
+	}
 
 	enqueue(key: K, value: V) {
 		if (this.jobs.has(key)) {
 			const old = this.jobs.get(key)!;
 			const merged = this.collapse(old.value, value);
-			this.jobs.set(key, { ...old, value: merged });
+			this.jobs.set(key, {...old, value: merged});
 		} else {
 			const timer = setTimeout(() => {
 				const job = this.jobs.get(key)!;
 				this.jobs.delete(key);
 				this.perform(key, job.value);
 			}, this.timeout);
-			this.jobs.set(key, { value, timer });
+			this.jobs.set(key, {value, timer});
 		}
 	}
 

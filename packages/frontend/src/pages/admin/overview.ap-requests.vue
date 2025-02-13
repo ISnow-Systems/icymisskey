@@ -4,32 +4,32 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div>
-	<MkLoading v-if="fetching"/>
-	<div v-show="!fetching" :class="$style.root">
-		<div class="charts _panel">
-			<div class="chart">
-				<canvas ref="chartEl2"></canvas>
-			</div>
-			<div class="chart">
-				<canvas ref="chartEl"></canvas>
+	<div>
+		<MkLoading v-if="fetching"/>
+		<div v-show="!fetching" :class="$style.root">
+			<div class="charts _panel">
+				<div class="chart">
+					<canvas ref="chartEl2"></canvas>
+				</div>
+				<div class="chart">
+					<canvas ref="chartEl"></canvas>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, shallowRef, ref } from 'vue';
-import { Chart } from 'chart.js';
+import {onMounted, shallowRef, ref} from 'vue';
+import {Chart} from 'chart.js';
 import gradient from 'chartjs-plugin-gradient';
 import isChromatic from 'chromatic';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { useChartTooltip } from '@/scripts/use-chart-tooltip.js';
-import { chartVLine } from '@/scripts/chart-vline.js';
-import { defaultStore } from '@/store.js';
-import { alpha } from '@/scripts/color.js';
-import { initChart } from '@/scripts/init-chart.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {useChartTooltip} from '@/scripts/use-chart-tooltip.js';
+import {chartVLine} from '@/scripts/chart-vline.js';
+import {defaultStore} from '@/store.js';
+import {alpha} from '@/scripts/color.js';
+import {initChart} from '@/scripts/init-chart.js';
 
 initChart();
 
@@ -38,8 +38,8 @@ const chartEl = shallowRef<HTMLCanvasElement>();
 const chartEl2 = shallowRef<HTMLCanvasElement>();
 const fetching = ref(true);
 
-const { handler: externalTooltipHandler } = useChartTooltip();
-const { handler: externalTooltipHandler2 } = useChartTooltip();
+const {handler: externalTooltipHandler} = useChartTooltip();
+const {handler: externalTooltipHandler2} = useChartTooltip();
 
 onMounted(async () => {
 	const now = isChromatic() ? new Date('2024-08-31T10:00:00Z') : new Date();
@@ -66,7 +66,7 @@ onMounted(async () => {
 		}));
 	};
 
-	const raw = await misskeyApi('charts/ap-request', { limit: chartLimit, span: 'day' });
+	const raw = await misskeyApi('charts/ap-request', {limit: chartLimit, span: 'day'});
 
 	const vLineColor = defaultStore.state.darkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)';
 	const succColor = '#87e000';

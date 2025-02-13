@@ -4,25 +4,25 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div ref="rootEl" :class="$style.root">
-	<canvas :id="idForCanvas" ref="canvasEl" style="display: block;" :width="width" height="300" @contextmenu.prevent="() => {}"></canvas>
-	<div :id="idForTags" ref="tagsEl" :class="$style.tags">
-		<ul>
-			<slot></slot>
-		</ul>
+	<div ref="rootEl" :class="$style.root">
+		<canvas :id="idForCanvas" ref="canvasEl" :width="width" height="300" style="display: block;" @contextmenu.prevent="() => {}"></canvas>
+		<div :id="idForTags" ref="tagsEl" :class="$style.tags">
+			<ul>
+				<slot></slot>
+			</ul>
+		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, watch, onBeforeUnmount, ref, shallowRef } from 'vue';
+import {onMounted, watch, onBeforeUnmount, ref, shallowRef} from 'vue';
 import tinycolor from 'tinycolor2';
 
 const loaded = !!window.TagCanvas;
 const SAFE_FOR_HTML_ID = 'abcdefghijklmnopqrstuvwxyz';
 const computedStyle = getComputedStyle(document.documentElement);
-const idForCanvas = Array.from({ length: 16 }, () => SAFE_FOR_HTML_ID[Math.floor(Math.random() * SAFE_FOR_HTML_ID.length)]).join('');
-const idForTags = Array.from({ length: 16 }, () => SAFE_FOR_HTML_ID[Math.floor(Math.random() * SAFE_FOR_HTML_ID.length)]).join('');
+const idForCanvas = Array.from({length: 16}, () => SAFE_FOR_HTML_ID[Math.floor(Math.random() * SAFE_FOR_HTML_ID.length)]).join('');
+const idForTags = Array.from({length: 16}, () => SAFE_FOR_HTML_ID[Math.floor(Math.random() * SAFE_FOR_HTML_ID.length)]).join('');
 const available = ref(false);
 const rootEl = shallowRef<HTMLElement | null>(null);
 const canvasEl = shallowRef<HTMLCanvasElement | null>(null);
@@ -48,7 +48,8 @@ watch(available, () => {
 			stretchX: 0.8,
 			stretchY: 0.8,
 		});
-	} catch (err) {}
+	} catch (err) {
+	}
 });
 
 onMounted(() => {

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { TransformStream } from 'node:stream/web';
+import {TransformStream} from 'node:stream/web';
 
 /**
  * ストリームに流れてきた各データについて`JSON.stringify()`した上で、それらを一つの配列にまとめる

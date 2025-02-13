@@ -4,54 +4,54 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkModalWindow
-	ref="dialog"
-	:width="400"
-	:height="450"
-	@close="cancel"
-	@closed="emit('closed')"
->
-	<template #header>{{ i18n.ts.avatarDecorations }}</template>
+	<MkModalWindow
+		ref="dialog"
+		:height="450"
+		:width="400"
+		@close="cancel"
+		@closed="emit('closed')"
+	>
+		<template #header>{{ i18n.ts.avatarDecorations }}</template>
 
-	<div>
-		<MkSpacer :marginMin="20" :marginMax="28">
-			<div style="text-align: center;">
-				<div :class="$style.name">{{ decoration.name }}</div>
-				<MkAvatar style="width: 64px; height: 64px; margin-bottom: 20px;" :user="$i" :decorations="decorationsForPreview" forceShowDecoration/>
-			</div>
-			<div class="_gaps_s">
-				<MkRange v-model="angle" continuousUpdate :min="-0.5" :max="0.5" :step="0.025" :textConverter="(v) => `${Math.floor(v * 360)}°`">
-					<template #label>{{ i18n.ts.angle }}</template>
-				</MkRange>
-				<MkRange v-model="offsetX" continuousUpdate :min="-0.25" :max="0.25" :step="0.025" :textConverter="(v) => `${Math.floor(v * 100)}%`">
-					<template #label>X {{ i18n.ts.position }}</template>
-				</MkRange>
-				<MkRange v-model="offsetY" continuousUpdate :min="-0.25" :max="0.25" :step="0.025" :textConverter="(v) => `${Math.floor(v * 100)}%`">
-					<template #label>Y {{ i18n.ts.position }}</template>
-				</MkRange>
-				<MkSwitch v-model="flipH">
-					<template #label>{{ i18n.ts.flip }}</template>
-				</MkSwitch>
-			</div>
-		</MkSpacer>
+		<div>
+			<MkSpacer :marginMax="28" :marginMin="20">
+				<div style="text-align: center;">
+					<div :class="$style.name">{{ decoration.name }}</div>
+					<MkAvatar :decorations="decorationsForPreview" :user="$i" forceShowDecoration style="width: 64px; height: 64px; margin-bottom: 20px;"/>
+				</div>
+				<div class="_gaps_s">
+					<MkRange v-model="angle" :max="0.5" :min="-0.5" :step="0.025" :textConverter="(v) => `${Math.floor(v * 360)}°`" continuousUpdate>
+						<template #label>{{ i18n.ts.angle }}</template>
+					</MkRange>
+					<MkRange v-model="offsetX" :max="0.25" :min="-0.25" :step="0.025" :textConverter="(v) => `${Math.floor(v * 100)}%`" continuousUpdate>
+						<template #label>X {{ i18n.ts.position }}</template>
+					</MkRange>
+					<MkRange v-model="offsetY" :max="0.25" :min="-0.25" :step="0.025" :textConverter="(v) => `${Math.floor(v * 100)}%`" continuousUpdate>
+						<template #label>Y {{ i18n.ts.position }}</template>
+					</MkRange>
+					<MkSwitch v-model="flipH">
+						<template #label>{{ i18n.ts.flip }}</template>
+					</MkSwitch>
+				</div>
+			</MkSpacer>
 
-		<div :class="$style.footer" class="_buttonsCenter">
-			<MkButton v-if="usingIndex != null" primary rounded @click="update"><i class="ti ti-check"></i> {{ i18n.ts.update }}</MkButton>
-			<MkButton v-if="usingIndex != null" rounded @click="detach"><i class="ti ti-x"></i> {{ i18n.ts.detach }}</MkButton>
-			<MkButton v-else :disabled="exceeded || locked" primary rounded @click="attach"><i class="ti ti-check"></i> {{ i18n.ts.attach }}</MkButton>
+			<div :class="$style.footer" class="_buttonsCenter">
+				<MkButton v-if="usingIndex != null" primary rounded @click="update"><i class="ti ti-check"></i> {{ i18n.ts.update }}</MkButton>
+				<MkButton v-if="usingIndex != null" rounded @click="detach"><i class="ti ti-x"></i> {{ i18n.ts.detach }}</MkButton>
+				<MkButton v-else :disabled="exceeded || locked" primary rounded @click="attach"><i class="ti ti-check"></i> {{ i18n.ts.attach }}</MkButton>
+			</div>
 		</div>
-	</div>
-</MkModalWindow>
+	</MkModalWindow>
 </template>
 
 <script lang="ts" setup>
-import { shallowRef, ref, computed } from 'vue';
+import {shallowRef, ref, computed} from 'vue';
 import MkButton from '@/components/MkButton.vue';
 import MkModalWindow from '@/components/MkModalWindow.vue';
 import MkSwitch from '@/components/MkSwitch.vue';
-import { i18n } from '@/i18n.js';
+import {i18n} from '@/i18n.js';
 import MkRange from '@/components/MkRange.vue';
-import { signinRequired } from '@/account.js';
+import {signinRequired} from '@/account.js';
 
 const $i = signinRequired();
 

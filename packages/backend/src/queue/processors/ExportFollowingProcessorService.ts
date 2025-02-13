@@ -4,21 +4,21 @@
  */
 
 import * as fs from 'node:fs';
-import { Inject, Injectable } from '@nestjs/common';
-import { In, MoreThan, Not } from 'typeorm';
-import { format as dateFormat } from 'date-fns';
-import { DI } from '@/di-symbols.js';
-import type { UsersRepository, FollowingsRepository, MutingsRepository } from '@/models/_.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {In, MoreThan, Not} from 'typeorm';
+import {format as dateFormat} from 'date-fns';
+import {DI} from '@/di-symbols.js';
+import type {UsersRepository, FollowingsRepository, MutingsRepository} from '@/models/_.js';
 import type Logger from '@/logger.js';
-import { DriveService } from '@/core/DriveService.js';
-import { createTemp } from '@/misc/create-temp.js';
-import type { MiFollowing } from '@/models/Following.js';
-import { UtilityService } from '@/core/UtilityService.js';
-import { NotificationService } from '@/core/NotificationService.js';
-import { bindThis } from '@/decorators.js';
-import { QueueLoggerService } from '../QueueLoggerService.js';
+import {DriveService} from '@/core/DriveService.js';
+import {createTemp} from '@/misc/create-temp.js';
+import type {MiFollowing} from '@/models/Following.js';
+import {UtilityService} from '@/core/UtilityService.js';
+import {NotificationService} from '@/core/NotificationService.js';
+import {bindThis} from '@/decorators.js';
+import {QueueLoggerService} from '../QueueLoggerService.js';
 import type * as Bull from 'bullmq';
-import type { DbExportFollowingData } from '../types.js';
+import type {DbExportFollowingData} from '../types.js';
 
 @Injectable()
 export class ExportFollowingProcessorService {
@@ -27,13 +27,10 @@ export class ExportFollowingProcessorService {
 	constructor(
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.followingsRepository)
 		private followingsRepository: FollowingsRepository,
-
 		@Inject(DI.mutingsRepository)
 		private mutingsRepository: MutingsRepository,
-
 		private utilityService: UtilityService,
 		private driveService: DriveService,
 		private queueLoggerService: QueueLoggerService,
@@ -46,7 +43,7 @@ export class ExportFollowingProcessorService {
 	public async process(job: Bull.Job<DbExportFollowingData>): Promise<void> {
 		this.logger.info(`Exporting following of ${job.data.user.id} ...`);
 
-		const user = await this.usersRepository.findOneBy({ id: job.data.user.id });
+		const user = await this.usersRepository.findOneBy({id: job.data.user.id});
 		if (user == null) {
 			return;
 		}
@@ -57,7 +54,7 @@ export class ExportFollowingProcessorService {
 		this.logger.info(`Temp file is ${path}`);
 
 		try {
-			const stream = fs.createWriteStream(path, { flags: 'a' });
+			const stream = fs.createWriteStream(path, {flags: 'a'});
 
 			let cursor: MiFollowing['id'] | null = null;
 
@@ -69,8 +66,8 @@ export class ExportFollowingProcessorService {
 				const followings = await this.followingsRepository.find({
 					where: {
 						followerId: user.id,
-						...(mutings.length > 0 ? { followeeId: Not(In(mutings.map(x => x.muteeId))) } : {}),
-						...(cursor ? { id: MoreThan(cursor) } : {}),
+						...(mutings.length > 0 ? {followeeId: Not(In(mutings.map(x => x.muteeId)))} : {}),
+						...(cursor ? {id: MoreThan(cursor)} : {}),
 					},
 					take: 100,
 					order: {
@@ -85,7 +82,7 @@ export class ExportFollowingProcessorService {
 				cursor = followings.at(-1)?.id ?? null;
 
 				for (const following of followings) {
-					const u = await this.usersRepository.findOneBy({ id: following.followeeId });
+					const u = await this.usersRepository.findOneBy({id: following.followeeId});
 					if (u == null) {
 						continue;
 					}
@@ -112,7 +109,7 @@ export class ExportFollowingProcessorService {
 			this.logger.succ(`Exported to: ${path}`);
 
 			const fileName = 'following-' + dateFormat(new Date(), 'yyyy-MM-dd-HH-mm-ss') + '.csv';
-			const driveFile = await this.driveService.addFile({ user, path, name: fileName, force: true, ext: 'csv' });
+			const driveFile = await this.driveService.addFile({user, path, name: fileName, force: true, ext: 'csv'});
 
 			this.logger.succ(`Exported to: ${driveFile.id}`);
 

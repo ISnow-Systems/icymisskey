@@ -4,7 +4,7 @@
  */
 
 import fs from 'node:fs/promises';
-import { fileURLToPath } from 'node:url';
+import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 import micromatch from 'micromatch';
 import main from './main.js';
@@ -60,7 +60,7 @@ await fs.readFile(
 	) {
 		return;
 	}
-	for (;;) {
+	for (; ;) {
 		const oldSize = modules.size;
 		for (const module of Array.from(modules)) {
 			if (map.has(module)) {

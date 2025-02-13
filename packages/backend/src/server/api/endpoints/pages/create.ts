@@ -4,14 +4,14 @@
  */
 
 import ms from 'ms';
-import { Inject, Injectable } from '@nestjs/common';
-import type { DriveFilesRepository, PagesRepository } from '@/models/_.js';
-import { IdService } from '@/core/IdService.js';
-import { MiPage, pageNameSchema } from '@/models/Page.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { PageEntityService } from '@/core/entities/PageEntityService.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {DriveFilesRepository, PagesRepository} from '@/models/_.js';
+import {IdService} from '@/core/IdService.js';
+import {MiPage, pageNameSchema} from '@/models/Page.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {PageEntityService} from '@/core/entities/PageEntityService.js';
+import {DI} from '@/di-symbols.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['pages'],
@@ -50,20 +50,24 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		title: { type: 'string' },
-		name: { ...pageNameSchema, minLength: 1 },
-		summary: { type: 'string', nullable: true },
-		content: { type: 'array', items: {
-			type: 'object', additionalProperties: true,
-		} },
-		variables: { type: 'array', items: {
-			type: 'object', additionalProperties: true,
-		} },
-		script: { type: 'string' },
-		eyeCatchingImageId: { type: 'string', format: 'misskey:id', nullable: true },
-		font: { type: 'string', enum: ['serif', 'sans-serif'], default: 'sans-serif' },
-		alignCenter: { type: 'boolean', default: false },
-		hideTitleWhenPinned: { type: 'boolean', default: false },
+		title: {type: 'string'},
+		name: {...pageNameSchema, minLength: 1},
+		summary: {type: 'string', nullable: true},
+		content: {
+			type: 'array', items: {
+				type: 'object', additionalProperties: true,
+			}
+		},
+		variables: {
+			type: 'array', items: {
+				type: 'object', additionalProperties: true,
+			}
+		},
+		script: {type: 'string'},
+		eyeCatchingImageId: {type: 'string', format: 'misskey:id', nullable: true},
+		font: {type: 'string', enum: ['serif', 'sans-serif'], default: 'sans-serif'},
+		alignCenter: {type: 'boolean', default: false},
+		hideTitleWhenPinned: {type: 'boolean', default: false},
 	},
 	required: ['title', 'name', 'content', 'variables', 'script'],
 } as const;
@@ -73,10 +77,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.pagesRepository)
 		private pagesRepository: PagesRepository,
-
 		@Inject(DI.driveFilesRepository)
 		private driveFilesRepository: DriveFilesRepository,
-
 		private pageEntityService: PageEntityService,
 		private idService: IdService,
 	) {

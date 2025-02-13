@@ -3,27 +3,27 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { ReadableStream, TextEncoderStream } from 'node:stream/web';
-import { Inject, Injectable } from '@nestjs/common';
-import { MoreThan } from 'typeorm';
-import { format as dateFormat } from 'date-fns';
-import { DI } from '@/di-symbols.js';
-import type { NotesRepository, PollsRepository, UsersRepository } from '@/models/_.js';
+import {ReadableStream, TextEncoderStream} from 'node:stream/web';
+import {Inject, Injectable} from '@nestjs/common';
+import {MoreThan} from 'typeorm';
+import {format as dateFormat} from 'date-fns';
+import {DI} from '@/di-symbols.js';
+import type {NotesRepository, PollsRepository, UsersRepository} from '@/models/_.js';
 import type Logger from '@/logger.js';
-import { DriveService } from '@/core/DriveService.js';
-import { createTemp } from '@/misc/create-temp.js';
-import type { MiPoll } from '@/models/Poll.js';
-import type { MiNote } from '@/models/Note.js';
-import { bindThis } from '@/decorators.js';
-import { DriveFileEntityService } from '@/core/entities/DriveFileEntityService.js';
-import { Packed } from '@/misc/json-schema.js';
-import { IdService } from '@/core/IdService.js';
-import { NotificationService } from '@/core/NotificationService.js';
-import { JsonArrayStream } from '@/misc/JsonArrayStream.js';
-import { FileWriterStream } from '@/misc/FileWriterStream.js';
-import { QueueLoggerService } from '../QueueLoggerService.js';
+import {DriveService} from '@/core/DriveService.js';
+import {createTemp} from '@/misc/create-temp.js';
+import type {MiPoll} from '@/models/Poll.js';
+import type {MiNote} from '@/models/Note.js';
+import {bindThis} from '@/decorators.js';
+import {DriveFileEntityService} from '@/core/entities/DriveFileEntityService.js';
+import {Packed} from '@/misc/json-schema.js';
+import {IdService} from '@/core/IdService.js';
+import {NotificationService} from '@/core/NotificationService.js';
+import {JsonArrayStream} from '@/misc/JsonArrayStream.js';
+import {FileWriterStream} from '@/misc/FileWriterStream.js';
+import {QueueLoggerService} from '../QueueLoggerService.js';
 import type * as Bull from 'bullmq';
-import type { DbJobDataWithUser } from '../types.js';
+import type {DbJobDataWithUser} from '../types.js';
 
 class NoteStream extends ReadableStream<Record<string, unknown>> {
 	constructor(
@@ -64,10 +64,10 @@ class NoteStream extends ReadableStream<Record<string, unknown>> {
 				const notes = await notesRepository.find({
 					where: {
 						userId,
-						...(cursor !== null ? { id: MoreThan(cursor) } : {}),
+						...(cursor !== null ? {id: MoreThan(cursor)} : {}),
 					},
 					take: 100, // 100件ずつ取得
-					order: { id: 1 },
+					order: {id: 1},
 				});
 
 				if (notes.length === 0) {
@@ -79,7 +79,7 @@ class NoteStream extends ReadableStream<Record<string, unknown>> {
 
 				for (const note of notes) {
 					const poll = note.hasPoll
-						? await pollsRepository.findOneByOrFail({ noteId: note.id }) // N+1
+						? await pollsRepository.findOneByOrFail({noteId: note.id}) // N+1
 						: null;
 					const files = await driveFileEntityService.packManyByIds(note.fileIds); // N+1
 					const content = serialize(note, poll, files);
@@ -88,7 +88,7 @@ class NoteStream extends ReadableStream<Record<string, unknown>> {
 					exportedNotesCount++;
 				}
 
-				const total = await notesRepository.countBy({ userId });
+				const total = await notesRepository.countBy({userId});
 				job.updateProgress(exportedNotesCount / total);
 			},
 		});
@@ -102,13 +102,10 @@ export class ExportNotesProcessorService {
 	constructor(
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.pollsRepository)
 		private pollsRepository: PollsRepository,
-
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		private driveService: DriveService,
 		private queueLoggerService: QueueLoggerService,
 		private driveFileEntityService: DriveFileEntityService,
@@ -122,7 +119,7 @@ export class ExportNotesProcessorService {
 	public async process(job: Bull.Job<DbJobDataWithUser>): Promise<void> {
 		this.logger.info(`Exporting notes of ${job.data.user.id} ...`);
 
-		const user = await this.usersRepository.findOneBy({ id: job.data.user.id });
+		const user = await this.usersRepository.findOneBy({id: job.data.user.id});
 		if (user == null) {
 			return;
 		}
@@ -149,7 +146,7 @@ export class ExportNotesProcessorService {
 			this.logger.succ(`Exported to: ${path}`);
 
 			const fileName = 'notes-' + dateFormat(new Date(), 'yyyy-MM-dd-HH-mm-ss') + '.json';
-			const driveFile = await this.driveService.addFile({ user, path, name: fileName, force: true, ext: 'json' });
+			const driveFile = await this.driveService.addFile({user, path, name: fileName, force: true, ext: 'json'});
 
 			this.logger.succ(`Exported to: ${driveFile.id}`);
 

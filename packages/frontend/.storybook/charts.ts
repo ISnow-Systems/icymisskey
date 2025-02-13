@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { HttpResponse, http } from 'msw';
-import type { DefaultBodyType, HttpResponseResolver, JsonBodyType, PathParams } from 'msw';
+import {HttpResponse, http} from 'msw';
+import type {DefaultBodyType, HttpResponseResolver, JsonBodyType, PathParams} from 'msw';
 import seedrandom from 'seedrandom';
-import { action } from '@storybook/addon-actions';
+import {action} from '@storybook/addon-actions';
 
 function getChartArray(seed: string, limit: number, option?: { accumulate?: boolean, mul?: number }): number[] {
 	const rng = seedrandom(seed);
@@ -26,7 +26,7 @@ function getChartArray(seed: string, limit: number, option?: { accumulate?: bool
 }
 
 export function getChartResolver(fields: string[], option?: { accumulate?: boolean, mulMap?: Record<string, number> }): HttpResponseResolver<PathParams, DefaultBodyType, JsonBodyType> {
-	return ({ request }) => {
+	return ({request}) => {
 		action(`GET ${request.url}`)();
 		const limitParam = new URL(request.url).searchParams.get('limit');
 		const limit = limitParam ? parseInt(limitParam) : 30;

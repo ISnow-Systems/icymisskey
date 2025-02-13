@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import type { FlashsRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { FlashEntityService } from '@/core/entities/FlashEntityService.js';
-import { DI } from '@/di-symbols.js';
-import { FlashService } from '@/core/FlashService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {FlashsRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {FlashEntityService} from '@/core/entities/FlashEntityService.js';
+import {DI} from '@/di-symbols.js';
+import {FlashService} from '@/core/FlashService.js';
 
 export const meta = {
 	tags: ['flash'],
@@ -29,8 +29,8 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		offset: { type: 'integer', minimum: 0, default: 0 },
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
+		offset: {type: 'integer', minimum: 0, default: 0},
+		limit: {type: 'integer', minimum: 1, maximum: 100, default: 10},
 	},
 	required: [],
 } as const;

@@ -3,20 +3,20 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { IsNull } from 'typeorm';
-import { DI } from '@/di-symbols.js';
-import type { UsersRepository, DriveFilesRepository } from '@/models/_.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {IsNull} from 'typeorm';
+import {DI} from '@/di-symbols.js';
+import type {UsersRepository, DriveFilesRepository} from '@/models/_.js';
 import type Logger from '@/logger.js';
 import * as Acct from '@/misc/acct.js';
-import { RemoteUserResolveService } from '@/core/RemoteUserResolveService.js';
-import { DownloadService } from '@/core/DownloadService.js';
-import { UserMutingService } from '@/core/UserMutingService.js';
-import { UtilityService } from '@/core/UtilityService.js';
-import { bindThis } from '@/decorators.js';
-import { QueueLoggerService } from '../QueueLoggerService.js';
+import {RemoteUserResolveService} from '@/core/RemoteUserResolveService.js';
+import {DownloadService} from '@/core/DownloadService.js';
+import {UserMutingService} from '@/core/UserMutingService.js';
+import {UtilityService} from '@/core/UtilityService.js';
+import {bindThis} from '@/decorators.js';
+import {QueueLoggerService} from '../QueueLoggerService.js';
 import type * as Bull from 'bullmq';
-import type { DbUserImportJobData } from '../types.js';
+import type {DbUserImportJobData} from '../types.js';
 
 @Injectable()
 export class ImportMutingProcessorService {
@@ -25,10 +25,8 @@ export class ImportMutingProcessorService {
 	constructor(
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.driveFilesRepository)
 		private driveFilesRepository: DriveFilesRepository,
-
 		private utilityService: UtilityService,
 		private userMutingService: UserMutingService,
 		private remoteUserResolveService: RemoteUserResolveService,
@@ -42,7 +40,7 @@ export class ImportMutingProcessorService {
 	public async process(job: Bull.Job<DbUserImportJobData>): Promise<void> {
 		this.logger.info(`Importing muting of ${job.data.user.id} ...`);
 
-		const user = await this.usersRepository.findOneBy({ id: job.data.user.id });
+		const user = await this.usersRepository.findOneBy({id: job.data.user.id});
 		if (user == null) {
 			return;
 		}
@@ -63,7 +61,7 @@ export class ImportMutingProcessorService {
 
 			try {
 				const acct = line.split(',')[0].trim();
-				const { username, host } = Acct.parse(acct);
+				const {username, host} = Acct.parse(acct);
 
 				if (!host) continue;
 

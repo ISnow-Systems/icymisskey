@@ -3,24 +3,22 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import type { Packed } from '@/misc/json-schema.js';
-import type { MiInstance } from '@/models/Instance.js';
-import { bindThis } from '@/decorators.js';
-import { UtilityService } from '@/core/UtilityService.js';
-import { RoleService } from '@/core/RoleService.js';
-import { MiUser } from '@/models/User.js';
-import { DI } from '@/di-symbols.js';
-import { MiMeta } from '@/models/_.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {Packed} from '@/misc/json-schema.js';
+import type {MiInstance} from '@/models/Instance.js';
+import {bindThis} from '@/decorators.js';
+import {UtilityService} from '@/core/UtilityService.js';
+import {RoleService} from '@/core/RoleService.js';
+import {MiUser} from '@/models/User.js';
+import {DI} from '@/di-symbols.js';
+import {MiMeta} from '@/models/_.js';
 
 @Injectable()
 export class InstanceEntityService {
 	constructor(
 		@Inject(DI.meta)
 		private meta: MiMeta,
-
 		private roleService: RoleService,
-
 		private utilityService: UtilityService,
 	) {
 	}

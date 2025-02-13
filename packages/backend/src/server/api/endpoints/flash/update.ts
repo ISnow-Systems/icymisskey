@@ -4,11 +4,11 @@
  */
 
 import ms from 'ms';
-import { Inject, Injectable } from '@nestjs/common';
-import type { FlashsRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {FlashsRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {DI} from '@/di-symbols.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['flash'],
@@ -42,14 +42,16 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		flashId: { type: 'string', format: 'misskey:id' },
-		title: { type: 'string' },
-		summary: { type: 'string' },
-		script: { type: 'string' },
-		permissions: { type: 'array', items: {
-			type: 'string',
-		} },
-		visibility: { type: 'string', enum: ['public', 'private'] },
+		flashId: {type: 'string', format: 'misskey:id'},
+		title: {type: 'string'},
+		summary: {type: 'string'},
+		script: {type: 'string'},
+		permissions: {
+			type: 'array', items: {
+				type: 'string',
+			}
+		},
+		visibility: {type: 'string', enum: ['public', 'private']},
 	},
 	required: ['flashId'],
 } as const;
@@ -61,7 +63,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		private flashsRepository: FlashsRepository,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const flash = await this.flashsRepository.findOneBy({ id: ps.flashId });
+			const flash = await this.flashsRepository.findOneBy({id: ps.flashId});
 			if (flash == null) {
 				throw new ApiError(meta.errors.noSuchFlash);
 			}

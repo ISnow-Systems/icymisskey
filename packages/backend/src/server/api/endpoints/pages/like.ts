@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import type { PagesRepository, PageLikesRepository } from '@/models/_.js';
-import { IdService } from '@/core/IdService.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {PagesRepository, PageLikesRepository} from '@/models/_.js';
+import {IdService} from '@/core/IdService.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {DI} from '@/di-symbols.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['pages'],
@@ -43,7 +43,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		pageId: { type: 'string', format: 'misskey:id' },
+		pageId: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['pageId'],
 } as const;
@@ -53,14 +53,12 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.pagesRepository)
 		private pagesRepository: PagesRepository,
-
 		@Inject(DI.pageLikesRepository)
 		private pageLikesRepository: PageLikesRepository,
-
 		private idService: IdService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const page = await this.pagesRepository.findOneBy({ id: ps.pageId });
+			const page = await this.pagesRepository.findOneBy({id: ps.pageId});
 			if (page == null) {
 				throw new ApiError(meta.errors.noSuchPage);
 			}
@@ -88,7 +86,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				userId: me.id,
 			});
 
-			this.pagesRepository.increment({ id: page.id }, 'likedCount', 1);
+			this.pagesRepository.increment({id: page.id}, 'likedCount', 1);
 		});
 	}
 }

@@ -4,45 +4,45 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div
-	class="mk_grid_tr"
-	:class="[
+	<div
+		:class="[
 		$style.row,
 		row.ranged ? $style.ranged : {},
 		...(row.additionalStyles ?? []).map(it => it.className ?? {}),
 	]"
-	:style="[
+		:data-grid-row="row.index"
+		:style="[
 		...(row.additionalStyles ?? []).map(it => it.style ?? {}),
 	]"
-	:data-grid-row="row.index"
->
-	<MkNumberCell
-		v-if="setting.showNumber"
-		:content="(row.index + 1).toString()"
-		:row="row"
-	/>
-	<MkDataCell
-		v-for="cell in cells"
-		:key="cell.address.col"
-		:vIf="cell.column.setting.type !== 'hidden'"
-		:cell="cell"
-		:rowSetting="setting"
-		:bus="bus"
-		@operation:beginEdit="(sender) => emit('operation:beginEdit', sender)"
-		@operation:endEdit="(sender) => emit('operation:endEdit', sender)"
-		@change:value="(sender, newValue) => emit('change:value', sender, newValue)"
-		@change:contentSize="(sender, newSize) => emit('change:contentSize', sender, newSize)"
-	/>
-</div>
+		class="mk_grid_tr"
+	>
+		<MkNumberCell
+			v-if="setting.showNumber"
+			:content="(row.index + 1).toString()"
+			:row="row"
+		/>
+		<MkDataCell
+			v-for="cell in cells"
+			:key="cell.address.col"
+			:bus="bus"
+			:cell="cell"
+			:rowSetting="setting"
+			:vIf="cell.column.setting.type !== 'hidden'"
+			@operation:beginEdit="(sender) => emit('operation:beginEdit', sender)"
+			@operation:endEdit="(sender) => emit('operation:endEdit', sender)"
+			@change:value="(sender, newValue) => emit('change:value', sender, newValue)"
+			@change:contentSize="(sender, newSize) => emit('change:contentSize', sender, newSize)"
+		/>
+	</div>
 </template>
 
-<script setup lang="ts">
-import { GridEventEmitter } from '@/components/grid/grid.js';
+<script lang="ts" setup>
+import {GridEventEmitter} from '@/components/grid/grid.js';
 import MkDataCell from '@/components/grid/MkDataCell.vue';
 import MkNumberCell from '@/components/grid/MkNumberCell.vue';
-import type { Size } from '@/components/grid/grid.js';
-import type { CellValue, GridCell } from '@/components/grid/cell.js';
-import type { GridRow, GridRowSetting } from '@/components/grid/row.js';
+import type {Size} from '@/components/grid/grid.js';
+import type {CellValue, GridCell} from '@/components/grid/cell.js';
+import type {GridRow, GridRowSetting} from '@/components/grid/row.js';
 
 const emit = defineEmits<{
 	(ev: 'operation:beginEdit', sender: GridCell): void;
@@ -59,7 +59,7 @@ defineProps<{
 
 </script>
 
-<style module lang="scss">
+<style lang="scss" module>
 .row {
 	display: flex;
 	flex-direction: row;

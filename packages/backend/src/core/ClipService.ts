@@ -3,34 +3,36 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { QueryFailedError } from 'typeorm';
-import { DI } from '@/di-symbols.js';
-import type { ClipsRepository, MiNote, MiClip, ClipNotesRepository, NotesRepository } from '@/models/_.js';
-import { bindThis } from '@/decorators.js';
-import { isDuplicateKeyValueError } from '@/misc/is-duplicate-key-value-error.js';
-import { RoleService } from '@/core/RoleService.js';
-import { IdService } from '@/core/IdService.js';
-import type { MiLocalUser } from '@/models/User.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {QueryFailedError} from 'typeorm';
+import {DI} from '@/di-symbols.js';
+import type {ClipsRepository, MiNote, MiClip, ClipNotesRepository, NotesRepository} from '@/models/_.js';
+import {bindThis} from '@/decorators.js';
+import {isDuplicateKeyValueError} from '@/misc/is-duplicate-key-value-error.js';
+import {RoleService} from '@/core/RoleService.js';
+import {IdService} from '@/core/IdService.js';
+import type {MiLocalUser} from '@/models/User.js';
 
 @Injectable()
 export class ClipService {
-	public static NoSuchNoteError = class extends Error {};
-	public static NoSuchClipError = class extends Error {};
-	public static AlreadyAddedError = class extends Error {};
-	public static TooManyClipNotesError = class extends Error {};
-	public static TooManyClipsError = class extends Error {};
+	public static NoSuchNoteError = class extends Error {
+	};
+	public static NoSuchClipError = class extends Error {
+	};
+	public static AlreadyAddedError = class extends Error {
+	};
+	public static TooManyClipNotesError = class extends Error {
+	};
+	public static TooManyClipsError = class extends Error {
+	};
 
 	constructor(
 		@Inject(DI.clipsRepository)
 		private clipsRepository: ClipsRepository,
-
 		@Inject(DI.clipNotesRepository)
 		private clipNotesRepository: ClipNotesRepository,
-
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		private roleService: RoleService,
 		private idService: IdService,
 	) {
@@ -128,7 +130,7 @@ export class ClipService {
 			lastClippedAt: new Date(),
 		});
 
-		this.notesRepository.increment({ id: noteId }, 'clippedCount', 1);
+		this.notesRepository.increment({id: noteId}, 'clippedCount', 1);
 	}
 
 	@bindThis
@@ -142,7 +144,7 @@ export class ClipService {
 			throw new ClipService.NoSuchClipError();
 		}
 
-		const note = await this.notesRepository.findOneBy({ id: noteId });
+		const note = await this.notesRepository.findOneBy({id: noteId});
 
 		if (note == null) {
 			throw new ClipService.NoSuchNoteError();
@@ -153,6 +155,6 @@ export class ClipService {
 			clipId: clip.id,
 		});
 
-		this.notesRepository.decrement({ id: noteId }, 'clippedCount', 1);
+		this.notesRepository.decrement({id: noteId}, 'clippedCount', 1);
 	}
 }

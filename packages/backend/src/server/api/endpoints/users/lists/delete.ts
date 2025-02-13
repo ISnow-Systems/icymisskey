@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import type { UserListsRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {UserListsRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {DI} from '@/di-symbols.js';
+import {ApiError} from '../../../error.js';
 
 export const meta = {
 	tags: ['lists'],
@@ -30,7 +30,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		listId: { type: 'string', format: 'misskey:id' },
+		listId: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['listId'],
 } as const;

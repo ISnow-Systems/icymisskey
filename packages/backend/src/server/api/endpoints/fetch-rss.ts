@@ -4,9 +4,9 @@
  */
 
 import Parser from 'rss-parser';
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { HttpRequestService } from '@/core/HttpRequestService.js';
+import {Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {HttpRequestService} from '@/core/HttpRequestService.js';
 
 const rssParser = new Parser();
 
@@ -208,7 +208,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		url: { type: 'string' },
+		url: {type: 'string'},
 	},
 	required: ['url'],
 } as const;

@@ -6,10 +6,10 @@
 // TODO: useTooltip関数使うようにしたい
 // ただディレクティブ内でonUnmountedなどのcomposition api使えるのか不明
 
-import { defineAsyncComponent, ref } from 'vue';
-import type { Directive } from 'vue';
-import { isTouchUsing } from '@/scripts/touch.js';
-import { popup, alert } from '@/os.js';
+import {defineAsyncComponent, ref} from 'vue';
+import type {Directive} from 'vue';
+import {isTouchUsing} from '@/scripts/touch.js';
+import {popup, alert} from '@/os.js';
 
 const start = isTouchUsing ? 'touchstart' : 'mouseenter';
 const end = isTouchUsing ? 'touchend' : 'mouseleave';
@@ -52,7 +52,7 @@ export default {
 			if (self.text == null) return;
 
 			const showing = ref(true);
-			const { dispose } = popup(defineAsyncComponent(() => import('@/components/MkTooltip.vue')), {
+			const {dispose} = popup(defineAsyncComponent(() => import('@/components/MkTooltip.vue')), {
 				showing,
 				text: self.text,
 				asMfm: binding.modifiers.mfm,
@@ -79,7 +79,7 @@ export default {
 			} else {
 				self.showTimer = window.setTimeout(self.show, delay);
 			}
-		}, { passive: true });
+		}, {passive: true});
 
 		el.addEventListener(end, () => {
 			window.clearTimeout(self.showTimer);
@@ -89,7 +89,7 @@ export default {
 			} else {
 				self.hideTimer = window.setTimeout(self.close, delay);
 			}
-		}, { passive: true });
+		}, {passive: true});
 
 		el.addEventListener('click', () => {
 			window.clearTimeout(self.showTimer);

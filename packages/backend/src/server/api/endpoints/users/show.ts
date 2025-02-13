@@ -3,19 +3,19 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { In, IsNull } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
-import type { UsersRepository } from '@/models/_.js';
-import type { MiUser } from '@/models/User.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { RemoteUserResolveService } from '@/core/RemoteUserResolveService.js';
-import { DI } from '@/di-symbols.js';
+import {In, IsNull} from 'typeorm';
+import {Inject, Injectable} from '@nestjs/common';
+import type {UsersRepository} from '@/models/_.js';
+import type {MiUser} from '@/models/User.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {RemoteUserResolveService} from '@/core/RemoteUserResolveService.js';
+import {DI} from '@/di-symbols.js';
 import PerUserPvChart from '@/core/chart/charts/per-user-pv.js';
-import { RoleService } from '@/core/RoleService.js';
-import { ApiError } from '../../error.js';
-import { ApiLoggerService } from '../../ApiLoggerService.js';
-import type { FindOptionsWhere } from 'typeorm';
+import {RoleService} from '@/core/RoleService.js';
+import {ApiError} from '../../error.js';
+import {ApiLoggerService} from '../../ApiLoggerService.js';
+import type {FindOptionsWhere} from 'typeorm';
 
 export const meta = {
 	tags: ['users'],
@@ -61,11 +61,13 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		userId: { type: 'string', format: 'misskey:id' },
-		userIds: { type: 'array', uniqueItems: true, items: {
-			type: 'string', format: 'misskey:id',
-		} },
-		username: { type: 'string' },
+		userId: {type: 'string', format: 'misskey:id'},
+		userIds: {
+			type: 'array', uniqueItems: true, items: {
+				type: 'string', format: 'misskey:id',
+			}
+		},
+		username: {type: 'string'},
 		host: {
 			type: 'string',
 			nullable: true,
@@ -73,9 +75,9 @@ export const paramDef = {
 		},
 	},
 	anyOf: [
-		{ required: ['userId'] },
-		{ required: ['userIds'] },
-		{ required: ['username'] },
+		{required: ['userId']},
+		{required: ['userIds']},
+		{required: ['username']},
 	],
 } as const;
 
@@ -84,7 +86,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		private userEntityService: UserEntityService,
 		private remoteUserResolveService: RemoteUserResolveService,
 		private roleService: RoleService,
@@ -117,7 +118,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 					if (user != null) _users.push(user);
 				}
 
-				const _userMap = await this.userEntityService.packMany(_users, me, { schema: 'UserDetailed' })
+				const _userMap = await this.userEntityService.packMany(_users, me, {schema: 'UserDetailed'})
 					.then(users => new Map(users.map(u => [u.id, u])));
 				return _users.map(u => _userMap.get(u.id)!);
 			} else {
@@ -129,8 +130,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 					});
 				} else {
 					const q: FindOptionsWhere<MiUser> = ps.userId != null
-						? { id: ps.userId }
-						: { usernameLower: ps.username!.toLowerCase(), host: IsNull() };
+						? {id: ps.userId}
+						: {usernameLower: ps.username!.toLowerCase(), host: IsNull()};
 
 					user = await this.usersRepository.findOneBy(q);
 				}

@@ -5,32 +5,32 @@
 
 import cluster from 'node:cluster';
 import * as fs from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { Inject, Injectable, OnApplicationShutdown } from '@nestjs/common';
-import Fastify, { FastifyInstance } from 'fastify';
+import {fileURLToPath} from 'node:url';
+import {Inject, Injectable, OnApplicationShutdown} from '@nestjs/common';
+import Fastify, {FastifyInstance} from 'fastify';
 import fastifyStatic from '@fastify/static';
 import fastifyRawBody from 'fastify-raw-body';
-import { IsNull } from 'typeorm';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import type { Config } from '@/config.js';
-import type { EmojisRepository, MiMeta, UserProfilesRepository, UsersRepository } from '@/models/_.js';
-import { DI } from '@/di-symbols.js';
+import {IsNull} from 'typeorm';
+import {GlobalEventService} from '@/core/GlobalEventService.js';
+import type {Config} from '@/config.js';
+import type {EmojisRepository, MiMeta, UserProfilesRepository, UsersRepository} from '@/models/_.js';
+import {DI} from '@/di-symbols.js';
 import type Logger from '@/logger.js';
 import * as Acct from '@/misc/acct.js';
-import { genIdenticon } from '@/misc/gen-identicon.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { LoggerService } from '@/core/LoggerService.js';
-import { bindThis } from '@/decorators.js';
-import { ActivityPubServerService } from './ActivityPubServerService.js';
-import { NodeinfoServerService } from './NodeinfoServerService.js';
-import { ApiServerService } from './api/ApiServerService.js';
-import { StreamingApiServerService } from './api/StreamingApiServerService.js';
-import { WellKnownServerService } from './WellKnownServerService.js';
-import { FileServerService } from './FileServerService.js';
-import { HealthServerService } from './HealthServerService.js';
-import { ClientServerService } from './web/ClientServerService.js';
-import { OpenApiServerService } from './api/openapi/OpenApiServerService.js';
-import { OAuth2ProviderService } from './oauth/OAuth2ProviderService.js';
+import {genIdenticon} from '@/misc/gen-identicon.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {LoggerService} from '@/core/LoggerService.js';
+import {bindThis} from '@/decorators.js';
+import {ActivityPubServerService} from './ActivityPubServerService.js';
+import {NodeinfoServerService} from './NodeinfoServerService.js';
+import {ApiServerService} from './api/ApiServerService.js';
+import {StreamingApiServerService} from './api/StreamingApiServerService.js';
+import {WellKnownServerService} from './WellKnownServerService.js';
+import {FileServerService} from './FileServerService.js';
+import {HealthServerService} from './HealthServerService.js';
+import {ClientServerService} from './web/ClientServerService.js';
+import {OpenApiServerService} from './api/openapi/OpenApiServerService.js';
+import {OAuth2ProviderService} from './oauth/OAuth2ProviderService.js';
 
 const _dirname = fileURLToPath(new URL('.', import.meta.url));
 
@@ -42,19 +42,14 @@ export class ServerService implements OnApplicationShutdown {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.meta)
 		private meta: MiMeta,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
-
 		@Inject(DI.emojisRepository)
 		private emojisRepository: EmojisRepository,
-
 		private userEntityService: UserEntityService,
 		private apiServerService: ApiServerService,
 		private openApiServerService: OpenApiServerService,
@@ -103,15 +98,15 @@ export class ServerService implements OnApplicationShutdown {
 			serve: false,
 		});
 
-		fastify.register(this.apiServerService.createServer, { prefix: '/api' });
+		fastify.register(this.apiServerService.createServer, {prefix: '/api'});
 		fastify.register(this.openApiServerService.createServer);
 		fastify.register(this.fileServerService.createServer);
 		fastify.register(this.activityPubServerService.createServer);
 		fastify.register(this.nodeinfoServerService.createServer);
 		fastify.register(this.wellKnownServerService.createServer);
-		fastify.register(this.oauth2ProviderService.createServer, { prefix: '/oauth' });
-		fastify.register(this.oauth2ProviderService.createTokenServer, { prefix: '/oauth/token' });
-		fastify.register(this.healthServerService.createServer, { prefix: '/healthz' });
+		fastify.register(this.oauth2ProviderService.createServer, {prefix: '/oauth'});
+		fastify.register(this.oauth2ProviderService.createTokenServer, {prefix: '/oauth/token'});
+		fastify.register(this.healthServerService.createServer, {prefix: '/healthz'});
 
 		fastify.get<{ Params: { path: string }; Querystring: { static?: any; badge?: any; }; }>('/emoji/:path(.*)', async (request, reply) => {
 			const path = request.params.path;
@@ -172,7 +167,7 @@ export class ServerService implements OnApplicationShutdown {
 		});
 
 		fastify.get<{ Params: { acct: string } }>('/avatar/@:acct', async (request, reply) => {
-			const { username, host } = Acct.parse(request.params.acct);
+			const {username, host} = Acct.parse(request.params.acct);
 			const user = await this.usersRepository.findOne({
 				where: {
 					usernameLower: username.toLowerCase(),
@@ -207,12 +202,12 @@ export class ServerService implements OnApplicationShutdown {
 			});
 
 			if (profile != null) {
-				await this.userProfilesRepository.update({ userId: profile.userId }, {
+				await this.userProfilesRepository.update({userId: profile.userId}, {
 					emailVerified: true,
 					emailVerifyCode: null,
 				});
 
-				this.globalEventService.publishMainStream(profile.userId, 'meUpdated', await this.userEntityService.pack(profile.userId, { id: profile.userId }, {
+				this.globalEventService.publishMainStream(profile.userId, 'meUpdated', await this.userEntityService.pack(profile.userId, {id: profile.userId}, {
 					schema: 'MeDetailed',
 					includeSecrets: true,
 				}));
@@ -254,13 +249,13 @@ export class ServerService implements OnApplicationShutdown {
 			if (fs.existsSync(this.config.socket)) {
 				fs.unlinkSync(this.config.socket);
 			}
-			fastify.listen({ path: this.config.socket }, (err, address) => {
+			fastify.listen({path: this.config.socket}, (err, address) => {
 				if (this.config.chmodSocket) {
 					fs.chmodSync(this.config.socket!, this.config.chmodSocket);
 				}
 			});
 		} else {
-			fastify.listen({ port: this.config.port, host: '0.0.0.0' });
+			fastify.listen({port: this.config.port, host: '0.0.0.0'});
 		}
 
 		await fastify.ready();

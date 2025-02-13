@@ -4,48 +4,50 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<button
-	class="_button"
-	:class="[$style.root, { [$style.wait]: wait, [$style.active]: isFollowing || hasPendingFollowRequestFromYou, [$style.full]: full, [$style.large]: large }]"
-	:disabled="wait"
-	@click="onClick"
->
-	<template v-if="!wait">
-		<template v-if="hasPendingFollowRequestFromYou && user.isLocked">
-			<span v-if="full" :class="$style.text">{{ i18n.ts.followRequestPending }}</span><i class="ti ti-hourglass-empty"></i>
+	<button
+		:class="[$style.root, { [$style.wait]: wait, [$style.active]: isFollowing || hasPendingFollowRequestFromYou, [$style.full]: full, [$style.large]: large }]"
+		:disabled="wait"
+		class="_button"
+		@click="onClick"
+	>
+		<template v-if="!wait">
+			<template v-if="hasPendingFollowRequestFromYou && user.isLocked">
+				<span v-if="full" :class="$style.text">{{ i18n.ts.followRequestPending }}</span><i class="ti ti-hourglass-empty"></i>
+			</template>
+			<template v-else-if="hasPendingFollowRequestFromYou && !user.isLocked">
+				<!-- つまりリモートフォローの場合。 -->
+				<span v-if="full" :class="$style.text">{{ i18n.ts.processing }}</span>
+				<MkLoading :colored="false" :em="true"/>
+			</template>
+			<template v-else-if="isFollowing">
+				<span v-if="full" :class="$style.text">{{ i18n.ts.youFollowing }}</span><i class="ti ti-minus"></i>
+			</template>
+			<template v-else-if="!isFollowing && user.isLocked">
+				<span v-if="full" :class="$style.text">{{ i18n.ts.followRequest }}</span><i class="ti ti-plus"></i>
+			</template>
+			<template v-else-if="!isFollowing && !user.isLocked">
+				<span v-if="full" :class="$style.text">{{ i18n.ts.follow }}</span><i class="ti ti-plus"></i>
+			</template>
 		</template>
-		<template v-else-if="hasPendingFollowRequestFromYou && !user.isLocked">
-			<!-- つまりリモートフォローの場合。 -->
-			<span v-if="full" :class="$style.text">{{ i18n.ts.processing }}</span><MkLoading :em="true" :colored="false"/>
+		<template v-else>
+			<span v-if="full" :class="$style.text">{{ i18n.ts.processing }}</span>
+			<MkLoading :colored="false" :em="true"/>
 		</template>
-		<template v-else-if="isFollowing">
-			<span v-if="full" :class="$style.text">{{ i18n.ts.youFollowing }}</span><i class="ti ti-minus"></i>
-		</template>
-		<template v-else-if="!isFollowing && user.isLocked">
-			<span v-if="full" :class="$style.text">{{ i18n.ts.followRequest }}</span><i class="ti ti-plus"></i>
-		</template>
-		<template v-else-if="!isFollowing && !user.isLocked">
-			<span v-if="full" :class="$style.text">{{ i18n.ts.follow }}</span><i class="ti ti-plus"></i>
-		</template>
-	</template>
-	<template v-else>
-		<span v-if="full" :class="$style.text">{{ i18n.ts.processing }}</span><MkLoading :em="true" :colored="false"/>
-	</template>
-</button>
+	</button>
 </template>
 
 <script lang="ts" setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import {onBeforeUnmount, onMounted, ref} from 'vue';
 import * as Misskey from 'misskey-js';
-import { host } from '@@/js/config.js';
+import {host} from '@@/js/config.js';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { useStream } from '@/stream.js';
-import { i18n } from '@/i18n.js';
-import { claimAchievement } from '@/scripts/achievements.js';
-import { pleaseLogin } from '@/scripts/please-login.js';
-import { $i } from '@/account.js';
-import { defaultStore } from '@/store.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {useStream} from '@/stream.js';
+import {i18n} from '@/i18n.js';
+import {claimAchievement} from '@/scripts/achievements.js';
+import {pleaseLogin} from '@/scripts/please-login.js';
+import {$i} from '@/account.js';
+import {defaultStore} from '@/store.js';
 
 const props = withDefaults(defineProps<{
 	user: Misskey.entities.UserDetailed,
@@ -80,15 +82,15 @@ function onFollowChange(user: Misskey.entities.UserDetailed) {
 }
 
 async function onClick() {
-	pleaseLogin({ openOnRemote: { type: 'web', path: `/@${props.user.username}@${props.user.host ?? host}` } });
+	pleaseLogin({openOnRemote: {type: 'web', path: `/@${props.user.username}@${props.user.host ?? host}`}});
 
 	wait.value = true;
 
 	try {
 		if (isFollowing.value) {
-			const { canceled } = await os.confirm({
+			const {canceled} = await os.confirm({
 				type: 'warning',
-				text: i18n.tsx.unfollowConfirm({ name: props.user.name || props.user.username }),
+				text: i18n.tsx.unfollowConfirm({name: props.user.name || props.user.username}),
 			});
 
 			if (canceled) {
@@ -101,9 +103,9 @@ async function onClick() {
 			});
 		} else {
 			if (defaultStore.state.alwaysConfirmFollow) {
-				const { canceled } = await os.confirm({
+				const {canceled} = await os.confirm({
 					type: 'question',
-					text: i18n.tsx.followConfirm({ name: props.user.name || props.user.username }),
+					text: i18n.tsx.followConfirm({name: props.user.name || props.user.username}),
 				});
 
 				if (canceled) {

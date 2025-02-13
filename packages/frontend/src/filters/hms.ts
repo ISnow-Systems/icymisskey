@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { i18n } from '@/i18n.js';
+import {i18n} from '@/i18n.js';
 
 export function hms(ms: number, options?: {
 	textFormat?: 'colon' | 'locale';

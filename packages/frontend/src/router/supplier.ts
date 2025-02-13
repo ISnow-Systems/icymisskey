@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { inject } from 'vue';
-import { Router } from '@/nirax.js';
-import type { IRouter } from '@/nirax.js';
-import { mainRouter } from '@/router/main.js';
+import {inject} from 'vue';
+import {Router} from '@/nirax.js';
+import type {IRouter} from '@/nirax.js';
+import {mainRouter} from '@/router/main.js';
 
 /**
  * メインの{@link Router}を取得する。

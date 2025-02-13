@@ -4,53 +4,53 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<template #header>
-		<MkPageHeader :overridePageMetadata="headerPageMetadata" :actions="headerActions"/>
-	</template>
-	<template #default>
-		<div class="_gaps" :class="$style.main">
-			<component :is="loadingHandler.component.value" v-if="loadingHandler.showing.value"/>
-			<template v-else>
-				<div v-if="gridItems.length === 0" style="text-align: center">
-					{{ i18n.ts._customEmojisManager._local._list.emojisNothing }}
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :overridePageMetadata="headerPageMetadata"/>
+		</template>
+		<template #default>
+			<div :class="$style.main" class="_gaps">
+				<component :is="loadingHandler.component.value" v-if="loadingHandler.showing.value"/>
+				<template v-else>
+					<div v-if="gridItems.length === 0" style="text-align: center">
+						{{ i18n.ts._customEmojisManager._local._list.emojisNothing }}
+					</div>
+
+					<template v-else>
+						<div :class="$style.grid">
+							<MkGrid :data="gridItems" :settings="setupGrid()" @event="onGridEvent"/>
+						</div>
+					</template>
+				</template>
+			</div>
+		</template>
+
+		<template #footer>
+			<div v-if="gridItems.length > 0" :class="$style.footer">
+				<div :class="$style.left">
+					<MkButton danger style="margin-right: auto" @click="onDeleteButtonClicked">
+						{{ i18n.ts.delete }} ({{ deleteItemsCount }})
+					</MkButton>
 				</div>
 
-				<template v-else>
-					<div :class="$style.grid">
-						<MkGrid :data="gridItems" :settings="setupGrid()" @event="onGridEvent"/>
-					</div>
-				</template>
-			</template>
-		</div>
-	</template>
+				<div :class="$style.center">
+					<MkPagingButtons :buttonCount="5" :current="currentPage" :max="allPages" @pageChanged="onPageChanged"/>
+				</div>
 
-	<template #footer>
-		<div v-if="gridItems.length > 0" :class="$style.footer">
-			<div :class="$style.left">
-				<MkButton danger style="margin-right: auto" @click="onDeleteButtonClicked">
-					{{ i18n.ts.delete }} ({{ deleteItemsCount }})
-				</MkButton>
+				<div :class="$style.right">
+					<MkButton :disabled="updateButtonDisabled" primary @click="onUpdateButtonClicked">
+						{{ i18n.ts.update }} ({{ updatedItemsCount }})
+					</MkButton>
+					<MkButton @click="onGridResetButtonClicked">{{ i18n.ts.reset }}</MkButton>
+				</div>
 			</div>
-
-			<div :class="$style.center">
-				<MkPagingButtons :current="currentPage" :max="allPages" :buttonCount="5" @pageChanged="onPageChanged"/>
-			</div>
-
-			<div :class="$style.right">
-				<MkButton primary :disabled="updateButtonDisabled" @click="onUpdateButtonClicked">
-					{{ i18n.ts.update }} ({{ updatedItemsCount }})
-				</MkButton>
-				<MkButton @click="onGridResetButtonClicked">{{ i18n.ts.reset }}</MkButton>
-			</div>
-		</div>
-	</template>
-</MkStickyContainer>
+		</template>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts">
-import type { SortOrder } from '@/components/MkSortOrderEditor.define.js';
-import type { GridSortOrderKey } from './custom-emojis-manager.impl.js';
+import type {SortOrder} from '@/components/MkSortOrderEditor.define.js';
+import type {GridSortOrderKey} from './custom-emojis-manager.impl.js';
 
 export type EmojiSearchQuery = {
 	name: string | null;
@@ -68,8 +68,8 @@ export type EmojiSearchQuery = {
 };
 </script>
 
-<script setup lang="ts">
-import { computed, defineAsyncComponent, onMounted, ref, nextTick, useCssModule } from 'vue';
+<script lang="ts" setup>
+import {computed, defineAsyncComponent, onMounted, ref, nextTick, useCssModule} from 'vue';
 import * as Misskey from 'misskey-js';
 import * as os from '@/os.js';
 import {
@@ -79,18 +79,18 @@ import {
 	roleIdsParser,
 } from '@/pages/admin/custom-emojis-manager.impl.js';
 import MkGrid from '@/components/grid/MkGrid.vue';
-import { i18n } from '@/i18n.js';
+import {i18n} from '@/i18n.js';
 import MkButton from '@/components/MkButton.vue';
-import { validators } from '@/components/grid/cell-validators.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
+import {validators} from '@/components/grid/cell-validators.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
 import MkPagingButtons from '@/components/MkPagingButtons.vue';
-import { selectFile } from '@/scripts/select-file.js';
-import { copyGridDataToClipboard, removeDataFromGrid } from '@/components/grid/grid-utils.js';
-import { useLoading } from "@/components/hook/useLoading.js";
+import {selectFile} from '@/scripts/select-file.js';
+import {copyGridDataToClipboard, removeDataFromGrid} from '@/components/grid/grid-utils.js';
+import {useLoading} from "@/components/hook/useLoading.js";
 
-import type { RequestLogItem } from '@/pages/admin/custom-emojis-manager.impl.js';
-import type { GridCellValidationEvent, GridCellValueChangeEvent, GridEvent } from '@/components/grid/grid-event.js';
-import type { GridSetting } from '@/components/grid/grid.js';
+import type {RequestLogItem} from '@/pages/admin/custom-emojis-manager.impl.js';
+import type {GridCellValidationEvent, GridCellValueChangeEvent, GridEvent} from '@/components/grid/grid-event.js';
+import type {GridSetting} from '@/components/grid/grid.js';
 
 type GridItem = {
 	checked: boolean;
@@ -131,13 +131,13 @@ function setupGrid(): GridSetting {
 			styleRules: [
 				{
 					// 初期値から変わっていたら背景色を変更
-					condition: ({ row }) => JSON.stringify(gridItems.value[row.index]) !== JSON.stringify(originGridItems.value[row.index]),
-					applyStyle: { className: $style.changedRow },
+					condition: ({row}) => JSON.stringify(gridItems.value[row.index]) !== JSON.stringify(originGridItems.value[row.index]),
+					applyStyle: {className: $style.changedRow},
 				},
 				{
 					// バリデーションに引っかかっていたら背景色を変更
-					condition: ({ cells }) => cells.some(it => !it.violation.valid),
-					applyStyle: { className: $style.violationRow },
+					condition: ({cells}) => cells.some(it => !it.violation.valid),
+					applyStyle: {className: $style.violationRow},
 				},
 			],
 			// 行のコンテキストメニュー設定
@@ -171,7 +171,7 @@ function setupGrid(): GridSetting {
 			},
 		},
 		cols: [
-			{ bindTo: 'checked', icon: 'ti-trash', type: 'boolean', editable: true, width: 34 },
+			{bindTo: 'checked', icon: 'ti-trash', type: 'boolean', editable: true, width: 34},
 			{
 				bindTo: 'url', icon: 'ti-icons', type: 'image', editable: true, width: 'auto', validators: [required],
 				async customValueEditor(row, col, value, cellElement) {
@@ -186,11 +186,11 @@ function setupGrid(): GridSetting {
 				bindTo: 'name', title: 'name', type: 'text', editable: true, width: 140,
 				validators: [required, regex, unique],
 			},
-			{ bindTo: 'category', title: 'category', type: 'text', editable: true, width: 140 },
-			{ bindTo: 'aliases', title: 'aliases', type: 'text', editable: true, width: 140 },
-			{ bindTo: 'license', title: 'license', type: 'text', editable: true, width: 140 },
-			{ bindTo: 'isSensitive', title: 'sensitive', type: 'boolean', editable: true, width: 90 },
-			{ bindTo: 'localOnly', title: 'localOnly', type: 'boolean', editable: true, width: 90 },
+			{bindTo: 'category', title: 'category', type: 'text', editable: true, width: 140},
+			{bindTo: 'aliases', title: 'aliases', type: 'text', editable: true, width: 140},
+			{bindTo: 'license', title: 'license', type: 'text', editable: true, width: 140},
+			{bindTo: 'isSensitive', title: 'sensitive', type: 'boolean', editable: true, width: 90},
+			{bindTo: 'localOnly', title: 'localOnly', type: 'boolean', editable: true, width: 90},
 			{
 				bindTo: 'roleIdsThatCanBeUsedThisEmojiAsReaction', title: 'role', type: 'text', editable: true, width: 140,
 				valueTransformer(row) {
@@ -212,7 +212,7 @@ function setupGrid(): GridSetting {
 						return current;
 					}
 
-					const transform = result.result.map(it => ({ id: it.id, name: it.name }));
+					const transform = result.result.map(it => ({id: it.id, name: it.name}));
 					gridItems.value[row.index].roleIdsThatCanBeUsedThisEmojiAsReaction = transform;
 
 					return transform;
@@ -225,10 +225,10 @@ function setupGrid(): GridSetting {
 					},
 				},
 			},
-			{ bindTo: 'type', type: 'text', editable: false, width: 90 },
-			{ bindTo: 'updatedAt', type: 'text', editable: false, width: 'auto' },
-			{ bindTo: 'publicUrl', type: 'text', editable: false, width: 180 },
-			{ bindTo: 'originalUrl', type: 'text', editable: false, width: 180 },
+			{bindTo: 'type', type: 'text', editable: false, width: 90},
+			{bindTo: 'updatedAt', type: 'text', editable: false, width: 'auto'},
+			{bindTo: 'publicUrl', type: 'text', editable: false, width: 180},
+			{bindTo: 'originalUrl', type: 'text', editable: false, width: 180},
 		],
 		cells: {
 			// セルのコンテキストメニュー設定
@@ -319,9 +319,9 @@ async function onUpdateButtonClicked() {
 		return;
 	}
 
-	const { canceled } = await os.confirm({
+	const {canceled} = await os.confirm({
 		type: 'info',
-		text: i18n.tsx._customEmojisManager._local._list.confirmUpdateEmojisDescription({ count: updatedItems.length }),
+		text: i18n.tsx._customEmojisManager._local._list.confirmUpdateEmojisDescription({count: updatedItems.length}),
 	});
 	if (canceled) {
 		return;
@@ -343,8 +343,8 @@ async function onUpdateButtonClicked() {
 					roleIdsThatCanBeUsedThisEmojiAsReaction: item.roleIdsThatCanBeUsedThisEmojiAsReaction.map(it => it.id),
 					fileId: item.fileId,
 				})
-				.then(() => ({ item, success: true, err: undefined }))
-				.catch(err => ({ item, success: false, err })),
+				.then(() => ({item, success: true, err: undefined}))
+				.catch(err => ({item, success: false, err})),
 		);
 	};
 
@@ -385,9 +385,9 @@ async function onDeleteButtonClicked() {
 		return;
 	}
 
-	const { canceled } = await os.confirm({
+	const {canceled} = await os.confirm({
 		type: 'info',
-		text: i18n.tsx._customEmojisManager._local._list.confirmDeleteEmojisDescription({ count: deleteItems.length }),
+		text: i18n.tsx._customEmojisManager._local._list.confirmDeleteEmojisDescription({count: deleteItems.length}),
 	});
 	if (canceled) {
 		return;
@@ -395,7 +395,7 @@ async function onDeleteButtonClicked() {
 
 	async function action() {
 		const deleteIds = deleteItems.map(it => it.id!);
-		await misskeyApi('admin/emoji/delete-bulk', { ids: deleteIds });
+		await misskeyApi('admin/emoji/delete-bulk', {ids: deleteIds});
 	}
 
 	await os.promiseDialog(
@@ -404,7 +404,7 @@ async function onDeleteButtonClicked() {
 }
 
 async function onGridResetButtonClicked() {
-	const { canceled } = await os.confirm({
+	const {canceled} = await os.confirm({
 		type: 'warning',
 		title: i18n.ts.resetAreYouSure,
 		text: i18n.ts._customEmojisManager._local._list.confirmResetDescription,
@@ -421,7 +421,7 @@ async function onSearchRequest() {
 
 async function onPageChanged(pageNumber: number) {
 	if (updatedItemsCount.value > 0) {
-		const { canceled } = await os.confirm({
+		const {canceled} = await os.confirm({
 			type: 'warning',
 			title: i18n.ts._customEmojisManager._local._list.confirmMovePage,
 			text: i18n.ts._customEmojisManager._local._list.confirmMovePageDesciption,
@@ -450,7 +450,7 @@ function onGridCellValidation(event: GridCellValidationEvent) {
 }
 
 function onGridCellValueChange(event: GridCellValueChangeEvent) {
-	const { row, column, newValue } = event;
+	const {row, column, newValue} = event;
 	if (gridItems.value.length > row.index && column.setting.bindTo in gridItems.value[row.index]) {
 		gridItems.value[row.index][column.setting.bindTo] = newValue;
 	}
@@ -481,7 +481,7 @@ async function refreshCustomEmojis() {
 		query: query,
 		limit: limit,
 		page: currentPage.value,
-		sortKeys: sortOrders.value.map(({ key, direction }) => `${direction}${key}` as any),
+		sortKeys: sortOrders.value.map(({key, direction}) => `${direction}${key}` as any),
 	}));
 
 	customEmojis.value = result.emojis;
@@ -529,7 +529,7 @@ const headerActions = computed(() => [{
 	handler: () => {
 		if (searchWindowOpening) return;
 		searchWindowOpening = true;
-		const { dispose } = os.popup(defineAsyncComponent(() => import('./custom-emojis-manager.local.list.search.vue')), {
+		const {dispose} = os.popup(defineAsyncComponent(() => import('./custom-emojis-manager.local.list.search.vue')), {
 			query: searchQuery.value,
 		}, {
 			queryUpdated: (query: EmojiSearchQuery) => {
@@ -553,7 +553,7 @@ const headerActions = computed(() => [{
 	handler: (ev: MouseEvent) => {
 		async function changeSearchLimit(to: number) {
 			if (updatedItemsCount.value > 0) {
-				const { canceled } = await os.confirm({
+				const {canceled} = await os.confirm({
 					type: 'warning',
 					title: i18n.ts._customEmojisManager._local._list.confirmChangeView,
 					text: i18n.ts._customEmojisManager._local._list.confirmMovePageDesciption,
@@ -586,7 +586,7 @@ const headerActions = computed(() => [{
 	icon: 'ti ti-notes',
 	text: i18n.ts._customEmojisManager._gridCommon.registrationLogs,
 	handler: () => {
-		const { dispose } = os.popup(defineAsyncComponent(() => import('./custom-emojis-manager.local.list.logs.vue')), {
+		const {dispose} = os.popup(defineAsyncComponent(() => import('./custom-emojis-manager.local.list.logs.vue')), {
 			logs: requestLogs.value,
 		}, {
 			closed: () => {
@@ -597,7 +597,7 @@ const headerActions = computed(() => [{
 }]);
 </script>
 
-<style module lang="scss">
+<style lang="scss" module>
 .violationRow {
 	background-color: var(--MI_THEME-infoWarnBg);
 }

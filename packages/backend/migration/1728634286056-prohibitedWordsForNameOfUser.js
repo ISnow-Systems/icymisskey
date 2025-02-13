@@ -4,11 +4,12 @@
  */
 
 export class ProhibitedWordsForNameOfUser1728634286056 {
-		async up(queryRunner) {
-			await queryRunner.query(`ALTER TABLE "meta" ADD "prohibitedWordsForNameOfUser" character varying(1024) array NOT NULL DEFAULT '{}'`);
-		}
+	async up(queryRunner) {
+		await queryRunner.query(`ALTER TABLE "meta"
+			ADD "prohibitedWordsForNameOfUser" character varying(1024) array NOT NULL DEFAULT '{}'`);
+	}
 
-		async down(queryRunner) {
-			await queryRunner.query(`ALTER TABLE "meta" DROP COLUMN "prohibitedWordsForNameOfUser"`);
-		}
+	async down(queryRunner) {
+		await queryRunner.query(`ALTER TABLE "meta" DROP COLUMN "prohibitedWordsForNameOfUser"`);
+	}
 }

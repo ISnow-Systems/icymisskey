@@ -5,15 +5,15 @@
 
 process.env.NODE_ENV = 'test';
 
-import { setTimeout } from 'node:timers/promises';
-import { jest } from '@jest/globals';
-import { ModuleMocker } from 'jest-mock';
-import { Test } from '@nestjs/testing';
+import {setTimeout} from 'node:timers/promises';
+import {jest} from '@jest/globals';
+import {ModuleMocker} from 'jest-mock';
+import {Test} from '@nestjs/testing';
 import * as lolex from '@sinonjs/fake-timers';
-import type { TestingModule } from '@nestjs/testing';
-import type { MockFunctionMetadata } from 'jest-mock';
-import { GlobalModule } from '@/GlobalModule.js';
-import { RoleService } from '@/core/RoleService.js';
+import type {TestingModule} from '@nestjs/testing';
+import type {MockFunctionMetadata} from 'jest-mock';
+import {GlobalModule} from '@/GlobalModule.js';
+import {RoleService} from '@/core/RoleService.js';
 import {
 	MiMeta,
 	MiRole,
@@ -23,16 +23,16 @@ import {
 	RolesRepository,
 	UsersRepository,
 } from '@/models/_.js';
-import { DI } from '@/di-symbols.js';
-import { MetaService } from '@/core/MetaService.js';
-import { genAidx } from '@/misc/id/aidx.js';
-import { CacheService } from '@/core/CacheService.js';
-import { IdService } from '@/core/IdService.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { secureRndstr } from '@/misc/secure-rndstr.js';
-import { NotificationService } from '@/core/NotificationService.js';
-import { RoleCondFormulaValue } from '@/models/Role.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
+import {DI} from '@/di-symbols.js';
+import {MetaService} from '@/core/MetaService.js';
+import {genAidx} from '@/misc/id/aidx.js';
+import {CacheService} from '@/core/CacheService.js';
+import {IdService} from '@/core/IdService.js';
+import {GlobalEventService} from '@/core/GlobalEventService.js';
+import {secureRndstr} from '@/misc/secure-rndstr.js';
+import {NotificationService} from '@/core/NotificationService.js';
+import {RoleCondFormulaValue} from '@/models/Role.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
 
 const moduleMocker = new ModuleMocker(global);
 
@@ -89,7 +89,7 @@ describe('RoleService', () => {
 			...args,
 		});
 
-		return await roleAssignmentsRepository.findOneByOrFail({ id });
+		return await roleAssignmentsRepository.findOneByOrFail({id});
 	}
 
 	function aidx() {
@@ -126,7 +126,7 @@ describe('RoleService', () => {
 		})
 			.useMocker((token) => {
 				if (token === MetaService) {
-					return { fetch: jest.fn() };
+					return {fetch: jest.fn()};
 				}
 				if (typeof token === 'function') {
 					const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
@@ -279,20 +279,20 @@ describe('RoleService', () => {
 	describe('getModeratorIds', () => {
 		test('includeAdmins = false, includeRoot = false, excludeExpire = false', async () => {
 			const [adminUser1, adminUser2, modeUser1, modeUser2, normalUser1, normalUser2, rootUser] = await Promise.all([
-				createUser(), createUser(), createUser(), createUser(), createUser(), createUser(), createUser({ isRoot: true }),
+				createUser(), createUser(), createUser(), createUser(), createUser(), createUser(), createUser({isRoot: true}),
 			]);
 
-			const role1 = await createRole({ name: 'admin', isAdministrator: true });
-			const role2 = await createRole({ name: 'moderator', isModerator: true });
-			const role3 = await createRole({ name: 'normal' });
+			const role1 = await createRole({name: 'admin', isAdministrator: true});
+			const role2 = await createRole({name: 'moderator', isModerator: true});
+			const role3 = await createRole({name: 'normal'});
 
 			await Promise.all([
-				assignRole({ userId: adminUser1.id, roleId: role1.id }),
-				assignRole({ userId: adminUser2.id, roleId: role1.id, expiresAt: new Date(Date.now() - 1000) }),
-				assignRole({ userId: modeUser1.id, roleId: role2.id }),
-				assignRole({ userId: modeUser2.id, roleId: role2.id, expiresAt: new Date(Date.now() - 1000) }),
-				assignRole({ userId: normalUser1.id, roleId: role3.id }),
-				assignRole({ userId: normalUser2.id, roleId: role3.id, expiresAt: new Date(Date.now() - 1000) }),
+				assignRole({userId: adminUser1.id, roleId: role1.id}),
+				assignRole({userId: adminUser2.id, roleId: role1.id, expiresAt: new Date(Date.now() - 1000)}),
+				assignRole({userId: modeUser1.id, roleId: role2.id}),
+				assignRole({userId: modeUser2.id, roleId: role2.id, expiresAt: new Date(Date.now() - 1000)}),
+				assignRole({userId: normalUser1.id, roleId: role3.id}),
+				assignRole({userId: normalUser2.id, roleId: role3.id, expiresAt: new Date(Date.now() - 1000)}),
 			]);
 
 			const result = await roleService.getModeratorIds({
@@ -305,20 +305,20 @@ describe('RoleService', () => {
 
 		test('includeAdmins = false, includeRoot = false, excludeExpire = true', async () => {
 			const [adminUser1, adminUser2, modeUser1, modeUser2, normalUser1, normalUser2, rootUser] = await Promise.all([
-				createUser(), createUser(), createUser(), createUser(), createUser(), createUser(), createUser({ isRoot: true }),
+				createUser(), createUser(), createUser(), createUser(), createUser(), createUser(), createUser({isRoot: true}),
 			]);
 
-			const role1 = await createRole({ name: 'admin', isAdministrator: true });
-			const role2 = await createRole({ name: 'moderator', isModerator: true });
-			const role3 = await createRole({ name: 'normal' });
+			const role1 = await createRole({name: 'admin', isAdministrator: true});
+			const role2 = await createRole({name: 'moderator', isModerator: true});
+			const role3 = await createRole({name: 'normal'});
 
 			await Promise.all([
-				assignRole({ userId: adminUser1.id, roleId: role1.id }),
-				assignRole({ userId: adminUser2.id, roleId: role1.id, expiresAt: new Date(Date.now() - 1000) }),
-				assignRole({ userId: modeUser1.id, roleId: role2.id }),
-				assignRole({ userId: modeUser2.id, roleId: role2.id, expiresAt: new Date(Date.now() - 1000) }),
-				assignRole({ userId: normalUser1.id, roleId: role3.id }),
-				assignRole({ userId: normalUser2.id, roleId: role3.id, expiresAt: new Date(Date.now() - 1000) }),
+				assignRole({userId: adminUser1.id, roleId: role1.id}),
+				assignRole({userId: adminUser2.id, roleId: role1.id, expiresAt: new Date(Date.now() - 1000)}),
+				assignRole({userId: modeUser1.id, roleId: role2.id}),
+				assignRole({userId: modeUser2.id, roleId: role2.id, expiresAt: new Date(Date.now() - 1000)}),
+				assignRole({userId: normalUser1.id, roleId: role3.id}),
+				assignRole({userId: normalUser2.id, roleId: role3.id, expiresAt: new Date(Date.now() - 1000)}),
 			]);
 
 			const result = await roleService.getModeratorIds({
@@ -331,20 +331,20 @@ describe('RoleService', () => {
 
 		test('includeAdmins = true, includeRoot = false, excludeExpire = false', async () => {
 			const [adminUser1, adminUser2, modeUser1, modeUser2, normalUser1, normalUser2, rootUser] = await Promise.all([
-				createUser(), createUser(), createUser(), createUser(), createUser(), createUser(), createUser({ isRoot: true }),
+				createUser(), createUser(), createUser(), createUser(), createUser(), createUser(), createUser({isRoot: true}),
 			]);
 
-			const role1 = await createRole({ name: 'admin', isAdministrator: true });
-			const role2 = await createRole({ name: 'moderator', isModerator: true });
-			const role3 = await createRole({ name: 'normal' });
+			const role1 = await createRole({name: 'admin', isAdministrator: true});
+			const role2 = await createRole({name: 'moderator', isModerator: true});
+			const role3 = await createRole({name: 'normal'});
 
 			await Promise.all([
-				assignRole({ userId: adminUser1.id, roleId: role1.id }),
-				assignRole({ userId: adminUser2.id, roleId: role1.id, expiresAt: new Date(Date.now() - 1000) }),
-				assignRole({ userId: modeUser1.id, roleId: role2.id }),
-				assignRole({ userId: modeUser2.id, roleId: role2.id, expiresAt: new Date(Date.now() - 1000) }),
-				assignRole({ userId: normalUser1.id, roleId: role3.id }),
-				assignRole({ userId: normalUser2.id, roleId: role3.id, expiresAt: new Date(Date.now() - 1000) }),
+				assignRole({userId: adminUser1.id, roleId: role1.id}),
+				assignRole({userId: adminUser2.id, roleId: role1.id, expiresAt: new Date(Date.now() - 1000)}),
+				assignRole({userId: modeUser1.id, roleId: role2.id}),
+				assignRole({userId: modeUser2.id, roleId: role2.id, expiresAt: new Date(Date.now() - 1000)}),
+				assignRole({userId: normalUser1.id, roleId: role3.id}),
+				assignRole({userId: normalUser2.id, roleId: role3.id, expiresAt: new Date(Date.now() - 1000)}),
 			]);
 
 			const result = await roleService.getModeratorIds({
@@ -357,20 +357,20 @@ describe('RoleService', () => {
 
 		test('includeAdmins = true, includeRoot = false, excludeExpire = true', async () => {
 			const [adminUser1, adminUser2, modeUser1, modeUser2, normalUser1, normalUser2, rootUser] = await Promise.all([
-				createUser(), createUser(), createUser(), createUser(), createUser(), createUser(), createUser({ isRoot: true }),
+				createUser(), createUser(), createUser(), createUser(), createUser(), createUser(), createUser({isRoot: true}),
 			]);
 
-			const role1 = await createRole({ name: 'admin', isAdministrator: true });
-			const role2 = await createRole({ name: 'moderator', isModerator: true });
-			const role3 = await createRole({ name: 'normal' });
+			const role1 = await createRole({name: 'admin', isAdministrator: true});
+			const role2 = await createRole({name: 'moderator', isModerator: true});
+			const role3 = await createRole({name: 'normal'});
 
 			await Promise.all([
-				assignRole({ userId: adminUser1.id, roleId: role1.id }),
-				assignRole({ userId: adminUser2.id, roleId: role1.id, expiresAt: new Date(Date.now() - 1000) }),
-				assignRole({ userId: modeUser1.id, roleId: role2.id }),
-				assignRole({ userId: modeUser2.id, roleId: role2.id, expiresAt: new Date(Date.now() - 1000) }),
-				assignRole({ userId: normalUser1.id, roleId: role3.id }),
-				assignRole({ userId: normalUser2.id, roleId: role3.id, expiresAt: new Date(Date.now() - 1000) }),
+				assignRole({userId: adminUser1.id, roleId: role1.id}),
+				assignRole({userId: adminUser2.id, roleId: role1.id, expiresAt: new Date(Date.now() - 1000)}),
+				assignRole({userId: modeUser1.id, roleId: role2.id}),
+				assignRole({userId: modeUser2.id, roleId: role2.id, expiresAt: new Date(Date.now() - 1000)}),
+				assignRole({userId: normalUser1.id, roleId: role3.id}),
+				assignRole({userId: normalUser2.id, roleId: role3.id, expiresAt: new Date(Date.now() - 1000)}),
 			]);
 
 			const result = await roleService.getModeratorIds({
@@ -383,20 +383,20 @@ describe('RoleService', () => {
 
 		test('includeAdmins = false, includeRoot = true, excludeExpire = false', async () => {
 			const [adminUser1, adminUser2, modeUser1, modeUser2, normalUser1, normalUser2, rootUser] = await Promise.all([
-				createUser(), createUser(), createUser(), createUser(), createUser(), createUser(), createUser({ isRoot: true }),
+				createUser(), createUser(), createUser(), createUser(), createUser(), createUser(), createUser({isRoot: true}),
 			]);
 
-			const role1 = await createRole({ name: 'admin', isAdministrator: true });
-			const role2 = await createRole({ name: 'moderator', isModerator: true });
-			const role3 = await createRole({ name: 'normal' });
+			const role1 = await createRole({name: 'admin', isAdministrator: true});
+			const role2 = await createRole({name: 'moderator', isModerator: true});
+			const role3 = await createRole({name: 'normal'});
 
 			await Promise.all([
-				assignRole({ userId: adminUser1.id, roleId: role1.id }),
-				assignRole({ userId: adminUser2.id, roleId: role1.id, expiresAt: new Date(Date.now() - 1000) }),
-				assignRole({ userId: modeUser1.id, roleId: role2.id }),
-				assignRole({ userId: modeUser2.id, roleId: role2.id, expiresAt: new Date(Date.now() - 1000) }),
-				assignRole({ userId: normalUser1.id, roleId: role3.id }),
-				assignRole({ userId: normalUser2.id, roleId: role3.id, expiresAt: new Date(Date.now() - 1000) }),
+				assignRole({userId: adminUser1.id, roleId: role1.id}),
+				assignRole({userId: adminUser2.id, roleId: role1.id, expiresAt: new Date(Date.now() - 1000)}),
+				assignRole({userId: modeUser1.id, roleId: role2.id}),
+				assignRole({userId: modeUser2.id, roleId: role2.id, expiresAt: new Date(Date.now() - 1000)}),
+				assignRole({userId: normalUser1.id, roleId: role3.id}),
+				assignRole({userId: normalUser2.id, roleId: role3.id, expiresAt: new Date(Date.now() - 1000)}),
 			]);
 
 			const result = await roleService.getModeratorIds({
@@ -409,18 +409,18 @@ describe('RoleService', () => {
 
 		test('root has moderator role', async () => {
 			const [adminUser1, modeUser1, normalUser1, rootUser] = await Promise.all([
-				createUser(), createUser(), createUser(), createUser({ isRoot: true }),
+				createUser(), createUser(), createUser(), createUser({isRoot: true}),
 			]);
 
-			const role1 = await createRole({ name: 'admin', isAdministrator: true });
-			const role2 = await createRole({ name: 'moderator', isModerator: true });
-			const role3 = await createRole({ name: 'normal' });
+			const role1 = await createRole({name: 'admin', isAdministrator: true});
+			const role2 = await createRole({name: 'moderator', isModerator: true});
+			const role3 = await createRole({name: 'normal'});
 
 			await Promise.all([
-				assignRole({ userId: adminUser1.id, roleId: role1.id }),
-				assignRole({ userId: modeUser1.id, roleId: role2.id }),
-				assignRole({ userId: rootUser.id, roleId: role2.id }),
-				assignRole({ userId: normalUser1.id, roleId: role3.id }),
+				assignRole({userId: adminUser1.id, roleId: role1.id}),
+				assignRole({userId: modeUser1.id, roleId: role2.id}),
+				assignRole({userId: rootUser.id, roleId: role2.id}),
+				assignRole({userId: normalUser1.id, roleId: role3.id}),
 			]);
 
 			const result = await roleService.getModeratorIds({
@@ -433,18 +433,18 @@ describe('RoleService', () => {
 
 		test('root has administrator role', async () => {
 			const [adminUser1, modeUser1, normalUser1, rootUser] = await Promise.all([
-				createUser(), createUser(), createUser(), createUser({ isRoot: true }),
+				createUser(), createUser(), createUser(), createUser({isRoot: true}),
 			]);
 
-			const role1 = await createRole({ name: 'admin', isAdministrator: true });
-			const role2 = await createRole({ name: 'moderator', isModerator: true });
-			const role3 = await createRole({ name: 'normal' });
+			const role1 = await createRole({name: 'admin', isAdministrator: true});
+			const role2 = await createRole({name: 'moderator', isModerator: true});
+			const role3 = await createRole({name: 'normal'});
 
 			await Promise.all([
-				assignRole({ userId: adminUser1.id, roleId: role1.id }),
-				assignRole({ userId: rootUser.id, roleId: role1.id }),
-				assignRole({ userId: modeUser1.id, roleId: role2.id }),
-				assignRole({ userId: normalUser1.id, roleId: role3.id }),
+				assignRole({userId: adminUser1.id, roleId: role1.id}),
+				assignRole({userId: rootUser.id, roleId: role1.id}),
+				assignRole({userId: modeUser1.id, roleId: role2.id}),
+				assignRole({userId: normalUser1.id, roleId: role3.id}),
 			]);
 
 			const result = await roleService.getModeratorIds({
@@ -457,18 +457,18 @@ describe('RoleService', () => {
 
 		test('root has moderator role(expire)', async () => {
 			const [adminUser1, modeUser1, normalUser1, rootUser] = await Promise.all([
-				createUser(), createUser(), createUser(), createUser({ isRoot: true }),
+				createUser(), createUser(), createUser(), createUser({isRoot: true}),
 			]);
 
-			const role1 = await createRole({ name: 'admin', isAdministrator: true });
-			const role2 = await createRole({ name: 'moderator', isModerator: true });
-			const role3 = await createRole({ name: 'normal' });
+			const role1 = await createRole({name: 'admin', isAdministrator: true});
+			const role2 = await createRole({name: 'moderator', isModerator: true});
+			const role3 = await createRole({name: 'normal'});
 
 			await Promise.all([
-				assignRole({ userId: adminUser1.id, roleId: role1.id }),
-				assignRole({ userId: modeUser1.id, roleId: role2.id, expiresAt: new Date(Date.now() - 1000) }),
-				assignRole({ userId: rootUser.id, roleId: role2.id, expiresAt: new Date(Date.now() - 1000) }),
-				assignRole({ userId: normalUser1.id, roleId: role3.id }),
+				assignRole({userId: adminUser1.id, roleId: role1.id}),
+				assignRole({userId: modeUser1.id, roleId: role2.id, expiresAt: new Date(Date.now() - 1000)}),
+				assignRole({userId: rootUser.id, roleId: role2.id, expiresAt: new Date(Date.now() - 1000)}),
+				assignRole({userId: normalUser1.id, roleId: role3.id}),
 			]);
 
 			const result = await roleService.getModeratorIds({
@@ -483,10 +483,10 @@ describe('RoleService', () => {
 	describe('conditional role', () => {
 		test('～かつ～', async () => {
 			const [user1, user2, user3, user4] = await Promise.all([
-				createUser({ isBot: true, isCat: false, isSuspended: false }),
-				createUser({ isBot: false, isCat: true, isSuspended: false }),
-				createUser({ isBot: true, isCat: true, isSuspended: false }),
-				createUser({ isBot: false, isCat: false, isSuspended: true }),
+				createUser({isBot: true, isCat: false, isSuspended: false}),
+				createUser({isBot: false, isCat: true, isSuspended: false}),
+				createUser({isBot: true, isCat: true, isSuspended: false}),
+				createUser({isBot: false, isCat: false, isSuspended: true}),
 			]);
 			const role1 = await createConditionalRole({
 				id: aidx(),
@@ -518,10 +518,10 @@ describe('RoleService', () => {
 
 		test('～または～', async () => {
 			const [user1, user2, user3, user4] = await Promise.all([
-				createUser({ isBot: true, isCat: false, isSuspended: false }),
-				createUser({ isBot: false, isCat: true, isSuspended: false }),
-				createUser({ isBot: true, isCat: true, isSuspended: false }),
-				createUser({ isBot: false, isCat: false, isSuspended: true }),
+				createUser({isBot: true, isCat: false, isSuspended: false}),
+				createUser({isBot: false, isCat: true, isSuspended: false}),
+				createUser({isBot: true, isCat: true, isSuspended: false}),
+				createUser({isBot: false, isCat: false, isSuspended: true}),
 			]);
 			const role1 = await createConditionalRole({
 				id: aidx(),
@@ -553,9 +553,9 @@ describe('RoleService', () => {
 
 		test('～ではない', async () => {
 			const [user1, user2, user3] = await Promise.all([
-				createUser({ isBot: true, isCat: false, isSuspended: false }),
-				createUser({ isBot: false, isCat: true, isSuspended: false }),
-				createUser({ isBot: true, isCat: true, isSuspended: false }),
+				createUser({isBot: true, isCat: false, isSuspended: false}),
+				createUser({isBot: false, isCat: true, isSuspended: false}),
+				createUser({isBot: true, isCat: true, isSuspended: false}),
 			]);
 			const role1 = await createConditionalRole({
 				id: aidx(),
@@ -604,8 +604,8 @@ describe('RoleService', () => {
 
 		test('ローカルユーザのみ', async () => {
 			const [user1, user2] = await Promise.all([
-				createUser({ host: null }),
-				createUser({ host: 'example.com' }),
+				createUser({host: null}),
+				createUser({host: 'example.com'}),
 			]);
 			const role = await createConditionalRole({
 				id: aidx(),
@@ -620,8 +620,8 @@ describe('RoleService', () => {
 
 		test('リモートユーザのみ', async () => {
 			const [user1, user2] = await Promise.all([
-				createUser({ host: null }),
-				createUser({ host: 'example.com' }),
+				createUser({host: null}),
+				createUser({host: 'example.com'}),
 			]);
 			const role = await createConditionalRole({
 				id: aidx(),
@@ -636,8 +636,8 @@ describe('RoleService', () => {
 
 		test('サスペンド済みユーザである', async () => {
 			const [user1, user2] = await Promise.all([
-				createUser({ isSuspended: false }),
-				createUser({ isSuspended: true }),
+				createUser({isSuspended: false}),
+				createUser({isSuspended: true}),
 			]);
 			const role = await createConditionalRole({
 				id: aidx(),
@@ -652,8 +652,8 @@ describe('RoleService', () => {
 
 		test('鍵アカウントユーザである', async () => {
 			const [user1, user2] = await Promise.all([
-				createUser({ isLocked: false }),
-				createUser({ isLocked: true }),
+				createUser({isLocked: false}),
+				createUser({isLocked: true}),
 			]);
 			const role = await createConditionalRole({
 				id: aidx(),
@@ -668,8 +668,8 @@ describe('RoleService', () => {
 
 		test('botユーザである', async () => {
 			const [user1, user2] = await Promise.all([
-				createUser({ isBot: false }),
-				createUser({ isBot: true }),
+				createUser({isBot: false}),
+				createUser({isBot: true}),
 			]);
 			const role = await createConditionalRole({
 				id: aidx(),
@@ -684,8 +684,8 @@ describe('RoleService', () => {
 
 		test('猫である', async () => {
 			const [user1, user2] = await Promise.all([
-				createUser({ isCat: false }),
-				createUser({ isCat: true }),
+				createUser({isCat: false}),
+				createUser({isCat: true}),
 			]);
 			const role = await createConditionalRole({
 				id: aidx(),
@@ -700,8 +700,8 @@ describe('RoleService', () => {
 
 		test('「ユーザを見つけやすくする」が有効なアカウント', async () => {
 			const [user1, user2] = await Promise.all([
-				createUser({ isExplorable: false }),
-				createUser({ isExplorable: true }),
+				createUser({isExplorable: false}),
+				createUser({isExplorable: true}),
 			]);
 			const role = await createConditionalRole({
 				id: aidx(),
@@ -726,11 +726,11 @@ describe('RoleService', () => {
 
 			const [user1, user2, user3] = await Promise.all([
 				// 4:59
-				createUser({ id: genAidx(d1.getTime()) }),
+				createUser({id: genAidx(d1.getTime())}),
 				// 5:00
-				createUser({ id: genAidx(d2.getTime()) }),
+				createUser({id: genAidx(d2.getTime())}),
 				// 5:01
-				createUser({ id: genAidx(d3.getTime()) }),
+				createUser({id: genAidx(d3.getTime())}),
 			]);
 			const role = await createConditionalRole({
 				id: aidx(),
@@ -759,11 +759,11 @@ describe('RoleService', () => {
 
 			const [user1, user2, user3] = await Promise.all([
 				// 4:59
-				createUser({ id: genAidx(d1.getTime()) }),
+				createUser({id: genAidx(d1.getTime())}),
 				// 5:00
-				createUser({ id: genAidx(d2.getTime()) }),
+				createUser({id: genAidx(d2.getTime())}),
 				// 5:01
-				createUser({ id: genAidx(d3.getTime()) }),
+				createUser({id: genAidx(d3.getTime())}),
 			]);
 			const role = await createConditionalRole({
 				id: aidx(),
@@ -782,9 +782,9 @@ describe('RoleService', () => {
 
 		test('フォロワー数が指定値以下', async () => {
 			const [user1, user2, user3] = await Promise.all([
-				createUser({ followersCount: 99 }),
-				createUser({ followersCount: 100 }),
-				createUser({ followersCount: 101 }),
+				createUser({followersCount: 99}),
+				createUser({followersCount: 100}),
+				createUser({followersCount: 101}),
 			]);
 			const role = await createConditionalRole({
 				id: aidx(),
@@ -802,9 +802,9 @@ describe('RoleService', () => {
 
 		test('フォロワー数が指定値以下', async () => {
 			const [user1, user2, user3] = await Promise.all([
-				createUser({ followersCount: 99 }),
-				createUser({ followersCount: 100 }),
-				createUser({ followersCount: 101 }),
+				createUser({followersCount: 99}),
+				createUser({followersCount: 100}),
+				createUser({followersCount: 101}),
 			]);
 			const role = await createConditionalRole({
 				id: aidx(),
@@ -822,9 +822,9 @@ describe('RoleService', () => {
 
 		test('フォロー数が指定値以下', async () => {
 			const [user1, user2, user3] = await Promise.all([
-				createUser({ followingCount: 99 }),
-				createUser({ followingCount: 100 }),
-				createUser({ followingCount: 101 }),
+				createUser({followingCount: 99}),
+				createUser({followingCount: 100}),
+				createUser({followingCount: 101}),
 			]);
 			const role = await createConditionalRole({
 				id: aidx(),
@@ -842,9 +842,9 @@ describe('RoleService', () => {
 
 		test('フォロー数が指定値以上', async () => {
 			const [user1, user2, user3] = await Promise.all([
-				createUser({ followingCount: 99 }),
-				createUser({ followingCount: 100 }),
-				createUser({ followingCount: 101 }),
+				createUser({followingCount: 99}),
+				createUser({followingCount: 100}),
+				createUser({followingCount: 101}),
 			]);
 			const role = await createConditionalRole({
 				id: aidx(),
@@ -862,9 +862,9 @@ describe('RoleService', () => {
 
 		test('ノート数が指定値以下', async () => {
 			const [user1, user2, user3] = await Promise.all([
-				createUser({ notesCount: 9 }),
-				createUser({ notesCount: 10 }),
-				createUser({ notesCount: 11 }),
+				createUser({notesCount: 9}),
+				createUser({notesCount: 10}),
+				createUser({notesCount: 11}),
 			]);
 			const role = await createConditionalRole({
 				id: aidx(),
@@ -882,9 +882,9 @@ describe('RoleService', () => {
 
 		test('ノート数が指定値以上', async () => {
 			const [user1, user2, user3] = await Promise.all([
-				createUser({ notesCount: 9 }),
-				createUser({ notesCount: 10 }),
-				createUser({ notesCount: 11 }),
+				createUser({notesCount: 9}),
+				createUser({notesCount: 10}),
+				createUser({notesCount: 11}),
 			]);
 			const role = await createConditionalRole({
 				id: aidx(),

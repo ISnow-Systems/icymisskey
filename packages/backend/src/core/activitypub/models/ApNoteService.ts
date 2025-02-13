@@ -3,39 +3,39 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { In } from 'typeorm';
-import { DI } from '@/di-symbols.js';
-import type { PollsRepository, EmojisRepository, MiMeta } from '@/models/_.js';
-import type { Config } from '@/config.js';
-import type { MiRemoteUser } from '@/models/User.js';
-import type { MiNote } from '@/models/Note.js';
-import { toArray, toSingle, unique } from '@/misc/prelude/array.js';
-import type { MiEmoji } from '@/models/Emoji.js';
-import { AppLockService } from '@/core/AppLockService.js';
-import type { MiDriveFile } from '@/models/DriveFile.js';
-import { NoteCreateService } from '@/core/NoteCreateService.js';
+import {forwardRef, Inject, Injectable} from '@nestjs/common';
+import {In} from 'typeorm';
+import {DI} from '@/di-symbols.js';
+import type {PollsRepository, EmojisRepository, MiMeta} from '@/models/_.js';
+import type {Config} from '@/config.js';
+import type {MiRemoteUser} from '@/models/User.js';
+import type {MiNote} from '@/models/Note.js';
+import {toArray, toSingle, unique} from '@/misc/prelude/array.js';
+import type {MiEmoji} from '@/models/Emoji.js';
+import {AppLockService} from '@/core/AppLockService.js';
+import type {MiDriveFile} from '@/models/DriveFile.js';
+import {NoteCreateService} from '@/core/NoteCreateService.js';
 import type Logger from '@/logger.js';
-import { IdService } from '@/core/IdService.js';
-import { PollService } from '@/core/PollService.js';
-import { StatusError } from '@/misc/status-error.js';
-import { UtilityService } from '@/core/UtilityService.js';
-import { bindThis } from '@/decorators.js';
-import { checkHttps } from '@/misc/check-https.js';
-import { IdentifiableError } from '@/misc/identifiable-error.js';
-import { getOneApId, getApId, getOneApHrefNullable, validPost, isEmoji, getApType } from '../type.js';
-import { ApLoggerService } from '../ApLoggerService.js';
-import { ApMfmService } from '../ApMfmService.js';
-import { ApDbResolverService } from '../ApDbResolverService.js';
-import { ApResolverService } from '../ApResolverService.js';
-import { ApAudienceService } from '../ApAudienceService.js';
-import { ApPersonService } from './ApPersonService.js';
-import { extractApHashtags } from './tag.js';
-import { ApMentionService } from './ApMentionService.js';
-import { ApQuestionService } from './ApQuestionService.js';
-import { ApImageService } from './ApImageService.js';
-import type { Resolver } from '../ApResolverService.js';
-import type { IObject, IPost } from '../type.js';
+import {IdService} from '@/core/IdService.js';
+import {PollService} from '@/core/PollService.js';
+import {StatusError} from '@/misc/status-error.js';
+import {UtilityService} from '@/core/UtilityService.js';
+import {bindThis} from '@/decorators.js';
+import {checkHttps} from '@/misc/check-https.js';
+import {IdentifiableError} from '@/misc/identifiable-error.js';
+import {getOneApId, getApId, getOneApHrefNullable, validPost, isEmoji, getApType} from '../type.js';
+import {ApLoggerService} from '../ApLoggerService.js';
+import {ApMfmService} from '../ApMfmService.js';
+import {ApDbResolverService} from '../ApDbResolverService.js';
+import {ApResolverService} from '../ApResolverService.js';
+import {ApAudienceService} from '../ApAudienceService.js';
+import {ApPersonService} from './ApPersonService.js';
+import {extractApHashtags} from './tag.js';
+import {ApMentionService} from './ApMentionService.js';
+import {ApQuestionService} from './ApQuestionService.js';
+import {ApImageService} from './ApImageService.js';
+import type {Resolver} from '../ApResolverService.js';
+import type {IObject, IPost} from '../type.js';
 
 @Injectable()
 export class ApNoteService {
@@ -44,24 +44,18 @@ export class ApNoteService {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.meta)
 		private meta: MiMeta,
-
 		@Inject(DI.pollsRepository)
 		private pollsRepository: PollsRepository,
-
 		@Inject(DI.emojisRepository)
 		private emojisRepository: EmojisRepository,
-
 		private idService: IdService,
 		private apMfmService: ApMfmService,
 		private apResolverService: ApResolverService,
-
 		// 循環参照のため / for circular dependency
 		@Inject(forwardRef(() => ApPersonService))
 		private apPersonService: ApPersonService,
-
 		private utilityService: UtilityService,
 		private apAudienceService: ApAudienceService,
 		private apMentionService: ApMentionService,
@@ -133,7 +127,7 @@ export class ApNoteService {
 		const err = this.validateNote(object, entryUri, actor);
 		if (err) {
 			this.logger.error(err.message, {
-				resolver: { history: resolver.getHistory() },
+				resolver: {history: resolver.getHistory()},
 				value,
 				object,
 			});
@@ -196,7 +190,7 @@ export class ApNoteService {
 		/**
 		 * 禁止ワードチェック
 		 */
-		const hasProhibitedWords = this.noteCreateService.checkProhibitedWordsContain({ cw, text, pollChoices: poll?.choices });
+		const hasProhibitedWords = this.noteCreateService.checkProhibitedWordsContain({cw, text, pollChoices: poll?.choices});
 		if (hasProhibitedWords) {
 			throw new IdentifiableError('689ee33f-f97c-479a-ac49-1b9f8140af99', 'Note contains prohibited words');
 		}
@@ -233,7 +227,7 @@ export class ApNoteService {
 
 		// リプライ
 		const reply: MiNote | null = note.inReplyTo
-			? await this.resolveNote(note.inReplyTo, { resolver })
+			? await this.resolveNote(note.inReplyTo, {resolver})
 				.then(x => {
 					if (x == null) {
 						this.logger.warn('Specified inReplyTo, but not found');
@@ -256,11 +250,11 @@ export class ApNoteService {
 				| { status: 'ok'; res: MiNote }
 				| { status: 'permerror' | 'temperror' }
 			> => {
-				if (!/^https?:/.test(uri)) return { status: 'permerror' };
+				if (!/^https?:/.test(uri)) return {status: 'permerror'};
 				try {
 					const res = await this.resolveNote(uri);
-					if (res == null) return { status: 'permerror' };
-					return { status: 'ok', res };
+					if (res == null) return {status: 'permerror'};
+					return {status: 'ok', res};
 				} catch (e) {
 					return {
 						status: (e instanceof StatusError && !e.isRetryable) ? 'permerror' : 'temperror',
@@ -281,7 +275,7 @@ export class ApNoteService {
 
 		// vote
 		if (reply && reply.hasPoll) {
-			const poll = await this.pollsRepository.findOneByOrFail({ noteId: reply.id });
+			const poll = await this.pollsRepository.findOneByOrFail({noteId: reply.id});
 
 			const tryCreateVote = async (name: string, index: number): Promise<null> => {
 				if (poll.expiresAt && Date.now() > new Date(poll.expiresAt).getTime()) {
@@ -412,7 +406,7 @@ export class ApNoteService {
 						license: (tag._misskey_license?.freeText ?? null)
 					});
 
-					const emoji = await this.emojisRepository.findOneBy({ host, name });
+					const emoji = await this.emojisRepository.findOneBy({host, name});
 					if (emoji == null) throw new Error('emoji update failed');
 					return emoji;
 				}

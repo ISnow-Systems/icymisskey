@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { markRaw, ref } from 'vue';
+import {markRaw, ref} from 'vue';
 import * as Misskey from 'misskey-js';
-import { hemisphere } from '@@/js/intl-const.js';
+import {hemisphere} from '@@/js/intl-const.js';
 import lightTheme from '@@/themes/l-light.json5';
 import darkTheme from '@@/themes/d-green-lime.json5';
-import type { SoundType } from '@/scripts/sound.js';
-import type { Ast } from '@syuilo/aiscript';
-import { DEFAULT_DEVICE_KIND } from '@/scripts/device-kind.js';
-import type { DeviceKind } from '@/scripts/device-kind.js';
-import { miLocalStorage } from '@/local-storage.js';
-import { Storage } from '@/pizzax.js';
+import type {SoundType} from '@/scripts/sound.js';
+import type {Ast} from '@syuilo/aiscript';
+import {DEFAULT_DEVICE_KIND} from '@/scripts/device-kind.js';
+import type {DeviceKind} from '@/scripts/device-kind.js';
+import {miLocalStorage} from '@/local-storage.js';
+import {Storage} from '@/pizzax.js';
 
 interface PostFormAction {
 	title: string,
@@ -494,19 +494,19 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	sound_note: {
 		where: 'device',
-		default: { type: 'syuilo/n-aec', volume: 1 } as SoundStore,
+		default: {type: 'syuilo/n-aec', volume: 1} as SoundStore,
 	},
 	sound_noteMy: {
 		where: 'device',
-		default: { type: 'syuilo/n-cea-4va', volume: 1 } as SoundStore,
+		default: {type: 'syuilo/n-cea-4va', volume: 1} as SoundStore,
 	},
 	sound_notification: {
 		where: 'device',
-		default: { type: 'syuilo/n-ea', volume: 1 } as SoundStore,
+		default: {type: 'syuilo/n-ea', volume: 1} as SoundStore,
 	},
 	sound_reaction: {
 		where: 'device',
-		default: { type: 'syuilo/bubble2', volume: 1 } as SoundStore,
+		default: {type: 'syuilo/bubble2', volume: 1} as SoundStore,
 	},
 }));
 
@@ -587,7 +587,7 @@ export class ColdDeviceStorage {
 	}
 
 	public static watch(key, callback) {
-		this.watchers.push({ key, callback });
+		this.watchers.push({key, callback});
 	}
 
 	// TODO: VueのcustomRef使うと良い感じになるかも

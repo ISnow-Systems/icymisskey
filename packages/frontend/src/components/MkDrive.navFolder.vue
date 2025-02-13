@@ -4,24 +4,24 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div
-	:class="[$style.root, { [$style.draghover]: draghover }]"
-	@click="onClick"
-	@dragover.prevent.stop="onDragover"
-	@dragenter="onDragenter"
-	@dragleave="onDragleave"
-	@drop.stop="onDrop"
->
-	<i v-if="folder == null" class="ti ti-cloud" style="margin-right: 4px;"></i>
-	<span>{{ folder == null ? i18n.ts.drive : folder.name }}</span>
-</div>
+	<div
+		:class="[$style.root, { [$style.draghover]: draghover }]"
+		@click="onClick"
+		@dragenter="onDragenter"
+		@dragleave="onDragleave"
+		@dragover.prevent.stop="onDragover"
+		@drop.stop="onDrop"
+	>
+		<i v-if="folder == null" class="ti ti-cloud" style="margin-right: 4px;"></i>
+		<span>{{ folder == null ? i18n.ts.drive : folder.name }}</span>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import {ref} from 'vue';
 import * as Misskey from 'misskey-js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { i18n } from '@/i18n.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {i18n} from '@/i18n.js';
 
 const props = defineProps<{
 	folder?: Misskey.entities.DriveFolder;

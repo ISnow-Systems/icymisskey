@@ -4,53 +4,53 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div v-if="!muted" :class="[$style.root, { [$style.children]: depth > 1 }]">
-	<div :class="$style.main">
-		<div v-if="note.channel" :class="$style.colorBar" :style="{ background: note.channel.color }"></div>
-		<MkAvatar :class="$style.avatar" :user="note.user" link preview/>
-		<div :class="$style.body">
-			<MkNoteHeader :class="$style.header" :note="note" :mini="true"/>
-			<div>
-				<p v-if="note.cw != null" :class="$style.cw">
-					<Mfm v-if="note.cw != ''" style="margin-right: 8px;" :text="note.cw" :author="note.user" :nyaize="'respect'"/>
-					<MkCwButton v-model="showContent" :text="note.text" :files="note.files" :poll="note.poll"/>
-				</p>
-				<div v-show="note.cw == null || showContent">
-					<MkSubNoteContent :class="$style.text" :note="note"/>
+	<div v-if="!muted" :class="[$style.root, { [$style.children]: depth > 1 }]">
+		<div :class="$style.main">
+			<div v-if="note.channel" :class="$style.colorBar" :style="{ background: note.channel.color }"></div>
+			<MkAvatar :class="$style.avatar" :user="note.user" link preview/>
+			<div :class="$style.body">
+				<MkNoteHeader :class="$style.header" :mini="true" :note="note"/>
+				<div>
+					<p v-if="note.cw != null" :class="$style.cw">
+						<Mfm v-if="note.cw != ''" :author="note.user" :nyaize="'respect'" :text="note.cw" style="margin-right: 8px;"/>
+						<MkCwButton v-model="showContent" :files="note.files" :poll="note.poll" :text="note.text"/>
+					</p>
+					<div v-show="note.cw == null || showContent">
+						<MkSubNoteContent :class="$style.text" :note="note"/>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<template v-if="depth < 5">
-		<MkNoteSub v-for="reply in replies" :key="reply.id" :note="reply" :class="$style.reply" :detail="true" :depth="depth + 1"/>
-	</template>
-	<div v-else :class="$style.more">
-		<MkA class="_link" :to="notePage(note)">{{ i18n.ts.continueThread }} <i class="ti ti-chevron-double-right"></i></MkA>
-	</div>
-</div>
-<div v-else :class="$style.muted" @click="muted = false">
-	<I18n :src="i18n.ts.userSaysSomething" tag="small">
-		<template #name>
-			<MkA v-user-preview="note.userId" :to="userPage(note.user)">
-				<MkUserName :user="note.user"/>
-			</MkA>
+		<template v-if="depth < 5">
+			<MkNoteSub v-for="reply in replies" :key="reply.id" :class="$style.reply" :depth="depth + 1" :detail="true" :note="reply"/>
 		</template>
-	</I18n>
-</div>
+		<div v-else :class="$style.more">
+			<MkA :to="notePage(note)" class="_link">{{ i18n.ts.continueThread }} <i class="ti ti-chevron-double-right"></i></MkA>
+		</div>
+	</div>
+	<div v-else :class="$style.muted" @click="muted = false">
+		<I18n :src="i18n.ts.userSaysSomething" tag="small">
+			<template #name>
+				<MkA v-user-preview="note.userId" :to="userPage(note.user)">
+					<MkUserName :user="note.user"/>
+				</MkA>
+			</template>
+		</I18n>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import {ref} from 'vue';
 import * as Misskey from 'misskey-js';
 import MkNoteHeader from '@/components/MkNoteHeader.vue';
 import MkSubNoteContent from '@/components/MkSubNoteContent.vue';
 import MkCwButton from '@/components/MkCwButton.vue';
-import { notePage } from '@/filters/note.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { i18n } from '@/i18n.js';
-import { $i } from '@/account.js';
-import { userPage } from '@/filters/user.js';
-import { checkWordMute } from '@/scripts/check-word-mute.js';
+import {notePage} from '@/filters/note.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {i18n} from '@/i18n.js';
+import {$i} from '@/account.js';
+import {userPage} from '@/filters/user.js';
+import {checkWordMute} from '@/scripts/check-word-mute.js';
 
 const props = withDefaults(defineProps<{
 	note: Misskey.entities.Note;

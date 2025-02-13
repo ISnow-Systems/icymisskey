@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import { getJsonSchema } from '@/core/chart/core.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
+import {Injectable} from '@nestjs/common';
+import {getJsonSchema} from '@/core/chart/core.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
 import NotesChart from '@/core/chart/charts/notes.js';
-import { schema } from '@/core/chart/charts/entities/notes.js';
+import {schema} from '@/core/chart/charts/entities/notes.js';
 
 export const meta = {
 	tags: ['charts', 'notes'],
@@ -21,9 +21,9 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		span: { type: 'string', enum: ['day', 'hour'] },
-		limit: { type: 'integer', minimum: 1, maximum: 500, default: 30 },
-		offset: { type: 'integer', nullable: true, default: null },
+		span: {type: 'string', enum: ['day', 'hour']},
+		limit: {type: 'integer', minimum: 1, maximum: 500, default: 30},
+		offset: {type: 'integer', nullable: true, default: null},
 	},
 	required: ['span'],
 } as const;

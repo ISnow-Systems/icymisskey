@@ -4,45 +4,45 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div
-	:class="[$style.root, { [$style.draghover]: draghover }]"
-	draggable="true"
-	:title="title"
-	@click="onClick"
-	@contextmenu.stop="onContextmenu"
-	@mouseover="onMouseover"
-	@mouseout="onMouseout"
-	@dragover.prevent.stop="onDragover"
-	@dragenter.prevent="onDragenter"
-	@dragleave="onDragleave"
-	@drop.prevent.stop="onDrop"
-	@dragstart="onDragstart"
-	@dragend="onDragend"
->
-	<p :class="$style.name">
-		<template v-if="hover"><i :class="$style.icon" class="ti ti-folder ti-fw"></i></template>
-		<template v-if="!hover"><i :class="$style.icon" class="ti ti-folder ti-fw"></i></template>
-		{{ folder.name }}
-	</p>
-	<p v-if="defaultStore.state.uploadFolder == folder.id" :class="$style.upload">
-		{{ i18n.ts.uploadFolder }}
-	</p>
-	<button v-if="selectMode" class="_button" :class="$style.checkboxWrapper" @click.prevent.stop="checkboxClicked">
-		<div :class="[$style.checkbox, { [$style.checked]: isSelected }]"></div>
-	</button>
-</div>
+	<div
+		:class="[$style.root, { [$style.draghover]: draghover }]"
+		:title="title"
+		draggable="true"
+		@click="onClick"
+		@dragend="onDragend"
+		@dragleave="onDragleave"
+		@dragstart="onDragstart"
+		@mouseout="onMouseout"
+		@mouseover="onMouseover"
+		@contextmenu.stop="onContextmenu"
+		@dragover.prevent.stop="onDragover"
+		@dragenter.prevent="onDragenter"
+		@drop.prevent.stop="onDrop"
+	>
+		<p :class="$style.name">
+			<template v-if="hover"><i :class="$style.icon" class="ti ti-folder ti-fw"></i></template>
+			<template v-if="!hover"><i :class="$style.icon" class="ti ti-folder ti-fw"></i></template>
+			{{ folder.name }}
+		</p>
+		<p v-if="defaultStore.state.uploadFolder == folder.id" :class="$style.upload">
+			{{ i18n.ts.uploadFolder }}
+		</p>
+		<button v-if="selectMode" :class="$style.checkboxWrapper" class="_button" @click.prevent.stop="checkboxClicked">
+			<div :class="[$style.checkbox, { [$style.checked]: isSelected }]"></div>
+		</button>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, ref } from 'vue';
+import {computed, defineAsyncComponent, ref} from 'vue';
 import * as Misskey from 'misskey-js';
-import type { MenuItem } from '@/types/menu.js';
+import type {MenuItem} from '@/types/menu.js';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { i18n } from '@/i18n.js';
-import { defaultStore } from '@/store.js';
-import { claimAchievement } from '@/scripts/achievements.js';
-import { copyToClipboard } from '@/scripts/copy-to-clipboard.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {i18n} from '@/i18n.js';
+import {defaultStore} from '@/store.js';
+import {claimAchievement} from '@/scripts/achievements.js';
+import {copyToClipboard} from '@/scripts/copy-to-clipboard.js';
 
 const props = withDefaults(defineProps<{
 	folder: Misskey.entities.DriveFolder;
@@ -220,7 +220,7 @@ function rename() {
 		title: i18n.ts.renameFolder,
 		placeholder: i18n.ts.inputNewFolderName,
 		default: props.folder.name,
-	}).then(({ canceled, result: name }) => {
+	}).then(({canceled, result: name}) => {
 		if (canceled) return;
 		misskeyApi('drive/folders/update', {
 			folderId: props.folder.id,
@@ -275,13 +275,13 @@ function onContextmenu(ev: MouseEvent) {
 		text: i18n.ts.openInWindow,
 		icon: 'ti ti-app-window',
 		action: () => {
-			const { dispose } = os.popup(defineAsyncComponent(() => import('@/components/MkDriveWindow.vue')), {
+			const {dispose} = os.popup(defineAsyncComponent(() => import('@/components/MkDriveWindow.vue')), {
 				initialFolder: props.folder,
 			}, {
 				closed: () => dispose(),
 			});
 		},
-	}, { type: 'divider' }, {
+	}, {type: 'divider'}, {
 		text: i18n.ts.rename,
 		icon: 'ti ti-forms',
 		action: rename,
@@ -289,14 +289,14 @@ function onContextmenu(ev: MouseEvent) {
 		text: i18n.ts.move,
 		icon: 'ti ti ti-folder-symlink',
 		action: move,
-	}, { type: 'divider' }, {
+	}, {type: 'divider'}, {
 		text: i18n.ts.delete,
 		icon: 'ti ti-trash',
 		danger: true,
 		action: deleteFolder,
 	}];
 	if (defaultStore.state.devMode) {
-		menu = menu.concat([{ type: 'divider' }, {
+		menu = menu.concat([{type: 'divider'}, {
 			icon: 'ti ti-id',
 			text: i18n.ts.copyFolderId,
 			action: () => {

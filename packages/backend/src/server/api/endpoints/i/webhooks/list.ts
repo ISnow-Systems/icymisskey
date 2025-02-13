@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { webhookEventTypes } from '@/models/Webhook.js';
-import type { WebhooksRepository } from '@/models/_.js';
-import { DI } from '@/di-symbols.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {webhookEventTypes} from '@/models/Webhook.js';
+import type {WebhooksRepository} from '@/models/_.js';
+import {DI} from '@/di-symbols.js';
 
 // TODO: UserWebhook schemaの適用
 export const meta = {
@@ -30,7 +30,7 @@ export const meta = {
 					type: 'string',
 					format: 'misskey:id',
 				},
-				name: { type: 'string' },
+				name: {type: 'string'},
 				on: {
 					type: 'array',
 					items: {
@@ -38,11 +38,11 @@ export const meta = {
 						enum: webhookEventTypes,
 					},
 				},
-				url: { type: 'string' },
-				secret: { type: 'string' },
-				active: { type: 'boolean' },
-				latestSentAt: { type: 'string', format: 'date-time', nullable: true },
-				latestStatus: { type: 'integer', nullable: true },
+				url: {type: 'string'},
+				secret: {type: 'string'},
+				active: {type: 'boolean'},
+				latestSentAt: {type: 'string', format: 'date-time', nullable: true},
+				latestStatus: {type: 'integer', nullable: true},
 			},
 		},
 	},

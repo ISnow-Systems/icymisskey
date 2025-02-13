@@ -10,7 +10,7 @@ import {
 	set as iset,
 	del as idel,
 } from 'idb-keyval';
-import { miLocalStorage } from '@/local-storage.js';
+import {miLocalStorage} from '@/local-storage.js';
 
 const PREFIX = 'idbfallback::';
 

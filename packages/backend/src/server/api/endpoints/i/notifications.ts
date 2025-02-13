@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { In } from 'typeorm';
+import {In} from 'typeorm';
 import * as Redis from 'ioredis';
-import { Inject, Injectable } from '@nestjs/common';
-import type { NotesRepository } from '@/models/_.js';
-import { FilterUnionByProperty, notificationTypes, obsoleteNotificationTypes } from '@/types.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { NoteReadService } from '@/core/NoteReadService.js';
-import { NotificationEntityService } from '@/core/entities/NotificationEntityService.js';
-import { NotificationService } from '@/core/NotificationService.js';
-import { DI } from '@/di-symbols.js';
-import { IdService } from '@/core/IdService.js';
-import { MiNotification } from '@/models/Notification.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {NotesRepository} from '@/models/_.js';
+import {FilterUnionByProperty, notificationTypes, obsoleteNotificationTypes} from '@/types.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {NoteReadService} from '@/core/NoteReadService.js';
+import {NotificationEntityService} from '@/core/entities/NotificationEntityService.js';
+import {NotificationService} from '@/core/NotificationService.js';
+import {DI} from '@/di-symbols.js';
+import {IdService} from '@/core/IdService.js';
+import {MiNotification} from '@/models/Notification.js';
 
 export const meta = {
 	tags: ['account', 'notifications'],
@@ -42,17 +42,21 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
-		markAsRead: { type: 'boolean', default: true },
+		limit: {type: 'integer', minimum: 1, maximum: 100, default: 10},
+		sinceId: {type: 'string', format: 'misskey:id'},
+		untilId: {type: 'string', format: 'misskey:id'},
+		markAsRead: {type: 'boolean', default: true},
 		// 後方互換のため、廃止された通知タイプも受け付ける
-		includeTypes: { type: 'array', items: {
-			type: 'string', enum: [...notificationTypes, ...obsoleteNotificationTypes],
-		} },
-		excludeTypes: { type: 'array', items: {
-			type: 'string', enum: [...notificationTypes, ...obsoleteNotificationTypes],
-		} },
+		includeTypes: {
+			type: 'array', items: {
+				type: 'string', enum: [...notificationTypes, ...obsoleteNotificationTypes],
+			}
+		},
+		excludeTypes: {
+			type: 'array', items: {
+				type: 'string', enum: [...notificationTypes, ...obsoleteNotificationTypes],
+			}
+		},
 	},
 	required: [],
 } as const;
@@ -62,10 +66,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.redis)
 		private redisClient: Redis.Redis,
-
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		private idService: IdService,
 		private notificationEntityService: NotificationEntityService,
 		private notificationService: NotificationService,
@@ -88,7 +90,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			let untilTime = ps.untilId ? this.idService.parse(ps.untilId).date.getTime().toString() : null;
 
 			let notifications: MiNotification[];
-			for (;;) {
+			for (; ;) {
 				let notificationsRes: [id: string, fields: string[]][];
 
 				// sinceidのみの場合は古い順、そうでない場合は新しい順。 QueryService.makePaginationQueryも参照
@@ -141,7 +143,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				.map(notification => notification.noteId);
 
 			if (noteIds.length > 0) {
-				const notes = await this.notesRepository.findBy({ id: In(noteIds) });
+				const notes = await this.notesRepository.findBy({id: In(noteIds)});
 				this.noteReadService.read(me.id, notes);
 			}
 

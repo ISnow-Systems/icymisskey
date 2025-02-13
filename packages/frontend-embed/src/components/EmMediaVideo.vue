@@ -4,13 +4,13 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<a :href="href" target="_blank" :class="$style.root">
-	<img v-if="!video.isSensitive && video.thumbnailUrl" :class="$style.thumbnail" :src="video.thumbnailUrl">
-	<div :class="$style.videoOverlayPlayButton"><i class="ti ti-player-play-filled"></i></div>
-</a>
+	<a :class="$style.root" :href="href" target="_blank">
+		<img v-if="!video.isSensitive && video.thumbnailUrl" :class="$style.thumbnail" :src="video.thumbnailUrl">
+		<div :class="$style.videoOverlayPlayButton"><i class="ti ti-player-play-filled"></i></div>
+	</a>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import * as Misskey from 'misskey-js';
 
 defineProps<{

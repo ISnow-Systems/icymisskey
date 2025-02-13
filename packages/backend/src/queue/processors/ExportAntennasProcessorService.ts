@@ -4,35 +4,32 @@
  */
 
 import fs from 'node:fs';
-import { Inject, Injectable } from '@nestjs/common';
-import { format as DateFormat } from 'date-fns';
-import { In } from 'typeorm';
-import { DI } from '@/di-symbols.js';
-import type { AntennasRepository, UsersRepository, UserListMembershipsRepository, MiUser } from '@/models/_.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {format as DateFormat} from 'date-fns';
+import {In} from 'typeorm';
+import {DI} from '@/di-symbols.js';
+import type {AntennasRepository, UsersRepository, UserListMembershipsRepository, MiUser} from '@/models/_.js';
 import Logger from '@/logger.js';
-import { DriveService } from '@/core/DriveService.js';
-import { bindThis } from '@/decorators.js';
-import { createTemp } from '@/misc/create-temp.js';
-import { UtilityService } from '@/core/UtilityService.js';
-import { NotificationService } from '@/core/NotificationService.js';
-import { QueueLoggerService } from '../QueueLoggerService.js';
-import type { DBExportAntennasData } from '../types.js';
+import {DriveService} from '@/core/DriveService.js';
+import {bindThis} from '@/decorators.js';
+import {createTemp} from '@/misc/create-temp.js';
+import {UtilityService} from '@/core/UtilityService.js';
+import {NotificationService} from '@/core/NotificationService.js';
+import {QueueLoggerService} from '../QueueLoggerService.js';
+import type {DBExportAntennasData} from '../types.js';
 import type * as Bull from 'bullmq';
 
 @Injectable()
 export class ExportAntennasProcessorService {
 	private logger: Logger;
 
-	constructor (
+	constructor(
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.antennasRepository)
 		private antennsRepository: AntennasRepository,
-
 		@Inject(DI.userListMembershipsRepository)
 		private userListMembershipsRepository: UserListMembershipsRepository,
-
 		private driveService: DriveService,
 		private utilityService: UtilityService,
 		private queueLoggerService: QueueLoggerService,
@@ -43,12 +40,12 @@ export class ExportAntennasProcessorService {
 
 	@bindThis
 	public async process(job: Bull.Job<DBExportAntennasData>): Promise<void> {
-		const user = await this.usersRepository.findOneBy({ id: job.data.user.id });
+		const user = await this.usersRepository.findOneBy({id: job.data.user.id});
 		if (user == null) {
 			return;
 		}
 		const [path, cleanup] = await createTemp();
-		const stream = fs.createWriteStream(path, { flags: 'a' });
+		const stream = fs.createWriteStream(path, {flags: 'a'});
 		const write = (input: string): Promise<void> => {
 			return new Promise((resolve, reject) => {
 				stream.write(input, err => {
@@ -62,12 +59,12 @@ export class ExportAntennasProcessorService {
 			});
 		};
 		try {
-			const antennas = await this.antennsRepository.findBy({ userId: job.data.user.id });
+			const antennas = await this.antennsRepository.findBy({userId: job.data.user.id});
 			write('[');
 			for (const [index, antenna] of antennas.entries()) {
 				let users: MiUser[] | undefined;
 				if (antenna.userListId !== null) {
-					const memberships = await this.userListMembershipsRepository.findBy({ userListId: antenna.userListId });
+					const memberships = await this.userListMembershipsRepository.findBy({userListId: antenna.userListId});
 					users = await this.usersRepository.findBy({
 						id: In(memberships.map(j => j.userId)),
 					});
@@ -95,7 +92,7 @@ export class ExportAntennasProcessorService {
 			stream.end();
 
 			const fileName = 'antennas-' + DateFormat(new Date(), 'yyyy-MM-dd-HH-mm-ss') + '.json';
-			const driveFile = await this.driveService.addFile({ user, path, name: fileName, force: true, ext: 'json' });
+			const driveFile = await this.driveService.addFile({user, path, name: fileName, force: true, ext: 'json'});
 			this.logger.succ('Exported to: ' + driveFile.id);
 
 			this.notificationService.createNotification(user.id, 'exportCompleted', {

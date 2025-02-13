@@ -4,36 +4,36 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="$style.root">
-	<MkButton primary :disabled="min === current" @click="onToPrevButtonClicked">&lt;</MkButton>
+	<div :class="$style.root">
+		<MkButton :disabled="min === current" primary @click="onToPrevButtonClicked">&lt;</MkButton>
 
-	<div :class="$style.buttons">
-		<div v-if="prevDotVisible" :class="$style.headTailButtons">
-			<MkButton @click="onToHeadButtonClicked">{{ min }}</MkButton>
-			<span class="ti ti-dots"/>
+		<div :class="$style.buttons">
+			<div v-if="prevDotVisible" :class="$style.headTailButtons">
+				<MkButton @click="onToHeadButtonClicked">{{ min }}</MkButton>
+				<span class="ti ti-dots"/>
+			</div>
+
+			<MkButton
+				v-for="i in buttonRanges" :key="i"
+				:disabled="current === i"
+				@click="onNumberButtonClicked(i)"
+			>
+				{{ i }}
+			</MkButton>
+
+			<div v-if="nextDotVisible" :class="$style.headTailButtons">
+				<span class="ti ti-dots"/>
+				<MkButton @click="onToTailButtonClicked">{{ max }}</MkButton>
+			</div>
 		</div>
 
-		<MkButton
-			v-for="i in buttonRanges" :key="i"
-			:disabled="current === i"
-			@click="onNumberButtonClicked(i)"
-		>
-			{{ i }}
-		</MkButton>
-
-		<div v-if="nextDotVisible" :class="$style.headTailButtons">
-			<span class="ti ti-dots"/>
-			<MkButton @click="onToTailButtonClicked">{{ max }}</MkButton>
-		</div>
+		<MkButton :disabled="max === current" primary @click="onToNextButtonClicked">&gt;</MkButton>
 	</div>
-
-	<MkButton primary :disabled="max === current" @click="onToNextButtonClicked">&gt;</MkButton>
-</div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 
-import { computed, toRefs } from 'vue';
+import {computed, toRefs} from 'vue';
 import MkButton from '@/components/MkButton.vue';
 
 const min = 1;
@@ -48,12 +48,12 @@ const props = defineProps<{
 	buttonCount: number;
 }>();
 
-const { current, max } = toRefs(props);
+const {current, max} = toRefs(props);
 
 const buttonCount = computed(() => Math.min(max.value, props.buttonCount));
 const buttonCountHalf = computed(() => Math.floor(buttonCount.value / 2));
 const buttonCountStart = computed(() => Math.min(Math.max(min, current.value - buttonCountHalf.value), max.value - buttonCount.value + 1));
-const buttonRanges = computed(() => Array.from({ length: buttonCount.value }, (_, i) => buttonCountStart.value + i));
+const buttonRanges = computed(() => Array.from({length: buttonCount.value}, (_, i) => buttonCountStart.value + i));
 
 const prevDotVisible = computed(() => (current.value - 1 > buttonCountHalf.value) && (max.value > buttonCount.value));
 const nextDotVisible = computed(() => (current.value < max.value - buttonCountHalf.value) && (max.value > buttonCount.value));
@@ -87,7 +87,7 @@ function onToTailButtonClicked() {
 }
 </script>
 
-<style module lang="scss">
+<style lang="scss" module>
 .root {
 	display: flex;
 	justify-content: center;

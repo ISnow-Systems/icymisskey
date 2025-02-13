@@ -4,10 +4,10 @@
  */
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { expect, userEvent, waitFor, within } from '@storybook/test';
-import type { StoryObj } from '@storybook/vue3';
+import {expect, userEvent, waitFor, within} from '@storybook/test';
+import type {StoryObj} from '@storybook/vue3';
 import MkAd from './MkAd.vue';
-import { i18n } from '@/i18n.js';
+import {i18n} from '@/i18n.js';
 
 const common = {
 	render(args) {
@@ -30,7 +30,7 @@ const common = {
 			template: '<MkAd v-bind="props" />',
 		};
 	},
-	async play({ canvasElement, args }) {
+	async play({canvasElement, args}) {
 		const canvas = within(canvasElement);
 		const a = canvas.getByRole<HTMLAnchorElement>('link');
 		// FIXME: 通るけどその後落ちるのでコメントアウト

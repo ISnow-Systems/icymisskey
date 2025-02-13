@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { GetterService } from '@/server/api/GetterService.js';
-import { RoleService } from '@/core/RoleService.js';
-import { AbuseReportService } from '@/core/AbuseReportService.js';
-import { ApiError } from '../../error.js';
+import {Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {GetterService} from '@/server/api/GetterService.js';
+import {RoleService} from '@/core/RoleService.js';
+import {AbuseReportService} from '@/core/AbuseReportService.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['users'],
@@ -42,8 +42,8 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		userId: { type: 'string', format: 'misskey:id' },
-		comment: { type: 'string', minLength: 1, maxLength: 2048 },
+		userId: {type: 'string', format: 'misskey:id'},
+		comment: {type: 'string', minLength: 1, maxLength: 2048},
 	},
 	required: ['userId', 'comment'],
 } as const;

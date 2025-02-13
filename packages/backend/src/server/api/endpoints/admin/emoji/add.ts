@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { DriveFilesRepository } from '@/models/_.js';
-import { DI } from '@/di-symbols.js';
-import { CustomEmojiService } from '@/core/CustomEmojiService.js';
-import { EmojiEntityService } from '@/core/entities/EmojiEntityService.js';
-import { FILE_TYPE_IMAGE } from '@/const.js';
-import { ApiError } from '../../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {DriveFilesRepository} from '@/models/_.js';
+import {DI} from '@/di-symbols.js';
+import {CustomEmojiService} from '@/core/CustomEmojiService.js';
+import {EmojiEntityService} from '@/core/entities/EmojiEntityService.js';
+import {FILE_TYPE_IMAGE} from '@/const.js';
+import {ApiError} from '../../../error.js';
 
 export const meta = {
 	tags: ['admin'],
@@ -46,8 +46,8 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		name: { type: 'string', pattern: '^[a-zA-Z0-9_]+$' },
-		fileId: { type: 'string', format: 'misskey:id' },
+		name: {type: 'string', pattern: '^[a-zA-Z0-9_]+$'},
+		fileId: {type: 'string', format: 'misskey:id'},
 		category: {
 			type: 'string',
 			nullable: true,
@@ -59,9 +59,9 @@ export const paramDef = {
 				type: 'string',
 			},
 		},
-		license: { type: 'string', nullable: true },
-		isSensitive: { type: 'boolean' },
-		localOnly: { type: 'boolean' },
+		license: {type: 'string', nullable: true},
+		isSensitive: {type: 'boolean'},
+		localOnly: {type: 'boolean'},
 		roleIdsThatCanBeUsedThisEmojiAsReaction: {
 			type: 'array',
 			items: {
@@ -83,7 +83,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		private emojiEntityService: EmojiEntityService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const driveFile = await this.driveFilesRepository.findOneBy({ id: ps.fileId });
+			const driveFile = await this.driveFilesRepository.findOneBy({id: ps.fileId});
 			if (driveFile == null) throw new ApiError(meta.errors.noSuchFile);
 			const isDuplicate = await this.customEmojiService.checkDuplicate(ps.name);
 			if (isDuplicate) throw new ApiError(meta.errors.duplicateName);

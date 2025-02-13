@@ -4,9 +4,10 @@
  */
 
 import * as Misskey from 'misskey-js';
-import { ref } from 'vue';
-import { apiUrl } from '@@/js/config.js';
-import { $i } from '@/account.js';
+import {ref} from 'vue';
+import {apiUrl} from '@@/js/config.js';
+import {$i} from '@/account.js';
+
 export const pendingApiRequestsCount = ref(0);
 
 export type Endpoint = keyof Misskey.Endpoints;
@@ -18,8 +19,8 @@ export type AnyRequest<E extends Endpoint | (string & unknown)> =
 
 export type Response<E extends Endpoint | (string & unknown), P extends AnyRequest<E>> =
 	E extends Endpoint
-	? P extends Request<E> ? Misskey.api.SwitchCaseResponseType<E, P> : never
-	: object;
+		? P extends Request<E> ? Misskey.api.SwitchCaseResponseType<E, P> : never
+		: object;
 
 // Implements Misskey.api.ApiClient.request
 export function misskeyApi<

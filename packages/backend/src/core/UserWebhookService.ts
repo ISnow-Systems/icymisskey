@@ -3,27 +3,27 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import * as Redis from 'ioredis';
-import { MiUser, type WebhooksRepository } from '@/models/_.js';
-import { MiWebhook, WebhookEventTypes } from '@/models/Webhook.js';
-import { DI } from '@/di-symbols.js';
-import { bindThis } from '@/decorators.js';
-import { GlobalEvents } from '@/core/GlobalEventService.js';
-import type { Packed } from '@/misc/json-schema.js';
-import { QueueService } from '@/core/QueueService.js';
-import type { OnApplicationShutdown } from '@nestjs/common';
+import {MiUser, type WebhooksRepository} from '@/models/_.js';
+import {MiWebhook, WebhookEventTypes} from '@/models/Webhook.js';
+import {DI} from '@/di-symbols.js';
+import {bindThis} from '@/decorators.js';
+import {GlobalEvents} from '@/core/GlobalEventService.js';
+import type {Packed} from '@/misc/json-schema.js';
+import {QueueService} from '@/core/QueueService.js';
+import type {OnApplicationShutdown} from '@nestjs/common';
 
 export type UserWebhookPayload<T extends WebhookEventTypes> =
-	T extends 'note' | 'reply' | 'renote' |'mention' ? {
-		note: Packed<'Note'>,
-	} :
-	T extends 'follow' | 'unfollow' ? {
-		user: Packed<'UserDetailedNotMe'>,
-	} :
-	T extends 'followed' ? {
-		user: Packed<'UserLite'>,
-	} : never;
+	T extends 'note' | 'reply' | 'renote' | 'mention' ? {
+			note: Packed<'Note'>,
+		} :
+		T extends 'follow' | 'unfollow' ? {
+				user: Packed<'UserDetailedNotMe'>,
+			} :
+			T extends 'followed' ? {
+				user: Packed<'UserLite'>,
+			} : never;
 
 @Injectable()
 export class UserWebhookService implements OnApplicationShutdown {
@@ -64,13 +64,13 @@ export class UserWebhookService implements OnApplicationShutdown {
 		const query = this.webhooksRepository.createQueryBuilder('webhook');
 		if (params) {
 			if (params.ids && params.ids.length > 0) {
-				query.andWhere('webhook.id IN (:...ids)', { ids: params.ids });
+				query.andWhere('webhook.id IN (:...ids)', {ids: params.ids});
 			}
 			if (params.isActive !== undefined) {
-				query.andWhere('webhook.active = :isActive', { isActive: params.isActive });
+				query.andWhere('webhook.active = :isActive', {isActive: params.isActive});
 			}
 			if (params.on && params.on.length > 0) {
-				query.andWhere(':on <@ webhook.on', { on: params.on });
+				query.andWhere(':on <@ webhook.on', {on: params.on});
 			}
 		}
 
@@ -97,13 +97,23 @@ export class UserWebhookService implements OnApplicationShutdown {
 	}
 
 	@bindThis
+	public dispose(): void {
+		this.redisForSub.off('message', this.onMessage);
+	}
+
+	@bindThis
+	public onApplicationShutdown(signal?: string | undefined): void {
+		this.dispose();
+	}
+
+	@bindThis
 	private async onMessage(_: string, data: string): Promise<void> {
 		const obj = JSON.parse(data);
 		if (obj.channel !== 'internal') {
 			return;
 		}
 
-		const { type, body } = obj.message as GlobalEvents['internal']['payload'];
+		const {type, body} = obj.message as GlobalEvents['internal']['payload'];
 		switch (type) {
 			case 'webhookCreated': {
 				if (body.active) {
@@ -143,15 +153,5 @@ export class UserWebhookService implements OnApplicationShutdown {
 			default:
 				break;
 		}
-	}
-
-	@bindThis
-	public dispose(): void {
-		this.redisForSub.off('message', this.onMessage);
-	}
-
-	@bindThis
-	public onApplicationShutdown(signal?: string | undefined): void {
-		this.dispose();
 	}
 }

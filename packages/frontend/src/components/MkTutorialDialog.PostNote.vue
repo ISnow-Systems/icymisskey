@@ -4,40 +4,40 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="_gaps">
-	<div style="text-align: center; padding: 0 16px;">{{ i18n.ts._initialTutorial._postNote.description1 }}</div>
-	<MkPostForm :class="$style.exampleRoot" :mock="true" :autofocus="false"/>
-	<MkFormSection>
-		<template #label>{{ i18n.ts.visibility }}</template>
-		<div class="_gaps">
-			<div>{{ i18n.ts._initialTutorial._postNote._visibility.description }}</div>
-			<div><i class="ti ti-world"></i> <b>{{ i18n.ts._visibility.public }}</b> … {{ i18n.ts._initialTutorial._postNote._visibility.public }}</div>
-			<div><i class="ti ti-home"></i> <b>{{ i18n.ts._visibility.home }}</b> … {{ i18n.ts._initialTutorial._postNote._visibility.home }}</div>
-			<div><i class="ti ti-lock"></i> <b>{{ i18n.ts._visibility.followers }}</b> … {{ i18n.ts._initialTutorial._postNote._visibility.followers }}</div>
-			<div class="_gaps_s">
-				<div><i class="ti ti-mail"></i> <b>{{ i18n.ts._visibility.specified }}</b> … {{ i18n.ts._initialTutorial._postNote._visibility.direct }}</div>
-				<MkInfo :warn="true">
-					<b>{{ i18n.ts._initialTutorial._postNote._visibility.doNotSendConfidencialOnDirect1 }}</b> {{ i18n.ts._initialTutorial._postNote._visibility.doNotSendConfidencialOnDirect2 }}
-				</MkInfo>
+	<div class="_gaps">
+		<div style="text-align: center; padding: 0 16px;">{{ i18n.ts._initialTutorial._postNote.description1 }}</div>
+		<MkPostForm :autofocus="false" :class="$style.exampleRoot" :mock="true"/>
+		<MkFormSection>
+			<template #label>{{ i18n.ts.visibility }}</template>
+			<div class="_gaps">
+				<div>{{ i18n.ts._initialTutorial._postNote._visibility.description }}</div>
+				<div><i class="ti ti-world"></i> <b>{{ i18n.ts._visibility.public }}</b> … {{ i18n.ts._initialTutorial._postNote._visibility.public }}</div>
+				<div><i class="ti ti-home"></i> <b>{{ i18n.ts._visibility.home }}</b> … {{ i18n.ts._initialTutorial._postNote._visibility.home }}</div>
+				<div><i class="ti ti-lock"></i> <b>{{ i18n.ts._visibility.followers }}</b> … {{ i18n.ts._initialTutorial._postNote._visibility.followers }}</div>
+				<div class="_gaps_s">
+					<div><i class="ti ti-mail"></i> <b>{{ i18n.ts._visibility.specified }}</b> … {{ i18n.ts._initialTutorial._postNote._visibility.direct }}</div>
+					<MkInfo :warn="true">
+						<b>{{ i18n.ts._initialTutorial._postNote._visibility.doNotSendConfidencialOnDirect1 }}</b> {{ i18n.ts._initialTutorial._postNote._visibility.doNotSendConfidencialOnDirect2 }}
+					</MkInfo>
+				</div>
+				<div><i class="ti ti-rocket-off"></i> <b>{{ i18n.ts._visibility.disableFederation }}</b> … {{ i18n.ts._initialTutorial._postNote._visibility.localOnly }}</div>
 			</div>
-			<div><i class="ti ti-rocket-off"></i> <b>{{ i18n.ts._visibility.disableFederation }}</b> … {{ i18n.ts._initialTutorial._postNote._visibility.localOnly }}</div>
-		</div>
-	</MkFormSection>
-	<MkFormSection>
-		<template #label>{{ i18n.ts._initialTutorial._postNote._cw.title }}</template>
-		<div class="_gaps">
-			<div>{{ i18n.ts._initialTutorial._postNote._cw.description }}</div>
-			<MkNote :class="$style.exampleRoot" :note="exampleCWNote" :mock="true"/>
-			<div>{{ i18n.ts._initialTutorial._postNote._cw.useCases }}</div>
-		</div>
-	</MkFormSection>
-</div>
+		</MkFormSection>
+		<MkFormSection>
+			<template #label>{{ i18n.ts._initialTutorial._postNote._cw.title }}</template>
+			<div class="_gaps">
+				<div>{{ i18n.ts._initialTutorial._postNote._cw.description }}</div>
+				<MkNote :class="$style.exampleRoot" :mock="true" :note="exampleCWNote"/>
+				<div>{{ i18n.ts._initialTutorial._postNote._cw.useCases }}</div>
+			</div>
+		</MkFormSection>
+	</div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import * as Misskey from 'misskey-js';
-import { reactive } from 'vue';
-import { i18n } from '@/i18n.js';
+import {reactive} from 'vue';
+import {i18n} from '@/i18n.js';
 import MkNote from '@/components/MkNote.vue';
 import MkPostForm from '@/components/MkPostForm.vue';
 import MkFormSection from '@/components/form/section.vue';
@@ -80,7 +80,7 @@ const exampleCWNote = reactive<Misskey.entities.Note>({
 
 <style lang="scss" module>
 .exampleRoot {
-	max-width: none!important;
+	max-width: none !important;
 	border-radius: var(--MI-radius);
 	border: var(--MI_THEME-panelBorder);
 	background: var(--MI_THEME-panel);

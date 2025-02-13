@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { ReversiService } from '@/core/ReversiService.js';
-import { ReversiGameEntityService } from '@/core/entities/ReversiGameEntityService.js';
-import { ApiError } from '../../error.js';
+import {Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {ReversiService} from '@/core/ReversiService.js';
+import {ReversiGameEntityService} from '@/core/entities/ReversiGameEntityService.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	requireCredential: false,
@@ -30,7 +30,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		gameId: { type: 'string', format: 'misskey:id' },
+		gameId: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['gameId'],
 } as const;

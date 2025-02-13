@@ -4,21 +4,21 @@
  */
 
 import ms from 'ms';
-import { In } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
-import type { MiUser } from '@/models/User.js';
-import type { UsersRepository, NotesRepository, BlockingsRepository, DriveFilesRepository, ChannelsRepository } from '@/models/_.js';
-import type { MiDriveFile } from '@/models/DriveFile.js';
-import type { MiNote } from '@/models/Note.js';
-import type { MiChannel } from '@/models/Channel.js';
-import { MAX_NOTE_TEXT_LENGTH } from '@/const.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { NoteCreateService } from '@/core/NoteCreateService.js';
-import { DI } from '@/di-symbols.js';
-import { isQuote, isRenote } from '@/misc/is-renote.js';
-import { IdentifiableError } from '@/misc/identifiable-error.js';
-import { ApiError } from '../../error.js';
+import {In} from 'typeorm';
+import {Inject, Injectable} from '@nestjs/common';
+import type {MiUser} from '@/models/User.js';
+import type {UsersRepository, NotesRepository, BlockingsRepository, DriveFilesRepository, ChannelsRepository} from '@/models/_.js';
+import type {MiDriveFile} from '@/models/DriveFile.js';
+import type {MiNote} from '@/models/Note.js';
+import type {MiChannel} from '@/models/Channel.js';
+import {MAX_NOTE_TEXT_LENGTH} from '@/const.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
+import {NoteCreateService} from '@/core/NoteCreateService.js';
+import {DI} from '@/di-symbols.js';
+import {isQuote, isRenote} from '@/misc/is-renote.js';
+import {IdentifiableError} from '@/misc/identifiable-error.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['notes'],
@@ -136,19 +136,21 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		visibility: { type: 'string', enum: ['public', 'home', 'followers', 'specified'], default: 'public' },
-		visibleUserIds: { type: 'array', uniqueItems: true, items: {
-			type: 'string', format: 'misskey:id',
-		} },
-		cw: { type: 'string', nullable: true, minLength: 1, maxLength: 100 },
-		localOnly: { type: 'boolean', default: false },
-		reactionAcceptance: { type: 'string', nullable: true, enum: [null, 'likeOnly', 'likeOnlyForRemote', 'nonSensitiveOnly', 'nonSensitiveOnlyForLocalLikeOnlyForRemote'], default: null },
-		noExtractMentions: { type: 'boolean', default: false },
-		noExtractHashtags: { type: 'boolean', default: false },
-		noExtractEmojis: { type: 'boolean', default: false },
-		replyId: { type: 'string', format: 'misskey:id', nullable: true },
-		renoteId: { type: 'string', format: 'misskey:id', nullable: true },
-		channelId: { type: 'string', format: 'misskey:id', nullable: true },
+		visibility: {type: 'string', enum: ['public', 'home', 'followers', 'specified'], default: 'public'},
+		visibleUserIds: {
+			type: 'array', uniqueItems: true, items: {
+				type: 'string', format: 'misskey:id',
+			}
+		},
+		cw: {type: 'string', nullable: true, minLength: 1, maxLength: 100},
+		localOnly: {type: 'boolean', default: false},
+		reactionAcceptance: {type: 'string', nullable: true, enum: [null, 'likeOnly', 'likeOnlyForRemote', 'nonSensitiveOnly', 'nonSensitiveOnlyForLocalLikeOnlyForRemote'], default: null},
+		noExtractMentions: {type: 'boolean', default: false},
+		noExtractHashtags: {type: 'boolean', default: false},
+		noExtractEmojis: {type: 'boolean', default: false},
+		replyId: {type: 'string', format: 'misskey:id', nullable: true},
+		renoteId: {type: 'string', format: 'misskey:id', nullable: true},
+		channelId: {type: 'string', format: 'misskey:id', nullable: true},
 
 		// anyOf内にバリデーションを書いても最初の一つしかチェックされない
 		// See https://github.com/misskey-dev/misskey/pull/10082
@@ -163,14 +165,14 @@ export const paramDef = {
 			uniqueItems: true,
 			minItems: 1,
 			maxItems: 16,
-			items: { type: 'string', format: 'misskey:id' },
+			items: {type: 'string', format: 'misskey:id'},
 		},
 		mediaIds: {
 			type: 'array',
 			uniqueItems: true,
 			minItems: 1,
 			maxItems: 16,
-			items: { type: 'string', format: 'misskey:id' },
+			items: {type: 'string', format: 'misskey:id'},
 		},
 		poll: {
 			type: 'object',
@@ -181,11 +183,11 @@ export const paramDef = {
 					uniqueItems: true,
 					minItems: 2,
 					maxItems: 10,
-					items: { type: 'string', minLength: 1, maxLength: 50 },
+					items: {type: 'string', minLength: 1, maxLength: 50},
 				},
-				multiple: { type: 'boolean' },
-				expiresAt: { type: 'integer', nullable: true },
-				expiredAfter: { type: 'integer', nullable: true, minimum: 1 },
+				multiple: {type: 'boolean'},
+				expiresAt: {type: 'integer', nullable: true},
+				expiredAfter: {type: 'integer', nullable: true, minimum: 1},
 			},
 			required: ['choices'],
 		},
@@ -225,19 +227,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		@Inject(DI.blockingsRepository)
 		private blockingsRepository: BlockingsRepository,
-
 		@Inject(DI.driveFilesRepository)
 		private driveFilesRepository: DriveFilesRepository,
-
 		@Inject(DI.channelsRepository)
 		private channelsRepository: ChannelsRepository,
-
 		private noteEntityService: NoteEntityService,
 		private noteCreateService: NoteCreateService,
 	) {
@@ -258,7 +255,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 						fileIds,
 					})
 					.orderBy('array_position(ARRAY[:...fileIds], "id"::text)')
-					.setParameters({ fileIds })
+					.setParameters({fileIds})
 					.getMany();
 
 				if (files.length !== fileIds.length) {
@@ -269,7 +266,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			let renote: MiNote | null = null;
 			if (ps.renoteId != null) {
 				// Fetch renote to note
-				renote = await this.notesRepository.findOneBy({ id: ps.renoteId });
+				renote = await this.notesRepository.findOneBy({id: ps.renoteId});
 
 				if (renote == null) {
 					throw new ApiError(meta.errors.noSuchRenoteTarget);
@@ -301,7 +298,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				if (renote.channelId && renote.channelId !== ps.channelId) {
 					// チャンネルのノートに対しリノート要求がきたとき、チャンネル外へのリノート可否をチェック
 					// リノートのユースケースのうち、チャンネル内→チャンネル外は少数だと考えられるため、JOINはせず必要な時に都度取得する
-					const renoteChannel = await this.channelsRepository.findOneBy({ id: renote.channelId });
+					const renoteChannel = await this.channelsRepository.findOneBy({id: renote.channelId});
 					if (renoteChannel == null) {
 						// リノートしたいノートが書き込まれているチャンネルが無い
 						throw new ApiError(meta.errors.noSuchChannel);
@@ -315,7 +312,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			let reply: MiNote | null = null;
 			if (ps.replyId != null) {
 				// Fetch reply
-				reply = await this.notesRepository.findOneBy({ id: ps.replyId });
+				reply = await this.notesRepository.findOneBy({id: ps.replyId});
 
 				if (reply == null) {
 					throw new ApiError(meta.errors.noSuchReplyTarget);
@@ -353,7 +350,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			let channel: MiChannel | null = null;
 			if (ps.channelId != null) {
-				channel = await this.channelsRepository.findOneBy({ id: ps.channelId, isArchived: false });
+				channel = await this.channelsRepository.findOneBy({id: ps.channelId, isArchived: false});
 
 				if (channel == null) {
 					throw new ApiError(meta.errors.noSuchChannel);

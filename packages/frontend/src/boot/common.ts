@@ -3,28 +3,28 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { computed, watch, version as vueVersion } from 'vue';
-import type { App } from 'vue';
-import { compareVersions } from 'compare-versions';
-import { version, lang, updateLocale, locale } from '@@/js/config.js';
+import {computed, watch, version as vueVersion} from 'vue';
+import type {App} from 'vue';
+import {compareVersions} from 'compare-versions';
+import {version, lang, updateLocale, locale} from '@@/js/config.js';
 import widgets from '@/widgets/index.js';
 import directives from '@/directives/index.js';
 import components from '@/components/index.js';
-import { applyTheme } from '@/scripts/theme.js';
-import { isDeviceDarkmode } from '@/scripts/is-device-darkmode.js';
-import { updateI18n, i18n } from '@/i18n.js';
-import { $i, refreshAccount, login } from '@/account.js';
-import { defaultStore, ColdDeviceStorage } from '@/store.js';
-import { fetchInstance, instance } from '@/instance.js';
-import { deviceKind, updateDeviceKind } from '@/scripts/device-kind.js';
-import { reloadChannel } from '@/scripts/unison-reload.js';
-import { getUrlWithoutLoginId } from '@/scripts/login-id.js';
-import { getAccountFromId } from '@/scripts/get-account-from-id.js';
-import { deckStore } from '@/ui/deck/deck-store.js';
-import { miLocalStorage } from '@/local-storage.js';
-import { fetchCustomEmojis } from '@/custom-emojis.js';
-import { setupRouter } from '@/router/main.js';
-import { createMainRouter } from '@/router/definition.js';
+import {applyTheme} from '@/scripts/theme.js';
+import {isDeviceDarkmode} from '@/scripts/is-device-darkmode.js';
+import {updateI18n, i18n} from '@/i18n.js';
+import {$i, refreshAccount, login} from '@/account.js';
+import {defaultStore, ColdDeviceStorage} from '@/store.js';
+import {fetchInstance, instance} from '@/instance.js';
+import {deviceKind, updateDeviceKind} from '@/scripts/device-kind.js';
+import {reloadChannel} from '@/scripts/unison-reload.js';
+import {getUrlWithoutLoginId} from '@/scripts/login-id.js';
+import {getAccountFromId} from '@/scripts/get-account-from-id.js';
+import {deckStore} from '@/ui/deck/deck-store.js';
+import {miLocalStorage} from '@/local-storage.js';
+import {fetchCustomEmojis} from '@/custom-emojis.js';
+import {setupRouter} from '@/router/main.js';
+import {createMainRouter} from '@/router/definition.js';
 
 export async function common(createVue: () => App<Element>) {
 	console.info(`IcyMisskey v${version}`);
@@ -76,7 +76,8 @@ export async function common(createVue: () => App<Element>) {
 			if (lastVersion != null && compareVersions(version, lastVersion) === 1) {
 				isClientUpdated = true;
 			}
-		} catch (err) { /* empty */ }
+		} catch (err) { /* empty */
+		}
 	}
 	//#endregion
 
@@ -97,7 +98,8 @@ export async function common(createVue: () => App<Element>) {
 	//#endregion
 
 	// タッチデバイスでCSSの:hoverを機能させる
-	document.addEventListener('touchend', () => {}, { passive: true });
+	document.addEventListener('touchend', () => {
+	}, {passive: true});
 
 	// URLに#pswpを含む場合は取り除く
 	if (location.hash === '#pswp') {
@@ -145,14 +147,14 @@ export async function common(createVue: () => App<Element>) {
 			}
 		}
 
-		history.replaceState({ misskey: 'loginId' }, '', target);
+		history.replaceState({misskey: 'loginId'}, '', target);
 	}
 	//#endregion
 
 	// NOTE: この処理は必ずクライアント更新チェック処理より後に来ること(テーマ再構築のため)
 	watch(defaultStore.reactiveState.darkMode, (darkMode) => {
 		applyTheme(darkMode ? ColdDeviceStorage.get('darkTheme') : ColdDeviceStorage.get('lightTheme'));
-	}, { immediate: miLocalStorage.getItem('theme') == null });
+	}, {immediate: miLocalStorage.getItem('theme') == null});
 
 	document.documentElement.dataset.colorScheme = defaultStore.state.darkMode ? 'dark' : 'light';
 
@@ -193,11 +195,11 @@ export async function common(createVue: () => App<Element>) {
 
 	watch(defaultStore.reactiveState.overridedDeviceKind, (kind) => {
 		updateDeviceKind(kind);
-	}, { immediate: true });
+	}, {immediate: true});
 
 	watch(defaultStore.reactiveState.useBlurEffectForModal, v => {
 		document.documentElement.style.setProperty('--MI-modalBgFilter', v ? 'blur(4px)' : 'none');
-	}, { immediate: true });
+	}, {immediate: true});
 
 	watch(defaultStore.reactiveState.useBlurEffect, v => {
 		if (v) {
@@ -205,7 +207,7 @@ export async function common(createVue: () => App<Element>) {
 		} else {
 			document.documentElement.style.setProperty('--MI-blur', 'none');
 		}
-	}, { immediate: true });
+	}, {immediate: true});
 
 	// Keep screen on
 	const onVisibilityChange = () => document.addEventListener('visibilitychange', () => {
@@ -222,7 +224,7 @@ export async function common(createVue: () => App<Element>) {
 				document.addEventListener(
 					'click',
 					() => navigator.wakeLock.request('screen').then(onVisibilityChange),
-					{ once: true },
+					{once: true},
 				);
 			});
 	}
@@ -239,7 +241,8 @@ export async function common(createVue: () => App<Element>) {
 
 	try {
 		await fetchCustomEmojis();
-	} catch (err) { /* empty */ }
+	} catch (err) { /* empty */
+	}
 
 	const app = createVue();
 
@@ -297,7 +300,7 @@ export async function common(createVue: () => App<Element>) {
 		'font-size: 16px;',
 		'font-size: 20px; font-weight: 700; color: #f00;',
 	);
-	console.log(i18n.tsx._selfXssPrevention.description3({ link: 'https://misskey-hub.net/docs/for-users/resources/self-xss/' }));
+	console.log(i18n.tsx._selfXssPrevention.description3({link: 'https://misskey-hub.net/docs/for-users/resources/self-xss/'}));
 	//#endregion
 
 	return {

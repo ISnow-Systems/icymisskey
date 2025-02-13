@@ -8,9 +8,9 @@ process.env.NODE_ENV = 'test';
 import * as assert from 'assert';
 // node-fetch only supports it's own Blob yet
 // https://github.com/node-fetch/node-fetch/pull/1664
-import { Blob } from 'node-fetch';
-import { MiUser } from '@/models/_.js';
-import { api, castAsError, initTestDb, post, signup, simpleGet, uploadFile } from '../utils.js';
+import {Blob} from 'node-fetch';
+import {MiUser} from '@/models/_.js';
+import {api, castAsError, initTestDb, post, signup, simpleGet, uploadFile} from '../utils.js';
 import type * as misskey from 'misskey-js';
 
 describe('Endpoints', () => {
@@ -20,10 +20,10 @@ describe('Endpoints', () => {
 	let dave: misskey.entities.SignupResponse;
 
 	beforeAll(async () => {
-		alice = await signup({ username: 'alice' });
-		bob = await signup({ username: 'bob' });
-		carol = await signup({ username: 'carol' });
-		dave = await signup({ username: 'dave' });
+		alice = await signup({username: 'alice'});
+		bob = await signup({username: 'bob'});
+		carol = await signup({username: 'carol'});
+		dave = await signup({username: 'dave'});
 	}, 1000 * 60 * 2);
 
 	describe('signup', () => {
@@ -215,7 +215,7 @@ describe('Endpoints', () => {
 
 	describe('notes/reactions/create', () => {
 		test('リアクションできる', async () => {
-			const bobPost = await post(bob, { text: 'hi' });
+			const bobPost = await post(bob, {text: 'hi'});
 
 			const res = await api('notes/reactions/create', {
 				noteId: bobPost.id,
@@ -233,7 +233,7 @@ describe('Endpoints', () => {
 		});
 
 		test('自分の投稿にもリアクションできる', async () => {
-			const myPost = await post(alice, { text: 'hi' });
+			const myPost = await post(alice, {text: 'hi'});
 
 			const res = await api('notes/reactions/create', {
 				noteId: myPost.id,
@@ -244,7 +244,7 @@ describe('Endpoints', () => {
 		});
 
 		test('二重にリアクションすると上書きされる', async () => {
-			const bobPost = await post(bob, { text: 'hi' });
+			const bobPost = await post(bob, {text: 'hi'});
 
 			await api('notes/reactions/create', {
 				noteId: bobPost.id,
@@ -263,7 +263,7 @@ describe('Endpoints', () => {
 			}, alice);
 
 			assert.strictEqual(resNote.status, 200);
-			assert.deepStrictEqual(resNote.body.reactions, { '🚀': 1 });
+			assert.deepStrictEqual(resNote.body.reactions, {'🚀': 1});
 		});
 
 		test('存在しない投稿にはリアクションできない', async () => {
@@ -276,8 +276,8 @@ describe('Endpoints', () => {
 		});
 
 		test('リノートにリアクションできない', async () => {
-			const bobNote = await post(bob, { text: 'hi' });
-			const bobRenote = await post(bob, { renoteId: bobNote.id });
+			const bobNote = await post(bob, {text: 'hi'});
+			const bobRenote = await post(bob, {renoteId: bobNote.id});
 
 			const res = await api('notes/reactions/create', {
 				noteId: bobRenote.id,
@@ -290,8 +290,8 @@ describe('Endpoints', () => {
 		});
 
 		test('引用にリアクションできる', async () => {
-			const bobNote = await post(bob, { text: 'hi' });
-			const bobRenote = await post(bob, { text: 'hi again', renoteId: bobNote.id });
+			const bobNote = await post(bob, {text: 'hi'});
+			const bobRenote = await post(bob, {text: 'hi again', renoteId: bobNote.id});
 
 			const res = await api('notes/reactions/create', {
 				noteId: bobRenote.id,
@@ -302,7 +302,7 @@ describe('Endpoints', () => {
 		});
 
 		test('空文字列のリアクションは\u2764にフォールバックされる', async () => {
-			const bobNote = await post(bob, { text: 'hi' });
+			const bobNote = await post(bob, {text: 'hi'});
 
 			const res = await api('notes/reactions/create', {
 				noteId: bobNote.id,
@@ -320,7 +320,7 @@ describe('Endpoints', () => {
 		});
 
 		test('絵文字ではない文字列のリアクションは\u2764にフォールバックされる', async () => {
-			const bobNote = await post(bob, { text: 'hi' });
+			const bobNote = await post(bob, {text: 'hi'});
 
 			const res = await api('notes/reactions/create', {
 				noteId: bobNote.id,
@@ -364,10 +364,10 @@ describe('Endpoints', () => {
 
 			const connection = await initTestDb(true);
 			const Users = connection.getRepository(MiUser);
-			const newBob = await Users.findOneByOrFail({ id: bob.id });
+			const newBob = await Users.findOneByOrFail({id: bob.id});
 			assert.strictEqual(newBob.followersCount, 0);
 			assert.strictEqual(newBob.followingCount, 1);
-			const newAlice = await Users.findOneByOrFail({ id: alice.id });
+			const newAlice = await Users.findOneByOrFail({id: alice.id});
 			assert.strictEqual(newAlice.followersCount, 1);
 			assert.strictEqual(newAlice.followingCount, 0);
 			connection.destroy();
@@ -427,10 +427,10 @@ describe('Endpoints', () => {
 
 			const connection = await initTestDb(true);
 			const Users = connection.getRepository(MiUser);
-			const newBob = await Users.findOneByOrFail({ id: bob.id });
+			const newBob = await Users.findOneByOrFail({id: bob.id});
 			assert.strictEqual(newBob.followersCount, 0);
 			assert.strictEqual(newBob.followingCount, 0);
-			const newAlice = await Users.findOneByOrFail({ id: alice.id });
+			const newAlice = await Users.findOneByOrFail({id: alice.id});
 			assert.strictEqual(newAlice.followersCount, 0);
 			assert.strictEqual(newAlice.followingCount, 0);
 			connection.destroy();
@@ -598,7 +598,7 @@ describe('Endpoints', () => {
 		});
 
 		test('ファイルに名前を付けられる', async () => {
-			const res = await uploadFile(alice, { name: 'Belmond.jpg' });
+			const res = await uploadFile(alice, {name: 'Belmond.jpg'});
 
 			assert.strictEqual(res.status, 200);
 			assert.strictEqual(typeof res.body === 'object' && !Array.isArray(res.body), true);
@@ -606,7 +606,7 @@ describe('Endpoints', () => {
 		});
 
 		test('ファイルに名前を付けられるが、拡張子は正しいものになる', async () => {
-			const res = await uploadFile(alice, { name: 'Belmond.png' });
+			const res = await uploadFile(alice, {name: 'Belmond.png'});
 
 			assert.strictEqual(res.status, 200);
 			assert.strictEqual(typeof res.body === 'object' && !Array.isArray(res.body), true);
@@ -621,7 +621,7 @@ describe('Endpoints', () => {
 		});
 
 		test('SVGファイルを作成できる', async () => {
-			const res = await uploadFile(alice, { path: 'image.svg' });
+			const res = await uploadFile(alice, {path: 'image.svg'});
 
 			assert.strictEqual(res.status, 200);
 			assert.strictEqual(typeof res.body === 'object' && !Array.isArray(res.body), true);
@@ -646,7 +646,7 @@ describe('Endpoints', () => {
 
 			test(`透明な${type}ファイルを作成できる`, async () => {
 				const path = `with-alpha.${type}`;
-				const res = await uploadFile(alice, { path });
+				const res = await uploadFile(alice, {path});
 
 				assert.strictEqual(res.status, 200);
 				assert.strictEqual(res.body!.name, path);
@@ -658,7 +658,7 @@ describe('Endpoints', () => {
 
 			test(`透明じゃない${type}ファイルを作成できる`, async () => {
 				const path = `without-alpha.${type}`;
-				const res = await uploadFile(alice, { path });
+				const res = await uploadFile(alice, {path});
 				assert.strictEqual(res.status, 200);
 				assert.strictEqual(res.body!.name, path);
 				assert.strictEqual(res.body!.type, mediaType);

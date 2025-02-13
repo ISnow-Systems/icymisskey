@@ -3,24 +3,23 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import { normalizeForSearch } from '@/misc/normalize-for-search.js';
-import type { Packed } from '@/misc/json-schema.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { bindThis } from '@/decorators.js';
-import { isRenotePacked, isQuotePacked } from '@/misc/is-renote.js';
-import type { JsonObject } from '@/misc/json-value.js';
-import Channel, { type MiChannelService } from '../channel.js';
+import {Injectable} from '@nestjs/common';
+import {normalizeForSearch} from '@/misc/normalize-for-search.js';
+import type {Packed} from '@/misc/json-schema.js';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
+import {bindThis} from '@/decorators.js';
+import {isRenotePacked, isQuotePacked} from '@/misc/is-renote.js';
+import type {JsonObject} from '@/misc/json-value.js';
+import Channel, {type MiChannelService} from '../channel.js';
 
 class HashtagChannel extends Channel {
-	public readonly chName = 'hashtag';
 	public static shouldShare = false;
 	public static requireCredential = false as const;
+	public readonly chName = 'hashtag';
 	private q: string[][];
 
 	constructor(
 		private noteEntityService: NoteEntityService,
-
 		id: string,
 		connection: Channel['connection'],
 	) {
@@ -36,6 +35,12 @@ class HashtagChannel extends Channel {
 
 		// Subscribe stream
 		this.subscriber.on('notesStream', this.onNote);
+	}
+
+	@bindThis
+	public dispose() {
+		// Unsubscribe events
+		this.subscriber.off('notesStream', this.onNote);
 	}
 
 	@bindThis
@@ -56,12 +61,6 @@ class HashtagChannel extends Channel {
 		this.connection.cacheNote(note);
 
 		this.send('note', note);
-	}
-
-	@bindThis
-	public dispose() {
-		// Unsubscribe events
-		this.subscriber.off('notesStream', this.onNote);
 	}
 }
 

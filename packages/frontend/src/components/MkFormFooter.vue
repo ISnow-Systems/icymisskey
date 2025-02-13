@@ -4,19 +4,19 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="$style.root">
-	<div :class="$style.text">{{ i18n.tsx.thereAreNChanges({ n: form.modifiedCount.value }) }}</div>
-	<div style="margin-left: auto;" class="_buttons">
-		<MkButton danger rounded @click="form.discard"><i class="ti ti-x"></i> {{ i18n.ts.discard }}</MkButton>
-		<MkButton primary rounded :disabled="!canSaving" @click="form.save"><i class="ti ti-check"></i> {{ i18n.ts.save }}</MkButton>
+	<div :class="$style.root">
+		<div :class="$style.text">{{ i18n.tsx.thereAreNChanges({n: form.modifiedCount.value}) }}</div>
+		<div class="_buttons" style="margin-left: auto;">
+			<MkButton danger rounded @click="form.discard"><i class="ti ti-x"></i> {{ i18n.ts.discard }}</MkButton>
+			<MkButton :disabled="!canSaving" primary rounded @click="form.save"><i class="ti ti-check"></i> {{ i18n.ts.save }}</MkButton>
+		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import {} from 'vue';
 import MkButton from './MkButton.vue';
-import { i18n } from '@/i18n.js';
+import {i18n} from '@/i18n.js';
 
 const props = withDefaults(defineProps<{
 	form: {
@@ -45,8 +45,14 @@ const props = withDefaults(defineProps<{
 }
 
 @keyframes modified-blink {
-	0% { opacity: 1; }
-	50% { opacity: 0.5; }
-	100% { opacity: 1; }
+	0% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.5;
+	}
+	100% {
+		opacity: 1;
+	}
 }
 </style>

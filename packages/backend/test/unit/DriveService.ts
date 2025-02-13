@@ -5,7 +5,7 @@
 
 process.env.NODE_ENV = 'test';
 
-import { Test } from '@nestjs/testing';
+import {Test} from '@nestjs/testing';
 import {
 	DeleteObjectCommand,
 	DeleteObjectCommandOutput,
@@ -13,11 +13,11 @@ import {
 	NoSuchKey,
 	S3Client,
 } from '@aws-sdk/client-s3';
-import { mockClient } from 'aws-sdk-client-mock';
-import { GlobalModule } from '@/GlobalModule.js';
-import { DriveService } from '@/core/DriveService.js';
-import { CoreModule } from '@/core/CoreModule.js';
-import type { TestingModule } from '@nestjs/testing';
+import {mockClient} from 'aws-sdk-client-mock';
+import {GlobalModule} from '@/GlobalModule.js';
+import {DriveService} from '@/core/DriveService.js';
+import {CoreModule} from '@/core/CoreModule.js';
+import type {TestingModule} from '@nestjs/testing';
 
 describe('DriveService', () => {
 	let app: TestingModule;
@@ -51,7 +51,7 @@ describe('DriveService', () => {
 
 		test('delete a file then unexpected error', async () => {
 			s3Mock.on(DeleteObjectCommand)
-				.rejects(new InvalidObjectState({ $metadata: {}, message: '' }));
+				.rejects(new InvalidObjectState({$metadata: {}, message: ''}));
 
 			await expect(driveService.deleteObjectStorageFile('unexpected')).rejects.toThrowError(Error);
 		});
@@ -59,7 +59,7 @@ describe('DriveService', () => {
 		test('delete a file with no valid key', async () => {
 			// Some S3 implementations returns 404 Not Found on deleting with a non-existent key
 			s3Mock.on(DeleteObjectCommand)
-				.rejects(new NoSuchKey({ $metadata: {}, message: 'allowed error.' }));
+				.rejects(new NoSuchKey({$metadata: {}, message: 'allowed error.'}));
 
 			await driveService.deleteObjectStorageFile('lol no way');
 		});

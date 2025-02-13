@@ -4,38 +4,38 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<button
-	v-if="!link"
-	ref="el" class="_button"
-	:class="[$style.root, { [$style.inline]: inline, [$style.primary]: primary, [$style.gradate]: gradate, [$style.danger]: danger, [$style.rounded]: rounded, [$style.full]: full, [$style.small]: small, [$style.large]: large, [$style.transparent]: transparent, [$style.asLike]: asLike }]"
-	:type="type"
-	:name="name"
-	:value="value"
-	:disabled="disabled"
-	@click="emit('click', $event)"
-	@mousedown="onMousedown"
->
-	<div ref="ripples" :class="$style.ripples" :data-children-class="$style.ripple"></div>
-	<div :class="$style.content">
-		<slot></slot>
-	</div>
-</button>
-<MkA
-	v-else class="_button"
-	:class="[$style.root, { [$style.inline]: inline, [$style.primary]: primary, [$style.gradate]: gradate, [$style.danger]: danger, [$style.rounded]: rounded, [$style.full]: full, [$style.small]: small, [$style.large]: large, [$style.transparent]: transparent, [$style.asLike]: asLike }]"
-	:to="to ?? '#'"
-	:behavior="linkBehavior"
-	@mousedown="onMousedown"
->
-	<div ref="ripples" :class="$style.ripples" :data-children-class="$style.ripple"></div>
-	<div :class="$style.content">
-		<slot></slot>
-	</div>
-</MkA>
+	<button
+		v-if="!link"
+		ref="el" :class="[$style.root, { [$style.inline]: inline, [$style.primary]: primary, [$style.gradate]: gradate, [$style.danger]: danger, [$style.rounded]: rounded, [$style.full]: full, [$style.small]: small, [$style.large]: large, [$style.transparent]: transparent, [$style.asLike]: asLike }]"
+		:disabled="disabled"
+		:name="name"
+		:type="type"
+		:value="value"
+		class="_button"
+		@click="emit('click', $event)"
+		@mousedown="onMousedown"
+	>
+		<div ref="ripples" :class="$style.ripples" :data-children-class="$style.ripple"></div>
+		<div :class="$style.content">
+			<slot></slot>
+		</div>
+	</button>
+	<MkA
+		v-else :behavior="linkBehavior"
+		:class="[$style.root, { [$style.inline]: inline, [$style.primary]: primary, [$style.gradate]: gradate, [$style.danger]: danger, [$style.rounded]: rounded, [$style.full]: full, [$style.small]: small, [$style.large]: large, [$style.transparent]: transparent, [$style.asLike]: asLike }]"
+		:to="to ?? '#'"
+		class="_button"
+		@mousedown="onMousedown"
+	>
+		<div ref="ripples" :class="$style.ripples" :data-children-class="$style.ripple"></div>
+		<div :class="$style.content">
+			<slot></slot>
+		</div>
+	</MkA>
 </template>
 
 <script lang="ts" setup>
-import { nextTick, onMounted, shallowRef } from 'vue';
+import {nextTick, onMounted, shallowRef} from 'vue';
 
 const props = defineProps<{
 	type?: 'button' | 'submit' | 'reset';
@@ -79,11 +79,11 @@ function distance(p, q): number {
 }
 
 function calcCircleScale(boxW, boxH, circleCenterX, circleCenterY): number {
-	const origin = { x: circleCenterX, y: circleCenterY };
-	const dist1 = distance({ x: 0, y: 0 }, origin);
-	const dist2 = distance({ x: boxW, y: 0 }, origin);
-	const dist3 = distance({ x: 0, y: boxH }, origin);
-	const dist4 = distance({ x: boxW, y: boxH }, origin);
+	const origin = {x: circleCenterX, y: circleCenterY};
+	const dist1 = distance({x: 0, y: 0}, origin);
+	const dist2 = distance({x: boxW, y: 0}, origin);
+	const dist3 = distance({x: 0, y: boxH}, origin);
+	const dist4 = distance({x: boxW, y: boxH}, origin);
 	return Math.max(dist1, dist2, dist3, dist4) * 2;
 }
 
@@ -285,7 +285,7 @@ function onMousedown(evt: MouseEvent): void {
 	background: rgba(0, 0, 0, 0.1);
 	opacity: 1;
 	transform: scale(1);
-	transition: all 0.5s cubic-bezier(0,.5,0,1);
+	transition: all 0.5s cubic-bezier(0, .5, 0, 1);
 }
 
 .content {

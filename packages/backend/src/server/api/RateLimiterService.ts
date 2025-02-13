@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import Limiter from 'ratelimiter';
 import * as Redis from 'ioredis';
-import { DI } from '@/di-symbols.js';
+import {DI} from '@/di-symbols.js';
 import type Logger from '@/logger.js';
-import { LoggerService } from '@/core/LoggerService.js';
-import { bindThis } from '@/decorators.js';
-import type { IEndpointMeta } from './endpoints.js';
+import {LoggerService} from '@/core/LoggerService.js';
+import {bindThis} from '@/decorators.js';
+import type {IEndpointMeta} from './endpoints.js';
 
 @Injectable()
 export class RateLimiterService {
@@ -20,7 +20,6 @@ export class RateLimiterService {
 	constructor(
 		@Inject(DI.redis)
 		private redisClient: Redis.Redis,
-
 		private loggerService: LoggerService,
 	) {
 		this.logger = this.loggerService.getLogger('limiter');
@@ -48,13 +47,13 @@ export class RateLimiterService {
 
 				minIntervalLimiter.get((err, info) => {
 					if (err) {
-						return reject({ code: 'ERR', info });
+						return reject({code: 'ERR', info});
 					}
 
 					this.logger.debug(`${actor} ${limitation.key} min remaining: ${info.remaining}`);
 
 					if (info.remaining === 0) {
-						return reject({ code: 'BRIEF_REQUEST_INTERVAL', info });
+						return reject({code: 'BRIEF_REQUEST_INTERVAL', info});
 					} else {
 						if (hasLongTermLimit) {
 							return max.then(ok, reject);
@@ -76,13 +75,13 @@ export class RateLimiterService {
 
 				limiter.get((err, info) => {
 					if (err) {
-						return reject({ code: 'ERR', info });
+						return reject({code: 'ERR', info});
 					}
 
 					this.logger.debug(`${actor} ${limitation.key} max remaining: ${info.remaining}`);
 
 					if (info.remaining === 0) {
-						return reject({ code: 'RATE_LIMIT_EXCEEDED', info });
+						return reject({code: 'RATE_LIMIT_EXCEEDED', info});
 					} else {
 						return ok();
 					}

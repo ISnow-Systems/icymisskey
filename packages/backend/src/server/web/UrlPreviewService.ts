@@ -3,19 +3,19 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { summaly } from '@misskey-dev/summaly';
-import { SummalyResult } from '@misskey-dev/summaly/built/summary.js';
-import { DI } from '@/di-symbols.js';
-import type { Config } from '@/config.js';
-import { HttpRequestService } from '@/core/HttpRequestService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {summaly} from '@misskey-dev/summaly';
+import {SummalyResult} from '@misskey-dev/summaly/built/summary.js';
+import {DI} from '@/di-symbols.js';
+import type {Config} from '@/config.js';
+import {HttpRequestService} from '@/core/HttpRequestService.js';
 import type Logger from '@/logger.js';
-import { query } from '@/misc/prelude/url.js';
-import { LoggerService } from '@/core/LoggerService.js';
-import { bindThis } from '@/decorators.js';
-import { ApiError } from '@/server/api/error.js';
-import { MiMeta } from '@/models/Meta.js';
-import type { FastifyRequest, FastifyReply } from 'fastify';
+import {query} from '@/misc/prelude/url.js';
+import {LoggerService} from '@/core/LoggerService.js';
+import {bindThis} from '@/decorators.js';
+import {ApiError} from '@/server/api/error.js';
+import {MiMeta} from '@/models/Meta.js';
+import type {FastifyRequest, FastifyReply} from 'fastify';
 
 @Injectable()
 export class UrlPreviewService {
@@ -24,26 +24,12 @@ export class UrlPreviewService {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.meta)
 		private meta: MiMeta,
-
 		private httpRequestService: HttpRequestService,
 		private loggerService: LoggerService,
 	) {
 		this.logger = this.loggerService.getLogger('url-preview');
-	}
-
-	@bindThis
-	private wrap(url?: string | null): string | null {
-		return url != null
-			? url.match(/^https?:\/\//)
-				? `${this.config.mediaProxy}/preview.webp?${query({
-					url,
-					preview: '1',
-				})}`
-				: url
-			: null;
 	}
 
 	@bindThis
@@ -113,6 +99,18 @@ export class UrlPreviewService {
 				}),
 			};
 		}
+	}
+
+	@bindThis
+	private wrap(url?: string | null): string | null {
+		return url != null
+			? url.match(/^https?:\/\//)
+				? `${this.config.mediaProxy}/preview.webp?${query({
+					url,
+					preview: '1',
+				})}`
+				: url
+			: null;
 	}
 
 	private fetchSummary(url: string, meta: MiMeta, lang?: string): Promise<SummalyResult> {

@@ -4,7 +4,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<code :class="$style.root">{{ code }}</code>
+	<code :class="$style.root">{{ code }}</code>
 </template>
 
 <script lang="ts" setup>
@@ -13,7 +13,7 @@ const props = defineProps<{
 }>();
 </script>
 
-<style module lang="scss">
+<style lang="scss" module>
 .root {
 	display: inline-block;
 	font-family: Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace;

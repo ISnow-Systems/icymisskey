@@ -4,32 +4,32 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div
-	ref="rootEl"
-	:class="[$style.transitionRoot, { [$style.enableAnimation]: shouldAnimate }]"
-	@touchstart.passive="touchStart"
-	@touchmove.passive="touchMove"
-	@touchend.passive="touchEnd"
->
-	<Transition
-		:class="[$style.transitionChildren, { [$style.swiping]: isSwipingForClass }]"
-		:enterActiveClass="$style.swipeAnimation_enterActive"
-		:leaveActiveClass="$style.swipeAnimation_leaveActive"
-		:enterFromClass="transitionName === 'swipeAnimationLeft' ? $style.swipeAnimationLeft_enterFrom : $style.swipeAnimationRight_enterFrom"
-		:leaveToClass="transitionName === 'swipeAnimationLeft' ? $style.swipeAnimationLeft_leaveTo : $style.swipeAnimationRight_leaveTo"
-		:style="`--swipe: ${pullDistance}px;`"
+	<div
+		ref="rootEl"
+		:class="[$style.transitionRoot, { [$style.enableAnimation]: shouldAnimate }]"
+		@touchstart.passive="touchStart"
+		@touchmove.passive="touchMove"
+		@touchend.passive="touchEnd"
 	>
-		<!-- 【注意】slot内の最上位要素に動的にkeyを設定すること -->
-		<!-- 各最上位要素にユニークなkeyの指定がないとTransitionがうまく動きません -->
-		<slot></slot>
-	</Transition>
-</div>
+		<Transition
+			:class="[$style.transitionChildren, { [$style.swiping]: isSwipingForClass }]"
+			:enterActiveClass="$style.swipeAnimation_enterActive"
+			:enterFromClass="transitionName === 'swipeAnimationLeft' ? $style.swipeAnimationLeft_enterFrom : $style.swipeAnimationRight_enterFrom"
+			:leaveActiveClass="$style.swipeAnimation_leaveActive"
+			:leaveToClass="transitionName === 'swipeAnimationLeft' ? $style.swipeAnimationLeft_leaveTo : $style.swipeAnimationRight_leaveTo"
+			:style="`--swipe: ${pullDistance}px;`"
+		>
+			<!-- 【注意】slot内の最上位要素に動的にkeyを設定すること -->
+			<!-- 各最上位要素にユニークなkeyの指定がないとTransitionがうまく動きません -->
+			<slot></slot>
+		</Transition>
+	</div>
 </template>
 <script lang="ts" setup>
-import { ref, shallowRef, computed, nextTick, watch } from 'vue';
-import type { Tab } from '@/components/global/MkPageHeader.tabs.vue';
-import { defaultStore } from '@/store.js';
-import { isHorizontalSwipeSwiping as isSwiping } from '@/scripts/touch.js';
+import {ref, shallowRef, computed, nextTick, watch} from 'vue';
+import type {Tab} from '@/components/global/MkPageHeader.tabs.vue';
+import {defaultStore} from '@/store.js';
+import {isHorizontalSwipeSwiping as isSwiping} from '@/scripts/touch.js';
 
 const rootEl = shallowRef<HTMLDivElement>();
 

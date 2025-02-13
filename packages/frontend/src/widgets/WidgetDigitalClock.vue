@@ -4,21 +4,21 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div data-cy-mkw-digitalClock class="_monospace" :class="[$style.root, { _panel: !widgetProps.transparent }]" :style="{ fontSize: `${widgetProps.fontSize}em` }">
-	<div v-if="widgetProps.showLabel" :class="$style.label">{{ tzAbbrev }}</div>
-	<div>
-		<MkDigitalClock :showMs="widgetProps.showMs" :offset="tzOffset"/>
+	<div :class="[$style.root, { _panel: !widgetProps.transparent }]" :style="{ fontSize: `${widgetProps.fontSize}em` }" class="_monospace" data-cy-mkw-digitalClock>
+		<div v-if="widgetProps.showLabel" :class="$style.label">{{ tzAbbrev }}</div>
+		<div>
+			<MkDigitalClock :offset="tzOffset" :showMs="widgetProps.showMs"/>
+		</div>
+		<div v-if="widgetProps.showLabel" :class="$style.label">{{ tzOffsetLabel }}</div>
 	</div>
-	<div v-if="widgetProps.showLabel" :class="$style.label">{{ tzOffsetLabel }}</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-import { useWidgetPropsManager } from './widget.js';
-import type { WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget.js';
-import type { GetFormResultType } from '@/scripts/form.js';
-import { timezones } from '@/scripts/timezones.js';
+import {computed} from 'vue';
+import {useWidgetPropsManager} from './widget.js';
+import type {WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps} from './widget.js';
+import type {GetFormResultType} from '@/scripts/form.js';
+import {timezones} from '@/scripts/timezones.js';
 import MkDigitalClock from '@/components/MkDigitalClock.vue';
 
 const name = 'digitalClock';
@@ -59,7 +59,7 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 const props = defineProps<WidgetComponentProps<WidgetProps>>();
 const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 
-const { widgetProps, configure } = useWidgetPropsManager(name,
+const {widgetProps, configure} = useWidgetPropsManager(name,
 	widgetPropsDef,
 	props,
 	emit,

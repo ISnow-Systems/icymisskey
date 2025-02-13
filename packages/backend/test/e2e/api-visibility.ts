@@ -6,7 +6,7 @@
 process.env.NODE_ENV = 'test';
 
 import * as assert from 'assert';
-import { UserToken, api, post, signup } from '../utils.js';
+import {UserToken, api, post, signup} from '../utils.js';
 import type * as misskey from 'misskey-js';
 
 describe('API visibility', () => {
@@ -63,33 +63,33 @@ describe('API visibility', () => {
 		beforeAll(async () => {
 			//#region prepare
 			// signup
-			alice = await signup({ username: 'alice' });
-			follower = await signup({ username: 'follower' });
-			other = await signup({ username: 'other' });
-			target = await signup({ username: 'target' });
-			target2 = await signup({ username: 'target2' });
+			alice = await signup({username: 'alice'});
+			follower = await signup({username: 'follower'});
+			other = await signup({username: 'other'});
+			target = await signup({username: 'target'});
+			target2 = await signup({username: 'target2'});
 
 			// follow alice <= follower
-			await api('following/create', { userId: alice.id }, follower);
+			await api('following/create', {userId: alice.id}, follower);
 
 			// normal posts
-			pub = await post(alice, { text: 'x', visibility: 'public' });
-			home = await post(alice, { text: 'x', visibility: 'home' });
-			fol = await post(alice, { text: 'x', visibility: 'followers' });
-			spe = await post(alice, { text: 'x', visibility: 'specified', visibleUserIds: [target.id] });
+			pub = await post(alice, {text: 'x', visibility: 'public'});
+			home = await post(alice, {text: 'x', visibility: 'home'});
+			fol = await post(alice, {text: 'x', visibility: 'followers'});
+			spe = await post(alice, {text: 'x', visibility: 'specified', visibleUserIds: [target.id]});
 
 			// replies
-			tgt = await post(target, { text: 'y', visibility: 'public' });
-			pubR = await post(alice, { text: 'x', replyId: tgt.id, visibility: 'public' });
-			homeR = await post(alice, { text: 'x', replyId: tgt.id, visibility: 'home' });
-			folR = await post(alice, { text: 'x', replyId: tgt.id, visibility: 'followers' });
-			speR = await post(alice, { text: 'x', replyId: tgt.id, visibility: 'specified' });
+			tgt = await post(target, {text: 'y', visibility: 'public'});
+			pubR = await post(alice, {text: 'x', replyId: tgt.id, visibility: 'public'});
+			homeR = await post(alice, {text: 'x', replyId: tgt.id, visibility: 'home'});
+			folR = await post(alice, {text: 'x', replyId: tgt.id, visibility: 'followers'});
+			speR = await post(alice, {text: 'x', replyId: tgt.id, visibility: 'specified'});
 
 			// mentions
-			pubM = await post(alice, { text: '@target x', replyId: tgt.id, visibility: 'public' });
-			homeM = await post(alice, { text: '@target x', replyId: tgt.id, visibility: 'home' });
-			folM = await post(alice, { text: '@target x', replyId: tgt.id, visibility: 'followers' });
-			speM = await post(alice, { text: '@target2 x', replyId: tgt.id, visibility: 'specified' });
+			pubM = await post(alice, {text: '@target x', replyId: tgt.id, visibility: 'public'});
+			homeM = await post(alice, {text: '@target x', replyId: tgt.id, visibility: 'home'});
+			folM = await post(alice, {text: '@target x', replyId: tgt.id, visibility: 'followers'});
+			speM = await post(alice, {text: '@target2 x', replyId: tgt.id, visibility: 'specified'});
 			//#endregion
 		});
 
@@ -408,21 +408,21 @@ describe('API visibility', () => {
 
 		//#region HTL
 		test('[HTL] public-post が 自分が見れる', async () => {
-			const res = await api('notes/timeline', { limit: 100 }, alice);
+			const res = await api('notes/timeline', {limit: 100}, alice);
 			assert.strictEqual(res.status, 200);
 			const notes = res.body.filter(n => n.id === pub.id);
 			assert.strictEqual(notes[0].text, 'x');
 		});
 
 		test('[HTL] public-post が 非フォロワーから見れない', async () => {
-			const res = await api('notes/timeline', { limit: 100 }, other);
+			const res = await api('notes/timeline', {limit: 100}, other);
 			assert.strictEqual(res.status, 200);
 			const notes = res.body.filter(n => n.id === pub.id);
 			assert.strictEqual(notes.length, 0);
 		});
 
 		test('[HTL] followers-post が フォロワーから見れる', async () => {
-			const res = await api('notes/timeline', { limit: 100 }, follower);
+			const res = await api('notes/timeline', {limit: 100}, follower);
 			assert.strictEqual(res.status, 200);
 			const notes = res.body.filter(n => n.id === fol.id);
 			assert.strictEqual(notes[0].text, 'x');
@@ -431,21 +431,21 @@ describe('API visibility', () => {
 
 		//#region RTL
 		test('[replies] followers-reply が フォロワーから見れる', async () => {
-			const res = await api('notes/replies', { noteId: tgt.id, limit: 100 }, follower);
+			const res = await api('notes/replies', {noteId: tgt.id, limit: 100}, follower);
 			assert.strictEqual(res.status, 200);
 			const notes = res.body.filter(n => n.id === folR.id);
 			assert.strictEqual(notes[0].text, 'x');
 		});
 
 		test('[replies] followers-reply が 非フォロワー (リプライ先ではない) から見れない', async () => {
-			const res = await api('notes/replies', { noteId: tgt.id, limit: 100 }, other);
+			const res = await api('notes/replies', {noteId: tgt.id, limit: 100}, other);
 			assert.strictEqual(res.status, 200);
 			const notes = res.body.filter(n => n.id === folR.id);
 			assert.strictEqual(notes.length, 0);
 		});
 
 		test('[replies] followers-reply が 非フォロワー (リプライ先である) から見れる', async () => {
-			const res = await api('notes/replies', { noteId: tgt.id, limit: 100 }, target);
+			const res = await api('notes/replies', {noteId: tgt.id, limit: 100}, target);
 			assert.strictEqual(res.status, 200);
 			const notes = res.body.filter(n => n.id === folR.id);
 			assert.strictEqual(notes[0].text, 'x');
@@ -454,14 +454,14 @@ describe('API visibility', () => {
 
 		//#region MTL
 		test('[mentions] followers-reply が 非フォロワー (リプライ先である) から見れる', async () => {
-			const res = await api('notes/mentions', { limit: 100 }, target);
+			const res = await api('notes/mentions', {limit: 100}, target);
 			assert.strictEqual(res.status, 200);
 			const notes = res.body.filter(n => n.id === folR.id);
 			assert.strictEqual(notes[0].text, 'x');
 		});
 
 		test('[mentions] followers-mention が 非フォロワー (メンション先である) から見れる', async () => {
-			const res = await api('notes/mentions', { limit: 100 }, target);
+			const res = await api('notes/mentions', {limit: 100}, target);
 			assert.strictEqual(res.status, 200);
 			const notes = res.body.filter(n => n.id === folM.id);
 			assert.strictEqual(notes[0].text, '@target x');

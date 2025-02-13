@@ -4,58 +4,70 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="_gaps">
-	<div :class="$style.status">
-		<div :class="$style.statusItem" class="_panel"><div :class="$style.statusLabel">Process</div>{{ number(activeSincePrevTick) }}</div>
-		<div :class="$style.statusItem" class="_panel"><div :class="$style.statusLabel">Active</div>{{ number(active) }}</div>
-		<div :class="$style.statusItem" class="_panel"><div :class="$style.statusLabel">Waiting</div>{{ number(waiting) }}</div>
-		<div :class="$style.statusItem" class="_panel"><div :class="$style.statusLabel">Delayed</div>{{ number(delayed) }}</div>
-	</div>
-	<div :class="$style.charts">
-		<div :class="$style.chart">
-			<div :class="$style.chartTitle">Process</div>
-			<XChart ref="chartProcess" type="process"/>
-		</div>
-		<div :class="$style.chart">
-			<div :class="$style.chartTitle">Active</div>
-			<XChart ref="chartActive" type="active"/>
-		</div>
-		<div :class="$style.chart">
-			<div :class="$style.chartTitle">Delayed</div>
-			<XChart ref="chartDelayed" type="delayed"/>
-		</div>
-		<div :class="$style.chart">
-			<div :class="$style.chartTitle">Waiting</div>
-			<XChart ref="chartWaiting" type="waiting"/>
-		</div>
-	</div>
-	<MkFolder :defaultOpen="true" :max-height="250">
-		<template #icon><i class="ti ti-alert-triangle"></i></template>
-		<template #label>Errored instances</template>
-		<template #suffix>({{ number(jobs.reduce((a, b) => a + b[1], 0)) }} jobs)</template>
-
-		<div>
-			<div v-if="jobs.length > 0">
-				<div v-for="job in jobs" :key="job[0]">
-					<MkA :to="`/instance-info/${job[0]}`" behavior="window">{{ job[0] }}</MkA>
-					<span style="margin-left: 8px; opacity: 0.7;">({{ number(job[1]) }} jobs)</span>
-				</div>
+	<div class="_gaps">
+		<div :class="$style.status">
+			<div :class="$style.statusItem" class="_panel">
+				<div :class="$style.statusLabel">Process</div>
+				{{ number(activeSincePrevTick) }}
 			</div>
-			<span v-else style="opacity: 0.5;">{{ i18n.ts.noJobs }}</span>
+			<div :class="$style.statusItem" class="_panel">
+				<div :class="$style.statusLabel">Active</div>
+				{{ number(active) }}
+			</div>
+			<div :class="$style.statusItem" class="_panel">
+				<div :class="$style.statusLabel">Waiting</div>
+				{{ number(waiting) }}
+			</div>
+			<div :class="$style.statusItem" class="_panel">
+				<div :class="$style.statusLabel">Delayed</div>
+				{{ number(delayed) }}
+			</div>
 		</div>
-	</MkFolder>
-</div>
+		<div :class="$style.charts">
+			<div :class="$style.chart">
+				<div :class="$style.chartTitle">Process</div>
+				<XChart ref="chartProcess" type="process"/>
+			</div>
+			<div :class="$style.chart">
+				<div :class="$style.chartTitle">Active</div>
+				<XChart ref="chartActive" type="active"/>
+			</div>
+			<div :class="$style.chart">
+				<div :class="$style.chartTitle">Delayed</div>
+				<XChart ref="chartDelayed" type="delayed"/>
+			</div>
+			<div :class="$style.chart">
+				<div :class="$style.chartTitle">Waiting</div>
+				<XChart ref="chartWaiting" type="waiting"/>
+			</div>
+		</div>
+		<MkFolder :defaultOpen="true" :max-height="250">
+			<template #icon><i class="ti ti-alert-triangle"></i></template>
+			<template #label>Errored instances</template>
+			<template #suffix>({{ number(jobs.reduce((a, b) => a + b[1], 0)) }} jobs)</template>
+
+			<div>
+				<div v-if="jobs.length > 0">
+					<div v-for="job in jobs" :key="job[0]">
+						<MkA :to="`/instance-info/${job[0]}`" behavior="window">{{ job[0] }}</MkA>
+						<span style="margin-left: 8px; opacity: 0.7;">({{ number(job[1]) }} jobs)</span>
+					</div>
+				</div>
+				<span v-else style="opacity: 0.5;">{{ i18n.ts.noJobs }}</span>
+			</div>
+		</MkFolder>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { markRaw, onMounted, onUnmounted, ref, shallowRef } from 'vue';
+import {markRaw, onMounted, onUnmounted, ref, shallowRef} from 'vue';
 import * as Misskey from 'misskey-js';
 import XChart from './queue.chart.chart.vue';
-import type { ApQueueDomain } from '@/pages/admin/queue.vue';
+import type {ApQueueDomain} from '@/pages/admin/queue.vue';
 import number from '@/filters/number.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { useStream } from '@/stream.js';
-import { i18n } from '@/i18n.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {useStream} from '@/stream.js';
+import {i18n} from '@/i18n.js';
 import MkFolder from '@/components/MkFolder.vue';
 
 const connection = markRaw(useStream().useChannel('queueStats'));

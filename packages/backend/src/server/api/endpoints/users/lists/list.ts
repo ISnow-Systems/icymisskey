@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import type { UserListsRepository, UsersRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { UserListEntityService } from '@/core/entities/UserListEntityService.js';
-import { ApiError } from '@/server/api/error.js';
-import { DI } from '@/di-symbols.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {UserListsRepository, UsersRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {UserListEntityService} from '@/core/entities/UserListEntityService.js';
+import {ApiError} from '@/server/api/error.js';
+import {DI} from '@/di-symbols.js';
 
 export const meta = {
 	tags: ['lists', 'account'],
@@ -50,7 +50,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		userId: { type: 'string', format: 'misskey:id' },
+		userId: {type: 'string', format: 'misskey:id'},
 	},
 	required: [],
 } as const;
@@ -60,15 +60,13 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 	constructor(
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.userListsRepository)
 		private userListsRepository: UserListsRepository,
-
 		private userListEntityService: UserListEntityService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			if (typeof ps.userId !== 'undefined') {
-				const user = await this.usersRepository.findOneBy({ id: ps.userId });
+				const user = await this.usersRepository.findOneBy({id: ps.userId});
 				if (user === null) throw new ApiError(meta.errors.noSuchUser);
 				if (user.host !== null) throw new ApiError(meta.errors.remoteUser);
 			} else if (me === null) {

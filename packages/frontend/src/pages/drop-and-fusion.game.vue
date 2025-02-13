@@ -4,214 +4,232 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkSpacer :contentMax="800">
-	<div :class="$style.root">
-		<div v-if="!gameLoaded" :class="$style.loadingScreen">
-			<div>{{ i18n.ts.loading }}<MkEllipsis/></div>
-		</div>
-		<!-- ↓に対してTransitionコンポーネントを使うと何故かkeyを指定していてもキャッシュが効かず様々なコンポーネントが都度再評価されてパフォーマンスが低下する -->
-		<div v-show="gameLoaded" class="_gaps_s">
-			<div v-if="readyGo === 'ready'" :class="$style.readyGo_bg">
-			</div>
-			<Transition
-				:enterActiveClass="$style.transition_zoom_enterActive"
-				:leaveActiveClass="$style.transition_zoom_leaveActive"
-				:enterFromClass="$style.transition_zoom_enterFrom"
-				:leaveToClass="$style.transition_zoom_leaveTo"
-				:moveClass="$style.transition_zoom_move"
-				mode="default"
-			>
-				<div v-if="readyGo === 'ready'" :class="$style.readyGo_ready">
-					<img src="/client-assets/drop-and-fusion/ready.png" :class="$style.readyGo_img"/>
-				</div>
-				<div v-else-if="readyGo === 'go'" :class="$style.readyGo_go">
-					<img src="/client-assets/drop-and-fusion/go.png" :class="$style.readyGo_img"/>
-				</div>
-			</Transition>
-
-			<div :class="$style.header">
-				<div class="_woodenFrame" :class="[$style.headerTitle]">
-					<div class="_woodenFrameInner">
-						<b>{{ i18n.ts.bubbleGame }}</b>
-						<div>- {{ gameMode.toUpperCase() }} -</div>
-					</div>
-				</div>
-				<div class="_woodenFrame _woodenFrameH">
-					<div class="_woodenFrameInner">
-						<MkButton inline small @click="hold">{{ i18n.ts._bubbleGame.hold }}</MkButton>
-						<img v-if="holdingStock" :src="getTextureImageUrl(holdingStock.mono)" style="width: 32px; margin-left: 8px; vertical-align: bottom;"/>
-					</div>
-					<div class="_woodenFrameInner" :class="$style.stock" style="text-align: center;">
-						<TransitionGroup
-							:enterActiveClass="$style.transition_stock_enterActive"
-							:leaveActiveClass="$style.transition_stock_leaveActive"
-							:enterFromClass="$style.transition_stock_enterFrom"
-							:leaveToClass="$style.transition_stock_leaveTo"
-							:moveClass="$style.transition_stock_move"
-						>
-							<img v-for="x in stock" :key="x.id" :src="getTextureImageUrl(x.mono)" style="width: 32px; vertical-align: bottom;"/>
-						</TransitionGroup>
-					</div>
+	<MkSpacer :contentMax="800">
+		<div :class="$style.root">
+			<div v-if="!gameLoaded" :class="$style.loadingScreen">
+				<div>{{ i18n.ts.loading }}
+					<MkEllipsis/>
 				</div>
 			</div>
-
-			<div ref="containerEl" :class="[$style.gameContainer, { [$style.gameOver]: isGameOver && !replaying }]" @contextmenu.stop.prevent @click.stop.prevent="onClick" @touchmove.stop.prevent="onTouchmove" @touchend="onTouchend" @mousemove="onMousemove">
-				<img v-if="defaultStore.state.darkMode" src="/client-assets/drop-and-fusion/frame-dark.svg" :class="$style.mainFrameImg"/>
-				<img v-else src="/client-assets/drop-and-fusion/frame-light.svg" :class="$style.mainFrameImg"/>
-				<canvas ref="canvasEl" :class="$style.canvas"/>
+			<!-- ↓に対してTransitionコンポーネントを使うと何故かkeyを指定していてもキャッシュが効かず様々なコンポーネントが都度再評価されてパフォーマンスが低下する -->
+			<div v-show="gameLoaded" class="_gaps_s">
+				<div v-if="readyGo === 'ready'" :class="$style.readyGo_bg">
+				</div>
 				<Transition
-					:enterActiveClass="$style.transition_combo_enterActive"
-					:leaveActiveClass="$style.transition_combo_leaveActive"
-					:enterFromClass="$style.transition_combo_enterFrom"
-					:leaveToClass="$style.transition_combo_leaveTo"
-					:moveClass="$style.transition_combo_move"
+					:enterActiveClass="$style.transition_zoom_enterActive"
+					:enterFromClass="$style.transition_zoom_enterFrom"
+					:leaveActiveClass="$style.transition_zoom_leaveActive"
+					:leaveToClass="$style.transition_zoom_leaveTo"
+					:moveClass="$style.transition_zoom_move"
+					mode="default"
 				>
-					<div v-show="combo > 1" :class="$style.combo" :style="{ fontSize: `${100 + ((comboPrev - 2) * 15)}%` }">{{ comboPrev }} Chain!</div>
+					<div v-if="readyGo === 'ready'" :class="$style.readyGo_ready">
+						<img :class="$style.readyGo_img" src="/client-assets/drop-and-fusion/ready.png"/>
+					</div>
+					<div v-else-if="readyGo === 'go'" :class="$style.readyGo_go">
+						<img :class="$style.readyGo_img" src="/client-assets/drop-and-fusion/go.png"/>
+					</div>
 				</Transition>
-				<div v-if="!isGameOver && !replaying && readyGo !== 'ready'" :class="$style.dropperContainer" :style="{ left: dropperX + 'px' }">
-					<!--<img v-if="currentPick" src="/client-assets/drop-and-fusion/dropper.png" :class="$style.dropper" :style="{ left: dropperX + 'px' }"/>-->
+
+				<div :class="$style.header">
+					<div :class="[$style.headerTitle]" class="_woodenFrame">
+						<div class="_woodenFrameInner">
+							<b>{{ i18n.ts.bubbleGame }}</b>
+							<div>- {{ gameMode.toUpperCase() }} -</div>
+						</div>
+					</div>
+					<div class="_woodenFrame _woodenFrameH">
+						<div class="_woodenFrameInner">
+							<MkButton inline small @click="hold">{{ i18n.ts._bubbleGame.hold }}</MkButton>
+							<img v-if="holdingStock" :src="getTextureImageUrl(holdingStock.mono)" style="width: 32px; margin-left: 8px; vertical-align: bottom;"/>
+						</div>
+						<div :class="$style.stock" class="_woodenFrameInner" style="text-align: center;">
+							<TransitionGroup
+								:enterActiveClass="$style.transition_stock_enterActive"
+								:enterFromClass="$style.transition_stock_enterFrom"
+								:leaveActiveClass="$style.transition_stock_leaveActive"
+								:leaveToClass="$style.transition_stock_leaveTo"
+								:moveClass="$style.transition_stock_move"
+							>
+								<img v-for="x in stock" :key="x.id" :src="getTextureImageUrl(x.mono)" style="width: 32px; vertical-align: bottom;"/>
+							</TransitionGroup>
+						</div>
+					</div>
+				</div>
+
+				<div ref="containerEl" :class="[$style.gameContainer, { [$style.gameOver]: isGameOver && !replaying }]" @mousemove="onMousemove" @touchend="onTouchend" @contextmenu.stop.prevent @click.stop.prevent="onClick" @touchmove.stop.prevent="onTouchmove">
+					<img v-if="defaultStore.state.darkMode" :class="$style.mainFrameImg" src="/client-assets/drop-and-fusion/frame-dark.svg"/>
+					<img v-else :class="$style.mainFrameImg" src="/client-assets/drop-and-fusion/frame-light.svg"/>
+					<canvas ref="canvasEl" :class="$style.canvas"/>
 					<Transition
-						:enterActiveClass="$style.transition_picked_enterActive"
-						:leaveActiveClass="$style.transition_picked_leaveActive"
-						:enterFromClass="$style.transition_picked_enterFrom"
-						:leaveToClass="$style.transition_picked_leaveTo"
-						:moveClass="$style.transition_picked_move"
-						mode="out-in"
+						:enterActiveClass="$style.transition_combo_enterActive"
+						:enterFromClass="$style.transition_combo_enterFrom"
+						:leaveActiveClass="$style.transition_combo_leaveActive"
+						:leaveToClass="$style.transition_combo_leaveTo"
+						:moveClass="$style.transition_combo_move"
 					>
-						<img v-if="currentPick" :key="currentPick.id" :src="getTextureImageUrl(currentPick.mono)" :class="$style.currentMono" :style="{ marginBottom: -((currentPick?.mono.sizeY * viewScale) / 2) + 'px', left: -((currentPick?.mono.sizeX * viewScale) / 2) + 'px', width: `${currentPick?.mono.sizeX * viewScale}px` }"/>
+						<div v-show="combo > 1" :class="$style.combo" :style="{ fontSize: `${100 + ((comboPrev - 2) * 15)}%` }">{{ comboPrev }} Chain!</div>
 					</Transition>
-					<template v-if="dropReady && currentPick">
-						<img src="/client-assets/drop-and-fusion/drop-arrow.svg" :class="$style.currentMonoArrow"/>
-						<div :class="$style.dropGuide"/>
-					</template>
-				</div>
-				<div v-if="isGameOver && !replaying" :class="$style.gameOverLabel">
-					<div class="_gaps_s">
-						<img src="/client-assets/drop-and-fusion/gameover.png" style="width: 200px; max-width: 100%; display: block; margin: auto; margin-bottom: -5px;"/>
-						<div>{{ i18n.ts._bubbleGame._score.score }}: <MkNumber :value="score"/>{{ getScoreUnit(gameMode) }}</div>
-						<div>{{ i18n.ts._bubbleGame._score.maxChain }}: <MkNumber :value="maxCombo"/></div>
-						<div v-if="gameMode === 'yen'">
-							{{ i18n.ts._bubbleGame._score.scoreYen }}:
-							<I18n :src="i18n.ts._bubbleGame._score.yen" tag="b">
-								<template #yen><MkNumber :value="yenTotal ?? score"/></template>
-							</I18n>
-						</div>
-						<I18n v-if="gameMode === 'sweets'" :src="i18n.ts._bubbleGame._score.scoreSweets" tag="div">
-							<template #onigiriQtyWithUnit>
-								<I18n :src="i18n.ts._bubbleGame._score.estimatedQty" tag="b">
-									<template #qty><MkNumber :value="score / 130"/></template>
+					<div v-if="!isGameOver && !replaying && readyGo !== 'ready'" :class="$style.dropperContainer" :style="{ left: dropperX + 'px' }">
+						<!--<img v-if="currentPick" src="/client-assets/drop-and-fusion/dropper.png" :class="$style.dropper" :style="{ left: dropperX + 'px' }"/>-->
+						<Transition
+							:enterActiveClass="$style.transition_picked_enterActive"
+							:enterFromClass="$style.transition_picked_enterFrom"
+							:leaveActiveClass="$style.transition_picked_leaveActive"
+							:leaveToClass="$style.transition_picked_leaveTo"
+							:moveClass="$style.transition_picked_move"
+							mode="out-in"
+						>
+							<img v-if="currentPick" :key="currentPick.id" :class="$style.currentMono" :src="getTextureImageUrl(currentPick.mono)" :style="{ marginBottom: -((currentPick?.mono.sizeY * viewScale) / 2) + 'px', left: -((currentPick?.mono.sizeX * viewScale) / 2) + 'px', width: `${currentPick?.mono.sizeX * viewScale}px` }"/>
+						</Transition>
+						<template v-if="dropReady && currentPick">
+							<img :class="$style.currentMonoArrow" src="/client-assets/drop-and-fusion/drop-arrow.svg"/>
+							<div :class="$style.dropGuide"/>
+						</template>
+					</div>
+					<div v-if="isGameOver && !replaying" :class="$style.gameOverLabel">
+						<div class="_gaps_s">
+							<img src="/client-assets/drop-and-fusion/gameover.png" style="width: 200px; max-width: 100%; display: block; margin: auto; margin-bottom: -5px;"/>
+							<div>{{ i18n.ts._bubbleGame._score.score }}:
+								<MkNumber :value="score"/>
+								{{ getScoreUnit(gameMode) }}
+							</div>
+							<div>{{ i18n.ts._bubbleGame._score.maxChain }}:
+								<MkNumber :value="maxCombo"/>
+							</div>
+							<div v-if="gameMode === 'yen'">
+								{{ i18n.ts._bubbleGame._score.scoreYen }}:
+								<I18n :src="i18n.ts._bubbleGame._score.yen" tag="b">
+									<template #yen>
+										<MkNumber :value="yenTotal ?? score"/>
+									</template>
 								</I18n>
-							</template>
-						</I18n>
-					</div>
-				</div>
-				<div v-if="replaying" :class="$style.replayIndicator"><span :class="$style.replayIndicatorText"><i class="ti ti-player-play"></i> {{ i18n.ts.replaying }}</span></div>
-			</div>
-
-			<div v-if="replaying" class="_woodenFrame">
-				<div class="_woodenFrameInner">
-					<div style="background: #0004;">
-						<div style="height: 10px; background: var(--MI_THEME-accent); will-change: width;" :style="{ width: `${(currentFrame / endedAtFrame) * 100}%` }"></div>
-					</div>
-				</div>
-				<div class="_woodenFrameInner">
-					<div class="_buttonsCenter">
-						<MkButton @click="endReplay"><i class="ti ti-player-stop"></i> {{ i18n.ts.endReplay }}</MkButton>
-						<MkButton :primary="replayPlaybackRate === 4" @click="replayPlaybackRate = replayPlaybackRate === 4 ? 1 : 4"><i class="ti ti-player-track-next"></i> x4</MkButton>
-						<MkButton :primary="replayPlaybackRate === 16" @click="replayPlaybackRate = replayPlaybackRate === 16 ? 1 : 16"><i class="ti ti-player-track-next"></i> x16</MkButton>
-					</div>
-				</div>
-			</div>
-
-			<div v-if="isGameOver" class="_woodenFrame">
-				<div class="_woodenFrameInner">
-					<div class="_buttonsCenter">
-						<MkButton primary rounded @click="backToTitle">{{ i18n.ts.backToTitle }}</MkButton>
-						<MkButton primary rounded @click="replay">{{ i18n.ts.showReplay }}</MkButton>
-						<MkButton primary rounded @click="share">{{ i18n.ts.share }}</MkButton>
-						<MkButton rounded @click="exportLog">{{ i18n.ts.copyReplayData }}</MkButton>
-					</div>
-				</div>
-			</div>
-
-			<div style="display: flex;">
-				<div class="_woodenFrame" style="flex: 1; margin-right: 10px;">
-					<div class="_woodenFrameInner">
-						<div>{{ i18n.ts._bubbleGame._score.score }}: <MkNumber :value="score"/>{{ getScoreUnit(gameMode) }}</div>
-						<div>{{ i18n.ts._bubbleGame._score.highScore }}: <b v-if="highScore"><MkNumber :value="highScore"/>{{ getScoreUnit(gameMode) }}</b><b v-else>-</b></div>
-						<div v-if="gameMode === 'yen'">
-							{{ i18n.ts._bubbleGame._score.scoreYen }}:
-							<I18n :src="i18n.ts._bubbleGame._score.yen" tag="b">
-								<template #yen><MkNumber :value="yenTotal ?? score"/></template>
+							</div>
+							<I18n v-if="gameMode === 'sweets'" :src="i18n.ts._bubbleGame._score.scoreSweets" tag="div">
+								<template #onigiriQtyWithUnit>
+									<I18n :src="i18n.ts._bubbleGame._score.estimatedQty" tag="b">
+										<template #qty>
+											<MkNumber :value="score / 130"/>
+										</template>
+									</I18n>
+								</template>
 							</I18n>
 						</div>
 					</div>
+					<div v-if="replaying" :class="$style.replayIndicator"><span :class="$style.replayIndicatorText"><i class="ti ti-player-play"></i> {{ i18n.ts.replaying }}</span></div>
 				</div>
-				<div class="_woodenFrame" style="margin-left: auto;">
-					<div class="_woodenFrameInner" style="text-align: center;">
-						<div @click="showConfig = !showConfig"><i class="ti ti-settings"></i></div>
-					</div>
-				</div>
-			</div>
 
-			<div v-if="showConfig" class="_woodenFrame">
-				<div class="_woodenFrameInner">
-					<div class="_gaps">
-						<MkRange v-model="bgmVolume" :min="0" :max="1" :step="0.01" :textConverter="(v) => `${Math.floor(v * 100)}%`" :continuousUpdate="true" @dragEnded="(v) => updateSettings('bgmVolume', v)">
-							<template #label>BGM {{ i18n.ts.volume }}</template>
-						</MkRange>
-						<MkRange v-model="sfxVolume" :min="0" :max="1" :step="0.01" :textConverter="(v) => `${Math.floor(v * 100)}%`" :continuousUpdate="true" @dragEnded="(v) => updateSettings('sfxVolume', v)">
-							<template #label>{{ i18n.ts.sfx }} {{ i18n.ts.volume }}</template>
-						</MkRange>
+				<div v-if="replaying" class="_woodenFrame">
+					<div class="_woodenFrameInner">
+						<div style="background: #0004;">
+							<div :style="{ width: `${(currentFrame / endedAtFrame) * 100}%` }" style="height: 10px; background: var(--MI_THEME-accent); will-change: width;"></div>
+						</div>
 					</div>
-				</div>
-			</div>
-
-			<div class="_woodenFrame">
-				<div class="_woodenFrameInner">
-					<div>FUSION RECIPE</div>
-					<div>
-						<div v-for="(mono, i) in game.monoDefinitions.sort((a, b) => a.level - b.level)" :key="mono.id" style="display: inline-block;">
-							<img :src="getTextureImageUrl(mono)" style="width: 32px; vertical-align: bottom;"/>
-							<div v-if="i < game.monoDefinitions.length - 1" style="display: inline-block; margin-left: 4px; vertical-align: bottom;"><i class="ti ti-arrow-big-right"></i></div>
+					<div class="_woodenFrameInner">
+						<div class="_buttonsCenter">
+							<MkButton @click="endReplay"><i class="ti ti-player-stop"></i> {{ i18n.ts.endReplay }}</MkButton>
+							<MkButton :primary="replayPlaybackRate === 4" @click="replayPlaybackRate = replayPlaybackRate === 4 ? 1 : 4"><i class="ti ti-player-track-next"></i> x4</MkButton>
+							<MkButton :primary="replayPlaybackRate === 16" @click="replayPlaybackRate = replayPlaybackRate === 16 ? 1 : 16"><i class="ti ti-player-track-next"></i> x16</MkButton>
 						</div>
 					</div>
 				</div>
-			</div>
 
-			<div class="_woodenFrame">
-				<div class="_woodenFrameInner">
-					<MkButton v-if="!isGameOver && !replaying" full danger @click="surrender">{{ i18n.ts.surrender }}</MkButton>
-					<MkButton v-else full @click="restart">{{ i18n.ts.gameRetry }}</MkButton>
+				<div v-if="isGameOver" class="_woodenFrame">
+					<div class="_woodenFrameInner">
+						<div class="_buttonsCenter">
+							<MkButton primary rounded @click="backToTitle">{{ i18n.ts.backToTitle }}</MkButton>
+							<MkButton primary rounded @click="replay">{{ i18n.ts.showReplay }}</MkButton>
+							<MkButton primary rounded @click="share">{{ i18n.ts.share }}</MkButton>
+							<MkButton rounded @click="exportLog">{{ i18n.ts.copyReplayData }}</MkButton>
+						</div>
+					</div>
+				</div>
+
+				<div style="display: flex;">
+					<div class="_woodenFrame" style="flex: 1; margin-right: 10px;">
+						<div class="_woodenFrameInner">
+							<div>{{ i18n.ts._bubbleGame._score.score }}:
+								<MkNumber :value="score"/>
+								{{ getScoreUnit(gameMode) }}
+							</div>
+							<div>{{ i18n.ts._bubbleGame._score.highScore }}: <b v-if="highScore">
+								<MkNumber :value="highScore"/>
+								{{ getScoreUnit(gameMode) }}</b><b v-else>-</b></div>
+							<div v-if="gameMode === 'yen'">
+								{{ i18n.ts._bubbleGame._score.scoreYen }}:
+								<I18n :src="i18n.ts._bubbleGame._score.yen" tag="b">
+									<template #yen>
+										<MkNumber :value="yenTotal ?? score"/>
+									</template>
+								</I18n>
+							</div>
+						</div>
+					</div>
+					<div class="_woodenFrame" style="margin-left: auto;">
+						<div class="_woodenFrameInner" style="text-align: center;">
+							<div @click="showConfig = !showConfig"><i class="ti ti-settings"></i></div>
+						</div>
+					</div>
+				</div>
+
+				<div v-if="showConfig" class="_woodenFrame">
+					<div class="_woodenFrameInner">
+						<div class="_gaps">
+							<MkRange v-model="bgmVolume" :continuousUpdate="true" :max="1" :min="0" :step="0.01" :textConverter="(v) => `${Math.floor(v * 100)}%`" @dragEnded="(v) => updateSettings('bgmVolume', v)">
+								<template #label>BGM {{ i18n.ts.volume }}</template>
+							</MkRange>
+							<MkRange v-model="sfxVolume" :continuousUpdate="true" :max="1" :min="0" :step="0.01" :textConverter="(v) => `${Math.floor(v * 100)}%`" @dragEnded="(v) => updateSettings('sfxVolume', v)">
+								<template #label>{{ i18n.ts.sfx }} {{ i18n.ts.volume }}</template>
+							</MkRange>
+						</div>
+					</div>
+				</div>
+
+				<div class="_woodenFrame">
+					<div class="_woodenFrameInner">
+						<div>FUSION RECIPE</div>
+						<div>
+							<div v-for="(mono, i) in game.monoDefinitions.sort((a, b) => a.level - b.level)" :key="mono.id" style="display: inline-block;">
+								<img :src="getTextureImageUrl(mono)" style="width: 32px; vertical-align: bottom;"/>
+								<div v-if="i < game.monoDefinitions.length - 1" style="display: inline-block; margin-left: 4px; vertical-align: bottom;"><i class="ti ti-arrow-big-right"></i></div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="_woodenFrame">
+					<div class="_woodenFrameInner">
+						<MkButton v-if="!isGameOver && !replaying" danger full @click="surrender">{{ i18n.ts.surrender }}</MkButton>
+						<MkButton v-else full @click="restart">{{ i18n.ts.gameRetry }}</MkButton>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-</MkSpacer>
+	</MkSpacer>
 </template>
 
 <script lang="ts" setup>
-import { computed, onDeactivated, onMounted, onUnmounted, ref, shallowRef, watch } from 'vue';
+import {computed, onDeactivated, onMounted, onUnmounted, ref, shallowRef, watch} from 'vue';
 import * as Matter from 'matter-js';
 import * as Misskey from 'misskey-js';
-import { DropAndFusionGame } from 'misskey-bubble-game';
-import type { Mono } from 'misskey-bubble-game';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
+import {DropAndFusionGame} from 'misskey-bubble-game';
+import type {Mono} from 'misskey-bubble-game';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
 import MkRippleEffect from '@/components/MkRippleEffect.vue';
 import * as os from '@/os.js';
 import MkNumber from '@/components/MkNumber.vue';
 import MkPlusOneEffect from '@/components/MkPlusOneEffect.vue';
 import MkButton from '@/components/MkButton.vue';
-import { claimAchievement } from '@/scripts/achievements.js';
-import { defaultStore } from '@/store.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { i18n } from '@/i18n.js';
-import { useInterval } from '@@/js/use-interval.js';
-import { apiUrl } from '@@/js/config.js';
-import { $i } from '@/account.js';
+import {claimAchievement} from '@/scripts/achievements.js';
+import {defaultStore} from '@/store.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {i18n} from '@/i18n.js';
+import {useInterval} from '@@/js/use-interval.js';
+import {apiUrl} from '@@/js/config.js';
+import {$i} from '@/account.js';
 import * as sound from '@/scripts/sound.js';
 import MkRange from '@/components/MkRange.vue';
-import { copyToClipboard } from '@/scripts/copy-to-clipboard.js';
+import {copyToClipboard} from '@/scripts/copy-to-clipboard.js';
 
 type FrontendMonoDefinition = {
 	id: string;
@@ -522,18 +540,18 @@ const emit = defineEmits<{
 const monoDefinitions = computed(() => {
 	return props.gameMode === 'normal' ? NORAML_MONOS :
 		props.gameMode === 'square' ? SQUARE_MONOS :
-		props.gameMode === 'yen' ? YEN_MONOS :
-		props.gameMode === 'sweets' ? SWEETS_MONOS :
-		props.gameMode === 'space' ? NORAML_MONOS :
-		[] as never;
+			props.gameMode === 'yen' ? YEN_MONOS :
+				props.gameMode === 'sweets' ? SWEETS_MONOS :
+					props.gameMode === 'space' ? NORAML_MONOS :
+						[] as never;
 });
 
 function getScoreUnit(gameMode: string) {
 	return gameMode === 'normal' ? 'pt' :
 		gameMode === 'square' ? 'pt' :
-		gameMode === 'yen' ? '円' :
-		gameMode === 'sweets' ? 'kcal' :
-		'' as never;
+			gameMode === 'yen' ? '円' :
+				gameMode === 'sweets' ? 'kcal' :
+					'' as never;
 }
 
 function getMonoRenderOptions(mono: Mono) {
@@ -712,8 +730,8 @@ async function start() {
 	renderer = createRendererInstance(game);
 	await loadMonoTextures();
 	Matter.Render.lookAt(renderer, {
-		min: { x: 0, y: 0 },
-		max: { x: game.GAME_WIDTH, y: game.GAME_HEIGHT },
+		min: {x: 0, y: 0},
+		max: {x: game.GAME_WIDTH, y: game.GAME_HEIGHT},
 	});
 	Matter.Render.run(renderer);
 	game.start();
@@ -764,7 +782,7 @@ function hold() {
 }
 
 async function surrender() {
-	const { canceled } = await os.confirm({
+	const {canceled} = await os.confirm({
 		type: 'warning',
 		text: i18n.ts.areYouSure,
 	});
@@ -825,8 +843,8 @@ function replay() {
 	os.promiseDialog(loadMonoTextures(), async () => {
 		renderer = createRendererInstance(game);
 		Matter.Render.lookAt(renderer, {
-			min: { x: 0, y: 0 },
-			max: { x: game.GAME_WIDTH, y: game.GAME_HEIGHT },
+			min: {x: 0, y: 0},
+			max: {x: game.GAME_WIDTH, y: game.GAME_HEIGHT},
 		});
 		Matter.Render.run(renderer);
 		game.start();
@@ -1011,13 +1029,13 @@ function attachGameEvents() {
 		const scoreUnit = getScoreUnit(props.gameMode);
 
 		{
-			const { dispose } = os.popup(MkRippleEffect, { x: domX, y: domY }, {
+			const {dispose} = os.popup(MkRippleEffect, {x: domX, y: domY}, {
 				end: () => dispose(),
 			});
 		}
 
 		{
-			const { dispose } = os.popup(MkPlusOneEffect, { x: domX, y: domY, value: scoreDelta + (scoreUnit === 'pt' ? '' : scoreUnit) }, {
+			const {dispose} = os.popup(MkPlusOneEffect, {x: domX, y: domY, value: scoreDelta + (scoreUnit === 'pt' ? '' : scoreUnit)}, {
 				end: () => dispose(),
 			});
 		}
@@ -1060,8 +1078,8 @@ function attachGameEvents() {
 			const volume = (Math.min(maxCollisionEnergyForSound, energy - minCollisionEnergyForSound) / maxCollisionEnergyForSound) / 4;
 			const panV =
 				bodyA.label === '_wall_' ? bodyB.position.x - game.PLAYAREA_MARGIN :
-				bodyB.label === '_wall_' ? bodyA.position.x - game.PLAYAREA_MARGIN :
-				((bodyA.position.x + bodyB.position.x) / 2) - game.PLAYAREA_MARGIN;
+					bodyB.label === '_wall_' ? bodyA.position.x - game.PLAYAREA_MARGIN :
+						((bodyA.position.x + bodyB.position.x) / 2) - game.PLAYAREA_MARGIN;
 			const panW = game.GAME_WIDTH - game.PLAYAREA_MARGIN - game.PLAYAREA_MARGIN;
 			const pan = ((panV / panW) - 0.5) * 2;
 			const pitch = soundPitchMin + ((soundPitchMax - soundPitchMin) * (1 - (Math.min(10, energy) / 10)));
@@ -1155,7 +1173,7 @@ useInterval(() => {
 	if (actualCanvasWidth === 0) return;
 	viewScale = actualCanvasWidth / game.GAME_WIDTH;
 	containerElRect = containerEl.value?.getBoundingClientRect() ?? null;
-}, 1000, { immediate: false, afterMounted: true });
+}, 1000, {immediate: false, afterMounted: true});
 
 onMounted(async () => {
 	try {
@@ -1239,8 +1257,9 @@ definePageMetadata(() => ({
 .transition_zoom_move,
 .transition_zoom_enterActive,
 .transition_zoom_leaveActive {
-	transition: opacity 0.5s cubic-bezier(0,.5,.5,1), transform 0.5s cubic-bezier(0,.5,.5,1) !important;
+	transition: opacity 0.5s cubic-bezier(0, .5, .5, 1), transform 0.5s cubic-bezier(0, .5, .5, 1) !important;
 }
+
 .transition_zoom_enterFrom,
 .transition_zoom_leaveTo {
 	opacity: 0;
@@ -1250,29 +1269,34 @@ definePageMetadata(() => ({
 .transition_stock_move,
 .transition_stock_enterActive,
 .transition_stock_leaveActive {
-	transition: opacity 0.4s cubic-bezier(0,.5,.5,1), transform 0.4s cubic-bezier(0,.5,.5,1) !important;
+	transition: opacity 0.4s cubic-bezier(0, .5, .5, 1), transform 0.4s cubic-bezier(0, .5, .5, 1) !important;
 }
+
 .transition_stock_enterFrom,
 .transition_stock_leaveTo {
 	opacity: 0;
 	transform: scale(0.7);
 }
+
 .transition_stock_leaveActive {
 	position: absolute;
 }
 
 .transition_picked_move,
 .transition_picked_enterActive {
-	transition: opacity 0.5s cubic-bezier(0,.5,.5,1), transform 0.5s cubic-bezier(0,.5,.5,1) !important;
+	transition: opacity 0.5s cubic-bezier(0, .5, .5, 1), transform 0.5s cubic-bezier(0, .5, .5, 1) !important;
 }
+
 .transition_picked_leaveActive {
 	transition: all 0s !important;
 }
+
 .transition_picked_enterFrom,
 .transition_picked_leaveTo {
 	opacity: 0;
 	transform: translateY(-50px);
 }
+
 .transition_picked_leaveActive {
 	position: absolute;
 }
@@ -1281,14 +1305,17 @@ definePageMetadata(() => ({
 .transition_combo_enterActive {
 	transition: all 0s !important;
 }
+
 .transition_combo_leaveActive {
-	transition: opacity 0.4s cubic-bezier(0,.5,.5,1), transform 0.4s cubic-bezier(0,.5,.5,1) !important;
+	transition: opacity 0.4s cubic-bezier(0, .5, .5, 1), transform 0.4s cubic-bezier(0, .5, .5, 1) !important;
 }
+
 .transition_combo_enterFrom,
 .transition_combo_leaveTo {
 	opacity: 0;
 	transform: scale(0.7);
 }
+
 .transition_combo_leaveActive {
 	position: absolute;
 }
@@ -1495,16 +1522,32 @@ definePageMetadata(() => ({
 }
 
 @keyframes replayIndicator-blink {
-	0% { opacity: 1; }
-	50% { opacity: 0; }
-	100% { opacity: 1; }
+	0% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
 }
 
 @keyframes currentMonoArrow {
-	0% { transform: translateY(0); }
-	25% { transform: translateY(-8px); }
-	50% { transform: translateY(0); }
-	75% { transform: translateY(-8px); }
-	100% { transform: translateY(0); }
+	0% {
+		transform: translateY(0);
+	}
+	25% {
+		transform: translateY(-8px);
+	}
+	50% {
+		transform: translateY(0);
+	}
+	75% {
+		transform: translateY(-8px);
+	}
+	100% {
+		transform: translateY(0);
+	}
 }
 </style>

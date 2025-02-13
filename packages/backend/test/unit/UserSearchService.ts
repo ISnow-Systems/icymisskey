@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Test, TestingModule } from '@nestjs/testing';
-import { describe, jest, test } from '@jest/globals';
-import { In } from 'typeorm';
-import { UserSearchService } from '@/core/UserSearchService.js';
-import { FollowingsRepository, MiUser, UserProfilesRepository, UsersRepository } from '@/models/_.js';
-import { IdService } from '@/core/IdService.js';
-import { GlobalModule } from '@/GlobalModule.js';
-import { DI } from '@/di-symbols.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
+import {Test, TestingModule} from '@nestjs/testing';
+import {describe, jest, test} from '@jest/globals';
+import {In} from 'typeorm';
+import {UserSearchService} from '@/core/UserSearchService.js';
+import {FollowingsRepository, MiUser, UserProfilesRepository, UsersRepository} from '@/models/_.js';
+import {IdService} from '@/core/IdService.js';
+import {GlobalModule} from '@/GlobalModule.js';
+import {DI} from '@/di-symbols.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
 
 describe('UserSearchService', () => {
 	let app: TestingModule;
@@ -113,17 +113,17 @@ describe('UserSearchService', () => {
 	});
 
 	beforeEach(async () => {
-		root = await createUser({ username: 'root', usernameLower: 'root', isRoot: true });
-		alice = await createUser({ username: 'Alice', usernameLower: 'alice' });
-		alyce = await createUser({ username: 'Alyce', usernameLower: 'alyce' });
-		alycia = await createUser({ username: 'Alycia', usernameLower: 'alycia' });
-		alysha = await createUser({ username: 'Alysha', usernameLower: 'alysha' });
-		alyson = await createUser({ username: 'Alyson', usernameLower: 'alyson', host: 'example.com' });
-		alyssa = await createUser({ username: 'Alyssa', usernameLower: 'alyssa', host: 'example.com' });
-		bob = await createUser({ username: 'Bob', usernameLower: 'bob' });
-		bobbi = await createUser({ username: 'Bobbi', usernameLower: 'bobbi' });
-		bobbie = await createUser({ username: 'Bobbie', usernameLower: 'bobbie', host: 'example.com' });
-		bobby = await createUser({ username: 'Bobby', usernameLower: 'bobby', host: 'example.com' });
+		root = await createUser({username: 'root', usernameLower: 'root', isRoot: true});
+		alice = await createUser({username: 'Alice', usernameLower: 'alice'});
+		alyce = await createUser({username: 'Alyce', usernameLower: 'alyce'});
+		alycia = await createUser({username: 'Alycia', usernameLower: 'alycia'});
+		alysha = await createUser({username: 'Alysha', usernameLower: 'alysha'});
+		alyson = await createUser({username: 'Alyson', usernameLower: 'alyson', host: 'example.com'});
+		alyssa = await createUser({username: 'Alyssa', usernameLower: 'alyssa', host: 'example.com'});
+		bob = await createUser({username: 'Bob', usernameLower: 'bob'});
+		bobbi = await createUser({username: 'Bobbi', usernameLower: 'bobbi'});
+		bobbie = await createUser({username: 'Bobbie', usernameLower: 'bobbie', host: 'example.com'});
+		bobby = await createUser({username: 'Bobby', usernameLower: 'bobby', host: 'example.com'});
 	});
 
 	afterEach(async () => {
@@ -141,8 +141,8 @@ describe('UserSearchService', () => {
 			await setInactive([alycia, alysha, alyson]);
 
 			const result = await service.search(
-				{ username: 'al' },
-				{ limit: 100 },
+				{username: 'al'},
+				{limit: 100},
 				root,
 			);
 
@@ -155,8 +155,8 @@ describe('UserSearchService', () => {
 			await setInactive([alice, alyce, alycia, alysha, alyson, alyssa, bob, bobbi, bobbie, bobby]);
 
 			const result = await service.search(
-				{ username: 'al' },
-				{ limit: 100 },
+				{username: 'al'},
+				{limit: 100},
 				root,
 			);
 
@@ -169,8 +169,8 @@ describe('UserSearchService', () => {
 			await setInactive([alice, alyce, alycia]);
 
 			const result = await service.search(
-				{ username: 'al' },
-				{ limit: 100 },
+				{username: 'al'},
+				{limit: 100},
 				root,
 			);
 
@@ -182,8 +182,8 @@ describe('UserSearchService', () => {
 			await setInactive([alice, alyce, alycia, alysha, alyson, alyssa, bob, bobbi, bobbie, bobby]);
 
 			const result = await service.search(
-				{ username: 'al' },
-				{ limit: 100 },
+				{username: 'al'},
+				{limit: 100},
 				root,
 			);
 
@@ -196,8 +196,8 @@ describe('UserSearchService', () => {
 			await setInactive([alyson, alice, alysha, bobbie, bobby]);
 
 			const result = await service.search(
-				{ },
-				{ limit: 100 },
+				{},
+				{limit: 100},
 				root,
 			);
 
@@ -217,8 +217,8 @@ describe('UserSearchService', () => {
 			await setInactive([alice, alyce, alycia]);
 
 			const result = await service.search(
-				{ username: 'al' },
-				{ limit: 100 },
+				{username: 'al'},
+				{limit: 100},
 			);
 
 			// alice, alyce, alyciaは非アクティブなので後ろに行く
@@ -229,8 +229,8 @@ describe('UserSearchService', () => {
 			await setInactive([alice, alyce, alycia, alysha, alyson, alyssa, bob, bobbi, bobbie, bobby]);
 
 			const result = await service.search(
-				{ username: 'al' },
-				{ limit: 100 },
+				{username: 'al'},
+				{limit: 100},
 			);
 
 			expect(result).toEqual([alice, alyce, alycia, alysha, alyson, alyssa].map(x => x.id));
@@ -241,8 +241,8 @@ describe('UserSearchService', () => {
 			await setActive([alice, alyce, alycia, alysha, alyson, alyssa, bob, bobbi, bobbie, bobby]);
 
 			const result = await service.search(
-				{ username: 'al', host: 'exam' },
-				{ limit: 100 },
+				{username: 'al', host: 'exam'},
+				{limit: 100},
 				root,
 			);
 
@@ -254,8 +254,8 @@ describe('UserSearchService', () => {
 			await setSuspended([alice, alyce, alycia]);
 
 			const result = await service.search(
-				{ username: 'al' },
-				{ limit: 100 },
+				{username: 'al'},
+				{limit: 100},
 				root,
 			);
 

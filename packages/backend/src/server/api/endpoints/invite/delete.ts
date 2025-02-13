@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { RegistrationTicketsRepository } from '@/models/_.js';
-import { RoleService } from '@/core/RoleService.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {RegistrationTicketsRepository} from '@/models/_.js';
+import {RoleService} from '@/core/RoleService.js';
+import {DI} from '@/di-symbols.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['meta'],
@@ -41,7 +41,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		inviteId: { type: 'string', format: 'misskey:id' },
+		inviteId: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['inviteId'],
 } as const;
@@ -51,11 +51,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.registrationTicketsRepository)
 		private registrationTicketsRepository: RegistrationTicketsRepository,
-
 		private roleService: RoleService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const ticket = await this.registrationTicketsRepository.findOneBy({ id: ps.inviteId });
+			const ticket = await this.registrationTicketsRepository.findOneBy({id: ps.inviteId});
 			const isModerator = await this.roleService.isModerator(me);
 
 			if (ticket == null) {

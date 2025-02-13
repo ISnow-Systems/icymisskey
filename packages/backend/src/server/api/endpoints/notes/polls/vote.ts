@@ -3,19 +3,19 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import type { UsersRepository, PollsRepository, PollVotesRepository } from '@/models/_.js';
-import type { MiRemoteUser } from '@/models/User.js';
-import { IdService } from '@/core/IdService.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { GetterService } from '@/server/api/GetterService.js';
-import { QueueService } from '@/core/QueueService.js';
-import { PollService } from '@/core/PollService.js';
-import { ApRendererService } from '@/core/activitypub/ApRendererService.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { DI } from '@/di-symbols.js';
-import { UserBlockingService } from '@/core/UserBlockingService.js';
-import { ApiError } from '../../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {UsersRepository, PollsRepository, PollVotesRepository} from '@/models/_.js';
+import type {MiRemoteUser} from '@/models/User.js';
+import {IdService} from '@/core/IdService.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {GetterService} from '@/server/api/GetterService.js';
+import {QueueService} from '@/core/QueueService.js';
+import {PollService} from '@/core/PollService.js';
+import {ApRendererService} from '@/core/activitypub/ApRendererService.js';
+import {GlobalEventService} from '@/core/GlobalEventService.js';
+import {DI} from '@/di-symbols.js';
+import {UserBlockingService} from '@/core/UserBlockingService.js';
+import {ApiError} from '../../../error.js';
 
 export const meta = {
 	tags: ['notes'],
@@ -68,8 +68,8 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		noteId: { type: 'string', format: 'misskey:id' },
-		choice: { type: 'integer' },
+		noteId: {type: 'string', format: 'misskey:id'},
+		choice: {type: 'integer'},
 	},
 	required: ['noteId', 'choice'],
 } as const;
@@ -81,13 +81,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.pollsRepository)
 		private pollsRepository: PollsRepository,
-
 		@Inject(DI.pollVotesRepository)
 		private pollVotesRepository: PollVotesRepository,
-
 		private idService: IdService,
 		private getterService: GetterService,
 		private queueService: QueueService,
@@ -117,7 +114,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				}
 			}
 
-			const poll = await this.pollsRepository.findOneByOrFail({ noteId: note.id });
+			const poll = await this.pollsRepository.findOneByOrFail({noteId: note.id});
 
 			if (poll.expiresAt && poll.expiresAt < createdAt) {
 				throw new ApiError(meta.errors.alreadyExpired);
@@ -153,7 +150,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			// Increment votes count
 			const index = ps.choice + 1; // In SQL, array index is 1 based
-			await this.pollsRepository.query(`UPDATE poll SET votes[${index}] = votes[${index}] + 1 WHERE "noteId" = '${poll.noteId}'`);
+			await this.pollsRepository.query(`UPDATE poll
+											  SET votes[${index}] = votes[${index}] + 1
+											  WHERE "noteId" = '${poll.noteId}'`);
 
 			this.globalEventService.publishNoteStream(note.id, 'pollVoted', {
 				choice: ps.choice,
@@ -162,7 +161,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			// リモート投票の場合リプライ送信
 			if (note.userHost != null) {
-				const pollOwner = await this.usersRepository.findOneByOrFail({ id: note.userId }) as MiRemoteUser;
+				const pollOwner = await this.usersRepository.findOneByOrFail({id: note.userId}) as MiRemoteUser;
 
 				this.queueService.deliver(me, this.apRendererService.addContext(await this.apRendererService.renderVote(me, vote, note, poll, pollOwner)), pollOwner.inbox, false);
 			}

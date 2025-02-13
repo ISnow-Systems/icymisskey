@@ -4,18 +4,18 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div
-	class="default" :style="[
+	<div
+		:style="[
 		marginTopBottom ? { marginTop: marginTopBottom, marginBottom: marginTopBottom } : {},
 		marginLeftRight ? { marginLeft: marginLeftRight, marginRight: marginLeftRight } : {},
 		borderStyle ? { borderStyle: borderStyle } : {},
 		borderWidth ? { borderWidth: borderWidth } : {},
 		borderColor ? { borderColor: borderColor } : {},
-	]"
-/>
+	]" class="default"
+	/>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 defineProps<{
 	marginTopBottom?: string;
 	marginLeftRight?: string;
@@ -25,7 +25,7 @@ defineProps<{
 }>();
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .default {
 	border-top: solid 0.5px var(--MI_THEME-divider);
 }

@@ -3,20 +3,20 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { DI } from '@/di-symbols.js';
-import type { UsersRepository, NotesRepository, PollsRepository } from '@/models/_.js';
-import type { Config } from '@/config.js';
-import type { IPoll } from '@/models/Poll.js';
-import type { MiRemoteUser } from '@/models/User.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {DI} from '@/di-symbols.js';
+import type {UsersRepository, NotesRepository, PollsRepository} from '@/models/_.js';
+import type {Config} from '@/config.js';
+import type {IPoll} from '@/models/Poll.js';
+import type {MiRemoteUser} from '@/models/User.js';
 import type Logger from '@/logger.js';
-import { bindThis } from '@/decorators.js';
-import { getOneApId, isQuestion } from '../type.js';
-import { UtilityService } from '@/core/UtilityService.js';
-import { ApLoggerService } from '../ApLoggerService.js';
-import { ApResolverService } from '../ApResolverService.js';
-import type { Resolver } from '../ApResolverService.js';
-import type { IObject } from '../type.js';
+import {bindThis} from '@/decorators.js';
+import {getOneApId, isQuestion} from '../type.js';
+import {UtilityService} from '@/core/UtilityService.js';
+import {ApLoggerService} from '../ApLoggerService.js';
+import {ApResolverService} from '../ApResolverService.js';
+import type {Resolver} from '../ApResolverService.js';
+import type {IObject} from '../type.js';
 
 @Injectable()
 export class ApQuestionService {
@@ -25,16 +25,12 @@ export class ApQuestionService {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		@Inject(DI.pollsRepository)
 		private pollsRepository: PollsRepository,
-
 		private apResolverService: ApResolverService,
 		private apLoggerService: ApLoggerService,
 		private utilityService: UtilityService,
@@ -56,13 +52,13 @@ export class ApQuestionService {
 		const expiresAt = question.endTime ? new Date(question.endTime) : question.closed ? new Date(question.closed) : null;
 
 		const choices = question[multiple ? 'anyOf' : 'oneOf']
-			?.map((x) => x.name)
-			.filter(x => x != null)
+				?.map((x) => x.name)
+				.filter(x => x != null)
 			?? [];
 
 		const votes = question[multiple ? 'anyOf' : 'oneOf']?.map((x) => x.replies?.totalItems ?? x._misskey_votes ?? 0);
 
-		return { choices, votes, multiple, expiresAt };
+		return {choices, votes, multiple, expiresAt};
 	}
 
 	/**
@@ -79,13 +75,13 @@ export class ApQuestionService {
 		if (this.utilityService.isUriLocal(uri)) throw new Error('uri points local');
 
 		//#region このサーバーに既に登録されているか
-		const note = await this.notesRepository.findOneBy({ uri });
+		const note = await this.notesRepository.findOneBy({uri});
 		if (note == null) throw new Error('Question is not registered');
 
-		const poll = await this.pollsRepository.findOneBy({ noteId: note.id });
+		const poll = await this.pollsRepository.findOneBy({noteId: note.id});
 		if (poll == null) throw new Error('Question is not registered');
 
-		const user = await this.usersRepository.findOneBy({ id: poll.userId });
+		const user = await this.usersRepository.findOneBy({id: poll.userId});
 		if (user == null) throw new Error('Question is not registered');
 		//#endregion
 
@@ -121,7 +117,7 @@ export class ApQuestionService {
 			}
 		}
 
-		await this.pollsRepository.update({ noteId: note.id }, { votes: poll.votes });
+		await this.pollsRepository.update({noteId: note.id}, {votes: poll.votes});
 
 		return changed;
 	}

@@ -4,15 +4,15 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="$style.root">
-	<input v-model="query" :class="$style.input" type="search" :placeholder="q">
-	<button :class="$style.button" @click="search"><i class="ti ti-search"></i> {{ i18n.ts.searchByGoogle }}</button>
-</div>
+	<div :class="$style.root">
+		<input v-model="query" :class="$style.input" :placeholder="q" type="search">
+		<button :class="$style.button" @click="search"><i class="ti ti-search"></i> {{ i18n.ts.searchByGoogle }}</button>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { i18n } from '@/i18n.js';
+import {ref} from 'vue';
+import {i18n} from '@/i18n.js';
 
 const props = defineProps<{
 	q: string;

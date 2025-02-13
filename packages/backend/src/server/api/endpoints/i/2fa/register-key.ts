@@ -4,13 +4,13 @@
  */
 
 import bcrypt from 'bcryptjs';
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { UserProfilesRepository } from '@/models/_.js';
-import { DI } from '@/di-symbols.js';
-import { WebAuthnService } from '@/core/WebAuthnService.js';
-import { ApiError } from '@/server/api/error.js';
-import { UserAuthService } from '@/core/UserAuthService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {UserProfilesRepository} from '@/models/_.js';
+import {DI} from '@/di-symbols.js';
+import {WebAuthnService} from '@/core/WebAuthnService.js';
+import {ApiError} from '@/server/api/error.js';
+import {UserAuthService} from '@/core/UserAuthService.js';
 
 export const meta = {
 	requireCredential: true,
@@ -176,8 +176,8 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		password: { type: 'string' },
-		token: { type: 'string', nullable: true },
+		password: {type: 'string'},
+		token: {type: 'string', nullable: true},
 	},
 	required: ['password'],
 } as const;
@@ -188,7 +188,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 	constructor(
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
-
 		private webAuthnService: WebAuthnService,
 		private userAuthService: UserAuthService,
 	) {

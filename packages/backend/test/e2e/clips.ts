@@ -6,8 +6,8 @@
 process.env.NODE_ENV = 'test';
 
 import * as assert from 'assert';
-import { DEFAULT_POLICIES } from '@/core/RoleService.js';
-import { api, ApiRequest, failedApiCall, hiddenNote, post, signup, successfulApiCall } from '../utils.js';
+import {DEFAULT_POLICIES} from '@/core/RoleService.js';
+import {api, ApiRequest, failedApiCall, hiddenNote, post, signup, successfulApiCall} from '../utils.js';
 import type * as Misskey from 'misskey-js';
 
 type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
@@ -55,7 +55,7 @@ describe('クリップ', () => {
 		return await Promise.all([...Array(count)].map((_, i) => create({
 			name: `test${i}`,
 			...parameters,
-		}, { user })));
+		}, {user})));
 	};
 
 	const update = async (parameters: Optional<Misskey.entities.ClipsUpdateRequest, 'name'>, request: Partial<ApiRequest<'clips/update'>> = {}): Promise<Misskey.entities.Clip> => {
@@ -117,25 +117,25 @@ describe('クリップ', () => {
 	};
 
 	beforeAll(async () => {
-		alice = await signup({ username: 'alice' });
-		bob = await signup({ username: 'bob' });
+		alice = await signup({username: 'alice'});
+		bob = await signup({username: 'bob'});
 
-		aliceNote = await post(alice, { text: 'test' });
-		aliceHomeNote = await post(alice, { text: 'home only', visibility: 'home' });
-		aliceFollowersNote = await post(alice, { text: 'followers only', visibility: 'followers' });
-		aliceSpecifiedNote = await post(alice, { text: 'specified only', visibility: 'specified' });
-		bobNote = await post(bob, { text: 'test' });
-		bobHomeNote = await post(bob, { text: 'home only', visibility: 'home' });
-		bobFollowersNote = await post(bob, { text: 'followers only', visibility: 'followers' });
-		bobSpecifiedNote = await post(bob, { text: 'specified only', visibility: 'specified' });
+		aliceNote = await post(alice, {text: 'test'});
+		aliceHomeNote = await post(alice, {text: 'home only', visibility: 'home'});
+		aliceFollowersNote = await post(alice, {text: 'followers only', visibility: 'followers'});
+		aliceSpecifiedNote = await post(alice, {text: 'specified only', visibility: 'specified'});
+		bobNote = await post(bob, {text: 'test'});
+		bobHomeNote = await post(bob, {text: 'home only', visibility: 'home'});
+		bobFollowersNote = await post(bob, {text: 'followers only', visibility: 'followers'});
+		bobSpecifiedNote = await post(bob, {text: 'specified only', visibility: 'specified'});
 	}, 1000 * 60 * 2);
 
 	afterEach(async () => {
 		// テスト間で影響し合わないように毎回全部消す。
 		for (const user of [alice, bob]) {
-			const list = await api('clips/list', { limit: 11 }, user);
+			const list = await api('clips/list', {limit: 11}, user);
 			for (const clip of list.body) {
-				await api('clips/delete', { clipId: clip.id }, user);
+				await api('clips/delete', {clipId: clip.id}, user);
 			}
 		}
 	});
@@ -170,22 +170,22 @@ describe('クリップ', () => {
 	});
 
 	const createClipAllowedPattern = [
-		{ label: 'nameが最大長', parameters: { name: 'x'.repeat(100) } },
-		{ label: 'private', parameters: { isPublic: false } },
-		{ label: 'public', parameters: { isPublic: true } },
-		{ label: 'descriptionがnull', parameters: { description: null } },
-		{ label: 'descriptionが最大長', parameters: { description: 'a'.repeat(2048) } },
+		{label: 'nameが最大長', parameters: {name: 'x'.repeat(100)}},
+		{label: 'private', parameters: {isPublic: false}},
+		{label: 'public', parameters: {isPublic: true}},
+		{label: 'descriptionがnull', parameters: {description: null}},
+		{label: 'descriptionが最大長', parameters: {description: 'a'.repeat(2048)}},
 	];
-	test.each(createClipAllowedPattern)('の作成は$labelでもできる', async ({ parameters }) => await create(parameters));
+	test.each(createClipAllowedPattern)('の作成は$labelでもできる', async ({parameters}) => await create(parameters));
 
 	const createClipDenyPattern = [
-		{ label: 'nameがnull', parameters: { name: null } },
-		{ label: 'nameが最大長+1', parameters: { name: 'x'.repeat(101) } },
-		{ label: 'isPublicがboolじゃない', parameters: { isPublic: 'true' } },
-		{ label: 'descriptionがゼロ長', parameters: { description: '' } },
-		{ label: 'descriptionが最大長+1', parameters: { description: 'a'.repeat(2049) } },
+		{label: 'nameがnull', parameters: {name: null}},
+		{label: 'nameが最大長+1', parameters: {name: 'x'.repeat(101)}},
+		{label: 'isPublicがboolじゃない', parameters: {isPublic: 'true'}},
+		{label: 'descriptionがゼロ長', parameters: {description: ''}},
+		{label: 'descriptionが最大長+1', parameters: {description: 'a'.repeat(2049)}},
 	];
-	test.each(createClipDenyPattern)('の作成は$labelならできない', async ({ parameters }) => failedApiCall({
+	test.each(createClipDenyPattern)('の作成は$labelならできない', async ({parameters}) => failedApiCall({
 		endpoint: 'clips/create',
 		// @ts-expect-error invalid params
 		parameters: {
@@ -217,27 +217,31 @@ describe('クリップ', () => {
 		assert.strictEqual(res.isFavorited, false);
 	});
 
-	test.each(createClipAllowedPattern)('の更新は$labelでもできる', async ({ parameters }) => await update({
+	test.each(createClipAllowedPattern)('の更新は$labelでもできる', async ({parameters}) => await update({
 		clipId: (await create()).id,
 		name: 'updated',
 		...parameters,
 	}));
 
 	test.each([
-		{ label: 'clipIdがnull', parameters: { clipId: null } },
-		{ label: '存在しないクリップ', parameters: { clipId: 'xxxxxx' }, assertion: {
-			code: 'NO_SUCH_CLIP',
-			id: 'b4d92d70-b216-46fa-9a3f-a8c811699257',
-		} },
-		{ label: '他人のクリップ', user: () => bob, assertion: {
-			code: 'NO_SUCH_CLIP',
-			id: 'b4d92d70-b216-46fa-9a3f-a8c811699257',
-		} },
+		{label: 'clipIdがnull', parameters: {clipId: null}},
+		{
+			label: '存在しないクリップ', parameters: {clipId: 'xxxxxx'}, assertion: {
+				code: 'NO_SUCH_CLIP',
+				id: 'b4d92d70-b216-46fa-9a3f-a8c811699257',
+			}
+		},
+		{
+			label: '他人のクリップ', user: () => bob, assertion: {
+				code: 'NO_SUCH_CLIP',
+				id: 'b4d92d70-b216-46fa-9a3f-a8c811699257',
+			}
+		},
 		...createClipDenyPattern as any,
-	])('の更新は$labelならできない', async ({ parameters, user, assertion }) => failedApiCall({
+	])('の更新は$labelならできない', async ({parameters, user, assertion}) => failedApiCall({
 		endpoint: 'clips/update',
 		parameters: {
-			clipId: (await create({}, { user: (user ?? (() => alice))() })).id,
+			clipId: (await create({}, {user: (user ?? (() => alice))()})).id,
 			name: 'updated',
 			...parameters,
 		},
@@ -257,20 +261,24 @@ describe('クリップ', () => {
 	});
 
 	test.each([
-		{ label: 'clipIdがnull', parameters: { clipId: null } },
-		{ label: '存在しないクリップ', parameters: { clipId: 'xxxxxx' }, assertion: {
-			code: 'NO_SUCH_CLIP',
-			id: '70ca08ba-6865-4630-b6fb-8494759aa754',
-		} },
-		{ label: '他人のクリップ', user: () => bob, assertion: {
-			code: 'NO_SUCH_CLIP',
-			id: '70ca08ba-6865-4630-b6fb-8494759aa754',
-		} },
-	])('の削除は$labelならできない', async ({ parameters, user, assertion }) => failedApiCall({
+		{label: 'clipIdがnull', parameters: {clipId: null}},
+		{
+			label: '存在しないクリップ', parameters: {clipId: 'xxxxxx'}, assertion: {
+				code: 'NO_SUCH_CLIP',
+				id: '70ca08ba-6865-4630-b6fb-8494759aa754',
+			}
+		},
+		{
+			label: '他人のクリップ', user: () => bob, assertion: {
+				code: 'NO_SUCH_CLIP',
+				id: '70ca08ba-6865-4630-b6fb-8494759aa754',
+			}
+		},
+	])('の削除は$labelならできない', async ({parameters, user, assertion}) => failedApiCall({
 		endpoint: 'clips/delete',
 		parameters: {
 			// @ts-expect-error clipId must not be null
-			clipId: (await create({}, { user: (user ?? (() => alice))() })).id,
+			clipId: (await create({}, {user: (user ?? (() => alice))()})).id,
 			...parameters,
 		},
 		user: alice,
@@ -283,15 +291,15 @@ describe('クリップ', () => {
 
 	test('のID指定取得ができる', async () => {
 		const clip = await create();
-		const res = await show({ clipId: clip.id });
+		const res = await show({clipId: clip.id});
 		assert.deepStrictEqual(res, clip);
 	});
 
 	test('のID指定取得は他人のPrivateなクリップは取得できない', async () => {
-		const clip = await create({ isPublic: false }, { user: bob } );
+		const clip = await create({isPublic: false}, {user: bob});
 		failedApiCall({
 			endpoint: 'clips/show',
-			parameters: { clipId: clip.id },
+			parameters: {clipId: clip.id},
 			user: alice,
 		}, {
 			status: 400,
@@ -301,12 +309,14 @@ describe('クリップ', () => {
 	});
 
 	test.each([
-		{ label: 'clipId未指定', parameters: { clipId: undefined } },
-		{ label: '存在しないクリップ', parameters: { clipId: 'xxxxxx' }, assetion: {
-			code: 'NO_SUCH_CLIP',
-			id: 'c3c5fe33-d62c-44d2-9ea5-d997703f5c20',
-		} },
-	])('のID指定取得は$labelならできない', async ({ parameters, assetion }) => failedApiCall({
+		{label: 'clipId未指定', parameters: {clipId: undefined}},
+		{
+			label: '存在しないクリップ', parameters: {clipId: 'xxxxxx'}, assetion: {
+				code: 'NO_SUCH_CLIP',
+				id: 'c3c5fe33-d62c-44d2-9ea5-d997703f5c20',
+			}
+		},
+	])('のID指定取得は$labelならできない', async ({parameters, assetion}) => failedApiCall({
 		endpoint: 'clips/show',
 		// @ts-expect-error clipId must not be undefined
 		parameters: {
@@ -329,7 +339,7 @@ describe('クリップ', () => {
 		const clipLimit = DEFAULT_POLICIES.clipLimit;
 		const clips = await createMany({}, clipLimit);
 		const res = await list({
-			parameters: { limit: 1 }, // FIXME: 無視されて11全部返ってくる
+			parameters: {limit: 1}, // FIXME: 無視されて11全部返ってくる
 		});
 
 		// 返ってくる配列には順序保障がないのでidでソートして厳密比較
@@ -347,10 +357,10 @@ describe('クリップ', () => {
 	});
 
 	test.each([
-		{ label: '' },
-		{ label: '他人アカウントから', user: () => bob },
+		{label: ''},
+		{label: '他人アカウントから', user: () => bob},
 	])('の一覧が$label取得できる', async () => {
-		const clips = await createMany({ isPublic: true });
+		const clips = await createMany({isPublic: true});
 		const res = await usersClips({
 			userId: alice.id,
 		});
@@ -367,10 +377,10 @@ describe('クリップ', () => {
 	});
 
 	test.each([
-		{ label: '未認証', user: () => undefined },
-		{ label: '存在しないユーザーのもの', parameters: { userId: 'xxxxxxx' } },
-	])('の一覧は$labelでも取得できる', async ({ parameters, user }) => {
-		const clips = await createMany({ isPublic: true });
+		{label: '未認証', user: () => undefined},
+		{label: '存在しないユーザーのもの', parameters: {userId: 'xxxxxxx'}},
+	])('の一覧は$labelでも取得できる', async ({parameters, user}) => {
+		const clips = await createMany({isPublic: true});
 		const res = await usersClips({
 			userId: alice.id,
 			limit: clips.length,
@@ -386,8 +396,8 @@ describe('クリップ', () => {
 	});
 
 	test('の一覧はPrivateなクリップを含まない(自分のものであっても。)', async () => {
-		await create({ isPublic: false });
-		const aliceClip = await create({ isPublic: true });
+		await create({isPublic: false});
+		const aliceClip = await create({isPublic: true});
 		const res = await usersClips({
 			userId: alice.id,
 			limit: 2,
@@ -396,7 +406,7 @@ describe('クリップ', () => {
 	});
 
 	test('の一覧はID指定で範囲選択ができる', async () => {
-		const clips = await createMany({ isPublic: true }, 7);
+		const clips = await createMany({isPublic: true}, 7);
 		clips.sort(compareBy(s => s.id));
 		const res = await usersClips({
 			userId: alice.id,
@@ -413,10 +423,10 @@ describe('クリップ', () => {
 	});
 
 	test.each([
-		{ label: 'userId未指定', parameters: { userId: undefined } },
-		{ label: 'limitゼロ', parameters: { limit: 0 } },
-		{ label: 'limit最大+1', parameters: { limit: 101 } },
-	])('の一覧は$labelだと取得できない', async ({ parameters }) => failedApiCall({
+		{label: 'userId未指定', parameters: {userId: undefined}},
+		{label: 'limitゼロ', parameters: {limit: 0}},
+		{label: 'limit最大+1', parameters: {limit: 101}},
+	])('の一覧は$labelだと取得できない', async ({parameters}) => failedApiCall({
 		endpoint: 'users/clips',
 		parameters: {
 			// @ts-expect-error userId must not be undefined
@@ -431,16 +441,16 @@ describe('クリップ', () => {
 	}));
 
 	test.each([
-		{ label: '作成', endpoint: 'clips/create' as const },
-		{ label: '更新', endpoint: 'clips/update' as const },
-		{ label: '削除', endpoint: 'clips/delete' as const },
-		{ label: '取得', endpoint: 'clips/list' as const },
-		{ label: 'お気に入り設定', endpoint: 'clips/favorite' as const },
-		{ label: 'お気に入り解除', endpoint: 'clips/unfavorite' as const },
-		{ label: 'お気に入り取得', endpoint: 'clips/my-favorites' as const },
-		{ label: 'ノート追加', endpoint: 'clips/add-note' as const },
-		{ label: 'ノート削除', endpoint: 'clips/remove-note' as const },
-	])('の$labelは未認証ではできない', async ({ endpoint }) => await failedApiCall({
+		{label: '作成', endpoint: 'clips/create' as const},
+		{label: '更新', endpoint: 'clips/update' as const},
+		{label: '削除', endpoint: 'clips/delete' as const},
+		{label: '取得', endpoint: 'clips/list' as const},
+		{label: 'お気に入り設定', endpoint: 'clips/favorite' as const},
+		{label: 'お気に入り解除', endpoint: 'clips/unfavorite' as const},
+		{label: 'お気に入り取得', endpoint: 'clips/my-favorites' as const},
+		{label: 'ノート追加', endpoint: 'clips/add-note' as const},
+		{label: 'ノート削除', endpoint: 'clips/remove-note' as const},
+	])('の$labelは未認証ではできない', async ({endpoint}) => await failedApiCall({
 		endpoint: endpoint,
 		parameters: {},
 		user: undefined,
@@ -489,34 +499,34 @@ describe('クリップ', () => {
 		});
 
 		test('を設定できる。', async () => {
-			await favorite({ clipId: aliceClip.id });
-			const clip = await show({ clipId: aliceClip.id });
+			await favorite({clipId: aliceClip.id});
+			const clip = await show({clipId: aliceClip.id});
 			assert.strictEqual(clip.favoritedCount, 1);
 			assert.strictEqual(clip.isFavorited, true);
 		});
 
 		test('はPublicな他人のクリップに設定できる。', async () => {
-			const publicClip = await create({ isPublic: true });
-			await favorite({ clipId: publicClip.id }, { user: bob });
-			const clip = await show({ clipId: publicClip.id }, { user: bob });
+			const publicClip = await create({isPublic: true});
+			await favorite({clipId: publicClip.id}, {user: bob});
+			const clip = await show({clipId: publicClip.id}, {user: bob});
 			assert.strictEqual(clip.favoritedCount, 1);
 			assert.strictEqual(clip.isFavorited, true);
 
 			// isFavoritedは見る人によって切り替わる。
-			const clip2 = await show({ clipId: publicClip.id });
+			const clip2 = await show({clipId: publicClip.id});
 			assert.strictEqual(clip2.favoritedCount, 1);
 			assert.strictEqual(clip2.isFavorited, false);
 		});
 
 		test('は1つのクリップに対して複数人が設定できる。', async () => {
-			const publicClip = await create({ isPublic: true });
-			await favorite({ clipId: publicClip.id }, { user: bob });
-			await favorite({ clipId: publicClip.id });
-			const clip = await show({ clipId: publicClip.id }, { user: bob });
+			const publicClip = await create({isPublic: true});
+			await favorite({clipId: publicClip.id}, {user: bob});
+			await favorite({clipId: publicClip.id});
+			const clip = await show({clipId: publicClip.id}, {user: bob});
 			assert.strictEqual(clip.favoritedCount, 2);
 			assert.strictEqual(clip.isFavorited, true);
 
-			const clip2 = await show({ clipId: publicClip.id });
+			const clip2 = await show({clipId: publicClip.id});
 			assert.strictEqual(clip2.favoritedCount, 2);
 			assert.strictEqual(clip2.isFavorited, true);
 		});
@@ -525,10 +535,10 @@ describe('クリップ', () => {
 			const clips = [
 				aliceClip,
 				...await createMany({}, 10, alice),
-				...await createMany({ isPublic: true }, 10, bob),
+				...await createMany({isPublic: true}, 10, bob),
 			];
 			for (const clip of clips) {
-				await favorite({ clipId: clip.id });
+				await favorite({clipId: clip.id});
 			}
 
 			// pagenationはない。全部一気にとれる。
@@ -541,7 +551,7 @@ describe('クリップ', () => {
 		});
 
 		test('は同じクリップに対して二回設定できない。', async () => {
-			await favorite({ clipId: aliceClip.id });
+			await favorite({clipId: aliceClip.id});
 			await failedApiCall({
 				endpoint: 'clips/favorite',
 				parameters: {
@@ -556,20 +566,24 @@ describe('クリップ', () => {
 		});
 
 		test.each([
-			{ label: 'clipIdがnull', parameters: { clipId: null } },
-			{ label: '存在しないクリップ', parameters: { clipId: 'xxxxxx' }, assertion: {
-				code: 'NO_SUCH_CLIP',
-				id: '4c2aaeae-80d8-4250-9606-26cb1fdb77a5',
-			} },
-			{ label: '他人のクリップ', user: () => bob, assertion: {
-				code: 'NO_SUCH_CLIP',
-				id: '4c2aaeae-80d8-4250-9606-26cb1fdb77a5',
-			} },
-		])('の設定は$labelならできない', async ({ parameters, user, assertion }) => failedApiCall({
+			{label: 'clipIdがnull', parameters: {clipId: null}},
+			{
+				label: '存在しないクリップ', parameters: {clipId: 'xxxxxx'}, assertion: {
+					code: 'NO_SUCH_CLIP',
+					id: '4c2aaeae-80d8-4250-9606-26cb1fdb77a5',
+				}
+			},
+			{
+				label: '他人のクリップ', user: () => bob, assertion: {
+					code: 'NO_SUCH_CLIP',
+					id: '4c2aaeae-80d8-4250-9606-26cb1fdb77a5',
+				}
+			},
+		])('の設定は$labelならできない', async ({parameters, user, assertion}) => failedApiCall({
 			endpoint: 'clips/favorite',
 			parameters: {
 				// @ts-expect-error clipId must not be null
-				clipId: (await create({}, { user: (user ?? (() => alice))() })).id,
+				clipId: (await create({}, {user: (user ?? (() => alice))()})).id,
 				...parameters,
 			},
 			user: alice,
@@ -581,33 +595,39 @@ describe('クリップ', () => {
 		}));
 
 		test('を設定解除できる。', async () => {
-			await favorite({ clipId: aliceClip.id });
-			await unfavorite({ clipId: aliceClip.id });
-			const clip = await show({ clipId: aliceClip.id });
+			await favorite({clipId: aliceClip.id});
+			await unfavorite({clipId: aliceClip.id});
+			const clip = await show({clipId: aliceClip.id});
 			assert.strictEqual(clip.favoritedCount, 0);
 			assert.strictEqual(clip.isFavorited, false);
 			assert.deepStrictEqual(await myFavorites(), []);
 		});
 
 		test.each([
-			{ label: 'clipIdがnull', parameters: { clipId: null } },
-			{ label: '存在しないクリップ', parameters: { clipId: 'xxxxxx' }, assertion: {
-				code: 'NO_SUCH_CLIP',
-				id: '2603966e-b865-426c-94a7-af4a01241dc1',
-			} },
-			{ label: '他人のクリップ', user: () => bob, assertion: {
-				code: 'NOT_FAVORITED',
-				id: '90c3a9e8-b321-4dae-bf57-2bf79bbcc187',
-			} },
-			{ label: 'お気に入りしていないクリップ', assertion: {
-				code: 'NOT_FAVORITED',
-				id: '90c3a9e8-b321-4dae-bf57-2bf79bbcc187',
-			} },
-		])('の設定解除は$labelならできない', async ({ parameters, user, assertion }) => failedApiCall({
+			{label: 'clipIdがnull', parameters: {clipId: null}},
+			{
+				label: '存在しないクリップ', parameters: {clipId: 'xxxxxx'}, assertion: {
+					code: 'NO_SUCH_CLIP',
+					id: '2603966e-b865-426c-94a7-af4a01241dc1',
+				}
+			},
+			{
+				label: '他人のクリップ', user: () => bob, assertion: {
+					code: 'NOT_FAVORITED',
+					id: '90c3a9e8-b321-4dae-bf57-2bf79bbcc187',
+				}
+			},
+			{
+				label: 'お気に入りしていないクリップ', assertion: {
+					code: 'NOT_FAVORITED',
+					id: '90c3a9e8-b321-4dae-bf57-2bf79bbcc187',
+				}
+			},
+		])('の設定解除は$labelならできない', async ({parameters, user, assertion}) => failedApiCall({
 			endpoint: 'clips/unfavorite',
 			parameters: {
 				// @ts-expect-error clipId must not be null
-				clipId: (await create({}, { user: (user ?? (() => alice))() })).id,
+				clipId: (await create({}, {user: (user ?? (() => alice))()})).id,
 				...parameters,
 			},
 			user: alice,
@@ -619,14 +639,14 @@ describe('クリップ', () => {
 		}));
 
 		test('を取得できる。', async () => {
-			await favorite({ clipId: aliceClip.id });
+			await favorite({clipId: aliceClip.id});
 			const favorited = await myFavorites();
-			assert.deepStrictEqual(favorited, [await show({ clipId: aliceClip.id })]);
+			assert.deepStrictEqual(favorited, [await show({clipId: aliceClip.id})]);
 		});
 
 		test('を取得したとき他人のお気に入りは含まない。', async () => {
-			await favorite({ clipId: aliceClip.id });
-			const favorited = await myFavorites({ user: bob });
+			await favorite({clipId: aliceClip.id});
+			const favorited = await myFavorites({user: bob});
 			assert.deepStrictEqual(favorited, []);
 		});
 	});
@@ -675,19 +695,19 @@ describe('クリップ', () => {
 		});
 
 		test('を追加できる。', async () => {
-			await addNote({ clipId: aliceClip.id, noteId: aliceNote.id });
-			const res = await show({ clipId: aliceClip.id });
+			await addNote({clipId: aliceClip.id, noteId: aliceNote.id});
+			const res = await show({clipId: aliceClip.id});
 			assert.strictEqual(res.lastClippedAt, res.lastClippedAt ? new Date(res.lastClippedAt).toISOString() : null);
-			assert.deepStrictEqual((await notes({ clipId: aliceClip.id })).map(x => x.id), [aliceNote.id]);
+			assert.deepStrictEqual((await notes({clipId: aliceClip.id})).map(x => x.id), [aliceNote.id]);
 
 			// 他人の非公開ノートも突っ込める
-			await addNote({ clipId: aliceClip.id, noteId: bobHomeNote.id });
-			await addNote({ clipId: aliceClip.id, noteId: bobFollowersNote.id });
-			await addNote({ clipId: aliceClip.id, noteId: bobSpecifiedNote.id });
+			await addNote({clipId: aliceClip.id, noteId: bobHomeNote.id});
+			await addNote({clipId: aliceClip.id, noteId: bobFollowersNote.id});
+			await addNote({clipId: aliceClip.id, noteId: bobSpecifiedNote.id});
 		});
 
 		test('として同じノートを二回紐づけることはできない', async () => {
-			await addNote({ clipId: aliceClip.id, noteId: aliceNote.id });
+			await addNote({clipId: aliceClip.id, noteId: aliceNote.id});
 			await failedApiCall({
 				endpoint: 'clips/add-note',
 				parameters: {
@@ -708,7 +728,7 @@ describe('クリップ', () => {
 			const noteList = await Promise.all([...Array(noteLimit)].map((_, i) => post(alice, {
 				text: `test ${i}`,
 			}) as unknown)) as Misskey.entities.Note[];
-			await Promise.all(noteList.map(s => addNote({ clipId: aliceClip.id, noteId: s.id })));
+			await Promise.all(noteList.map(s => addNote({clipId: aliceClip.id, noteId: s.id})));
 
 			await failedApiCall({
 				endpoint: 'clips/add-note',
@@ -738,21 +758,27 @@ describe('クリップ', () => {
 		}));
 
 		test.each([
-			{ label: 'clipId未指定', parameters: { clipId: undefined } },
-			{ label: 'noteId未指定', parameters: { noteId: undefined } },
-			{ label: '存在しないクリップ', parameters: { clipId: 'xxxxxx' }, assetion: {
-				code: 'NO_SUCH_CLIP',
-				id: 'd6e76cc0-a1b5-4c7c-a287-73fa9c716dcf',
-			} },
-			{ label: '存在しないノート', parameters: { noteId: 'xxxxxx' }, assetion: {
-				code: 'NO_SUCH_NOTE',
-				id: 'fc8c0b49-c7a3-4664-a0a6-b418d386bb8b',
-			} },
-			{ label: '他人のクリップ', user: () => bob, assetion: {
-				code: 'NO_SUCH_CLIP',
-				id: 'd6e76cc0-a1b5-4c7c-a287-73fa9c716dcf',
-			} },
-		])('の追加は$labelだとできない', async ({ parameters, user, assetion }) => failedApiCall({
+			{label: 'clipId未指定', parameters: {clipId: undefined}},
+			{label: 'noteId未指定', parameters: {noteId: undefined}},
+			{
+				label: '存在しないクリップ', parameters: {clipId: 'xxxxxx'}, assetion: {
+					code: 'NO_SUCH_CLIP',
+					id: 'd6e76cc0-a1b5-4c7c-a287-73fa9c716dcf',
+				}
+			},
+			{
+				label: '存在しないノート', parameters: {noteId: 'xxxxxx'}, assetion: {
+					code: 'NO_SUCH_NOTE',
+					id: 'fc8c0b49-c7a3-4664-a0a6-b418d386bb8b',
+				}
+			},
+			{
+				label: '他人のクリップ', user: () => bob, assetion: {
+					code: 'NO_SUCH_CLIP',
+					id: 'd6e76cc0-a1b5-4c7c-a287-73fa9c716dcf',
+				}
+			},
+		])('の追加は$labelだとできない', async ({parameters, user, assetion}) => failedApiCall({
 			endpoint: 'clips/add-note',
 			parameters: {
 				// @ts-expect-error clipId must not be undefined
@@ -770,27 +796,33 @@ describe('クリップ', () => {
 		}));
 
 		test('を削除できる。', async () => {
-			await addNote({ clipId: aliceClip.id, noteId: aliceNote.id });
-			await removeNote({ clipId: aliceClip.id, noteId: aliceNote.id });
-			assert.deepStrictEqual(await notes({ clipId: aliceClip.id }), []);
+			await addNote({clipId: aliceClip.id, noteId: aliceNote.id});
+			await removeNote({clipId: aliceClip.id, noteId: aliceNote.id});
+			assert.deepStrictEqual(await notes({clipId: aliceClip.id}), []);
 		});
 
 		test.each([
-			{ label: 'clipId未指定', parameters: { clipId: undefined } },
-			{ label: 'noteId未指定', parameters: { noteId: undefined } },
-			{ label: '存在しないクリップ', parameters: { clipId: 'xxxxxx' }, assetion: {
-				code: 'NO_SUCH_CLIP',
-				id: 'b80525c6-97f7-49d7-a42d-ebccd49cfd52', // add-noteと異なる
-			} },
-			{ label: '存在しないノート', parameters: { noteId: 'xxxxxx' }, assetion: {
-				code: 'NO_SUCH_NOTE',
-				id: 'aff017de-190e-434b-893e-33a9ff5049d8', // add-noteと異なる
-			} },
-			{ label: '他人のクリップ', user: () => bob, assetion: {
-				code: 'NO_SUCH_CLIP',
-				id: 'b80525c6-97f7-49d7-a42d-ebccd49cfd52', // add-noteと異なる
-			} },
-		])('の削除は$labelだとできない', async ({ parameters, user, assetion }) => failedApiCall({
+			{label: 'clipId未指定', parameters: {clipId: undefined}},
+			{label: 'noteId未指定', parameters: {noteId: undefined}},
+			{
+				label: '存在しないクリップ', parameters: {clipId: 'xxxxxx'}, assetion: {
+					code: 'NO_SUCH_CLIP',
+					id: 'b80525c6-97f7-49d7-a42d-ebccd49cfd52', // add-noteと異なる
+				}
+			},
+			{
+				label: '存在しないノート', parameters: {noteId: 'xxxxxx'}, assetion: {
+					code: 'NO_SUCH_NOTE',
+					id: 'aff017de-190e-434b-893e-33a9ff5049d8', // add-noteと異なる
+				}
+			},
+			{
+				label: '他人のクリップ', user: () => bob, assetion: {
+					code: 'NO_SUCH_CLIP',
+					id: 'b80525c6-97f7-49d7-a42d-ebccd49cfd52', // add-noteと異なる
+				}
+			},
+		])('の削除は$labelだとできない', async ({parameters, user, assetion}) => failedApiCall({
 			endpoint: 'clips/remove-note',
 			parameters: {
 				// @ts-expect-error clipId must not be undefined
@@ -810,10 +842,10 @@ describe('クリップ', () => {
 		test('を取得できる。', async () => {
 			const noteList = sampleNotes();
 			for (const note of noteList) {
-				await addNote({ clipId: aliceClip.id, noteId: note.id });
+				await addNote({clipId: aliceClip.id, noteId: note.id});
 			}
 
-			const res = await notes({ clipId: aliceClip.id });
+			const res = await notes({clipId: aliceClip.id});
 
 			// 自分のノートは非公開でも入れられるし、見える
 			// 他人の非公開ノートは入れられるけど、除外される
@@ -830,7 +862,7 @@ describe('クリップ', () => {
 			const noteList = sampleNotes();
 			noteList.sort(compareBy(s => s.id));
 			for (const note of noteList) {
-				await addNote({ clipId: aliceClip.id, noteId: note.id });
+				await addNote({clipId: aliceClip.id, noteId: note.id});
 			}
 
 			const res = await notes({
@@ -850,7 +882,7 @@ describe('クリップ', () => {
 			const noteList = sampleNotes();
 			noteList.sort(compareBy(s => s.id));
 			for (const note of noteList) {
-				await addNote({ clipId: aliceClip.id, noteId: note.id });
+				await addNote({clipId: aliceClip.id, noteId: note.id});
 			}
 
 			const res = await notes({
@@ -869,20 +901,20 @@ describe('クリップ', () => {
 		test.todo('Remoteのノートもクリップできる。どうテストしよう？');
 
 		test('は他人のPublicなクリップからも取得できる。', async () => {
-			const bobClip = await create({ isPublic: true }, { user: bob } );
-			await addNote({ clipId: bobClip.id, noteId: aliceNote.id }, { user: bob });
-			const res = await notes({ clipId: bobClip.id });
+			const bobClip = await create({isPublic: true}, {user: bob});
+			await addNote({clipId: bobClip.id, noteId: aliceNote.id}, {user: bob});
+			const res = await notes({clipId: bobClip.id});
 			assert.deepStrictEqual(res.map(x => x.id), [aliceNote.id]);
 		});
 
 		test('はPublicなクリップなら認証なしでも取得できる。(非公開ノートはhideされて返ってくる)', async () => {
-			const publicClip = await create({ isPublic: true });
-			await addNote({ clipId: publicClip.id, noteId: aliceNote.id });
-			await addNote({ clipId: publicClip.id, noteId: aliceHomeNote.id });
-			await addNote({ clipId: publicClip.id, noteId: aliceFollowersNote.id });
-			await addNote({ clipId: publicClip.id, noteId: aliceSpecifiedNote.id });
+			const publicClip = await create({isPublic: true});
+			await addNote({clipId: publicClip.id, noteId: aliceNote.id});
+			await addNote({clipId: publicClip.id, noteId: aliceHomeNote.id});
+			await addNote({clipId: publicClip.id, noteId: aliceFollowersNote.id});
+			await addNote({clipId: publicClip.id, noteId: aliceSpecifiedNote.id});
 
-			const res = await notes({ clipId: publicClip.id }, { user: undefined });
+			const res = await notes({clipId: publicClip.id}, {user: undefined});
 			const expects = [
 				aliceNote, aliceHomeNote,
 				// 認証なしだと非公開ノートは結果には含むけどhideされる。
@@ -896,22 +928,28 @@ describe('クリップ', () => {
 		test.todo('ブロック、ミュートされたユーザーからの設定＆取得etc.');
 
 		test.each([
-			{ label: 'clipId未指定', parameters: { clipId: undefined } },
-			{ label: 'limitゼロ', parameters: { limit: 0 } },
-			{ label: 'limit最大+1', parameters: { limit: 101 } },
-			{ label: '存在しないクリップ', parameters: { clipId: 'xxxxxx' }, assertion: {
-				code: 'NO_SUCH_CLIP',
-				id: '1d7645e6-2b6d-4635-b0fe-fe22b0e72e00',
-			} },
-			{ label: '他人のPrivateなクリップから', user: () => bob, assertion: {
-				code: 'NO_SUCH_CLIP',
-				id: '1d7645e6-2b6d-4635-b0fe-fe22b0e72e00',
-			} },
-			{ label: '未認証でPrivateなクリップから', user: () => undefined, assertion: {
-				code: 'NO_SUCH_CLIP',
-				id: '1d7645e6-2b6d-4635-b0fe-fe22b0e72e00',
-			} },
-		])('は$labelだと取得できない', async ({ parameters, user, assertion }) => failedApiCall({
+			{label: 'clipId未指定', parameters: {clipId: undefined}},
+			{label: 'limitゼロ', parameters: {limit: 0}},
+			{label: 'limit最大+1', parameters: {limit: 101}},
+			{
+				label: '存在しないクリップ', parameters: {clipId: 'xxxxxx'}, assertion: {
+					code: 'NO_SUCH_CLIP',
+					id: '1d7645e6-2b6d-4635-b0fe-fe22b0e72e00',
+				}
+			},
+			{
+				label: '他人のPrivateなクリップから', user: () => bob, assertion: {
+					code: 'NO_SUCH_CLIP',
+					id: '1d7645e6-2b6d-4635-b0fe-fe22b0e72e00',
+				}
+			},
+			{
+				label: '未認証でPrivateなクリップから', user: () => undefined, assertion: {
+					code: 'NO_SUCH_CLIP',
+					id: '1d7645e6-2b6d-4635-b0fe-fe22b0e72e00',
+				}
+			},
+		])('は$labelだと取得できない', async ({parameters, user, assertion}) => failedApiCall({
 			endpoint: 'clips/notes',
 			parameters: {
 				// @ts-expect-error clipId must not be undefined

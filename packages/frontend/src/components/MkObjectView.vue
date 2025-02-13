@@ -4,13 +4,13 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div>
-	<XValue :value="value" :collapsed="false"/>
-</div>
+	<div>
+		<XValue :collapsed="false" :value="value"/>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import {} from 'vue';
 import XValue from './MkObjectView.value.vue';
 
 const props = defineProps<{

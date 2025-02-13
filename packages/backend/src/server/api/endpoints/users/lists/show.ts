@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import type { UserListsRepository, UserListFavoritesRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { UserListEntityService } from '@/core/entities/UserListEntityService.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {UserListsRepository, UserListFavoritesRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {UserListEntityService} from '@/core/entities/UserListEntityService.js';
+import {DI} from '@/di-symbols.js';
+import {ApiError} from '../../../error.js';
 
 export const meta = {
 	tags: ['lists', 'account'],
@@ -37,8 +37,8 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		listId: { type: 'string', format: 'misskey:id' },
-		forPublic: { type: 'boolean', default: false },
+		listId: {type: 'string', format: 'misskey:id'},
+		forPublic: {type: 'boolean', default: false},
 	},
 	required: ['listId'],
 } as const;
@@ -48,10 +48,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 	constructor(
 		@Inject(DI.userListsRepository)
 		private userListsRepository: UserListsRepository,
-
 		@Inject(DI.userListFavoritesRepository)
 		private userListFavoritesRepository: UserListFavoritesRepository,
-
 		private userListEntityService: UserListEntityService,
 	) {
 		super(meta, paramDef, async (ps, me) => {

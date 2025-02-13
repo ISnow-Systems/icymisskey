@@ -4,31 +4,31 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="showBottom ? $style.rootWithBottom : $style.root">
-	<div style="container-type: inline-size;">
-		<RouterView/>
+	<div :class="showBottom ? $style.rootWithBottom : $style.root">
+		<div style="container-type: inline-size;">
+			<RouterView/>
+		</div>
+
+		<XCommon/>
 	</div>
 
-	<XCommon/>
-</div>
-
-<!--
-	デッキUIが設定されている場合はデッキUIに戻れるようにする (ただし?zenが明示された場合は表示しない)
-	See https://github.com/misskey-dev/misskey/issues/10905
--->
-<div v-if="showBottom" :class="$style.bottom">
-	<button v-tooltip="i18n.ts.goToMisskey" :class="['_button', '_shadow', $style.button]" @click="goToMisskey"><i class="ti ti-home"></i></button>
-</div>
+	<!--
+		デッキUIが設定されている場合はデッキUIに戻れるようにする (ただし?zenが明示された場合は表示しない)
+		See https://github.com/misskey-dev/misskey/issues/10905
+	-->
+	<div v-if="showBottom" :class="$style.bottom">
+		<button v-tooltip="i18n.ts.goToMisskey" :class="['_button', '_shadow', $style.button]" @click="goToMisskey"><i class="ti ti-home"></i></button>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { computed, provide, ref } from 'vue';
+import {computed, provide, ref} from 'vue';
 import XCommon from './_common_/common.vue';
-import { provideMetadataReceiver, provideReactiveMetadata } from '@/scripts/page-metadata.js';
-import type { PageMetadata } from '@/scripts/page-metadata.js';
-import { instanceName, ui } from '@@/js/config.js';
-import { i18n } from '@/i18n.js';
-import { mainRouter } from '@/router/main.js';
+import {provideMetadataReceiver, provideReactiveMetadata} from '@/scripts/page-metadata.js';
+import type {PageMetadata} from '@/scripts/page-metadata.js';
+import {instanceName, ui} from '@@/js/config.js';
+import {i18n} from '@/i18n.js';
+import {mainRouter} from '@/router/main.js';
 
 const isRoot = computed(() => mainRouter.currentRoute.value.name === 'index');
 

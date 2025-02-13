@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import { EntityNotFoundError } from 'typeorm';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { AnnouncementService } from '@/core/AnnouncementService.js';
-import { ApiError } from '../../error.js';
+import {Injectable} from '@nestjs/common';
+import {EntityNotFoundError} from 'typeorm';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {AnnouncementService} from '@/core/AnnouncementService.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['meta'],
@@ -32,7 +32,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		announcementId: { type: 'string', format: 'misskey:id' },
+		announcementId: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['announcementId'],
 } as const;

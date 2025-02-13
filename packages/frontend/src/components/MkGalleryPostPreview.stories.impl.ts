@@ -4,10 +4,11 @@
  */
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { expect, userEvent, waitFor, within } from '@storybook/test';
-import type { StoryObj } from '@storybook/vue3';
-import { galleryPost } from '../../.storybook/fakes.js';
+import {expect, userEvent, waitFor, within} from '@storybook/test';
+import type {StoryObj} from '@storybook/vue3';
+import {galleryPost} from '../../.storybook/fakes.js';
 import MkGalleryPostPreview from './MkGalleryPostPreview.vue';
+
 export const Default = {
 	render(args) {
 		return {
@@ -29,7 +30,7 @@ export const Default = {
 			template: '<MkGalleryPostPreview v-bind="props" />',
 		};
 	},
-	async play({ canvasElement }) {
+	async play({canvasElement}) {
 		const canvas = within(canvasElement);
 		const links = canvas.getAllByRole('link');
 		expect(links).toHaveLength(2);

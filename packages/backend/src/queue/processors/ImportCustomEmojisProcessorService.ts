@@ -4,19 +4,19 @@
  */
 
 import * as fs from 'node:fs';
-import { Inject, Injectable } from '@nestjs/common';
-import { ZipReader } from 'slacc';
-import { DI } from '@/di-symbols.js';
-import type { EmojisRepository, DriveFilesRepository } from '@/models/_.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {ZipReader} from 'slacc';
+import {DI} from '@/di-symbols.js';
+import type {EmojisRepository, DriveFilesRepository} from '@/models/_.js';
 import type Logger from '@/logger.js';
-import { CustomEmojiService } from '@/core/CustomEmojiService.js';
-import { createTempDir } from '@/misc/create-temp.js';
-import { DriveService } from '@/core/DriveService.js';
-import { DownloadService } from '@/core/DownloadService.js';
-import { bindThis } from '@/decorators.js';
-import { QueueLoggerService } from '../QueueLoggerService.js';
+import {CustomEmojiService} from '@/core/CustomEmojiService.js';
+import {createTempDir} from '@/misc/create-temp.js';
+import {DriveService} from '@/core/DriveService.js';
+import {DownloadService} from '@/core/DownloadService.js';
+import {bindThis} from '@/decorators.js';
+import {QueueLoggerService} from '../QueueLoggerService.js';
 import type * as Bull from 'bullmq';
-import type { DbUserImportJobData } from '../types.js';
+import type {DbUserImportJobData} from '../types.js';
 
 // TODO: 名前衝突時の動作を選べるようにする
 @Injectable()
@@ -26,10 +26,8 @@ export class ImportCustomEmojisProcessorService {
 	constructor(
 		@Inject(DI.driveFilesRepository)
 		private driveFilesRepository: DriveFilesRepository,
-
 		@Inject(DI.emojisRepository)
 		private emojisRepository: EmojisRepository,
-
 		private customEmojiService: CustomEmojiService,
 		private driveService: DriveService,
 		private downloadService: DownloadService,

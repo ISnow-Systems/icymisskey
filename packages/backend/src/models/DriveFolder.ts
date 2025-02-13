@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { JoinColumn, ManyToOne, Entity, PrimaryColumn, Index, Column } from 'typeorm';
-import { id } from './util/id.js';
-import { MiUser } from './User.js';
+import {JoinColumn, ManyToOne, Entity, PrimaryColumn, Index, Column} from 'typeorm';
+import {id} from './util/id.js';
+import {MiUser} from './User.js';
 
 @Entity('drive_folder')
 export class MiDriveFolder {

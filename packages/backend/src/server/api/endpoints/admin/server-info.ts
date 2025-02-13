@@ -5,11 +5,11 @@
 
 import * as os from 'node:os';
 import si from 'systeminformation';
-import { Inject, Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import {Inject, Injectable} from '@nestjs/common';
+import {DataSource} from 'typeorm';
 import * as Redis from 'ioredis';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {DI} from '@/di-symbols.js';
 
 export const meta = {
 	requireCredential: true,
@@ -106,10 +106,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.db)
 		private db: DataSource,
-
 		@Inject(DI.redis)
 		private redisClient: Redis.Redis,
-
 	) {
 		super(meta, paramDef, async () => {
 			const memStats = await si.mem();

@@ -4,9 +4,9 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="{ [$style.center]: page.alignCenter, [$style.serif]: page.font === 'serif' }" class="_gaps">
-	<XBlock v-for="child in page.content" :key="child.id" :page="page" :block="child" :h="2"/>
-</div>
+	<div :class="{ [$style.center]: page.alignCenter, [$style.serif]: page.font === 'serif' }" class="_gaps">
+		<XBlock v-for="child in page.content" :key="child.id" :block="child" :h="2" :page="page"/>
+	</div>
 </template>
 
 <script lang="ts" setup>

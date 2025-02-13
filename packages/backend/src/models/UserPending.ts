@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { PrimaryColumn, Entity, Index, Column } from 'typeorm';
-import { id } from './util/id.js';
+import {PrimaryColumn, Entity, Index, Column} from 'typeorm';
+import {id} from './util/id.js';
 
 @Entity('user_pending')
 export class MiUserPending {
 	@PrimaryColumn(id())
 	public id: string;
 
-	@Index({ unique: true })
+	@Index({unique: true})
 	@Column('varchar', {
 		length: 128,
 	})

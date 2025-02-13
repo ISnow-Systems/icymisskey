@@ -3,21 +3,21 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import type { Packed } from '@/misc/json-schema.js';
-import { MetaService } from '@/core/MetaService.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { bindThis } from '@/decorators.js';
-import { RoleService } from '@/core/RoleService.js';
-import { isRenotePacked, isQuotePacked } from '@/misc/is-renote.js';
-import type { JsonObject } from '@/misc/json-value.js';
-import Channel, { type MiChannelService } from '../channel.js';
+import {Injectable} from '@nestjs/common';
+import type {Packed} from '@/misc/json-schema.js';
+import {MetaService} from '@/core/MetaService.js';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
+import {bindThis} from '@/decorators.js';
+import {RoleService} from '@/core/RoleService.js';
+import {isRenotePacked, isQuotePacked} from '@/misc/is-renote.js';
+import type {JsonObject} from '@/misc/json-value.js';
+import Channel, {type MiChannelService} from '../channel.js';
 
 class HybridTimelineChannel extends Channel {
-	public readonly chName = 'hybridTimeline';
 	public static shouldShare = false;
 	public static requireCredential = true as const;
 	public static kind = 'read:account';
+	public readonly chName = 'hybridTimeline';
 	private withRenotes: boolean;
 	private withReplies: boolean;
 	private withFiles: boolean;
@@ -26,7 +26,6 @@ class HybridTimelineChannel extends Channel {
 		private metaService: MetaService,
 		private roleService: RoleService,
 		private noteEntityService: NoteEntityService,
-
 		id: string,
 		connection: Channel['connection'],
 	) {
@@ -45,6 +44,12 @@ class HybridTimelineChannel extends Channel {
 
 		// Subscribe events
 		this.subscriber.on('notesStream', this.onNote);
+	}
+
+	@bindThis
+	public dispose(): void {
+		// Unsubscribe events
+		this.subscriber.off('notesStream', this.onNote);
 	}
 
 	@bindThis
@@ -103,12 +108,6 @@ class HybridTimelineChannel extends Channel {
 		this.connection.cacheNote(note);
 
 		this.send('note', note);
-	}
-
-	@bindThis
-	public dispose(): void {
-		// Unsubscribe events
-		this.subscriber.off('notesStream', this.onNote);
 	}
 }
 

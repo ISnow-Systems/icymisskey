@@ -4,19 +4,19 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkA :class="[$style.root]" :to="url" :style="{ background: bgCss }">
+	<MkA :class="[$style.root]" :style="{ background: bgCss }" :to="url">
 	<span>
 		<span>@{{ username }}</span>
 		<span v-if="(host != localHost)" :class="$style.host">@{{ toUnicode(host) }}</span>
 	</span>
-</MkA>
+	</MkA>
 </template>
 
 <script lang="ts" setup>
-import { toUnicode } from 'punycode.js';
-import { } from 'vue';
+import {toUnicode} from 'punycode.js';
+import {} from 'vue';
 import tinycolor from 'tinycolor2';
-import { host as localHost } from '@@/js/config.js';
+import {host as localHost} from '@@/js/config.js';
 
 const props = defineProps<{
 	username: string;

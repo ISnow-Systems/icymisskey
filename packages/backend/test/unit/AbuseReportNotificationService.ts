@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { describe, jest } from '@jest/globals';
-import { Test, TestingModule } from '@nestjs/testing';
-import { randomString } from '../utils.js';
-import { AbuseReportNotificationService } from '@/core/AbuseReportNotificationService.js';
+import {describe, jest} from '@jest/globals';
+import {Test, TestingModule} from '@nestjs/testing';
+import {randomString} from '../utils.js';
+import {AbuseReportNotificationService} from '@/core/AbuseReportNotificationService.js';
 import {
 	AbuseReportNotificationRecipientRepository,
 	MiAbuseReportNotificationRecipient,
@@ -17,17 +17,17 @@ import {
 	UserProfilesRepository,
 	UsersRepository,
 } from '@/models/_.js';
-import { DI } from '@/di-symbols.js';
-import { GlobalModule } from '@/GlobalModule.js';
-import { IdService } from '@/core/IdService.js';
-import { EmailService } from '@/core/EmailService.js';
-import { RoleService } from '@/core/RoleService.js';
-import { MetaService } from '@/core/MetaService.js';
-import { ModerationLogService } from '@/core/ModerationLogService.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { RecipientMethod } from '@/models/AbuseReportNotificationRecipient.js';
-import { SystemWebhookService } from '@/core/SystemWebhookService.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
+import {DI} from '@/di-symbols.js';
+import {GlobalModule} from '@/GlobalModule.js';
+import {IdService} from '@/core/IdService.js';
+import {EmailService} from '@/core/EmailService.js';
+import {RoleService} from '@/core/RoleService.js';
+import {MetaService} from '@/core/MetaService.js';
+import {ModerationLogService} from '@/core/ModerationLogService.js';
+import {GlobalEventService} from '@/core/GlobalEventService.js';
+import {RecipientMethod} from '@/models/AbuseReportNotificationRecipient.js';
+import {SystemWebhookService} from '@/core/SystemWebhookService.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
 
 process.env.NODE_ENV = 'test';
 
@@ -107,10 +107,10 @@ describe('AbuseReportNotificationService', () => {
 					AbuseReportNotificationService,
 					IdService,
 					{
-						provide: RoleService, useFactory: () => ({ getModeratorIds: jest.fn() }),
+						provide: RoleService, useFactory: () => ({getModeratorIds: jest.fn()}),
 					},
 					{
-						provide: SystemWebhookService, useFactory: () => ({ enqueueSystemWebhook: jest.fn() }),
+						provide: SystemWebhookService, useFactory: () => ({enqueueSystemWebhook: jest.fn()}),
 					},
 					{
 						provide: UserEntityService, useFactory: () => ({
@@ -119,16 +119,16 @@ describe('AbuseReportNotificationService', () => {
 						}),
 					},
 					{
-						provide: EmailService, useFactory: () => ({ sendEmail: jest.fn() }),
+						provide: EmailService, useFactory: () => ({sendEmail: jest.fn()}),
 					},
 					{
-						provide: MetaService, useFactory: () => ({ fetch: jest.fn() }),
+						provide: MetaService, useFactory: () => ({fetch: jest.fn()}),
 					},
 					{
-						provide: ModerationLogService, useFactory: () => ({ log: () => Promise.resolve() }),
+						provide: ModerationLogService, useFactory: () => ({log: () => Promise.resolve()}),
 					},
 					{
-						provide: GlobalEventService, useFactory: () => ({ publishAdminStream: jest.fn() }),
+						provide: GlobalEventService, useFactory: () => ({publishAdminStream: jest.fn()}),
 					},
 				],
 			})
@@ -149,9 +149,9 @@ describe('AbuseReportNotificationService', () => {
 	});
 
 	beforeEach(async () => {
-		root = await createUser({ username: 'root', usernameLower: 'root', isRoot: true });
-		alice = await createUser({ username: 'alice', usernameLower: 'alice', isRoot: false });
-		bob = await createUser({ username: 'bob', usernameLower: 'bob', isRoot: false });
+		root = await createUser({username: 'root', usernameLower: 'root', isRoot: true});
+		alice = await createUser({username: 'alice', usernameLower: 'alice', isRoot: false});
+		bob = await createUser({username: 'bob', usernameLower: 'bob', isRoot: false});
 		systemWebhook1 = await createWebhook();
 		systemWebhook2 = await createWebhook();
 
@@ -251,7 +251,7 @@ describe('AbuseReportNotificationService', () => {
 
 			await service.deleteRecipient(recipient1.id, root);
 
-			await expect(abuseReportNotificationRecipientRepository.findOneBy({ id: recipient1.id })).resolves.toBeNull();
+			await expect(abuseReportNotificationRecipientRepository.findOneBy({id: recipient1.id})).resolves.toBeNull();
 		});
 	});
 
@@ -302,49 +302,49 @@ describe('AbuseReportNotificationService', () => {
 
 			const [recipient1, recipient2, recipient3, recipient4] = await create();
 
-			const recipients = await service.fetchRecipients({}, { removeUnauthorized: false });
+			const recipients = await service.fetchRecipients({}, {removeUnauthorized: false});
 			expect(recipients).toEqual([recipient1, recipient2, recipient3, recipient4]);
 		});
 
 		test('emailのみ', async () => {
 			const [recipient1, recipient2, recipient3, recipient4] = await create();
 
-			const recipients = await service.fetchRecipients({ method: ['email'] });
+			const recipients = await service.fetchRecipients({method: ['email']});
 			expect(recipients).toEqual([recipient1, recipient2]);
 		});
 
 		test('webhookのみ', async () => {
 			const [recipient1, recipient2, recipient3, recipient4] = await create();
 
-			const recipients = await service.fetchRecipients({ method: ['webhook'] });
+			const recipients = await service.fetchRecipients({method: ['webhook']});
 			expect(recipients).toEqual([recipient3, recipient4]);
 		});
 
 		test('すべて', async () => {
 			const [recipient1, recipient2, recipient3, recipient4] = await create();
 
-			const recipients = await service.fetchRecipients({ method: ['email', 'webhook'] });
+			const recipients = await service.fetchRecipients({method: ['email', 'webhook']});
 			expect(recipients).toEqual([recipient1, recipient2, recipient3, recipient4]);
 		});
 
 		test('ID指定', async () => {
 			const [recipient1, recipient2, recipient3, recipient4] = await create();
 
-			const recipients = await service.fetchRecipients({ ids: [recipient1.id, recipient3.id] });
+			const recipients = await service.fetchRecipients({ids: [recipient1.id, recipient3.id]});
 			expect(recipients).toEqual([recipient1, recipient3]);
 		});
 
 		test('ID指定(method=emailではないIDが混ざりこまない)', async () => {
 			const [recipient1, recipient2, recipient3, recipient4] = await create();
 
-			const recipients = await service.fetchRecipients({ ids: [recipient1.id, recipient3.id], method: ['email'] });
+			const recipients = await service.fetchRecipients({ids: [recipient1.id, recipient3.id], method: ['email']});
 			expect(recipients).toEqual([recipient1]);
 		});
 
 		test('ID指定(method=webhookではないIDが混ざりこまない)', async () => {
 			const [recipient1, recipient2, recipient3, recipient4] = await create();
 
-			const recipients = await service.fetchRecipients({ ids: [recipient1.id, recipient3.id], method: ['webhook'] });
+			const recipients = await service.fetchRecipients({ids: [recipient1.id, recipient3.id], method: ['webhook']});
 			expect(recipients).toEqual([recipient3]);
 		});
 	});
@@ -387,7 +387,7 @@ describe('AbuseReportNotificationService', () => {
 			// ここでは非アクティブな通報通知を除外設定できているかを確認する
 			expect(webhookService.enqueueSystemWebhook).toHaveBeenCalledTimes(1);
 			expect(webhookService.enqueueSystemWebhook.mock.calls[0][0]).toBe('abuseReport');
-			expect(webhookService.enqueueSystemWebhook.mock.calls[0][2]).toEqual({ excludes: [systemWebhook2.id] });
+			expect(webhookService.enqueueSystemWebhook.mock.calls[0][2]).toEqual({excludes: [systemWebhook2.id]});
 		});
 	});
 });

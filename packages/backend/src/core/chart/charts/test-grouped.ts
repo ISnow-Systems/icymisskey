@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable, Inject } from '@nestjs/common';
-import { DataSource } from 'typeorm';
-import { AppLockService } from '@/core/AppLockService.js';
-import { DI } from '@/di-symbols.js';
+import {Injectable, Inject} from '@nestjs/common';
+import {DataSource} from 'typeorm';
+import {AppLockService} from '@/core/AppLockService.js';
+import {DI} from '@/di-symbols.js';
 import Logger from '@/logger.js';
-import { bindThis } from '@/decorators.js';
+import {bindThis} from '@/decorators.js';
 import Chart from '../core.js';
-import { name, schema } from './entities/test-grouped.js';
-import type { KVs } from '../core.js';
+import {name, schema} from './entities/test-grouped.js';
+import type {KVs} from '../core.js';
 
 /**
  * For testing
@@ -23,21 +23,10 @@ export default class TestGroupedChart extends Chart<typeof schema> { // eslint-d
 	constructor(
 		@Inject(DI.db)
 		private db: DataSource,
-
 		private appLockService: AppLockService,
 		logger: Logger,
 	) {
 		super(db, (k) => appLockService.getChartInsertLock(k), logger, name, schema, true);
-	}
-
-	protected async tickMajor(group: string): Promise<Partial<KVs<typeof schema>>> {
-		return {
-			'foo.total': this.total[group],
-		};
-	}
-
-	protected async tickMinor(): Promise<Partial<KVs<typeof schema>>> {
-		return {};
 	}
 
 	@bindThis
@@ -50,5 +39,15 @@ export default class TestGroupedChart extends Chart<typeof schema> { // eslint-d
 			'foo.total': 1,
 			'foo.inc': 1,
 		}, group);
+	}
+
+	protected async tickMajor(group: string): Promise<Partial<KVs<typeof schema>>> {
+		return {
+			'foo.total': this.total[group],
+		};
+	}
+
+	protected async tickMinor(): Promise<Partial<KVs<typeof schema>>> {
+		return {};
 	}
 }

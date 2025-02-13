@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Brackets } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
-import type { NotesRepository } from '@/models/_.js';
-import { safeForSql } from '@/misc/safe-for-sql.js';
-import { normalizeForSearch } from '@/misc/normalize-for-search.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { QueryService } from '@/core/QueryService.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { DI } from '@/di-symbols.js';
+import {Brackets} from 'typeorm';
+import {Inject, Injectable} from '@nestjs/common';
+import type {NotesRepository} from '@/models/_.js';
+import {safeForSql} from '@/misc/safe-for-sql.js';
+import {normalizeForSearch} from '@/misc/normalize-for-search.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {QueryService} from '@/core/QueryService.js';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
+import {DI} from '@/di-symbols.js';
 
 export const meta = {
 	tags: ['notes', 'hashtags'],
@@ -30,19 +30,19 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		reply: { type: 'boolean', nullable: true, default: null },
-		renote: { type: 'boolean', nullable: true, default: null },
+		reply: {type: 'boolean', nullable: true, default: null},
+		renote: {type: 'boolean', nullable: true, default: null},
 		withFiles: {
 			type: 'boolean',
 			default: false,
 			description: 'Only show notes that have attached files.',
 		},
-		poll: { type: 'boolean', nullable: true, default: null },
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
+		poll: {type: 'boolean', nullable: true, default: null},
+		sinceId: {type: 'string', format: 'misskey:id'},
+		untilId: {type: 'string', format: 'misskey:id'},
+		limit: {type: 'integer', minimum: 1, maximum: 100, default: 10},
 
-		tag: { type: 'string', minLength: 1 },
+		tag: {type: 'string', minLength: 1},
 		query: {
 			type: 'array',
 			description: 'The outer arrays are chained with OR, the inner arrays are chained with AND.',
@@ -58,8 +58,8 @@ export const paramDef = {
 		},
 	},
 	anyOf: [
-		{ required: ['tag'] },
-		{ required: ['query'] },
+		{required: ['tag']},
+		{required: ['query']},
 	],
 } as const;
 
@@ -68,7 +68,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		private noteEntityService: NoteEntityService,
 		private queryService: QueryService,
 	) {
@@ -87,14 +86,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			try {
 				if (ps.tag) {
 					if (!safeForSql(normalizeForSearch(ps.tag))) throw new Error('Injection');
-					query.andWhere(':tag <@ note.tags', { tag: [normalizeForSearch(ps.tag)] });
+					query.andWhere(':tag <@ note.tags', {tag: [normalizeForSearch(ps.tag)]});
 				} else {
 					query.andWhere(new Brackets(qb => {
 						for (const tags of ps.query!) {
 							qb.orWhere(new Brackets(qb => {
 								for (const tag of tags) {
 									if (!safeForSql(normalizeForSearch(tag))) throw new Error('Injection');
-									qb.andWhere(':tag <@ note.tags', { tag: [normalizeForSearch(tag)] });
+									qb.andWhere(':tag <@ note.tags', {tag: [normalizeForSearch(tag)]});
 								}
 							}));
 						}

@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable, Inject } from '@nestjs/common';
-import { DataSource } from 'typeorm';
-import type { MiDriveFile } from '@/models/DriveFile.js';
-import { AppLockService } from '@/core/AppLockService.js';
-import { DI } from '@/di-symbols.js';
-import { bindThis } from '@/decorators.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {DataSource} from 'typeorm';
+import type {MiDriveFile} from '@/models/DriveFile.js';
+import {AppLockService} from '@/core/AppLockService.js';
+import {DI} from '@/di-symbols.js';
+import {bindThis} from '@/decorators.js';
+import type {KVs} from '../core.js';
 import Chart from '../core.js';
-import { ChartLoggerService } from '../ChartLoggerService.js';
-import { name, schema } from './entities/drive.js';
-import type { KVs } from '../core.js';
+import {ChartLoggerService} from '../ChartLoggerService.js';
+import {name, schema} from './entities/drive.js';
 
 /**
  * ドライブに関するチャート
@@ -22,19 +22,10 @@ export default class DriveChart extends Chart<typeof schema> { // eslint-disable
 	constructor(
 		@Inject(DI.db)
 		private db: DataSource,
-
 		private appLockService: AppLockService,
 		private chartLoggerService: ChartLoggerService,
 	) {
 		super(db, (k) => appLockService.getChartInsertLock(k), chartLoggerService.logger, name, schema);
-	}
-
-	protected async tickMajor(): Promise<Partial<KVs<typeof schema>>> {
-		return {};
-	}
-
-	protected async tickMinor(): Promise<Partial<KVs<typeof schema>>> {
-		return {};
 	}
 
 	@bindThis
@@ -51,5 +42,13 @@ export default class DriveChart extends Chart<typeof schema> { // eslint-disable
 			'remote.decCount': isAdditional ? 0 : 1,
 			'remote.decSize': isAdditional ? 0 : fileSizeKb,
 		});
+	}
+
+	protected async tickMajor(): Promise<Partial<KVs<typeof schema>>> {
+		return {};
+	}
+
+	protected async tickMinor(): Promise<Partial<KVs<typeof schema>>> {
+		return {};
 	}
 }

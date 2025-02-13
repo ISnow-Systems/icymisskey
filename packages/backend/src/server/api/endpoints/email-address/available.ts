@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { EmailService } from '@/core/EmailService.js';
+import {Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {EmailService} from '@/core/EmailService.js';
 
 export const meta = {
 	tags: ['users'],
@@ -31,7 +31,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		emailAddress: { type: 'string' },
+		emailAddress: {type: 'string'},
 	},
 	required: ['emailAddress'],
 } as const;

@@ -8,14 +8,14 @@
  */
 
 import cluster from 'node:cluster';
-import { EventEmitter } from 'node:events';
+import {EventEmitter} from 'node:events';
 import chalk from 'chalk';
 import Xev from 'xev';
 import Logger from '@/logger.js';
-import { envOption } from '../env.js';
-import { masterMain } from './master.js';
-import { workerMain } from './worker.js';
-import { readyRef } from './ready.js';
+import {envOption} from '../env.js';
+import {masterMain} from './master.js';
+import {workerMain} from './worker.js';
+import {readyRef} from './ready.js';
 
 import 'reflect-metadata';
 
@@ -58,7 +58,8 @@ process.on('uncaughtException', err => {
 	try {
 		logger.error(err);
 		console.trace(err);
-	} catch { }
+	} catch {
+	}
 });
 
 // Dying away...

@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { GetterService } from '@/server/api/GetterService.js';
-import { ReactionService } from '@/core/ReactionService.js';
-import { ApiError } from '../../../error.js';
+import {Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {GetterService} from '@/server/api/GetterService.js';
+import {ReactionService} from '@/core/ReactionService.js';
+import {ApiError} from '../../../error.js';
 
 export const meta = {
 	tags: ['reactions', 'notes'],
@@ -48,8 +48,8 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		noteId: { type: 'string', format: 'misskey:id' },
-		reaction: { type: 'string' },
+		noteId: {type: 'string', format: 'misskey:id'},
+		reaction: {type: 'string'},
 	},
 	required: ['noteId', 'reaction'],
 } as const;

@@ -3,22 +3,22 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { EventEmitter } from 'events';
-import { Inject, Injectable } from '@nestjs/common';
+import {EventEmitter} from 'events';
+import {Inject, Injectable} from '@nestjs/common';
 import * as Redis from 'ioredis';
 import * as WebSocket from 'ws';
-import { DI } from '@/di-symbols.js';
-import type { UsersRepository, MiAccessToken } from '@/models/_.js';
-import { NoteReadService } from '@/core/NoteReadService.js';
-import { NotificationService } from '@/core/NotificationService.js';
-import { bindThis } from '@/decorators.js';
-import { CacheService } from '@/core/CacheService.js';
-import { MiLocalUser } from '@/models/User.js';
-import { UserService } from '@/core/UserService.js';
-import { ChannelFollowingService } from '@/core/ChannelFollowingService.js';
-import { AuthenticateService, AuthenticationError } from './AuthenticateService.js';
+import {DI} from '@/di-symbols.js';
+import type {UsersRepository, MiAccessToken} from '@/models/_.js';
+import {NoteReadService} from '@/core/NoteReadService.js';
+import {NotificationService} from '@/core/NotificationService.js';
+import {bindThis} from '@/decorators.js';
+import {CacheService} from '@/core/CacheService.js';
+import {MiLocalUser} from '@/models/User.js';
+import {UserService} from '@/core/UserService.js';
+import {ChannelFollowingService} from '@/core/ChannelFollowingService.js';
+import {AuthenticateService, AuthenticationError} from './AuthenticateService.js';
 import MainStreamConnection from './stream/Connection.js';
-import { ChannelsService } from './stream/ChannelsService.js';
+import {ChannelsService} from './stream/ChannelsService.js';
 import type * as http from 'node:http';
 
 @Injectable()
@@ -30,10 +30,8 @@ export class StreamingApiServerService {
 	constructor(
 		@Inject(DI.redisForSub)
 		private redisForSub: Redis.Redis,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		private cacheService: CacheService,
 		private noteReadService: NoteReadService,
 		private authenticateService: AuthenticateService,
@@ -124,7 +122,7 @@ export class StreamingApiServerService {
 			user: MiLocalUser | null;
 			app: MiAccessToken | null
 		}) => {
-			const { stream, user, app } = ctx;
+			const {stream, user, app} = ctx;
 
 			const ev = new EventEmitter();
 

@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne } from 'typeorm';
-import { id } from './util/id.js';
-import { MiUser } from './User.js';
-import { MiUserList } from './UserList.js';
+import {PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne} from 'typeorm';
+import {id} from './util/id.js';
+import {MiUser} from './User.js';
+import {MiUserList} from './UserList.js';
 
 @Entity('antenna')
 export class MiAntenna {
@@ -36,7 +36,7 @@ export class MiAntenna {
 	})
 	public name: string;
 
-	@Column('enum', { enum: ['home', 'all', 'users', 'list', 'users_blacklist'] })
+	@Column('enum', {enum: ['home', 'all', 'users', 'list', 'users_blacklist']})
 	public src: 'home' | 'all' | 'users' | 'list' | 'users_blacklist';
 
 	@Column({

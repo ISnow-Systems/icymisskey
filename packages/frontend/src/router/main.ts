@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { EventEmitter } from 'eventemitter3';
-import type { IRouter, Resolved, RouteDef, RouterEvent, RouterFlag } from '@/nirax.js';
+import {EventEmitter} from 'eventemitter3';
+import type {IRouter, Resolved, RouteDef, RouterEvent, RouterFlag} from '@/nirax.js';
 
-import type { App, ShallowRef } from 'vue';
+import type {App, ShallowRef} from 'vue';
 
 /**
  * {@link Router}による画面遷移を可能とするために{@link mainRouter}をセットアップする。
@@ -22,11 +22,11 @@ export function setupRouter(app: App, routerFactory: ((path: string) => IRouter)
 	});
 
 	mainRouter.addListener('push', ctx => {
-		window.history.pushState({ key: ctx.key }, '', ctx.path);
+		window.history.pushState({key: ctx.key}, '', ctx.path);
 	});
 
 	mainRouter.addListener('replace', ctx => {
-		window.history.replaceState({ key: ctx.key }, '', ctx.path);
+		window.history.replaceState({key: ctx.key}, '', ctx.path);
 	});
 
 	mainRouter.init();

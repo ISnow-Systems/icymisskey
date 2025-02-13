@@ -4,15 +4,15 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <script lang="ts">
-import { defineComponent, h, TransitionGroup, useCssModule } from 'vue';
-import type { PropType } from 'vue';
+import {defineComponent, h, TransitionGroup, useCssModule} from 'vue';
+import type {PropType} from 'vue';
 import MkAd from '@/components/global/MkAd.vue';
-import { isDebuggerEnabled, stackTraceInstances } from '@/debug.js';
-import { i18n } from '@/i18n.js';
+import {isDebuggerEnabled, stackTraceInstances} from '@/debug.js';
+import {i18n} from '@/i18n.js';
 import * as os from '@/os.js';
-import { instance } from '@/instance.js';
-import { defaultStore } from '@/store.js';
-import type { MisskeyEntity } from '@/types/date-separated-list.js';
+import {instance} from '@/instance.js';
+import {defaultStore} from '@/store.js';
+import type {MisskeyEntity} from '@/types/date-separated-list.js';
 
 export default defineComponent({
 	props: {
@@ -42,7 +42,7 @@ export default defineComponent({
 		},
 	},
 
-	setup(props, { slots, expose }) {
+	setup(props, {slots, expose}) {
 		const $style = useCssModule(); // カスタムレンダラなので使っても大丈夫
 
 		function getDateText(dateInstance: Date) {
@@ -123,7 +123,7 @@ export default defineComponent({
 					const id = crypto.randomUUID();
 					const instances = stackTraceInstances();
 					os.toast(instances.reduce((a, c) => `${a} at ${c.type.name}`, `[DEBUG_6864 (${id})]: ${nodes.length - keys.size} duplicated keys found`));
-					console.warn({ id, debugId: 6864, stack: instances });
+					console.warn({id, debugId: 6864, stack: instances});
 				}
 			}
 			return children;
@@ -156,9 +156,9 @@ export default defineComponent({
 			tag: 'div',
 			onBeforeLeave,
 			onLeaveCancelled,
-		}, { default: renderChildren }) : h('div', {
+		}, {default: renderChildren}) : h('div', {
 			class: classes,
-		}, { default: renderChildren });
+		}, {default: renderChildren});
 	},
 });
 </script>
@@ -168,21 +168,21 @@ export default defineComponent({
 	container-type: inline-size;
 
 	&:global {
-	> .list-move {
-		transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
-	}
+		> .list-move {
+			transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+		}
 
-	&.deny-move-transition > .list-move {
-		transition: none !important;
-	}
+		&.deny-move-transition > .list-move {
+			transition: none !important;
+		}
 
-	> .list-enter-active {
-		transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.7s cubic-bezier(0.23, 1, 0.32, 1);
-	}
+		> .list-enter-active {
+			transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+		}
 
-	> *:empty {
-		display: none;
-	}
+		> *:empty {
+			display: none;
+		}
 	}
 
 	&:not(.date-separated-list-nogap) > *:not(:last-child) {
@@ -205,20 +205,21 @@ export default defineComponent({
 
 .direction-up {
 	&:global {
-	> .list-enter-from,
-	> .list-leave-to {
-		opacity: 0;
-		transform: translateY(64px);
-	}
+		> .list-enter-from,
+		> .list-leave-to {
+			opacity: 0;
+			transform: translateY(64px);
+		}
 	}
 }
+
 .direction-down {
 	&:global {
-	> .list-enter-from,
-	> .list-leave-to {
-		opacity: 0;
-		transform: translateY(-64px);
-	}
+		> .list-enter-from,
+		> .list-leave-to {
+			opacity: 0;
+			transform: translateY(-64px);
+		}
 	}
 }
 

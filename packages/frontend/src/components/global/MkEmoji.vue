@@ -4,20 +4,20 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<img v-if="!useOsNativeEmojis" :class="$style.root" :src="url" :alt="props.emoji" decoding="async" @pointerenter="computeTitle" @click="onClick"/>
-<span v-else :alt="props.emoji" @pointerenter="computeTitle" @click="onClick">{{ colorizedNativeEmoji }}</span>
+	<img v-if="!useOsNativeEmojis" :alt="props.emoji" :class="$style.root" :src="url" decoding="async" @click="onClick" @pointerenter="computeTitle"/>
+	<span v-else :alt="props.emoji" @click="onClick" @pointerenter="computeTitle">{{ colorizedNativeEmoji }}</span>
 </template>
 
 <script lang="ts" setup>
-import { computed, inject } from 'vue';
-import { colorizeEmoji, getEmojiName } from '@@/js/emojilist.js';
-import { char2fluentEmojiFilePath, char2twemojiFilePath } from '@@/js/emoji-base.js';
-import { defaultStore } from '@/store.js';
+import {computed, inject} from 'vue';
+import {colorizeEmoji, getEmojiName} from '@@/js/emojilist.js';
+import {char2fluentEmojiFilePath, char2twemojiFilePath} from '@@/js/emoji-base.js';
+import {defaultStore} from '@/store.js';
 import * as os from '@/os.js';
-import { copyToClipboard } from '@/scripts/copy-to-clipboard.js';
+import {copyToClipboard} from '@/scripts/copy-to-clipboard.js';
 import * as sound from '@/scripts/sound.js';
-import { i18n } from '@/i18n.js';
-import type { MenuItem } from '@/types/menu.js';
+import {i18n} from '@/i18n.js';
+import type {MenuItem} from '@/types/menu.js';
 
 const props = defineProps<{
 	emoji: string;

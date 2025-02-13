@@ -4,102 +4,112 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="700" :class="$style.main">
-		<MkHorizontalSwipe v-model:tab="tab" :tabs="headerTabs">
-			<div v-if="channel && tab === 'overview'" key="overview" class="_gaps">
-				<div class="_panel" :class="$style.bannerContainer">
-					<XChannelFollowButton :channel="channel" :full="true" :class="$style.subscribe"/>
-					<MkButton v-if="favorited" v-tooltip="i18n.ts.unfavorite" asLike class="button" rounded primary :class="$style.favorite" @click="unfavorite()"><i class="ti ti-star"></i></MkButton>
-					<MkButton v-else v-tooltip="i18n.ts.favorite" asLike class="button" rounded :class="$style.favorite" @click="favorite()"><i class="ti ti-star"></i></MkButton>
-					<div :style="{ backgroundImage: channel.bannerUrl ? `url(${channel.bannerUrl})` : undefined }" :class="$style.banner">
-						<div :class="$style.bannerStatus">
-							<div><i class="ti ti-users ti-fw"></i><I18n :src="i18n.ts._channel.usersCount" tag="span" style="margin-left: 4px;"><template #n><b>{{ channel.usersCount }}</b></template></I18n></div>
-							<div><i class="ti ti-pencil ti-fw"></i><I18n :src="i18n.ts._channel.notesCount" tag="span" style="margin-left: 4px;"><template #n><b>{{ channel.notesCount }}</b></template></I18n></div>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/>
+		</template>
+		<MkSpacer :class="$style.main" :contentMax="700">
+			<MkHorizontalSwipe v-model:tab="tab" :tabs="headerTabs">
+				<div v-if="channel && tab === 'overview'" key="overview" class="_gaps">
+					<div :class="$style.bannerContainer" class="_panel">
+						<XChannelFollowButton :channel="channel" :class="$style.subscribe" :full="true"/>
+						<MkButton v-if="favorited" v-tooltip="i18n.ts.unfavorite" :class="$style.favorite" asLike class="button" primary rounded @click="unfavorite()"><i class="ti ti-star"></i></MkButton>
+						<MkButton v-else v-tooltip="i18n.ts.favorite" :class="$style.favorite" asLike class="button" rounded @click="favorite()"><i class="ti ti-star"></i></MkButton>
+						<div :class="$style.banner" :style="{ backgroundImage: channel.bannerUrl ? `url(${channel.bannerUrl})` : undefined }">
+							<div :class="$style.bannerStatus">
+								<div><i class="ti ti-users ti-fw"></i>
+									<I18n :src="i18n.ts._channel.usersCount" style="margin-left: 4px;" tag="span">
+										<template #n><b>{{ channel.usersCount }}</b></template>
+									</I18n>
+								</div>
+								<div><i class="ti ti-pencil ti-fw"></i>
+									<I18n :src="i18n.ts._channel.notesCount" style="margin-left: 4px;" tag="span">
+										<template #n><b>{{ channel.notesCount }}</b></template>
+									</I18n>
+								</div>
+							</div>
+							<div v-if="channel.isSensitive" :class="$style.sensitiveIndicator">{{ i18n.ts.sensitive }}</div>
+							<div :class="$style.bannerFade"></div>
 						</div>
-						<div v-if="channel.isSensitive" :class="$style.sensitiveIndicator">{{ i18n.ts.sensitive }}</div>
-						<div :class="$style.bannerFade"></div>
+						<div v-if="channel.description" :class="$style.description">
+							<Mfm :isNote="false" :text="channel.description"/>
+						</div>
 					</div>
-					<div v-if="channel.description" :class="$style.description">
-						<Mfm :text="channel.description" :isNote="false"/>
-					</div>
-				</div>
 
-				<MkFoldableSection>
-					<template #header><i class="ti ti-pin ti-fw" style="margin-right: 0.5em;"></i>{{ i18n.ts.pinnedNotes }}</template>
-					<div v-if="channel.pinnedNotes && channel.pinnedNotes.length > 0" class="_gaps">
-						<MkNote v-for="note in channel.pinnedNotes" :key="note.id" class="_panel" :note="note"/>
-					</div>
-				</MkFoldableSection>
-			</div>
-			<div v-if="channel && tab === 'timeline'" key="timeline" class="_gaps">
-				<MkInfo v-if="channel.isArchived" warn>{{ i18n.ts.thisChannelArchived }}</MkInfo>
+					<MkFoldableSection>
+						<template #header><i class="ti ti-pin ti-fw" style="margin-right: 0.5em;"></i>{{ i18n.ts.pinnedNotes }}</template>
+						<div v-if="channel.pinnedNotes && channel.pinnedNotes.length > 0" class="_gaps">
+							<MkNote v-for="note in channel.pinnedNotes" :key="note.id" :note="note" class="_panel"/>
+						</div>
+					</MkFoldableSection>
+				</div>
+				<div v-if="channel && tab === 'timeline'" key="timeline" class="_gaps">
+					<MkInfo v-if="channel.isArchived" warn>{{ i18n.ts.thisChannelArchived }}</MkInfo>
 
-				<!-- スマホ・タブレットの場合、キーボードが表示されると投稿が見づらくなるので、デスクトップ場合のみ自動でフォーカスを当てる -->
-				<MkPostForm v-if="$i && defaultStore.reactiveState.showFixedPostFormInChannel.value" :channel="channel" class="post-form _panel" fixed :autofocus="deviceKind === 'desktop'"/>
+					<!-- スマホ・タブレットの場合、キーボードが表示されると投稿が見づらくなるので、デスクトップ場合のみ自動でフォーカスを当てる -->
+					<MkPostForm v-if="$i && defaultStore.reactiveState.showFixedPostFormInChannel.value" :autofocus="deviceKind === 'desktop'" :channel="channel" class="post-form _panel" fixed/>
 
-				<MkTimeline :key="channelId" src="channel" :channel="channelId" @before="before" @after="after" @note="miLocalStorage.setItemAsJson(`channelLastReadedAt:${channel.id}`, Date.now())"/>
-			</div>
-			<div v-else-if="tab === 'featured'" key="featured">
-				<MkNotes :pagination="featuredPagination"/>
-			</div>
-			<div v-else-if="tab === 'search'" key="search">
-				<div v-if="notesSearchAvailable" class="_gaps">
-					<div>
-						<MkInput v-model="searchQuery" @enter="search()">
-							<template #prefix><i class="ti ti-search"></i></template>
-						</MkInput>
-						<MkButton primary rounded style="margin-top: 8px;" @click="search()">{{ i18n.ts.search }}</MkButton>
+					<MkTimeline :key="channelId" :channel="channelId" src="channel" @after="after" @before="before" @note="miLocalStorage.setItemAsJson(`channelLastReadedAt:${channel.id}`, Date.now())"/>
+				</div>
+				<div v-else-if="tab === 'featured'" key="featured">
+					<MkNotes :pagination="featuredPagination"/>
+				</div>
+				<div v-else-if="tab === 'search'" key="search">
+					<div v-if="notesSearchAvailable" class="_gaps">
+						<div>
+							<MkInput v-model="searchQuery" @enter="search()">
+								<template #prefix><i class="ti ti-search"></i></template>
+							</MkInput>
+							<MkButton primary rounded style="margin-top: 8px;" @click="search()">{{ i18n.ts.search }}</MkButton>
+						</div>
+						<MkNotes v-if="searchPagination" :key="searchKey" :pagination="searchPagination"/>
 					</div>
-					<MkNotes v-if="searchPagination" :key="searchKey" :pagination="searchPagination"/>
+					<div v-else>
+						<MkInfo warn>{{ i18n.ts.notesSearchNotAvailable }}</MkInfo>
+					</div>
 				</div>
-				<div v-else>
-					<MkInfo warn>{{ i18n.ts.notesSearchNotAvailable }}</MkInfo>
-				</div>
+			</MkHorizontalSwipe>
+		</MkSpacer>
+		<template #footer>
+			<div :class="$style.footer">
+				<MkSpacer :contentMax="700" :marginMax="16" :marginMin="16">
+					<div class="_buttonsCenter">
+						<MkButton gradate inline primary rounded @click="openPostForm()"><i class="ti ti-pencil"></i> {{ i18n.ts.postToTheChannel }}</MkButton>
+					</div>
+				</MkSpacer>
 			</div>
-		</MkHorizontalSwipe>
-	</MkSpacer>
-	<template #footer>
-		<div :class="$style.footer">
-			<MkSpacer :contentMax="700" :marginMin="16" :marginMax="16">
-				<div class="_buttonsCenter">
-					<MkButton inline rounded primary gradate @click="openPostForm()"><i class="ti ti-pencil"></i> {{ i18n.ts.postToTheChannel }}</MkButton>
-				</div>
-			</MkSpacer>
-		</div>
-	</template>
-</MkStickyContainer>
+		</template>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { computed, watch, ref } from 'vue';
+import {computed, watch, ref} from 'vue';
 import * as Misskey from 'misskey-js';
 import MkPostForm from '@/components/MkPostForm.vue';
 import MkTimeline from '@/components/MkTimeline.vue';
 import XChannelFollowButton from '@/components/MkChannelFollowButton.vue';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { $i, iAmModerator } from '@/account.js';
-import { i18n } from '@/i18n.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
-import { deviceKind } from '@/scripts/device-kind.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {$i, iAmModerator} from '@/account.js';
+import {i18n} from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
+import {deviceKind} from '@/scripts/device-kind.js';
 import MkNotes from '@/components/MkNotes.vue';
-import { url } from '@@/js/config.js';
-import { favoritedChannelsCache } from '@/cache.js';
+import {url} from '@@/js/config.js';
+import {favoritedChannelsCache} from '@/cache.js';
 import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/MkInput.vue';
-import { defaultStore } from '@/store.js';
+import {defaultStore} from '@/store.js';
 import MkNote from '@/components/MkNote.vue';
 import MkInfo from '@/components/MkInfo.vue';
 import MkFoldableSection from '@/components/MkFoldableSection.vue';
 import MkHorizontalSwipe from '@/components/MkHorizontalSwipe.vue';
-import type { PageHeaderItem } from '@/types/page-header.js';
-import { isSupportShare } from '@/scripts/navigator.js';
-import { copyToClipboard } from '@/scripts/copy-to-clipboard.js';
-import { notesSearchAvailable } from '@/scripts/check-permissions.js';
-import { miLocalStorage } from '@/local-storage.js';
-import { useRouter } from '@/router/supplier.js';
+import type {PageHeaderItem} from '@/types/page-header.js';
+import {isSupportShare} from '@/scripts/navigator.js';
+import {copyToClipboard} from '@/scripts/copy-to-clipboard.js';
+import {notesSearchAvailable} from '@/scripts/check-permissions.js';
+import {miLocalStorage} from '@/local-storage.js';
+import {useRouter} from '@/router/supplier.js';
 
 const router = useRouter();
 
@@ -139,7 +149,7 @@ watch(() => props.channelId, async () => {
 			miLocalStorage.setItemAsJson(`channelLastReadedAt:${channel.value.id}`, lastNotedAt);
 		}
 	}
-}, { immediate: true });
+}, {immediate: true});
 
 function edit() {
 	router.push(`/channels/${channel.value?.id}/edit`);

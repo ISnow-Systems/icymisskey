@@ -4,13 +4,13 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="$style.root">
-	<MkMediaList v-if="image" :mediaList="[image]" :class="$style.mediaList"/>
-</div>
+	<div :class="$style.root">
+		<MkMediaList v-if="image" :class="$style.mediaList" :mediaList="[image]"/>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import * as Misskey from 'misskey-js';
 import MkMediaList from '@/components/MkMediaList.vue';
 
@@ -32,6 +32,7 @@ onMounted(() => {
 	border-radius: var(--MI-radius);
 	overflow: hidden;
 }
+
 .mediaList {
 	// MkMediaList 内の上部マージン 4px
 	margin-top: -4px;

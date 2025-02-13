@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { promisify } from 'node:util';
-import { Inject, Injectable } from '@nestjs/common';
+import {promisify} from 'node:util';
+import {Inject, Injectable} from '@nestjs/common';
 import redisLock from 'redis-lock';
 import * as Redis from 'ioredis';
-import { DI } from '@/di-symbols.js';
-import { bindThis } from '@/decorators.js';
+import {DI} from '@/di-symbols.js';
+import {bindThis} from '@/decorators.js';
 
 /**
  * Retry delay (ms) for lock acquisition

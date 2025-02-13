@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { PrimaryColumn, Entity, Index, Column } from 'typeorm';
-import { id } from './util/id.js';
+import {PrimaryColumn, Entity, Index, Column} from 'typeorm';
+import {id} from './util/id.js';
 
 @Entity('emoji')
-@Index(['name', 'host'], { unique: true })
+@Index(['name', 'host'], {unique: true})
 export class MiEmoji {
 	@PrimaryColumn(id())
 	public id: string;

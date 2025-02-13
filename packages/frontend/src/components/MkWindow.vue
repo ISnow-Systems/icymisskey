@@ -4,61 +4,61 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<Transition
-	:enterActiveClass="defaultStore.state.animation ? $style.transition_window_enterActive : ''"
-	:leaveActiveClass="defaultStore.state.animation ? $style.transition_window_leaveActive : ''"
-	:enterFromClass="defaultStore.state.animation ? $style.transition_window_enterFrom : ''"
-	:leaveToClass="defaultStore.state.animation ? $style.transition_window_leaveTo : ''"
-	appear
-	@afterLeave="emit('closed')"
->
-	<div v-if="showing" ref="rootEl" :class="[$style.root, { [$style.maximized]: maximized }]">
-		<div :class="$style.body" class="_shadow" @mousedown="onBodyMousedown" @keydown="onKeydown">
-			<div :class="[$style.header, { [$style.mini]: mini }]" @contextmenu.prevent.stop="onContextmenu">
+	<Transition
+		:enterActiveClass="defaultStore.state.animation ? $style.transition_window_enterActive : ''"
+		:enterFromClass="defaultStore.state.animation ? $style.transition_window_enterFrom : ''"
+		:leaveActiveClass="defaultStore.state.animation ? $style.transition_window_leaveActive : ''"
+		:leaveToClass="defaultStore.state.animation ? $style.transition_window_leaveTo : ''"
+		appear
+		@afterLeave="emit('closed')"
+	>
+		<div v-if="showing" ref="rootEl" :class="[$style.root, { [$style.maximized]: maximized }]">
+			<div :class="$style.body" class="_shadow" @keydown="onKeydown" @mousedown="onBodyMousedown">
+				<div :class="[$style.header, { [$style.mini]: mini }]" @contextmenu.prevent.stop="onContextmenu">
 				<span :class="$style.headerLeft">
 					<template v-if="!minimized">
-						<button v-for="button in buttonsLeft" v-tooltip="button.title" class="_button" :class="[$style.headerButton, { [$style.highlighted]: button.highlighted }]" @click="button.onClick"><i :class="button.icon"></i></button>
+						<button v-for="button in buttonsLeft" v-tooltip="button.title" :class="[$style.headerButton, { [$style.highlighted]: button.highlighted }]" class="_button" @click="button.onClick"><i :class="button.icon"></i></button>
 					</template>
 				</span>
-				<span :class="$style.headerTitle" @mousedown.prevent="onHeaderMousedown" @touchstart.prevent="onHeaderMousedown">
+					<span :class="$style.headerTitle" @mousedown.prevent="onHeaderMousedown" @touchstart.prevent="onHeaderMousedown">
 					<slot name="header"></slot>
 				</span>
-				<span :class="$style.headerRight">
+					<span :class="$style.headerRight">
 					<template v-if="!minimized">
-						<button v-for="button in buttonsRight" v-tooltip="button.title" class="_button" :class="[$style.headerButton, { [$style.highlighted]: button.highlighted }]" @click="button.onClick"><i :class="button.icon"></i></button>
+						<button v-for="button in buttonsRight" v-tooltip="button.title" :class="[$style.headerButton, { [$style.highlighted]: button.highlighted }]" class="_button" @click="button.onClick"><i :class="button.icon"></i></button>
 					</template>
-					<button v-if="canResize && minimized" v-tooltip="i18n.ts.windowRestore" class="_button" :class="$style.headerButton" @click="unMinimize()"><i class="ti ti-maximize"></i></button>
-					<button v-else-if="canResize && !maximized" v-tooltip="i18n.ts.windowMinimize" class="_button" :class="$style.headerButton" @click="minimize()"><i class="ti ti-minimize"></i></button>
-					<button v-if="canResize && maximized" v-tooltip="i18n.ts.windowRestore" class="_button" :class="$style.headerButton" @click="unMaximize()"><i class="ti ti-picture-in-picture"></i></button>
-					<button v-else-if="canResize && !maximized && !minimized" v-tooltip="i18n.ts.windowMaximize" class="_button" :class="$style.headerButton" @click="maximize()"><i class="ti ti-rectangle"></i></button>
-					<button v-if="closeButton" v-tooltip="i18n.ts.close" class="_button" :class="$style.headerButton" @click="close()"><i class="ti ti-x"></i></button>
+					<button v-if="canResize && minimized" v-tooltip="i18n.ts.windowRestore" :class="$style.headerButton" class="_button" @click="unMinimize()"><i class="ti ti-maximize"></i></button>
+					<button v-else-if="canResize && !maximized" v-tooltip="i18n.ts.windowMinimize" :class="$style.headerButton" class="_button" @click="minimize()"><i class="ti ti-minimize"></i></button>
+					<button v-if="canResize && maximized" v-tooltip="i18n.ts.windowRestore" :class="$style.headerButton" class="_button" @click="unMaximize()"><i class="ti ti-picture-in-picture"></i></button>
+					<button v-else-if="canResize && !maximized && !minimized" v-tooltip="i18n.ts.windowMaximize" :class="$style.headerButton" class="_button" @click="maximize()"><i class="ti ti-rectangle"></i></button>
+					<button v-if="closeButton" v-tooltip="i18n.ts.close" :class="$style.headerButton" class="_button" @click="close()"><i class="ti ti-x"></i></button>
 				</span>
+				</div>
+				<div :class="$style.content">
+					<slot></slot>
+				</div>
 			</div>
-			<div :class="$style.content">
-				<slot></slot>
-			</div>
+			<template v-if="canResize && !minimized">
+				<div :class="$style.handleTop" @mousedown.prevent="onTopHandleMousedown"></div>
+				<div :class="$style.handleRight" @mousedown.prevent="onRightHandleMousedown"></div>
+				<div :class="$style.handleBottom" @mousedown.prevent="onBottomHandleMousedown"></div>
+				<div :class="$style.handleLeft" @mousedown.prevent="onLeftHandleMousedown"></div>
+				<div :class="$style.handleTopLeft" @mousedown.prevent="onTopLeftHandleMousedown"></div>
+				<div :class="$style.handleTopRight" @mousedown.prevent="onTopRightHandleMousedown"></div>
+				<div :class="$style.handleBottomRight" @mousedown.prevent="onBottomRightHandleMousedown"></div>
+				<div :class="$style.handleBottomLeft" @mousedown.prevent="onBottomLeftHandleMousedown"></div>
+			</template>
 		</div>
-		<template v-if="canResize && !minimized">
-			<div :class="$style.handleTop" @mousedown.prevent="onTopHandleMousedown"></div>
-			<div :class="$style.handleRight" @mousedown.prevent="onRightHandleMousedown"></div>
-			<div :class="$style.handleBottom" @mousedown.prevent="onBottomHandleMousedown"></div>
-			<div :class="$style.handleLeft" @mousedown.prevent="onLeftHandleMousedown"></div>
-			<div :class="$style.handleTopLeft" @mousedown.prevent="onTopLeftHandleMousedown"></div>
-			<div :class="$style.handleTopRight" @mousedown.prevent="onTopRightHandleMousedown"></div>
-			<div :class="$style.handleBottomRight" @mousedown.prevent="onBottomRightHandleMousedown"></div>
-			<div :class="$style.handleBottomLeft" @mousedown.prevent="onBottomLeftHandleMousedown"></div>
-		</template>
-	</div>
-</Transition>
+	</Transition>
 </template>
 
 <script lang="ts" setup>
-import { onBeforeUnmount, onMounted, provide, shallowRef, ref } from 'vue';
-import type { MenuItem } from '@/types/menu.js';
+import {onBeforeUnmount, onMounted, provide, shallowRef, ref} from 'vue';
+import type {MenuItem} from '@/types/menu.js';
 import contains from '@/scripts/contains.js';
 import * as os from '@/os.js';
-import { i18n } from '@/i18n.js';
-import { defaultStore } from '@/store.js';
+import {i18n} from '@/i18n.js';
+import {defaultStore} from '@/store.js';
 
 type WindowButton = {
 	title: string;
@@ -483,6 +483,7 @@ defineExpose({
 .transition_window_leaveActive {
 	transition: opacity 0.2s, transform 0.2s !important;
 }
+
 .transition_window_enterFrom,
 .transition_window_leaveTo {
 	pointer-events: none;

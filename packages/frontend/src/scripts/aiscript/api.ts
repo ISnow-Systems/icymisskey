@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { errors, utils, values } from '@syuilo/aiscript';
+import {errors, utils, values} from '@syuilo/aiscript';
 import * as Misskey from 'misskey-js';
-import { url, lang } from '@@/js/config.js';
-import { assertStringAndIsIn } from './common.js';
+import {url, lang} from '@@/js/config.js';
+import {assertStringAndIsIn} from './common.js';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { $i } from '@/account.js';
-import { miLocalStorage } from '@/local-storage.js';
-import { customEmojis } from '@/custom-emojis.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {$i} from '@/account.js';
+import {miLocalStorage} from '@/local-storage.js';
+import {customEmojis} from '@/custom-emojis.js';
 
 const DIALOG_TYPES = [
 	'error',
@@ -26,7 +26,7 @@ export function aiScriptReadline(q: string): Promise<string> {
 	return new Promise(ok => {
 		os.inputText({
 			title: q,
-		}).then(({ result: a }) => {
+		}).then(({result: a}) => {
 			ok(a ?? '');
 		});
 	});
@@ -76,7 +76,7 @@ export function createAiScriptEnv(opts: { storageKey: string, token?: string }) 
 				// バグがあればundefinedもあり得るため念のため
 				if (typeof token.value !== 'string') throw new Error('invalid token');
 			}
-			const actualToken: string|null = token?.value ?? opts.token ?? null;
+			const actualToken: string | null = token?.value ?? opts.token ?? null;
 			if (param == null) {
 				throw new errors.AiScriptRuntimeError('expected param');
 			}

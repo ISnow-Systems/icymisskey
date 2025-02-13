@@ -3,23 +3,22 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { ReversiService } from '@/core/ReversiService.js';
+import {Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {ReversiService} from '@/core/ReversiService.js';
 
 export const meta = {
 	requireCredential: true,
 
 	kind: 'write:account',
 
-	errors: {
-	},
+	errors: {},
 } as const;
 
 export const paramDef = {
 	type: 'object',
 	properties: {
-		userId: { type: 'string', format: 'misskey:id', nullable: true },
+		userId: {type: 'string', format: 'misskey:id', nullable: true},
 	},
 	required: [],
 } as const;

@@ -5,15 +5,15 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 <!-- eslint-disable vue/no-v-html -->
 <template>
-<div :class="[$style.codeBlockRoot, { [$style.codeEditor]: codeEditor }, (darkMode ? $style.dark : $style.light)]" v-html="html"></div>
+	<div :class="[$style.codeBlockRoot, { [$style.codeEditor]: codeEditor }, (darkMode ? $style.dark : $style.light)]" v-html="html"></div>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
-import { bundledLanguagesInfo } from 'shiki/langs';
-import type { BundledLanguage } from 'shiki/langs';
-import { getHighlighter, getTheme } from '@/scripts/code-highlighter.js';
-import { defaultStore } from '@/store.js';
+import {computed, ref, watch} from 'vue';
+import {bundledLanguagesInfo} from 'shiki/langs';
+import type {BundledLanguage} from 'shiki/langs';
+import {getHighlighter, getTheme} from '@/scripts/code-highlighter.js';
+import {defaultStore} from '@/store.js';
 
 const props = defineProps<{
 	code: string;
@@ -68,10 +68,10 @@ watch(() => props.lang, (to) => {
 	return new Promise((resolve) => {
 		fetchLanguage(to).then(() => resolve);
 	});
-}, { immediate: true });
+}, {immediate: true});
 </script>
 
-<style module lang="scss">
+<style lang="scss" module>
 .codeBlockRoot :global(.shiki) {
 	padding: 1em;
 	margin: .5em 0;
@@ -132,8 +132,8 @@ watch(() => props.lang, (to) => {
 		font-size: 1em;
 		overflow: visible;
 		text-rendering: inherit;
-    text-transform: inherit;
-    white-space: pre;
+		text-transform: inherit;
+		white-space: pre;
 
 		& span {
 			display: inline-block;

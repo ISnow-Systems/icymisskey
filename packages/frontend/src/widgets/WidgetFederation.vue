@@ -4,39 +4,39 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkContainer :showHeader="widgetProps.showHeader" :foldable="foldable" :scrollable="scrollable" data-cy-mkw-federation class="mkw-federation">
-	<template #icon><i class="ti ti-whirl"></i></template>
-	<template #header>{{ i18n.ts._widgets.federation }}</template>
+	<MkContainer :foldable="foldable" :scrollable="scrollable" :showHeader="widgetProps.showHeader" class="mkw-federation" data-cy-mkw-federation>
+		<template #icon><i class="ti ti-whirl"></i></template>
+		<template #header>{{ i18n.ts._widgets.federation }}</template>
 
-	<div class="wbrkwalb">
-		<MkLoading v-if="fetching"/>
-		<TransitionGroup v-else tag="div" :name="defaultStore.state.animation ? 'chart' : ''" class="instances">
-			<div v-for="(instance, i) in instances" :key="instance.id" class="instance">
-				<img :src="getInstanceIcon(instance)" alt=""/>
-				<div class="body">
-					<MkA class="a" :to="`/instance-info/${instance.host}`" behavior="window" :title="instance.host">{{ instance.host }}</MkA>
-					<p>{{ instance.softwareName || '?' }} {{ instance.softwareVersion }}</p>
+		<div class="wbrkwalb">
+			<MkLoading v-if="fetching"/>
+			<TransitionGroup v-else :name="defaultStore.state.animation ? 'chart' : ''" class="instances" tag="div">
+				<div v-for="(instance, i) in instances" :key="instance.id" class="instance">
+					<img :src="getInstanceIcon(instance)" alt=""/>
+					<div class="body">
+						<MkA :title="instance.host" :to="`/instance-info/${instance.host}`" behavior="window" class="a">{{ instance.host }}</MkA>
+						<p>{{ instance.softwareName || '?' }} {{ instance.softwareVersion }}</p>
+					</div>
+					<MkMiniChart :src="charts[i].requests.received" class="chart"/>
 				</div>
-				<MkMiniChart class="chart" :src="charts[i].requests.received"/>
-			</div>
-		</TransitionGroup>
-	</div>
-</MkContainer>
+			</TransitionGroup>
+		</div>
+	</MkContainer>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import {ref} from 'vue';
 import * as Misskey from 'misskey-js';
-import { useWidgetPropsManager } from './widget.js';
-import type { WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget.js';
-import type { GetFormResultType } from '@/scripts/form.js';
+import {useWidgetPropsManager} from './widget.js';
+import type {WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps} from './widget.js';
+import type {GetFormResultType} from '@/scripts/form.js';
 import MkContainer from '@/components/MkContainer.vue';
 import MkMiniChart from '@/components/MkMiniChart.vue';
-import { misskeyApi, misskeyApiGet } from '@/scripts/misskey-api.js';
-import { useInterval } from '@@/js/use-interval.js';
-import { i18n } from '@/i18n.js';
-import { getProxiedImageUrlNullable } from '@/scripts/media-proxy.js';
-import { defaultStore } from '@/store.js';
+import {misskeyApi, misskeyApiGet} from '@/scripts/misskey-api.js';
+import {useInterval} from '@@/js/use-interval.js';
+import {i18n} from '@/i18n.js';
+import {getProxiedImageUrlNullable} from '@/scripts/media-proxy.js';
+import {defaultStore} from '@/store.js';
 
 const name = 'federation';
 
@@ -52,7 +52,7 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 const props = defineProps<WidgetComponentProps<WidgetProps>>();
 const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 
-const { widgetProps, configure } = useWidgetPropsManager(name,
+const {widgetProps, configure} = useWidgetPropsManager(name,
 	widgetPropsDef,
 	props,
 	emit,
@@ -67,7 +67,7 @@ const fetch = async () => {
 		sort: '+latestRequestReceivedAt',
 		limit: 5,
 	});
-	const fetchedCharts = await Promise.all(fetchedInstances.map(i => misskeyApiGet('charts/instance', { host: i.host, limit: 16, span: 'hour' })));
+	const fetchedCharts = await Promise.all(fetchedInstances.map(i => misskeyApiGet('charts/instance', {host: i.host, limit: 16, span: 'hour'})));
 	instances.value = fetchedInstances;
 	charts.value = fetchedCharts;
 	fetching.value = false;

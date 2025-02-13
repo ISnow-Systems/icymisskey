@@ -4,15 +4,15 @@
  */
 
 import ms from 'ms';
-import { Inject, Injectable } from '@nestjs/common';
-import { DB_MAX_IMAGE_COMMENT_LENGTH } from '@/const.js';
-import { IdentifiableError } from '@/misc/identifiable-error.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DriveFileEntityService } from '@/core/entities/DriveFileEntityService.js';
-import { DriveService } from '@/core/DriveService.js';
-import { ApiError } from '../../../error.js';
-import { MiMeta } from '@/models/_.js';
-import { DI } from '@/di-symbols.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {DB_MAX_IMAGE_COMMENT_LENGTH} from '@/const.js';
+import {IdentifiableError} from '@/misc/identifiable-error.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {DriveFileEntityService} from '@/core/entities/DriveFileEntityService.js';
+import {DriveService} from '@/core/DriveService.js';
+import {ApiError} from '../../../error.js';
+import {MiMeta} from '@/models/_.js';
+import {DI} from '@/di-symbols.js';
 
 export const meta = {
 	tags: ['drive'],
@@ -62,11 +62,11 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		folderId: { type: 'string', format: 'misskey:id', nullable: true, default: null },
-		name: { type: 'string', nullable: true, default: null },
-		comment: { type: 'string', nullable: true, maxLength: DB_MAX_IMAGE_COMMENT_LENGTH, default: null },
-		isSensitive: { type: 'boolean', default: false },
-		force: { type: 'boolean', default: false },
+		folderId: {type: 'string', format: 'misskey:id', nullable: true, default: null},
+		name: {type: 'string', nullable: true, default: null},
+		comment: {type: 'string', nullable: true, maxLength: DB_MAX_IMAGE_COMMENT_LENGTH, default: null},
+		isSensitive: {type: 'boolean', default: false},
+		force: {type: 'boolean', default: false},
 	},
 	required: [],
 } as const;
@@ -76,7 +76,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.meta)
 		private serverSettings: MiMeta,
-
 		private driveFileEntityService: DriveFileEntityService,
 		private driveService: DriveService,
 	) {
@@ -107,7 +106,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 					requestIp: this.serverSettings.enableIpLogging ? ip : null,
 					requestHeaders: this.serverSettings.enableIpLogging ? headers : null,
 				});
-				return await this.driveFileEntityService.pack(driveFile, { self: true });
+				return await this.driveFileEntityService.pack(driveFile, {self: true});
 			} catch (err) {
 				if (err instanceof Error || typeof err === 'string') {
 					console.error(err);

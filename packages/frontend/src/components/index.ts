@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { App } from 'vue';
+import type {App} from 'vue';
 
 import Mfm from './global/MkMfm.js';
 import MkA from './global/MkA.vue';
@@ -27,7 +27,7 @@ import MkFooterSpacer from './global/MkFooterSpacer.vue';
 import MkStickyContainer from './global/MkStickyContainer.vue';
 import MkLazy from './global/MkLazy.vue';
 
-export default function(app: App) {
+export default function (app: App) {
 	for (const [key, value] of Object.entries(components)) {
 		app.component(key, value);
 	}

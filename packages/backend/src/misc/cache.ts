@@ -4,7 +4,7 @@
  */
 
 import * as Redis from 'ioredis';
-import { bindThis } from '@/decorators.js';
+import {bindThis} from '@/decorators.js';
 
 export class RedisKVCache<T> {
 	private readonly lifetime: number;
@@ -212,7 +212,12 @@ export class MemoryKVCache<T> {
 
 	constructor(
 		private readonly lifetime: number,
-	) {}
+	) {
+	}
+
+	public get entries() {
+		return this.cache.entries();
+	}
 
 	@bindThis
 	/**
@@ -298,7 +303,7 @@ export class MemoryKVCache<T> {
 	public gc(): void {
 		const now = Date.now();
 
-		for (const [key, { date }] of this.cache.entries()) {
+		for (const [key, {date}] of this.cache.entries()) {
 			// The map is ordered from oldest to youngest.
 			// We can stop once we find an entry that's still active, because all following entries must *also* be active.
 			const age = now - date;
@@ -312,10 +317,6 @@ export class MemoryKVCache<T> {
 	public dispose(): void {
 		clearInterval(this.gcIntervalHandle);
 	}
-
-	public get entries() {
-		return this.cache.entries();
-	}
 }
 
 export class MemorySingleCache<T> {
@@ -324,7 +325,8 @@ export class MemorySingleCache<T> {
 
 	constructor(
 		private lifetime: number,
-	) {}
+	) {
+	}
 
 	@bindThis
 	public set(value: T): void {

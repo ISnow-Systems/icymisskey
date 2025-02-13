@@ -1,6 +1,6 @@
-import assert, { strictEqual } from 'node:assert';
+import assert, {strictEqual} from 'node:assert';
 import * as Misskey from 'misskey-js';
-import { createAccount, deepStrictEqualWithExcludedFields, fetchAdmin, type LoginUser, resolveRemoteNote, resolveRemoteUser, sleep, uploadFile } from './utils.js';
+import {createAccount, deepStrictEqualWithExcludedFields, fetchAdmin, type LoginUser, resolveRemoteNote, resolveRemoteUser, sleep, uploadFile} from './utils.js';
 
 const bAdmin = await fetchAdmin('b.test');
 
@@ -17,7 +17,7 @@ describe('Drive', () => {
 		describe('Upload', () => {
 			beforeAll(async () => {
 				image = await uploadFile('a.test', uploader);
-				const noteWithImage = (await uploader.client.request('notes/create', { fileIds: [image.id] })).createdNote;
+				const noteWithImage = (await uploader.client.request('notes/create', {fileIds: [image.id]})).createdNote;
 				const noteInB = await resolveRemoteNote('a.test', noteWithImage.id, bAdmin);
 				assert(noteInB.files != null);
 				strictEqual(noteInB.files.length, 1);
@@ -70,7 +70,7 @@ describe('Drive', () => {
 
 		describe('Re-update with attaching to Note', () => {
 			beforeAll(async () => {
-				const noteWithUpdatedImage = (await uploader.client.request('notes/create', { fileIds: [updatedImage.id] })).createdNote;
+				const noteWithUpdatedImage = (await uploader.client.request('notes/create', {fileIds: [updatedImage.id]})).createdNote;
 				const noteWithUpdatedImageInB = await resolveRemoteNote('a.test', noteWithUpdatedImage.id, bAdmin);
 				assert(noteWithUpdatedImageInB.files != null);
 				strictEqual(noteWithUpdatedImageInB.files.length, 1);
@@ -104,14 +104,14 @@ describe('Drive', () => {
 					resolveRemoteUser('a.test', alice.id, bob),
 				]);
 
-				await bob.client.request('following/create', { userId: aliceInB.id });
+				await bob.client.request('following/create', {userId: aliceInB.id});
 				await sleep();
 			});
 
 			test('Alice uploads sensitive image and it is shown as sensitive from Bob', async () => {
 				const file = await uploadFile('a.test', alice);
-				await alice.client.request('drive/files/update', { fileId: file.id, isSensitive: true });
-				await alice.client.request('notes/create', { text: 'sensitive', fileIds: [file.id] });
+				await alice.client.request('drive/files/update', {fileId: file.id, isSensitive: true});
+				await alice.client.request('notes/create', {text: 'sensitive', fileIds: [file.id]});
 				await sleep();
 
 				const notes = await bob.client.request('notes/timeline', {});
@@ -135,8 +135,8 @@ describe('Drive', () => {
 
 			test('Alice uploads sensitive image and it is shown as sensitive from Bob', async () => {
 				const file = await uploadFile('a.test', alice);
-				await alice.client.request('drive/files/update', { fileId: file.id, isSensitive: true });
-				const note = (await alice.client.request('notes/create', { text: 'sensitive', fileIds: [file.id] })).createdNote;
+				await alice.client.request('drive/files/update', {fileId: file.id, isSensitive: true});
+				const note = (await alice.client.request('notes/create', {text: 'sensitive', fileIds: [file.id]})).createdNote;
 
 				const noteInB = await resolveRemoteNote('a.test', note.id, bob);
 				assert(noteInB.files != null);
@@ -157,12 +157,12 @@ describe('Drive', () => {
 			});
 
 			test('Alice uploads sensitive image and it is shown as sensitive from Bob', async () => {
-				const bobNote = (await bob.client.request('notes/create', { text: 'I\'m Bob' })).createdNote;
+				const bobNote = (await bob.client.request('notes/create', {text: 'I\'m Bob'})).createdNote;
 
 				const file = await uploadFile('a.test', alice);
-				await alice.client.request('drive/files/update', { fileId: file.id, isSensitive: true });
+				await alice.client.request('drive/files/update', {fileId: file.id, isSensitive: true});
 				const bobNoteInA = await resolveRemoteNote('b.test', bobNote.id, alice);
-				const note = (await alice.client.request('notes/create', { text: 'sensitive', fileIds: [file.id], replyId: bobNoteInA.id })).createdNote;
+				const note = (await alice.client.request('notes/create', {text: 'sensitive', fileIds: [file.id], replyId: bobNoteInA.id})).createdNote;
 				await sleep();
 
 				const noteInB = await resolveRemoteNote('a.test', note.id, bob);

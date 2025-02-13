@@ -6,9 +6,9 @@
 /*
  * Language manager for SW
  */
-import { get, set } from 'idb-keyval';
-import { I18n } from '@@/js/i18n.js';
-import type { Locale } from '../../../../locales/index.js';
+import {get, set} from 'idb-keyval';
+import {I18n} from '@@/js/i18n.js';
+import type {Locale} from '../../../../locales/index.js';
 
 class SwLang {
 	public cacheName = `mk-cache-${_VERSION_}`;
@@ -17,14 +17,13 @@ class SwLang {
 		if (!prelang) return 'en-US';
 		return prelang;
 	});
+	public i18n: Promise<I18n<Locale>> | null = null;
 
 	public setLang(newLang: string): Promise<I18n<Locale>> {
 		this.lang = Promise.resolve(newLang);
 		set('lang', newLang);
 		return this.fetchLocale();
 	}
-
-	public i18n: Promise<I18n<Locale>> | null = null;
 
 	public fetchLocale(): Promise<I18n<Locale>> {
 		return (this.i18n = this._fetch());

@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { utils, values } from '@syuilo/aiscript';
-import { v4 as uuid } from 'uuid';
-import { ref } from 'vue';
-import type { Ref } from 'vue';
+import {utils, values} from '@syuilo/aiscript';
+import {v4 as uuid} from 'uuid';
+import {ref} from 'vue';
+import type {Ref} from 'vue';
 import * as Misskey from 'misskey-js';
-import { assertStringAndIsIn } from './common.js';
+import {assertStringAndIsIn} from './common.js';
 
 const ALIGNS = ['left', 'center', 'right'] as const;
 const FONTS = ['serif', 'sans-serif', 'monospace'] as const;
@@ -565,7 +565,8 @@ export function registerAsUiLib(components: Ref<AsUiComponent>[], done: (root: R
 		return instance;
 	}
 
-	const rootInstance = createComponentInstance('root', utils.jsToVal({ children: [] }), utils.jsToVal('___root___'), getRootOptions, () => {});
+	const rootInstance = createComponentInstance('root', utils.jsToVal({children: []}), utils.jsToVal('___root___'), getRootOptions, () => {
+	});
 	const rootComponent = components[0] as Ref<AsUiRoot>;
 	done(rootComponent);
 

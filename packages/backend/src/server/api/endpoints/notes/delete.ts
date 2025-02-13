@@ -4,14 +4,14 @@
  */
 
 import ms from 'ms';
-import { Inject, Injectable } from '@nestjs/common';
-import type { UsersRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { NoteDeleteService } from '@/core/NoteDeleteService.js';
-import { DI } from '@/di-symbols.js';
-import { GetterService } from '@/server/api/GetterService.js';
-import { RoleService } from '@/core/RoleService.js';
-import { ApiError } from '../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {UsersRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {NoteDeleteService} from '@/core/NoteDeleteService.js';
+import {DI} from '@/di-symbols.js';
+import {GetterService} from '@/server/api/GetterService.js';
+import {RoleService} from '@/core/RoleService.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['notes'],
@@ -44,7 +44,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		noteId: { type: 'string', format: 'misskey:id' },
+		noteId: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['noteId'],
 } as const;
@@ -54,7 +54,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		private getterService: GetterService,
 		private roleService: RoleService,
 		private noteDeleteService: NoteDeleteService,
@@ -70,7 +69,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			}
 
 			// この操作を行うのが投稿者とは限らない(例えばモデレーター)ため
-			await this.noteDeleteService.delete(await this.usersRepository.findOneByOrFail({ id: note.userId }), note, false, me);
+			await this.noteDeleteService.delete(await this.usersRepository.findOneByOrFail({id: note.userId}), note, false, me);
 		});
 	}
 }

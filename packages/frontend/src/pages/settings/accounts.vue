@@ -4,41 +4,41 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="">
-	<FormSuspense :p="init">
-		<div class="_gaps">
-			<div class="_buttons">
-				<MkButton primary @click="addAccount"><i class="ti ti-plus"></i> {{ i18n.ts.addAccount }}</MkButton>
-				<MkButton @click="init"><i class="ti ti-refresh"></i> {{ i18n.ts.reloadAccountsList }}</MkButton>
-			</div>
+	<div class="">
+		<FormSuspense :p="init">
+			<div class="_gaps">
+				<div class="_buttons">
+					<MkButton primary @click="addAccount"><i class="ti ti-plus"></i> {{ i18n.ts.addAccount }}</MkButton>
+					<MkButton @click="init"><i class="ti ti-refresh"></i> {{ i18n.ts.reloadAccountsList }}</MkButton>
+				</div>
 
-			<template v-for="[id, user] in accounts">
-				<MkUserCardMini v-if="user != null" :key="user.id" :user="user" :class="$style.user" @click.prevent="menu(user, $event)"/>
-				<button v-else v-panel class="_button" :class="$style.unknownUser" @click="menu(id, $event)">
-					<div :class="$style.unknownUserAvatarMock"><i class="ti ti-user-question"></i></div>
-					<div>
-						<div :class="$style.unknownUserTitle">{{ i18n.ts.unknown }}</div>
-						<div :class="$style.unknownUserSub">ID: <span class="_monospace">{{ id }}</span></div>
-					</div>
-				</button>
-			</template>
-		</div>
-	</FormSuspense>
-</div>
+				<template v-for="[id, user] in accounts">
+					<MkUserCardMini v-if="user != null" :key="user.id" :class="$style.user" :user="user" @click.prevent="menu(user, $event)"/>
+					<button v-else v-panel :class="$style.unknownUser" class="_button" @click="menu(id, $event)">
+						<div :class="$style.unknownUserAvatarMock"><i class="ti ti-user-question"></i></div>
+						<div>
+							<div :class="$style.unknownUserTitle">{{ i18n.ts.unknown }}</div>
+							<div :class="$style.unknownUserSub">ID: <span class="_monospace">{{ id }}</span></div>
+						</div>
+					</button>
+				</template>
+			</div>
+		</FormSuspense>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
+import {ref, computed} from 'vue';
 import * as Misskey from 'misskey-js';
 import FormSuspense from '@/components/form/suspense.vue';
 import MkButton from '@/components/MkButton.vue';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { getAccounts, removeAccount as _removeAccount, login, $i, getAccountWithSigninDialog, getAccountWithSignupDialog } from '@/account.js';
-import { i18n } from '@/i18n.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {getAccounts, removeAccount as _removeAccount, login, $i, getAccountWithSigninDialog, getAccountWithSignupDialog} from '@/account.js';
+import {i18n} from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
 import MkUserCardMini from '@/components/MkUserCardMini.vue';
-import type { MenuItem } from '@/types/menu.js';
+import type {MenuItem} from '@/types/menu.js';
 
 const storedAccounts = ref<{ id: string, token: string }[] | null>(null);
 const accounts = ref(new Map<string, Misskey.entities.UserDetailed | null>());
@@ -85,10 +85,14 @@ function menu(account: Misskey.entities.UserDetailed | string, ev: MouseEvent) {
 function addAccount(ev: MouseEvent) {
 	os.popupMenu([{
 		text: i18n.ts.existingAccount,
-		action: () => { addExistingAccount(); },
+		action: () => {
+			addExistingAccount();
+		},
 	}, {
 		text: i18n.ts.createAccount,
-		action: () => { createAccount(); },
+		action: () => {
+			createAccount();
+		},
 	}], ev.currentTarget ?? ev.target);
 }
 

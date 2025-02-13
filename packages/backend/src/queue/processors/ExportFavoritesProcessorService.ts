@@ -4,22 +4,22 @@
  */
 
 import * as fs from 'node:fs';
-import { Inject, Injectable } from '@nestjs/common';
-import { MoreThan } from 'typeorm';
-import { format as dateFormat } from 'date-fns';
-import { DI } from '@/di-symbols.js';
-import type { MiNoteFavorite, NoteFavoritesRepository, PollsRepository, MiUser, UsersRepository } from '@/models/_.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {MoreThan} from 'typeorm';
+import {format as dateFormat} from 'date-fns';
+import {DI} from '@/di-symbols.js';
+import type {MiNoteFavorite, NoteFavoritesRepository, PollsRepository, MiUser, UsersRepository} from '@/models/_.js';
 import type Logger from '@/logger.js';
-import { DriveService } from '@/core/DriveService.js';
-import { createTemp } from '@/misc/create-temp.js';
-import type { MiPoll } from '@/models/Poll.js';
-import type { MiNote } from '@/models/Note.js';
-import { bindThis } from '@/decorators.js';
-import { IdService } from '@/core/IdService.js';
-import { NotificationService } from '@/core/NotificationService.js';
-import { QueueLoggerService } from '../QueueLoggerService.js';
+import {DriveService} from '@/core/DriveService.js';
+import {createTemp} from '@/misc/create-temp.js';
+import type {MiPoll} from '@/models/Poll.js';
+import type {MiNote} from '@/models/Note.js';
+import {bindThis} from '@/decorators.js';
+import {IdService} from '@/core/IdService.js';
+import {NotificationService} from '@/core/NotificationService.js';
+import {QueueLoggerService} from '../QueueLoggerService.js';
 import type * as Bull from 'bullmq';
-import type { DbJobDataWithUser } from '../types.js';
+import type {DbJobDataWithUser} from '../types.js';
 
 @Injectable()
 export class ExportFavoritesProcessorService {
@@ -28,13 +28,10 @@ export class ExportFavoritesProcessorService {
 	constructor(
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.pollsRepository)
 		private pollsRepository: PollsRepository,
-
 		@Inject(DI.noteFavoritesRepository)
 		private noteFavoritesRepository: NoteFavoritesRepository,
-
 		private driveService: DriveService,
 		private queueLoggerService: QueueLoggerService,
 		private idService: IdService,
@@ -47,7 +44,7 @@ export class ExportFavoritesProcessorService {
 	public async process(job: Bull.Job<DbJobDataWithUser>): Promise<void> {
 		this.logger.info(`Exporting favorites of ${job.data.user.id} ...`);
 
-		const user = await this.usersRepository.findOneBy({ id: job.data.user.id });
+		const user = await this.usersRepository.findOneBy({id: job.data.user.id});
 		if (user == null) {
 			return;
 		}
@@ -58,7 +55,7 @@ export class ExportFavoritesProcessorService {
 		this.logger.info(`Temp file is ${path}`);
 
 		try {
-			const stream = fs.createWriteStream(path, { flags: 'a' });
+			const stream = fs.createWriteStream(path, {flags: 'a'});
 
 			const write = (text: string): Promise<void> => {
 				return new Promise<void>((res, rej) => {
@@ -82,7 +79,7 @@ export class ExportFavoritesProcessorService {
 				const favorites = await this.noteFavoritesRepository.find({
 					where: {
 						userId: user.id,
-						...(cursor ? { id: MoreThan(cursor) } : {}),
+						...(cursor ? {id: MoreThan(cursor)} : {}),
 					},
 					take: 100,
 					order: {
@@ -101,7 +98,7 @@ export class ExportFavoritesProcessorService {
 				for (const favorite of favorites) {
 					let poll: MiPoll | undefined;
 					if (favorite.note.hasPoll) {
-						poll = await this.pollsRepository.findOneByOrFail({ noteId: favorite.note.id });
+						poll = await this.pollsRepository.findOneByOrFail({noteId: favorite.note.id});
 					}
 					const content = JSON.stringify(this.serialize(favorite, poll));
 					const isFirst = exportedFavoritesCount === 0;
@@ -122,7 +119,7 @@ export class ExportFavoritesProcessorService {
 			this.logger.succ(`Exported to: ${path}`);
 
 			const fileName = 'favorites-' + dateFormat(new Date(), 'yyyy-MM-dd-HH-mm-ss') + '.json';
-			const driveFile = await this.driveService.addFile({ user, path, name: fileName, force: true, ext: 'json' });
+			const driveFile = await this.driveService.addFile({user, path, name: fileName, force: true, ext: 'json'});
 
 			this.logger.succ(`Exported to: ${driveFile.id}`);
 

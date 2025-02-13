@@ -4,23 +4,23 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div data-cy-mkw-onlineUsers :class="[$style.root, { _panel: !widgetProps.transparent, [$style.pad]: !widgetProps.transparent }]">
+	<div :class="[$style.root, { _panel: !widgetProps.transparent, [$style.pad]: !widgetProps.transparent }]" data-cy-mkw-onlineUsers>
 	<span :class="$style.text">
 		<I18n v-if="onlineUsersCount" :src="i18n.ts.onlineUsersCount" textTag="span">
 			<template #n><b style="color: #41b781;">{{ number(onlineUsersCount) }}</b></template>
 		</I18n>
 	</span>
-</div>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { useWidgetPropsManager } from './widget.js';
-import type { WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget.js';
-import type { GetFormResultType } from '@/scripts/form.js';
-import { misskeyApi, misskeyApiGet } from '@/scripts/misskey-api.js';
-import { useInterval } from '@@/js/use-interval.js';
-import { i18n } from '@/i18n.js';
+import {ref} from 'vue';
+import {useWidgetPropsManager} from './widget.js';
+import type {WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps} from './widget.js';
+import type {GetFormResultType} from '@/scripts/form.js';
+import {misskeyApi, misskeyApiGet} from '@/scripts/misskey-api.js';
+import {useInterval} from '@@/js/use-interval.js';
+import {i18n} from '@/i18n.js';
 import number from '@/filters/number.js';
 
 const name = 'onlineUsers';
@@ -37,7 +37,7 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 const props = defineProps<WidgetComponentProps<WidgetProps>>();
 const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 
-const { widgetProps, configure } = useWidgetPropsManager(name,
+const {widgetProps, configure} = useWidgetPropsManager(name,
 	widgetPropsDef,
 	props,
 	emit,

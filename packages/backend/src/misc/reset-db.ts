@@ -3,17 +3,19 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { DataSource } from 'typeorm';
+import type {DataSource} from 'typeorm';
 
 export async function resetDb(db: DataSource) {
 	const reset = async () => {
 		const tables = await db.query(`SELECT relname AS "table"
-		FROM pg_class C LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
-		WHERE nspname NOT IN ('pg_catalog', 'information_schema')
-			AND C.relkind = 'r'
-			AND nspname !~ '^pg_toast';`);
+									   FROM pg_class C
+												LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
+									   WHERE nspname NOT IN ('pg_catalog', 'information_schema')
+										 AND C.relkind = 'r'
+										 AND nspname !~ '^pg_toast';`);
 		for (const table of tables) {
-			await db.query(`DELETE FROM "${table.table}" CASCADE`);
+			await db.query(`DELETE
+							FROM "${table.table}" CASCADE`);
 		}
 	};
 

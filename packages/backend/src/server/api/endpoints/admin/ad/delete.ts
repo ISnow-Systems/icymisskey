@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { AdsRepository } from '@/models/_.js';
-import { DI } from '@/di-symbols.js';
-import { ModerationLogService } from '@/core/ModerationLogService.js';
-import { ApiError } from '../../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {AdsRepository} from '@/models/_.js';
+import {DI} from '@/di-symbols.js';
+import {ModerationLogService} from '@/core/ModerationLogService.js';
+import {ApiError} from '../../../error.js';
 
 export const meta = {
 	tags: ['admin'],
@@ -29,7 +29,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		id: { type: 'string', format: 'misskey:id' },
+		id: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['id'],
 } as const;
@@ -39,11 +39,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.adsRepository)
 		private adsRepository: AdsRepository,
-
 		private moderationLogService: ModerationLogService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const ad = await this.adsRepository.findOneBy({ id: ps.id });
+			const ad = await this.adsRepository.findOneBy({id: ps.id});
 
 			if (ad == null) throw new ApiError(meta.errors.noSuchAd);
 

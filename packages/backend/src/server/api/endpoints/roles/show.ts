@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import type { RolesRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
-import { RoleEntityService } from '@/core/entities/RoleEntityService.js';
-import { ApiError } from '../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {RolesRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {DI} from '@/di-symbols.js';
+import {RoleEntityService} from '@/core/entities/RoleEntityService.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['role', 'users'],
@@ -33,7 +33,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		roleId: { type: 'string', format: 'misskey:id' },
+		roleId: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['roleId'],
 } as const;
@@ -43,7 +43,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.rolesRepository)
 		private rolesRepository: RolesRepository,
-
 		private roleEntityService: RoleEntityService,
 	) {
 		super(meta, paramDef, async (ps, me) => {

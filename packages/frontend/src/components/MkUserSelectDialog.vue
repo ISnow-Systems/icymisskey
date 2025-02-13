@@ -4,74 +4,74 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkModalWindow
-	ref="dialogEl"
-	:withOkButton="true"
-	:okButtonDisabled="selected == null"
-	@click="cancel()"
-	@close="cancel()"
-	@ok="ok()"
-	@closed="emit('closed')"
->
-	<template #header>{{ i18n.ts.selectUser }}</template>
-	<div>
-		<div :class="$style.form">
-			<MkInput v-if="computedLocalOnly" v-model="username" :autofocus="true" @update:modelValue="search">
-				<template #label>{{ i18n.ts.username }}</template>
-				<template #prefix>@</template>
-			</MkInput>
-			<FormSplit v-else :minWidth="170">
-				<MkInput v-model="username" :autofocus="true" @update:modelValue="search">
+	<MkModalWindow
+		ref="dialogEl"
+		:okButtonDisabled="selected == null"
+		:withOkButton="true"
+		@click="cancel()"
+		@close="cancel()"
+		@closed="emit('closed')"
+		@ok="ok()"
+	>
+		<template #header>{{ i18n.ts.selectUser }}</template>
+		<div>
+			<div :class="$style.form">
+				<MkInput v-if="computedLocalOnly" v-model="username" :autofocus="true" @update:modelValue="search">
 					<template #label>{{ i18n.ts.username }}</template>
 					<template #prefix>@</template>
 				</MkInput>
-				<MkInput v-model="host" :datalist="[hostname]" @update:modelValue="search">
-					<template #label>{{ i18n.ts.host }}</template>
-					<template #prefix>@</template>
-				</MkInput>
-			</FormSplit>
-		</div>
-		<div v-if="username != '' || host != ''" :class="[$style.result, { [$style.hit]: users.length > 0 }]">
-			<div v-if="users.length > 0" :class="$style.users">
-				<div v-for="user in users" :key="user.id" class="_button" :class="[$style.user, { [$style.selected]: selected && selected.id === user.id }]" @click="selected = user" @dblclick="ok()">
-					<MkAvatar :user="user" :class="$style.avatar" indicator/>
-					<div :class="$style.userBody">
-						<MkUserName :user="user" :class="$style.userName"/>
-						<MkAcct :user="user" :class="$style.userAcct"/>
+				<FormSplit v-else :minWidth="170">
+					<MkInput v-model="username" :autofocus="true" @update:modelValue="search">
+						<template #label>{{ i18n.ts.username }}</template>
+						<template #prefix>@</template>
+					</MkInput>
+					<MkInput v-model="host" :datalist="[hostname]" @update:modelValue="search">
+						<template #label>{{ i18n.ts.host }}</template>
+						<template #prefix>@</template>
+					</MkInput>
+				</FormSplit>
+			</div>
+			<div v-if="username != '' || host != ''" :class="[$style.result, { [$style.hit]: users.length > 0 }]">
+				<div v-if="users.length > 0" :class="$style.users">
+					<div v-for="user in users" :key="user.id" :class="[$style.user, { [$style.selected]: selected && selected.id === user.id }]" class="_button" @click="selected = user" @dblclick="ok()">
+						<MkAvatar :class="$style.avatar" :user="user" indicator/>
+						<div :class="$style.userBody">
+							<MkUserName :class="$style.userName" :user="user"/>
+							<MkAcct :class="$style.userAcct" :user="user"/>
+						</div>
+					</div>
+				</div>
+				<div v-else :class="$style.empty">
+					<span>{{ i18n.ts.noUsers }}</span>
+				</div>
+			</div>
+			<div v-if="username == '' && host == ''" :class="$style.recent">
+				<div :class="$style.users">
+					<div v-for="user in recentUsers" :key="user.id" :class="[$style.user, { [$style.selected]: selected && selected.id === user.id }]" class="_button" @click="selected = user" @dblclick="ok()">
+						<MkAvatar :class="$style.avatar" :user="user" indicator/>
+						<div :class="$style.userBody">
+							<MkUserName :class="$style.userName" :user="user"/>
+							<MkAcct :class="$style.userAcct" :user="user"/>
+						</div>
 					</div>
 				</div>
 			</div>
-			<div v-else :class="$style.empty">
-				<span>{{ i18n.ts.noUsers }}</span>
-			</div>
 		</div>
-		<div v-if="username == '' && host == ''" :class="$style.recent">
-			<div :class="$style.users">
-				<div v-for="user in recentUsers" :key="user.id" class="_button" :class="[$style.user, { [$style.selected]: selected && selected.id === user.id }]" @click="selected = user" @dblclick="ok()">
-					<MkAvatar :user="user" :class="$style.avatar" indicator/>
-					<div :class="$style.userBody">
-						<MkUserName :user="user" :class="$style.userName"/>
-						<MkAcct :user="user" :class="$style.userAcct"/>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</MkModalWindow>
+	</MkModalWindow>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, computed, shallowRef } from 'vue';
+import {onMounted, ref, computed, shallowRef} from 'vue';
 import * as Misskey from 'misskey-js';
-import { host as currentHost, hostname } from '@@/js/config.js';
+import {host as currentHost, hostname} from '@@/js/config.js';
 import MkInput from '@/components/MkInput.vue';
 import FormSplit from '@/components/form/split.vue';
 import MkModalWindow from '@/components/MkModalWindow.vue';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { defaultStore } from '@/store.js';
-import { i18n } from '@/i18n.js';
-import { $i } from '@/account.js';
-import { instance } from '@/instance.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {defaultStore} from '@/store.js';
+import {i18n} from '@/i18n.js';
+import {$i} from '@/account.js';
+import {instance} from '@/instance.js';
 
 const emit = defineEmits<{
 	(ev: 'ok', selected: Misskey.entities.UserDetailed): void;

@@ -4,11 +4,11 @@
  */
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import type { StoryObj } from '@storybook/vue3';
-import { HttpResponse, http } from 'msw';
-import { federationInstance } from '../../.storybook/fakes.js';
-import { commonHandlers } from '../../.storybook/mocks.js';
-import { getChartResolver } from '../../.storybook/charts.js';
+import type {StoryObj} from '@storybook/vue3';
+import {HttpResponse, http} from 'msw';
+import {federationInstance} from '../../.storybook/fakes.js';
+import {commonHandlers} from '../../.storybook/mocks.js';
+import {getChartResolver} from '../../.storybook/charts.js';
 import MkInstanceCardMini from './MkInstanceCardMini.vue';
 
 export const Default = {
@@ -40,10 +40,10 @@ export const Default = {
 		msw: {
 			handlers: [
 				...commonHandlers,
-				http.get('/undefined/preview.webp', async ({ request }) => {
+				http.get('/undefined/preview.webp', async ({request}) => {
 					const urlStr = new URL(request.url).searchParams.get('url');
 					if (urlStr == null) {
-						return new HttpResponse(null, { status: 404 });
+						return new HttpResponse(null, {status: 404});
 					}
 					const url = new URL(urlStr);
 
@@ -55,7 +55,7 @@ export const Default = {
 							},
 						});
 					} else {
-						return new HttpResponse(null, { status: 404 });
+						return new HttpResponse(null, {status: 404});
 					}
 				}),
 				http.get('/api/charts/instance', getChartResolver(['requests.received'])),

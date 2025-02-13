@@ -4,15 +4,15 @@
  */
 
 import ms from 'ms';
-import { IsNull } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
-import type { PasswordResetRequestsRepository, UserProfilesRepository, UsersRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { IdService } from '@/core/IdService.js';
-import type { Config } from '@/config.js';
-import { DI } from '@/di-symbols.js';
-import { EmailService } from '@/core/EmailService.js';
-import { L_CHARS, secureRndstr } from '@/misc/secure-rndstr.js';
+import {IsNull} from 'typeorm';
+import {Inject, Injectable} from '@nestjs/common';
+import type {PasswordResetRequestsRepository, UserProfilesRepository, UsersRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {IdService} from '@/core/IdService.js';
+import type {Config} from '@/config.js';
+import {DI} from '@/di-symbols.js';
+import {EmailService} from '@/core/EmailService.js';
+import {L_CHARS, secureRndstr} from '@/misc/secure-rndstr.js';
 
 export const meta = {
 	tags: ['reset password'],
@@ -26,16 +26,14 @@ export const meta = {
 		max: 3,
 	},
 
-	errors: {
-
-	},
+	errors: {},
 } as const;
 
 export const paramDef = {
 	type: 'object',
 	properties: {
-		username: { type: 'string' },
-		email: { type: 'string' },
+		username: {type: 'string'},
+		email: {type: 'string'},
 	},
 	required: ['username', 'email'],
 } as const;
@@ -45,16 +43,12 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
-
 		@Inject(DI.passwordResetRequestsRepository)
 		private passwordResetRequestsRepository: PasswordResetRequestsRepository,
-
 		private idService: IdService,
 		private emailService: EmailService,
 	) {
@@ -69,7 +63,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				return;
 			}
 
-			const profile = await this.userProfilesRepository.findOneByOrFail({ userId: user.id });
+			const profile = await this.userProfilesRepository.findOneByOrFail({userId: user.id});
 
 			// 合致するメアドが登録されていなかったら無視
 			if (profile.email !== ps.email) {
@@ -81,7 +75,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				return;
 			}
 
-			const token = secureRndstr(64, { chars: L_CHARS });
+			const token = secureRndstr(64, {chars: L_CHARS});
 
 			await this.passwordResetRequestsRepository.insert({
 				id: this.idService.gen(),

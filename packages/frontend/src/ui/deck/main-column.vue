@@ -4,33 +4,33 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<XColumn v-if="deckStore.state.alwaysShowMainColumn || mainRouter.currentRoute.value.name !== 'index'" :column="column" :isStacked="isStacked">
-	<template #header>
-		<template v-if="pageMetadata">
-			<i :class="pageMetadata.icon"></i>
-			{{ pageMetadata.title }}
+	<XColumn v-if="deckStore.state.alwaysShowMainColumn || mainRouter.currentRoute.value.name !== 'index'" :column="column" :isStacked="isStacked">
+		<template #header>
+			<template v-if="pageMetadata">
+				<i :class="pageMetadata.icon"></i>
+				{{ pageMetadata.title }}
+			</template>
 		</template>
-	</template>
 
-	<div ref="contents">
-		<RouterView @contextmenu.stop="onContextmenu"/>
-	</div>
-</XColumn>
+		<div ref="contents">
+			<RouterView @contextmenu.stop="onContextmenu"/>
+		</div>
+	</XColumn>
 </template>
 
 <script lang="ts" setup>
-import { provide, shallowRef, ref } from 'vue';
+import {provide, shallowRef, ref} from 'vue';
 import XColumn from './column.vue';
-import { deckStore } from '@/ui/deck/deck-store.js';
-import type { Column } from '@/ui/deck/deck-store.js';
+import {deckStore} from '@/ui/deck/deck-store.js';
+import type {Column} from '@/ui/deck/deck-store.js';
 import * as os from '@/os.js';
-import { i18n } from '@/i18n.js';
-import { provideMetadataReceiver, provideReactiveMetadata } from '@/scripts/page-metadata.js';
-import type { PageMetadata } from '@/scripts/page-metadata.js';
-import { useScrollPositionManager } from '@/nirax.js';
-import { getScrollContainer } from '@@/js/scroll.js';
-import { isLink } from '@@/js/is-link.js';
-import { mainRouter } from '@/router/main.js';
+import {i18n} from '@/i18n.js';
+import {provideMetadataReceiver, provideReactiveMetadata} from '@/scripts/page-metadata.js';
+import type {PageMetadata} from '@/scripts/page-metadata.js';
+import {useScrollPositionManager} from '@/nirax.js';
+import {getScrollContainer} from '@@/js/scroll.js';
+import {isLink} from '@@/js/is-link.js';
+import {mainRouter} from '@/router/main.js';
 
 defineProps<{
 	column: Column;

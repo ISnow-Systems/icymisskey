@@ -4,12 +4,12 @@
  */
 
 import ms from 'ms';
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { DriveFilesRepository, GalleryPostsRepository } from '@/models/_.js';
-import type { MiDriveFile } from '@/models/DriveFile.js';
-import { GalleryPostEntityService } from '@/core/entities/GalleryPostEntityService.js';
-import { DI } from '@/di-symbols.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {DriveFilesRepository, GalleryPostsRepository} from '@/models/_.js';
+import type {MiDriveFile} from '@/models/DriveFile.js';
+import {GalleryPostEntityService} from '@/core/entities/GalleryPostEntityService.js';
+import {DI} from '@/di-symbols.js';
 
 export const meta = {
 	tags: ['gallery'],
@@ -31,21 +31,21 @@ export const meta = {
 		ref: 'GalleryPost',
 	},
 
-	errors: {
-
-	},
+	errors: {},
 } as const;
 
 export const paramDef = {
 	type: 'object',
 	properties: {
-		postId: { type: 'string', format: 'misskey:id' },
-		title: { type: 'string', minLength: 1 },
-		description: { type: 'string', nullable: true },
-		fileIds: { type: 'array', uniqueItems: true, minItems: 1, maxItems: 32, items: {
-			type: 'string', format: 'misskey:id',
-		} },
-		isSensitive: { type: 'boolean', default: false },
+		postId: {type: 'string', format: 'misskey:id'},
+		title: {type: 'string', minLength: 1},
+		description: {type: 'string', nullable: true},
+		fileIds: {
+			type: 'array', uniqueItems: true, minItems: 1, maxItems: 32, items: {
+				type: 'string', format: 'misskey:id',
+			}
+		},
+		isSensitive: {type: 'boolean', default: false},
 	},
 	required: ['postId'],
 } as const;
@@ -55,10 +55,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.galleryPostsRepository)
 		private galleryPostsRepository: GalleryPostsRepository,
-
 		@Inject(DI.driveFilesRepository)
 		private driveFilesRepository: DriveFilesRepository,
-
 		private galleryPostEntityService: GalleryPostEntityService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
@@ -88,7 +86,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				fileIds: files ? files.map(file => file.id) : undefined,
 			});
 
-			const post = await this.galleryPostsRepository.findOneByOrFail({ id: ps.postId });
+			const post = await this.galleryPostsRepository.findOneByOrFail({id: ps.postId});
 
 			return await this.galleryPostEntityService.pack(post, me);
 		});

@@ -4,11 +4,11 @@
  */
 
 import bcrypt from 'bcryptjs';
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { UserProfilesRepository } from '@/models/_.js';
-import { DI } from '@/di-symbols.js';
-import { UserAuthService } from '@/core/UserAuthService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {UserProfilesRepository} from '@/models/_.js';
+import {DI} from '@/di-symbols.js';
+import {UserAuthService} from '@/core/UserAuthService.js';
 
 export const meta = {
 	requireCredential: true,
@@ -19,9 +19,9 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		currentPassword: { type: 'string' },
-		newPassword: { type: 'string', minLength: 1 },
-		token: { type: 'string', nullable: true },
+		currentPassword: {type: 'string'},
+		newPassword: {type: 'string', minLength: 1},
+		token: {type: 'string', nullable: true},
 	},
 	required: ['currentPassword', 'newPassword'],
 } as const;
@@ -31,12 +31,11 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
-
 		private userAuthService: UserAuthService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			const token = ps.token;
-			const profile = await this.userProfilesRepository.findOneByOrFail({ userId: me.id });
+			const profile = await this.userProfilesRepository.findOneByOrFail({userId: me.id});
 
 			if (profile.twoFactorEnabled) {
 				if (token == null) {

@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import si from 'systeminformation';
 import Xev from 'xev';
 import * as osUtils from 'os-utils';
-import { bindThis } from '@/decorators.js';
-import type { OnApplicationShutdown } from '@nestjs/common';
-import { MiMeta } from '@/models/_.js';
-import { DI } from '@/di-symbols.js';
+import {bindThis} from '@/decorators.js';
+import type {OnApplicationShutdown} from '@nestjs/common';
+import {MiMeta} from '@/models/_.js';
+import {DI} from '@/di-symbols.js';
 
 const ev = new Xev();
 
@@ -110,5 +110,5 @@ async function net() {
 
 // FS STAT
 async function fs() {
-	return await si.disksIO().catch(() => ({ rIO_sec: 0, wIO_sec: 0 }));
+	return await si.disksIO().catch(() => ({rIO_sec: 0, wIO_sec: 0}));
 }

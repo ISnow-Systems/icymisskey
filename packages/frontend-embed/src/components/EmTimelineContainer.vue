@@ -4,13 +4,17 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="$style.timelineRoot">
-	<div v-if="showHeader" :class="$style.header"><slot name="header"></slot></div>
-	<div :class="$style.body"><slot name="body"></slot></div>
-</div>
+	<div :class="$style.timelineRoot">
+		<div v-if="showHeader" :class="$style.header">
+			<slot name="header"></slot>
+		</div>
+		<div :class="$style.body">
+			<slot name="body"></slot>
+		</div>
+	</div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 withDefaults(defineProps<{
 	showHeader?: boolean;
 }>(), {
@@ -18,7 +22,7 @@ withDefaults(defineProps<{
 });
 </script>
 
-<style module lang="scss">
+<style lang="scss" module>
 .timelineRoot {
 	background-color: var(--MI_THEME-panel);
 	height: 100%;

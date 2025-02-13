@@ -1,11 +1,8 @@
 {
 	id: '0ff48d43-aab3-46e7-ab12-8492110d2e2b',
-
 	name: 'Mi Apricot Light',
 	author: 'syuilo',
-
 	base: 'light',
-
 	props: {
 		accent: 'rgb(234, 154, 82)',
 		bg: '#e6e5e2',

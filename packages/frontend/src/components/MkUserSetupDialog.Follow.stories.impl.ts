@@ -4,11 +4,12 @@
  */
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import type { StoryObj } from '@storybook/vue3';
-import { HttpResponse, http } from 'msw';
-import { commonHandlers } from '../../.storybook/mocks.js';
-import { userDetailed } from '../../.storybook/fakes.js';
+import type {StoryObj} from '@storybook/vue3';
+import {HttpResponse, http} from 'msw';
+import {commonHandlers} from '../../.storybook/mocks.js';
+import {userDetailed} from '../../.storybook/fakes.js';
 import MkUserSetupDialog_Follow from './MkUserSetupDialog.Follow.vue';
+
 export const Default = {
 	render(args) {
 		return {
@@ -30,9 +31,7 @@ export const Default = {
 			template: '<MkUserSetupDialog_Follow v-bind="props" />',
 		};
 	},
-	args: {
-
-	},
+	args: {},
 	parameters: {
 		layout: 'centered',
 		msw: {

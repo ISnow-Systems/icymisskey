@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Brackets } from 'typeorm';
-import type { MiMeta, MiUserList, NotesRepository, UserListMembershipsRepository, UserListsRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Brackets} from 'typeorm';
+import type {MiMeta, MiUserList, NotesRepository, UserListMembershipsRepository, UserListsRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
 import ActiveUsersChart from '@/core/chart/charts/active-users.js';
-import { DI } from '@/di-symbols.js';
-import { IdService } from '@/core/IdService.js';
-import { QueryService } from '@/core/QueryService.js';
-import { MiLocalUser } from '@/models/User.js';
-import { FanoutTimelineEndpointService } from '@/core/FanoutTimelineEndpointService.js';
-import { ApiError } from '../../error.js';
+import {DI} from '@/di-symbols.js';
+import {IdService} from '@/core/IdService.js';
+import {QueryService} from '@/core/QueryService.js';
+import {MiLocalUser} from '@/models/User.js';
+import {FanoutTimelineEndpointService} from '@/core/FanoutTimelineEndpointService.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['notes', 'lists'],
@@ -44,17 +44,17 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		listId: { type: 'string', format: 'misskey:id' },
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
-		sinceDate: { type: 'integer' },
-		untilDate: { type: 'integer' },
-		allowPartial: { type: 'boolean', default: false }, // true is recommended but for compatibility false by default
-		includeMyRenotes: { type: 'boolean', default: true },
-		includeRenotedMyNotes: { type: 'boolean', default: true },
-		includeLocalRenotes: { type: 'boolean', default: true },
-		withRenotes: { type: 'boolean', default: true },
+		listId: {type: 'string', format: 'misskey:id'},
+		limit: {type: 'integer', minimum: 1, maximum: 100, default: 10},
+		sinceId: {type: 'string', format: 'misskey:id'},
+		untilId: {type: 'string', format: 'misskey:id'},
+		sinceDate: {type: 'integer'},
+		untilDate: {type: 'integer'},
+		allowPartial: {type: 'boolean', default: false}, // true is recommended but for compatibility false by default
+		includeMyRenotes: {type: 'boolean', default: true},
+		includeRenotedMyNotes: {type: 'boolean', default: true},
+		includeLocalRenotes: {type: 'boolean', default: true},
+		withRenotes: {type: 'boolean', default: true},
 		withFiles: {
 			type: 'boolean',
 			default: false,
@@ -69,16 +69,12 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.meta)
 		private serverSettings: MiMeta,
-
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		@Inject(DI.userListsRepository)
 		private userListsRepository: UserListsRepository,
-
 		@Inject(DI.userListMembershipsRepository)
 		private userListMembershipsRepository: UserListMembershipsRepository,
-
 		private noteEntityService: NoteEntityService,
 		private activeUsersChart: ActiveUsersChart,
 		private idService: IdService,
@@ -161,7 +157,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			.leftJoinAndSelect('note.renote', 'renote')
 			.leftJoinAndSelect('reply.user', 'replyUser')
 			.leftJoinAndSelect('renote.user', 'renoteUser')
-			.andWhere('userListMemberships.userListId = :userListId', { userListId: list.id })
+			.andWhere('userListMemberships.userListId = :userListId', {userListId: list.id})
 			.andWhere('note.channelId IS NULL') // チャンネルノートではない
 			.andWhere(new Brackets(qb => {
 				qb
@@ -174,7 +170,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 					.orWhere(new Brackets(qb => {
 						qb // 返信だけど自分宛ての返信
 							.where('note.replyId IS NOT NULL')
-							.andWhere('note.replyUserId = :meId', { meId: me.id });
+							.andWhere('note.replyUserId = :meId', {meId: me.id});
 					}))
 					.orWhere(new Brackets(qb => {
 						qb // 返信だけどwithRepliesがtrueの場合
@@ -190,7 +186,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 		if (ps.includeMyRenotes === false) {
 			query.andWhere(new Brackets(qb => {
-				qb.orWhere('note.userId != :meId', { meId: me.id });
+				qb.orWhere('note.userId != :meId', {meId: me.id});
 				qb.orWhere('note.renoteId IS NULL');
 				qb.orWhere('note.text IS NOT NULL');
 				qb.orWhere('note.fileIds != \'{}\'');
@@ -200,7 +196,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 		if (ps.includeRenotedMyNotes === false) {
 			query.andWhere(new Brackets(qb => {
-				qb.orWhere('note.renoteUserId != :meId', { meId: me.id });
+				qb.orWhere('note.renoteUserId != :meId', {meId: me.id});
 				qb.orWhere('note.renoteId IS NULL');
 				qb.orWhere('note.text IS NOT NULL');
 				qb.orWhere('note.fileIds != \'{}\'');

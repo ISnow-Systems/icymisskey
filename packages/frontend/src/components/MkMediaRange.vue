@@ -5,16 +5,16 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 <!-- Media系専用のinput range -->
 <template>
-<div :style="sliderBgWhite ? '--sliderBg: rgba(255,255,255,.25);' : '--sliderBg: var(--MI_THEME-scrollbarHandle);'">
-	<div :class="$style.controlsSeekbar">
-		<progress v-if="buffer !== undefined" :class="$style.buffer" :value="isNaN(buffer) ? 0 : buffer" min="0" max="1">{{ Math.round(buffer * 100) }}% buffered</progress>
-		<input v-model="model" :class="$style.seek" :style="`--value: ${modelValue * 100}%;`" type="range" min="0" max="1" step="any" @change="emit('dragEnded', modelValue)"/>
+	<div :style="sliderBgWhite ? '--sliderBg: rgba(255,255,255,.25);' : '--sliderBg: var(--MI_THEME-scrollbarHandle);'">
+		<div :class="$style.controlsSeekbar">
+			<progress v-if="buffer !== undefined" :class="$style.buffer" :value="isNaN(buffer) ? 0 : buffer" max="1" min="0">{{ Math.round(buffer * 100) }}% buffered</progress>
+			<input v-model="model" :class="$style.seek" :style="`--value: ${modelValue * 100}%;`" max="1" min="0" step="any" type="range" @change="emit('dragEnded', modelValue)"/>
+		</div>
 	</div>
-</div>
 </template>
 
-<script setup lang="ts">
-import { computed } from 'vue';
+<script lang="ts" setup>
+import {computed} from 'vue';
 
 withDefaults(defineProps<{
 	buffer?: number;
@@ -28,10 +28,12 @@ const emit = defineEmits<{
 	(ev: 'dragEnded', value: number): void;
 }>();
 
-const model = defineModel<string | number>({ required: true });
+const model = defineModel<string | number>({required: true});
 const modelValue = computed({
 	get: () => typeof model.value === 'number' ? model.value : parseFloat(model.value),
-	set: v => { model.value = v; },
+	set: v => {
+		model.value = v;
+	},
 });
 </script>
 
@@ -58,7 +60,7 @@ const modelValue = computed({
 
 	&::-webkit-slider-runnable-track {
 		background-color: var(--sliderBg);
-		background-image: linear-gradient(to right,currentColor var(--value,0),transparent var(--value,0));
+		background-image: linear-gradient(to right, currentColor var(--value, 0), transparent var(--value, 0));
 		border: 0;
 		border-radius: 99rem;
 		height: 5px;
@@ -82,7 +84,7 @@ const modelValue = computed({
 		background: #fff;
 		border: 0;
 		border-radius: 100%;
-		box-shadow: 0 1px 1px rgba(35, 40, 47, .15),0 0 0 1px rgba(35, 40, 47, .2);
+		box-shadow: 0 1px 1px rgba(35, 40, 47, .15), 0 0 0 1px rgba(35, 40, 47, .2);
 		height: 13px;
 		margin-top: -4px;
 		position: relative;
@@ -98,7 +100,7 @@ const modelValue = computed({
 		background: #fff;
 		border: 0;
 		border-radius: 100%;
-		box-shadow: 0 1px 1px rgba(35, 40, 47, .15),0 0 0 1px rgba(35, 40, 47, .2);
+		box-shadow: 0 1px 1px rgba(35, 40, 47, .15), 0 0 0 1px rgba(35, 40, 47, .2);
 		height: 13px;
 		position: relative;
 		transition: all .2s ease;

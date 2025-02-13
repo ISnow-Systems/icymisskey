@@ -4,57 +4,61 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader v-model:tab="src" :actions="headerActions" :tabs="$i ? headerTabs : headerTabsWhenNotLogin" :displayMyAvatar="true"/></template>
-	<MkSpacer :contentMax="800">
-		<MkHorizontalSwipe v-model:tab="src" :tabs="$i ? headerTabs : headerTabsWhenNotLogin">
-			<div :key="src" ref="rootEl">
-				<MkInfo v-if="isBasicTimeline(src) && !defaultStore.reactiveState.timelineTutorials.value[src]" style="margin-bottom: var(--MI-margin);" closable @close="closeTutorial()">
-					{{ i18n.ts._timelineDescription[src] }}
-				</MkInfo>
-				<MkPostForm v-if="defaultStore.reactiveState.showFixedPostForm.value" :class="$style.postForm" class="post-form _panel" fixed style="margin-bottom: var(--MI-margin);"/>
-				<div v-if="queue > 0" :class="$style.new"><button class="_buttonPrimary" :class="$style.newButton" @click="top()">{{ i18n.ts.newNoteRecived }}</button></div>
-				<div :class="$style.tl">
-					<MkTimeline
-						ref="tlComponent"
-						:key="src + withRenotes + withReplies + onlyFiles + withSensitive"
-						:src="src.split(':')[0]"
-						:list="src.split(':')[1]"
-						:withRenotes="withRenotes"
-						:withReplies="withReplies"
-						:withSensitive="withSensitive"
-						:onlyFiles="onlyFiles"
-						:sound="true"
-						@queue="queueUpdated"
-					/>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader v-model:tab="src" :actions="headerActions" :displayMyAvatar="true" :tabs="$i ? headerTabs : headerTabsWhenNotLogin"/>
+		</template>
+		<MkSpacer :contentMax="800">
+			<MkHorizontalSwipe v-model:tab="src" :tabs="$i ? headerTabs : headerTabsWhenNotLogin">
+				<div :key="src" ref="rootEl">
+					<MkInfo v-if="isBasicTimeline(src) && !defaultStore.reactiveState.timelineTutorials.value[src]" closable style="margin-bottom: var(--MI-margin);" @close="closeTutorial()">
+						{{ i18n.ts._timelineDescription[src] }}
+					</MkInfo>
+					<MkPostForm v-if="defaultStore.reactiveState.showFixedPostForm.value" :class="$style.postForm" class="post-form _panel" fixed style="margin-bottom: var(--MI-margin);"/>
+					<div v-if="queue > 0" :class="$style.new">
+						<button :class="$style.newButton" class="_buttonPrimary" @click="top()">{{ i18n.ts.newNoteRecived }}</button>
+					</div>
+					<div :class="$style.tl">
+						<MkTimeline
+							:key="src + withRenotes + withReplies + onlyFiles + withSensitive"
+							ref="tlComponent"
+							:list="src.split(':')[1]"
+							:onlyFiles="onlyFiles"
+							:sound="true"
+							:src="src.split(':')[0]"
+							:withRenotes="withRenotes"
+							:withReplies="withReplies"
+							:withSensitive="withSensitive"
+							@queue="queueUpdated"
+						/>
+					</div>
 				</div>
-			</div>
-		</MkHorizontalSwipe>
-	</MkSpacer>
-</MkStickyContainer>
+			</MkHorizontalSwipe>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { computed, watch, provide, shallowRef, ref, onMounted, onActivated } from 'vue';
-import type { Tab } from '@/components/global/MkPageHeader.tabs.vue';
+import {computed, watch, provide, shallowRef, ref, onMounted, onActivated} from 'vue';
+import type {Tab} from '@/components/global/MkPageHeader.tabs.vue';
 import MkTimeline from '@/components/MkTimeline.vue';
 import MkInfo from '@/components/MkInfo.vue';
 import MkPostForm from '@/components/MkPostForm.vue';
 import MkHorizontalSwipe from '@/components/MkHorizontalSwipe.vue';
-import { scroll } from '@@/js/scroll.js';
+import {scroll} from '@@/js/scroll.js';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { defaultStore } from '@/store.js';
-import { i18n } from '@/i18n.js';
-import { $i } from '@/account.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
-import { antennasCache, userListsCache, favoritedChannelsCache } from '@/cache.js';
-import { deviceKind } from '@/scripts/device-kind.js';
-import { deepMerge } from '@/scripts/merge.js';
-import type { MenuItem } from '@/types/menu.js';
-import { miLocalStorage } from '@/local-storage.js';
-import { availableBasicTimelines, hasWithReplies, isAvailableBasicTimeline, isBasicTimeline, basicTimelineIconClass } from '@/timelines.js';
-import type { BasicTimelineType } from '@/timelines.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {defaultStore} from '@/store.js';
+import {i18n} from '@/i18n.js';
+import {$i} from '@/account.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
+import {antennasCache, userListsCache, favoritedChannelsCache} from '@/cache.js';
+import {deviceKind} from '@/scripts/device-kind.js';
+import {deepMerge} from '@/scripts/merge.js';
+import type {MenuItem} from '@/types/menu.js';
+import {miLocalStorage} from '@/local-storage.js';
+import {availableBasicTimelines, hasWithReplies, isAvailableBasicTimeline, isBasicTimeline, basicTimelineIconClass} from '@/timelines.js';
+import type {BasicTimelineType} from '@/timelines.js';
 
 provide('shouldOmitHeaderTitle', true);
 
@@ -77,8 +81,8 @@ const withRenotes = computed<boolean>({
 // computed内での無限ループを防ぐためのフラグ
 const localSocialTLFilterSwitchStore = ref<'withReplies' | 'onlyFiles' | false>(
 	defaultStore.reactiveState.tl.value.filter.withReplies ? 'withReplies' :
-	defaultStore.reactiveState.tl.value.filter.onlyFiles ? 'onlyFiles' :
-	false,
+		defaultStore.reactiveState.tl.value.filter.onlyFiles ? 'onlyFiles' :
+			false,
 );
 
 const withReplies = computed<boolean>({
@@ -127,7 +131,7 @@ function queueUpdated(q: number): void {
 }
 
 function top(): void {
-	if (rootEl.value) scroll(rootEl.value, { top: 0 });
+	if (rootEl.value) scroll(rootEl.value, {top: 0});
 }
 
 async function chooseList(ev: MouseEvent): Promise<void> {
@@ -138,7 +142,7 @@ async function chooseList(ev: MouseEvent): Promise<void> {
 			text: list.name,
 			to: `/timeline/list/${list.id}`,
 		})),
-		(lists.length === 0 ? undefined : { type: 'divider' }),
+		(lists.length === 0 ? undefined : {type: 'divider'}),
 		{
 			type: 'link' as const,
 			icon: 'ti ti-plus',
@@ -158,7 +162,7 @@ async function chooseAntenna(ev: MouseEvent): Promise<void> {
 			indicate: antenna.hasUnreadNote,
 			to: `/timeline/antenna/${antenna.id}`,
 		})),
-		(antennas.length === 0 ? undefined : { type: 'divider' }),
+		(antennas.length === 0 ? undefined : {type: 'divider'}),
 		{
 			type: 'link' as const,
 			icon: 'ti ti-plus',
@@ -183,7 +187,7 @@ async function chooseChannel(ev: MouseEvent): Promise<void> {
 				to: `/channels/${channel.id}`,
 			};
 		}),
-		(channels.length === 0 ? undefined : { type: 'divider' }),
+		(channels.length === 0 ? undefined : {type: 'divider'}),
 		{
 			type: 'link',
 			icon: 'ti ti-plus',
@@ -195,7 +199,7 @@ async function chooseChannel(ev: MouseEvent): Promise<void> {
 }
 
 function saveSrc(newSrc: TimelinePageSrc): void {
-	const out = deepMerge({ src: newSrc }, defaultStore.state.tl);
+	const out = deepMerge({src: newSrc}, defaultStore.state.tl);
 
 	if (newSrc.startsWith('userList:')) {
 		const id = newSrc.substring('userList:'.length);
@@ -210,13 +214,13 @@ function saveSrc(newSrc: TimelinePageSrc): void {
 
 function saveTlFilter(key: keyof typeof defaultStore.state.tl.filter, newValue: boolean) {
 	if (key !== 'withReplies' || $i) {
-		const out = deepMerge({ filter: { [key]: newValue } }, defaultStore.state.tl);
+		const out = deepMerge({filter: {[key]: newValue}}, defaultStore.state.tl);
 		defaultStore.set('tl', out);
 	}
 }
 
 async function timetravel(): Promise<void> {
-	const { canceled, result: date } = await os.inputDate({
+	const {canceled, result: date} = await os.inputDate({
 		title: i18n.ts.date,
 	});
 	if (canceled) return;

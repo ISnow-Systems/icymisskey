@@ -8,7 +8,7 @@ html
 
 		message('Start flushing.');
 
-		(async function() {
+		(async function () {
 			try {
 				localStorage.clear();
 				message('localStorage cleared.');
@@ -24,10 +24,12 @@ html
 				if (navigator.serviceWorker.controller) {
 					navigator.serviceWorker.controller.postMessage('clear');
 					await navigator.serviceWorker.getRegistrations()
-						.then(registrations => {
-							return Promise.all(registrations.map(registration => registration.unregister()));
-						})
-						.catch(e => { throw new Error(e) });
+							.then(registrations => {
+								return Promise.all(registrations.map(registration => registration.unregister()));
+							})
+							.catch(e => {
+								throw new Error(e)
+							});
 				}
 
 				message(successText);
@@ -43,5 +45,5 @@ html
 		})();
 
 		function message(text) {
-			msg.insertAdjacentHTML('beforeend', `<p>[${(new Date()).toString()}] ${text.replace(/\n/g,'<br>')}</p>`)
+			msg.insertAdjacentHTML('beforeend', `<p>[${(new Date()).toString()}] ${text.replace(/\n/g, '<br>')}</p>`)
 		}

@@ -3,20 +3,20 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { MoreThan } from 'typeorm';
-import { DI } from '@/di-symbols.js';
-import type { DriveFilesRepository, NotesRepository, UserProfilesRepository, UsersRepository } from '@/models/_.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {MoreThan} from 'typeorm';
+import {DI} from '@/di-symbols.js';
+import type {DriveFilesRepository, NotesRepository, UserProfilesRepository, UsersRepository} from '@/models/_.js';
 import type Logger from '@/logger.js';
-import { DriveService } from '@/core/DriveService.js';
-import type { MiDriveFile } from '@/models/DriveFile.js';
-import type { MiNote } from '@/models/Note.js';
-import { EmailService } from '@/core/EmailService.js';
-import { bindThis } from '@/decorators.js';
-import { SearchService } from '@/core/SearchService.js';
-import { QueueLoggerService } from '../QueueLoggerService.js';
+import {DriveService} from '@/core/DriveService.js';
+import type {MiDriveFile} from '@/models/DriveFile.js';
+import type {MiNote} from '@/models/Note.js';
+import {EmailService} from '@/core/EmailService.js';
+import {bindThis} from '@/decorators.js';
+import {SearchService} from '@/core/SearchService.js';
+import {QueueLoggerService} from '../QueueLoggerService.js';
 import type * as Bull from 'bullmq';
-import type { DbUserDeleteJobData } from '../types.js';
+import type {DbUserDeleteJobData} from '../types.js';
 
 @Injectable()
 export class DeleteAccountProcessorService {
@@ -25,16 +25,12 @@ export class DeleteAccountProcessorService {
 	constructor(
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
-
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		@Inject(DI.driveFilesRepository)
 		private driveFilesRepository: DriveFilesRepository,
-
 		private driveService: DriveService,
 		private emailService: EmailService,
 		private queueLoggerService: QueueLoggerService,
@@ -47,7 +43,7 @@ export class DeleteAccountProcessorService {
 	public async process(job: Bull.Job<DbUserDeleteJobData>): Promise<string | void> {
 		this.logger.info(`Deleting account of ${job.data.user.id} ...`);
 
-		const user = await this.usersRepository.findOneBy({ id: job.data.user.id });
+		const user = await this.usersRepository.findOneBy({id: job.data.user.id});
 		if (user == null) {
 			return;
 		}
@@ -59,7 +55,7 @@ export class DeleteAccountProcessorService {
 				const notes = await this.notesRepository.find({
 					where: {
 						userId: user.id,
-						...(cursor ? { id: MoreThan(cursor) } : {}),
+						...(cursor ? {id: MoreThan(cursor)} : {}),
 					},
 					take: 100,
 					order: {
@@ -90,7 +86,7 @@ export class DeleteAccountProcessorService {
 				const files = await this.driveFilesRepository.find({
 					where: {
 						userId: user.id,
-						...(cursor ? { id: MoreThan(cursor) } : {}),
+						...(cursor ? {id: MoreThan(cursor)} : {}),
 					},
 					take: 10,
 					order: {
@@ -113,7 +109,7 @@ export class DeleteAccountProcessorService {
 		}
 
 		{ // Send email notification
-			const profile = await this.userProfilesRepository.findOneByOrFail({ userId: user.id });
+			const profile = await this.userProfilesRepository.findOneByOrFail({userId: user.id});
 			if (profile.email && profile.emailVerified) {
 				this.emailService.sendEmail(profile.email, 'Account deleted',
 					'Your account has been deleted.',
@@ -123,7 +119,7 @@ export class DeleteAccountProcessorService {
 
 		// soft指定されている場合は物理削除しない
 		if (job.data.soft) {
-		// nop
+			// nop
 		} else {
 			await this.usersRepository.delete(job.data.user.id);
 		}

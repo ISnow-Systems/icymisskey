@@ -3,23 +3,23 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
-import { IdService } from '@/core/IdService.js';
-import type { MiUser } from '@/models/User.js';
-import type { MiBlocking } from '@/models/Blocking.js';
-import { QueueService } from '@/core/QueueService.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { DI } from '@/di-symbols.js';
-import type { FollowRequestsRepository, BlockingsRepository, UserListsRepository, UserListMembershipsRepository } from '@/models/_.js';
+import {Inject, Injectable, OnModuleInit} from '@nestjs/common';
+import {ModuleRef} from '@nestjs/core';
+import {IdService} from '@/core/IdService.js';
+import type {MiUser} from '@/models/User.js';
+import type {MiBlocking} from '@/models/Blocking.js';
+import {QueueService} from '@/core/QueueService.js';
+import {GlobalEventService} from '@/core/GlobalEventService.js';
+import {DI} from '@/di-symbols.js';
+import type {FollowRequestsRepository, BlockingsRepository, UserListsRepository, UserListMembershipsRepository} from '@/models/_.js';
 import Logger from '@/logger.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { ApRendererService } from '@/core/activitypub/ApRendererService.js';
-import { LoggerService } from '@/core/LoggerService.js';
-import { UserWebhookService } from '@/core/UserWebhookService.js';
-import { bindThis } from '@/decorators.js';
-import { CacheService } from '@/core/CacheService.js';
-import { UserFollowingService } from '@/core/UserFollowingService.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {ApRendererService} from '@/core/activitypub/ApRendererService.js';
+import {LoggerService} from '@/core/LoggerService.js';
+import {UserWebhookService} from '@/core/UserWebhookService.js';
+import {bindThis} from '@/decorators.js';
+import {CacheService} from '@/core/CacheService.js';
+import {UserFollowingService} from '@/core/UserFollowingService.js';
 
 @Injectable()
 export class UserBlockingService implements OnModuleInit {
@@ -28,19 +28,14 @@ export class UserBlockingService implements OnModuleInit {
 
 	constructor(
 		private moduleRef: ModuleRef,
-
 		@Inject(DI.followRequestsRepository)
 		private followRequestsRepository: FollowRequestsRepository,
-
 		@Inject(DI.blockingsRepository)
 		private blockingsRepository: BlockingsRepository,
-
 		@Inject(DI.userListsRepository)
 		private userListsRepository: UserListsRepository,
-
 		@Inject(DI.userListMembershipsRepository)
 		private userListMembershipsRepository: UserListMembershipsRepository,
-
 		private cacheService: CacheService,
 		private userEntityService: UserEntityService,
 		private idService: IdService,
@@ -92,64 +87,6 @@ export class UserBlockingService implements OnModuleInit {
 	}
 
 	@bindThis
-	private async cancelRequest(follower: MiUser, followee: MiUser, silent = false) {
-		const request = await this.followRequestsRepository.findOneBy({
-			followeeId: followee.id,
-			followerId: follower.id,
-		});
-
-		if (request == null) {
-			return;
-		}
-
-		await this.followRequestsRepository.delete({
-			followeeId: followee.id,
-			followerId: follower.id,
-		});
-
-		if (this.userEntityService.isLocalUser(followee)) {
-			this.userEntityService.pack(followee, followee, {
-				schema: 'MeDetailed',
-			}).then(packed => this.globalEventService.publishMainStream(followee.id, 'meUpdated', packed));
-		}
-
-		if (this.userEntityService.isLocalUser(follower) && !silent) {
-			this.userEntityService.pack(followee, follower, {
-				schema: 'UserDetailedNotMe',
-			}).then(async packed => {
-				this.globalEventService.publishMainStream(follower.id, 'unfollow', packed);
-				this.webhookService.enqueueUserWebhook(follower.id, 'unfollow', { user: packed });
-			});
-		}
-
-		// リモートにフォローリクエストをしていたらUndoFollow送信
-		if (this.userEntityService.isLocalUser(follower) && this.userEntityService.isRemoteUser(followee)) {
-			const content = this.apRendererService.addContext(this.apRendererService.renderUndo(this.apRendererService.renderFollow(follower, followee), follower));
-			this.queueService.deliver(follower, content, followee.inbox, false);
-		}
-
-		// リモートからフォローリクエストを受けていたらReject送信
-		if (this.userEntityService.isRemoteUser(follower) && this.userEntityService.isLocalUser(followee)) {
-			const content = this.apRendererService.addContext(this.apRendererService.renderReject(this.apRendererService.renderFollow(follower, followee, request.requestId!), followee));
-			this.queueService.deliver(followee, content, follower.inbox, false);
-		}
-	}
-
-	@bindThis
-	private async removeFromList(listOwner: MiUser, user: MiUser) {
-		const userLists = await this.userListsRepository.findBy({
-			userId: listOwner.id,
-		});
-
-		for (const userList of userLists) {
-			await this.userListMembershipsRepository.delete({
-				userListId: userList.id,
-				userId: user.id,
-			});
-		}
-	}
-
-	@bindThis
 	public async unblock(blocker: MiUser, blockee: MiUser) {
 		const blocking = await this.blockingsRepository.findOneBy({
 			blockerId: blocker.id,
@@ -186,5 +123,63 @@ export class UserBlockingService implements OnModuleInit {
 	@bindThis
 	public async checkBlocked(blockerId: MiUser['id'], blockeeId: MiUser['id']): Promise<boolean> {
 		return (await this.cacheService.userBlockingCache.fetch(blockerId)).has(blockeeId);
+	}
+
+	@bindThis
+	private async cancelRequest(follower: MiUser, followee: MiUser, silent = false) {
+		const request = await this.followRequestsRepository.findOneBy({
+			followeeId: followee.id,
+			followerId: follower.id,
+		});
+
+		if (request == null) {
+			return;
+		}
+
+		await this.followRequestsRepository.delete({
+			followeeId: followee.id,
+			followerId: follower.id,
+		});
+
+		if (this.userEntityService.isLocalUser(followee)) {
+			this.userEntityService.pack(followee, followee, {
+				schema: 'MeDetailed',
+			}).then(packed => this.globalEventService.publishMainStream(followee.id, 'meUpdated', packed));
+		}
+
+		if (this.userEntityService.isLocalUser(follower) && !silent) {
+			this.userEntityService.pack(followee, follower, {
+				schema: 'UserDetailedNotMe',
+			}).then(async packed => {
+				this.globalEventService.publishMainStream(follower.id, 'unfollow', packed);
+				this.webhookService.enqueueUserWebhook(follower.id, 'unfollow', {user: packed});
+			});
+		}
+
+		// リモートにフォローリクエストをしていたらUndoFollow送信
+		if (this.userEntityService.isLocalUser(follower) && this.userEntityService.isRemoteUser(followee)) {
+			const content = this.apRendererService.addContext(this.apRendererService.renderUndo(this.apRendererService.renderFollow(follower, followee), follower));
+			this.queueService.deliver(follower, content, followee.inbox, false);
+		}
+
+		// リモートからフォローリクエストを受けていたらReject送信
+		if (this.userEntityService.isRemoteUser(follower) && this.userEntityService.isLocalUser(followee)) {
+			const content = this.apRendererService.addContext(this.apRendererService.renderReject(this.apRendererService.renderFollow(follower, followee, request.requestId!), followee));
+			this.queueService.deliver(followee, content, follower.inbox, false);
+		}
+	}
+
+	@bindThis
+	private async removeFromList(listOwner: MiUser, user: MiUser) {
+		const userLists = await this.userListsRepository.findBy({
+			userId: listOwner.id,
+		});
+
+		for (const userList of userLists) {
+			await this.userListMembershipsRepository.delete({
+				userListId: userList.id,
+				userId: user.id,
+			});
+		}
 	}
 }

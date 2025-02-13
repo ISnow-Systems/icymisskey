@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { In } from 'typeorm';
-import { DI } from '@/di-symbols.js';
-import type { MiSystemWebhook, SystemWebhooksRepository } from '@/models/_.js';
-import { bindThis } from '@/decorators.js';
-import { Packed } from '@/misc/json-schema.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {In} from 'typeorm';
+import {DI} from '@/di-symbols.js';
+import type {MiSystemWebhook, SystemWebhooksRepository} from '@/models/_.js';
+import {bindThis} from '@/decorators.js';
+import {Packed} from '@/misc/json-schema.js';
 
 @Injectable()
 export class SystemWebhookEntityService {
@@ -27,7 +27,7 @@ export class SystemWebhookEntityService {
 	): Promise<Packed<'SystemWebhook'>> {
 		const webhook = typeof src === 'object'
 			? src
-			: opts?.webhooks.get(src) ?? await this.systemWebhooksRepository.findOneByOrFail({ id: src });
+			: opts?.webhooks.get(src) ?? await this.systemWebhooksRepository.findOneByOrFail({id: src});
 
 		return {
 			id: webhook.id,
@@ -56,7 +56,7 @@ export class SystemWebhookEntityService {
 		const ids = src.filter((it): it is MiSystemWebhook['id'] => typeof it === 'string');
 		if (ids.length > 0) {
 			webhooks.push(
-				...await this.systemWebhooksRepository.findBy({ id: In(ids) }),
+				...await this.systemWebhooksRepository.findBy({id: In(ids)}),
 			);
 		}
 

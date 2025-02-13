@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Brackets, SelectQueryBuilder } from 'typeorm';
-import { DI } from '@/di-symbols.js';
-import { type FollowingsRepository, MiUser, type UsersRepository } from '@/models/_.js';
-import { bindThis } from '@/decorators.js';
-import { sqlLikeEscape } from '@/misc/sql-like-escape.js';
-import type { Config } from '@/config.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { Packed } from '@/misc/json-schema.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Brackets, SelectQueryBuilder} from 'typeorm';
+import {DI} from '@/di-symbols.js';
+import {type FollowingsRepository, MiUser, type UsersRepository} from '@/models/_.js';
+import {bindThis} from '@/decorators.js';
+import {sqlLikeEscape} from '@/misc/sql-like-escape.js';
+import type {Config} from '@/config.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {Packed} from '@/misc/json-schema.js';
 
 function defaultActiveThreshold() {
 	return new Date(Date.now() - 1000 * 60 * 60 * 24 * 30);
@@ -91,7 +91,7 @@ export class UserSearchService {
 		return this.userEntityService.packMany<'UserLite' | 'UserDetailed'>(
 			[...resultSet].slice(0, limit),
 			me,
-			{ schema: opts?.detail ? 'UserDetailed' : 'UserLite' },
+			{schema: opts?.detail ? 'UserDetailed' : 'UserLite'},
 		);
 	}
 
@@ -115,11 +115,11 @@ export class UserSearchService {
 
 		const followingUserQuery = this.followingsRepository.createQueryBuilder('following')
 			.select('following.followeeId')
-			.where('following.followerId = :followerId', { followerId: me.id });
+			.where('following.followerId = :followerId', {followerId: me.id});
 
 		const activeFollowingUsersQuery = this.generateUserQueryBuilder(params)
 			.andWhere(`user.id IN (${followingUserQuery.getQuery()})`)
-			.andWhere('user.updatedAt > :activeThreshold', { activeThreshold });
+			.andWhere('user.updatedAt > :activeThreshold', {activeThreshold});
 		activeFollowingUsersQuery.setParameters(followingUserQuery.getParameters());
 
 		const inactiveFollowingUsersQuery = this.generateUserQueryBuilder(params)
@@ -127,19 +127,19 @@ export class UserSearchService {
 			.andWhere(new Brackets(qb => {
 				qb
 					.where('user.updatedAt IS NULL')
-					.orWhere('user.updatedAt <= :activeThreshold', { activeThreshold });
+					.orWhere('user.updatedAt <= :activeThreshold', {activeThreshold});
 			}));
 		inactiveFollowingUsersQuery.setParameters(followingUserQuery.getParameters());
 
 		// 自分自身がヒットするとしたらここ
 		const activeUserQuery = this.generateUserQueryBuilder(params)
 			.andWhere(`user.id NOT IN (${followingUserQuery.getQuery()})`)
-			.andWhere('user.updatedAt > :activeThreshold', { activeThreshold });
+			.andWhere('user.updatedAt > :activeThreshold', {activeThreshold});
 		activeUserQuery.setParameters(followingUserQuery.getParameters());
 
 		const inactiveUserQuery = this.generateUserQueryBuilder(params)
 			.andWhere(`user.id NOT IN (${followingUserQuery.getQuery()})`)
-			.andWhere('user.updatedAt <= :activeThreshold', { activeThreshold });
+			.andWhere('user.updatedAt <= :activeThreshold', {activeThreshold});
 		inactiveUserQuery.setParameters(followingUserQuery.getParameters());
 
 		return [activeFollowingUsersQuery, inactiveFollowingUsersQuery, activeUserQuery, inactiveUserQuery];
@@ -163,11 +163,11 @@ export class UserSearchService {
 			.andWhere(new Brackets(qb => {
 				qb
 					.where('user.updatedAt IS NULL')
-					.orWhere('user.updatedAt > :activeThreshold', { activeThreshold });
+					.orWhere('user.updatedAt > :activeThreshold', {activeThreshold});
 			}));
 
 		const inactiveUserQuery = this.generateUserQueryBuilder(params)
-			.andWhere('user.updatedAt <= :activeThreshold', { activeThreshold });
+			.andWhere('user.updatedAt <= :activeThreshold', {activeThreshold});
 
 		return [activeUserQuery, inactiveUserQuery];
 	}
@@ -185,7 +185,7 @@ export class UserSearchService {
 		const userQuery = this.usersRepository.createQueryBuilder('user');
 
 		if (params.username) {
-			userQuery.andWhere('user.usernameLower LIKE :username', { username: sqlLikeEscape(params.username.toLowerCase()) + '%' });
+			userQuery.andWhere('user.usernameLower LIKE :username', {username: sqlLikeEscape(params.username.toLowerCase()) + '%'});
 		}
 
 		if (params.host) {

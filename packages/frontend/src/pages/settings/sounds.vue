@@ -4,53 +4,53 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="_gaps_m">
-	<MkSwitch v-model="notUseSound">
-		<template #label>{{ i18n.ts.notUseSound }}</template>
-	</MkSwitch>
-	<MkSwitch v-model="useSoundOnlyWhenActive">
-		<template #label>{{ i18n.ts.useSoundOnlyWhenActive }}</template>
-	</MkSwitch>
-	<MkRange v-model="masterVolume" :min="0" :max="1" :step="0.05" :textConverter="(v) => `${Math.floor(v * 100)}%`">
-		<template #label>{{ i18n.ts.masterVolume }}</template>
-	</MkRange>
+	<div class="_gaps_m">
+		<MkSwitch v-model="notUseSound">
+			<template #label>{{ i18n.ts.notUseSound }}</template>
+		</MkSwitch>
+		<MkSwitch v-model="useSoundOnlyWhenActive">
+			<template #label>{{ i18n.ts.useSoundOnlyWhenActive }}</template>
+		</MkSwitch>
+		<MkRange v-model="masterVolume" :max="1" :min="0" :step="0.05" :textConverter="(v) => `${Math.floor(v * 100)}%`">
+			<template #label>{{ i18n.ts.masterVolume }}</template>
+		</MkRange>
 
-	<FormSection>
-		<template #label>{{ i18n.ts.sounds }}</template>
-		<div class="_gaps_s">
-			<MkFolder v-for="type in operationTypes" :key="type">
-				<template #label>{{ i18n.ts._sfx[type] }}</template>
-				<template #suffix>{{ getSoundTypeName(sounds[type].type) }}</template>
-				<Suspense>
-					<template #default>
-						<XSound :type="sounds[type].type" :volume="sounds[type].volume" :fileId="sounds[type].fileId" :fileUrl="sounds[type].fileUrl" @update="(res) => updated(type, res)"/>
-					</template>
-					<template #fallback>
-						<MkLoading/>
-					</template>
-				</Suspense>
-			</MkFolder>
-		</div>
-	</FormSection>
+		<FormSection>
+			<template #label>{{ i18n.ts.sounds }}</template>
+			<div class="_gaps_s">
+				<MkFolder v-for="type in operationTypes" :key="type">
+					<template #label>{{ i18n.ts._sfx[type] }}</template>
+					<template #suffix>{{ getSoundTypeName(sounds[type].type) }}</template>
+					<Suspense>
+						<template #default>
+							<XSound :fileId="sounds[type].fileId" :fileUrl="sounds[type].fileUrl" :type="sounds[type].type" :volume="sounds[type].volume" @update="(res) => updated(type, res)"/>
+						</template>
+						<template #fallback>
+							<MkLoading/>
+						</template>
+					</Suspense>
+				</MkFolder>
+			</div>
+		</FormSection>
 
-	<MkButton danger @click="reset()"><i class="ti ti-reload"></i> {{ i18n.ts.default }}</MkButton>
-</div>
+		<MkButton danger @click="reset()"><i class="ti ti-reload"></i> {{ i18n.ts.default }}</MkButton>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
-import type { Ref } from 'vue';
+import {computed, ref} from 'vue';
+import type {Ref} from 'vue';
 import XSound from './sounds.sound.vue';
-import type { SoundType, OperationType } from '@/scripts/sound.js';
-import type { SoundStore } from '@/store.js';
+import type {SoundType, OperationType} from '@/scripts/sound.js';
+import type {SoundStore} from '@/store.js';
 import MkRange from '@/components/MkRange.vue';
 import MkButton from '@/components/MkButton.vue';
 import FormSection from '@/components/form/section.vue';
 import MkFolder from '@/components/MkFolder.vue';
-import { i18n } from '@/i18n.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
-import { operationTypes } from '@/scripts/sound.js';
-import { defaultStore } from '@/store.js';
+import {i18n} from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
+import {operationTypes} from '@/scripts/sound.js';
+import {defaultStore} from '@/store.js';
 import MkSwitch from '@/components/MkSwitch.vue';
 
 const notUseSound = computed(defaultStore.makeGetterSetter('sound_notUseSound'));

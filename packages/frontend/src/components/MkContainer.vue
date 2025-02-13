@@ -4,44 +4,44 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div ref="rootEl" class="_panel" :class="[$style.root, { [$style.naked]: naked, [$style.thin]: thin, [$style.scrollable]: scrollable }]">
-	<header v-if="showHeader" ref="headerEl" :class="$style.header">
-		<div :class="$style.title">
-			<span :class="$style.titleIcon"><slot name="icon"></slot></span>
-			<slot name="header"></slot>
-		</div>
-		<div :class="$style.headerSub">
-			<slot name="func" :buttonStyleClass="$style.headerButton"></slot>
-			<button v-if="foldable" :class="$style.headerButton" class="_button" @click="() => showBody = !showBody">
-				<template v-if="showBody"><i class="ti ti-chevron-up"></i></template>
-				<template v-else><i class="ti ti-chevron-down"></i></template>
-			</button>
-		</div>
-	</header>
-	<Transition
-		:enterActiveClass="defaultStore.state.animation ? $style.transition_toggle_enterActive : ''"
-		:leaveActiveClass="defaultStore.state.animation ? $style.transition_toggle_leaveActive : ''"
-		:enterFromClass="defaultStore.state.animation ? $style.transition_toggle_enterFrom : ''"
-		:leaveToClass="defaultStore.state.animation ? $style.transition_toggle_leaveTo : ''"
-		@enter="enter"
-		@afterEnter="afterEnter"
-		@leave="leave"
-		@afterLeave="afterLeave"
-	>
-		<div v-show="showBody" ref="contentEl" :class="[$style.content, { [$style.omitted]: omitted }]">
-			<slot></slot>
-			<button v-if="omitted" :class="$style.fade" class="_button" @click="showMore">
-				<span :class="$style.fadeLabel">{{ i18n.ts.showMore }}</span>
-			</button>
-		</div>
-	</Transition>
-</div>
+	<div ref="rootEl" :class="[$style.root, { [$style.naked]: naked, [$style.thin]: thin, [$style.scrollable]: scrollable }]" class="_panel">
+		<header v-if="showHeader" ref="headerEl" :class="$style.header">
+			<div :class="$style.title">
+				<span :class="$style.titleIcon"><slot name="icon"></slot></span>
+				<slot name="header"></slot>
+			</div>
+			<div :class="$style.headerSub">
+				<slot :buttonStyleClass="$style.headerButton" name="func"></slot>
+				<button v-if="foldable" :class="$style.headerButton" class="_button" @click="() => showBody = !showBody">
+					<template v-if="showBody"><i class="ti ti-chevron-up"></i></template>
+					<template v-else><i class="ti ti-chevron-down"></i></template>
+				</button>
+			</div>
+		</header>
+		<Transition
+			:enterActiveClass="defaultStore.state.animation ? $style.transition_toggle_enterActive : ''"
+			:enterFromClass="defaultStore.state.animation ? $style.transition_toggle_enterFrom : ''"
+			:leaveActiveClass="defaultStore.state.animation ? $style.transition_toggle_leaveActive : ''"
+			:leaveToClass="defaultStore.state.animation ? $style.transition_toggle_leaveTo : ''"
+			@afterEnter="afterEnter"
+			@afterLeave="afterLeave"
+			@enter="enter"
+			@leave="leave"
+		>
+			<div v-show="showBody" ref="contentEl" :class="[$style.content, { [$style.omitted]: omitted }]">
+				<slot></slot>
+				<button v-if="omitted" :class="$style.fade" class="_button" @click="showMore">
+					<span :class="$style.fadeLabel">{{ i18n.ts.showMore }}</span>
+				</button>
+			</div>
+		</Transition>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref, shallowRef, watch } from 'vue';
-import { defaultStore } from '@/store.js';
-import { i18n } from '@/i18n.js';
+import {onMounted, onUnmounted, ref, shallowRef, watch} from 'vue';
+import {defaultStore} from '@/store.js';
+import {i18n} from '@/i18n.js';
 
 const props = withDefaults(defineProps<{
 	showHeader?: boolean;
@@ -141,6 +141,7 @@ onUnmounted(() => {
 	overflow-y: clip;
 	transition: opacity 0.5s, height 0.5s !important;
 }
+
 .transition_toggle_enterFrom,
 .transition_toggle_leaveTo {
 	opacity: 0;

@@ -3,19 +3,19 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Brackets } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
-import type { MiMeta, NotesRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { DI } from '@/di-symbols.js';
-import { CacheService } from '@/core/CacheService.js';
-import { IdService } from '@/core/IdService.js';
-import { QueryService } from '@/core/QueryService.js';
-import { MiLocalUser } from '@/models/User.js';
-import { FanoutTimelineEndpointService } from '@/core/FanoutTimelineEndpointService.js';
-import { FanoutTimelineName } from '@/core/FanoutTimelineService.js';
-import { ApiError } from '@/server/api/error.js';
+import {Brackets} from 'typeorm';
+import {Inject, Injectable} from '@nestjs/common';
+import type {MiMeta, NotesRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
+import {DI} from '@/di-symbols.js';
+import {CacheService} from '@/core/CacheService.js';
+import {IdService} from '@/core/IdService.js';
+import {QueryService} from '@/core/QueryService.js';
+import {MiLocalUser} from '@/models/User.js';
+import {FanoutTimelineEndpointService} from '@/core/FanoutTimelineEndpointService.js';
+import {FanoutTimelineName} from '@/core/FanoutTimelineService.js';
+import {ApiError} from '@/server/api/error.js';
 
 export const meta = {
 	tags: ['users', 'notes'],
@@ -54,17 +54,17 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		userId: { type: 'string', format: 'misskey:id' },
-		withReplies: { type: 'boolean', default: false },
-		withRenotes: { type: 'boolean', default: true },
-		withChannelNotes: { type: 'boolean', default: false },
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
-		sinceDate: { type: 'integer' },
-		untilDate: { type: 'integer' },
-		allowPartial: { type: 'boolean', default: false }, // true is recommended but for compatibility false by default
-		withFiles: { type: 'boolean', default: false },
+		userId: {type: 'string', format: 'misskey:id'},
+		withReplies: {type: 'boolean', default: false},
+		withRenotes: {type: 'boolean', default: true},
+		withChannelNotes: {type: 'boolean', default: false},
+		limit: {type: 'integer', minimum: 1, maximum: 100, default: 10},
+		sinceId: {type: 'string', format: 'misskey:id'},
+		untilId: {type: 'string', format: 'misskey:id'},
+		sinceDate: {type: 'integer'},
+		untilDate: {type: 'integer'},
+		allowPartial: {type: 'boolean', default: false}, // true is recommended but for compatibility false by default
+		withFiles: {type: 'boolean', default: false},
 	},
 	required: ['userId'],
 } as const;
@@ -74,10 +74,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.meta)
 		private serverSettings: MiMeta,
-
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		private noteEntityService: NoteEntityService,
 		private queryService: QueryService,
 		private cacheService: CacheService,
@@ -166,7 +164,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		const isSelf = me && (me.id === ps.userId);
 
 		const query = this.queryService.makePaginationQuery(this.notesRepository.createQueryBuilder('note'), ps.sinceId, ps.untilId)
-			.andWhere('note.userId = :userId', { userId: ps.userId })
+			.andWhere('note.userId = :userId', {userId: ps.userId})
 			.innerJoinAndSelect('note.user', 'user')
 			.leftJoinAndSelect('note.reply', 'reply')
 			.leftJoinAndSelect('note.renote', 'renote')
@@ -185,7 +183,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 		this.queryService.generateVisibilityQuery(query, me);
 		if (me) {
-			this.queryService.generateMutedUserQuery(query, me, { id: ps.userId });
+			this.queryService.generateMutedUserQuery(query, me, {id: ps.userId});
 			this.queryService.generateBlockedUserQuery(query, me);
 		}
 
@@ -195,7 +193,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 		if (ps.withRenotes === false) {
 			query.andWhere(new Brackets(qb => {
-				qb.orWhere('note.userId != :userId', { userId: ps.userId });
+				qb.orWhere('note.userId != :userId', {userId: ps.userId});
 				qb.orWhere('note.renoteId IS NULL');
 				qb.orWhere('note.text IS NOT NULL');
 				qb.orWhere('note.fileIds != \'{}\'');

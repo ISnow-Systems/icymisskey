@@ -1,10 +1,10 @@
-import { enableFetchMocks } from 'jest-fetch-mock';
-import { APIClient, isAPIError } from '../src/api.js';
+import {enableFetchMocks} from 'jest-fetch-mock';
+import {APIClient, isAPIError} from '../src/api.js';
 
 enableFetchMocks();
 
 function getFetchCall(call: any[]) {
-	const { body, method } = call[1];
+	const {body, method} = call[1];
 	const contentType = call[1].headers['Content-Type'];
 	if (
 		body == null ||
@@ -28,12 +28,12 @@ describe('API', () => {
 			const body = await req.json();
 			if (req.method == 'POST' && req.url == 'https://misskey.test/api/i') {
 				if (body.i === 'TOKEN') {
-					return JSON.stringify({ id: 'foo' });
+					return JSON.stringify({id: 'foo'});
 				} else {
-					return { status: 400 };
+					return {status: 400};
 				}
 			} else {
-				return { status: 404 };
+				return {status: 404};
 			}
 		});
 
@@ -52,7 +52,7 @@ describe('API', () => {
 			url: 'https://misskey.test/api/i',
 			method: 'POST',
 			contentType: 'application/json',
-			body: { i: 'TOKEN' }
+			body: {i: 'TOKEN'}
 		});
 	});
 
@@ -62,12 +62,12 @@ describe('API', () => {
 			const body = await req.json();
 			if (req.method == 'POST' && req.url == 'https://misskey.test/api/notes/show') {
 				if (body.i === 'TOKEN' && body.noteId === 'aaaaa') {
-					return JSON.stringify({ id: 'foo' });
+					return JSON.stringify({id: 'foo'});
 				} else {
-					return { status: 400 };
+					return {status: 400};
 				}
 			} else {
-				return { status: 404 };
+				return {status: 404};
 			}
 		});
 
@@ -76,7 +76,7 @@ describe('API', () => {
 			credential: 'TOKEN',
 		});
 
-		const res = await cli.request('notes/show', { noteId: 'aaaaa' });
+		const res = await cli.request('notes/show', {noteId: 'aaaaa'});
 
 		expect(res).toEqual({
 			id: 'foo'
@@ -86,7 +86,7 @@ describe('API', () => {
 			url: 'https://misskey.test/api/notes/show',
 			method: 'POST',
 			contentType: 'application/json',
-			body: { i: 'TOKEN', noteId: 'aaaaa' }
+			body: {i: 'TOKEN', noteId: 'aaaaa'}
 		});
 	});
 
@@ -95,12 +95,12 @@ describe('API', () => {
 		fetchMock.mockResponse(async (req) => {
 			if (req.method == 'POST' && req.url == 'https://misskey.test/api/drive/files/create') {
 				if (req.headers.get('Content-Type')?.includes('multipart/form-data')) {
-					return JSON.stringify({ id: 'foo' });
+					return JSON.stringify({id: 'foo'});
 				} else {
-					return { status: 400 };
+					return {status: 400};
 				}
 			} else {
-				return { status: 404 };
+				return {status: 404};
 			}
 		});
 
@@ -135,9 +135,9 @@ describe('API', () => {
 		fetchMock.resetMocks();
 		fetchMock.mockResponse(async (req) => {
 			if (req.method == 'POST' && req.url == 'https://misskey.test/api/reset-password') {
-				return { status: 204 };
+				return {status: 204};
 			} else {
-				return { status: 404 };
+				return {status: 404};
 			}
 		});
 
@@ -146,7 +146,7 @@ describe('API', () => {
 			credential: 'TOKEN',
 		});
 
-		const res = await cli.request('reset-password', { token: 'aaa', password: 'aaa' });
+		const res = await cli.request('reset-password', {token: 'aaa', password: 'aaa'});
 
 		expect(res).toEqual(null);
 
@@ -154,7 +154,7 @@ describe('API', () => {
 			url: 'https://misskey.test/api/reset-password',
 			method: 'POST',
 			contentType: 'application/json',
-			body: { i: 'TOKEN', token: 'aaa', password: 'aaa' }
+			body: {i: 'TOKEN', token: 'aaa', password: 'aaa'}
 		});
 	});
 
@@ -164,7 +164,7 @@ describe('API', () => {
 			const body = await req.json();
 			if (req.method == 'POST' && req.url == 'https://misskey.test/api/i') {
 				if (typeof body.i === 'string') {
-					return JSON.stringify({ id: 'foo' });
+					return JSON.stringify({id: 'foo'});
 				} else {
 					return {
 						status: 401,
@@ -178,7 +178,7 @@ describe('API', () => {
 					};
 				}
 			} else {
-				return { status: 404 };
+				return {status: 404};
 			}
 		});
 
@@ -260,7 +260,7 @@ describe('API', () => {
 		}
 	});
 
-	test('admin/roles/create の型が合う', async() => {
+	test('admin/roles/create の型が合う', async () => {
 		fetchMock.resetMocks();
 		fetchMock.mockResponse(async () => {
 			return {

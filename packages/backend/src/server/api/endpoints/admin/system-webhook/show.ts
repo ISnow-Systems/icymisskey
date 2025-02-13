@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { SystemWebhookEntityService } from '@/core/entities/SystemWebhookEntityService.js';
-import { ApiError } from '@/server/api/error.js';
-import { SystemWebhookService } from '@/core/SystemWebhookService.js';
+import {Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {SystemWebhookEntityService} from '@/core/entities/SystemWebhookEntityService.js';
+import {ApiError} from '@/server/api/error.js';
+import {SystemWebhookService} from '@/core/SystemWebhookService.js';
 
 export const meta = {
 	tags: ['admin', 'system-webhook'],
@@ -51,7 +51,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		private systemWebhookEntityService: SystemWebhookEntityService,
 	) {
 		super(meta, paramDef, async (ps) => {
-			const webhooks = await this.systemWebhookService.fetchSystemWebhooks({ ids: [ps.id] });
+			const webhooks = await this.systemWebhookService.fetchSystemWebhooks({ids: [ps.id]});
 			if (webhooks.length === 0) {
 				throw new ApiError(meta.errors.noSuchSystemWebhook);
 			}

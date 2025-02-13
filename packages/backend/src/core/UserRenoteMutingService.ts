@@ -3,23 +3,22 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { In } from 'typeorm';
-import type { RenoteMutingsRepository } from '@/models/_.js';
-import type { MiRenoteMuting } from '@/models/RenoteMuting.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {In} from 'typeorm';
+import type {RenoteMutingsRepository} from '@/models/_.js';
+import type {MiRenoteMuting} from '@/models/RenoteMuting.js';
 
-import { IdService } from '@/core/IdService.js';
-import type { MiUser } from '@/models/User.js';
-import { DI } from '@/di-symbols.js';
-import { bindThis } from '@/decorators.js';
-import { CacheService } from '@/core/CacheService.js';
+import {IdService} from '@/core/IdService.js';
+import type {MiUser} from '@/models/User.js';
+import {DI} from '@/di-symbols.js';
+import {bindThis} from '@/decorators.js';
+import {CacheService} from '@/core/CacheService.js';
 
 @Injectable()
 export class UserRenoteMutingService {
 	constructor(
 		@Inject(DI.renoteMutingsRepository)
 		private renoteMutingsRepository: RenoteMutingsRepository,
-
 		private idService: IdService,
 		private cacheService: CacheService,
 	) {

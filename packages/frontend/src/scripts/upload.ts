@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { reactive, ref } from 'vue';
+import {reactive, ref} from 'vue';
 import * as Misskey from 'misskey-js';
-import { v4 as uuid } from 'uuid';
-import { readAndCompressImage } from '@misskey-dev/browser-image-resizer';
-import { getCompressionConfig } from './upload/compress-config.js';
-import { defaultStore } from '@/store.js';
-import { apiUrl } from '@@/js/config.js';
-import { $i } from '@/account.js';
-import { alert } from '@/os.js';
-import { i18n } from '@/i18n.js';
-import { instance } from '@/instance.js';
+import {v4 as uuid} from 'uuid';
+import {readAndCompressImage} from '@misskey-dev/browser-image-resizer';
+import {getCompressionConfig} from './upload/compress-config.js';
+import {defaultStore} from '@/store.js';
+import {apiUrl} from '@@/js/config.js';
+import {$i} from '@/account.js';
+import {alert} from '@/os.js';
+import {i18n} from '@/i18n.js';
+import {instance} from '@/instance.js';
 
 type Uploading = {
 	id: string;

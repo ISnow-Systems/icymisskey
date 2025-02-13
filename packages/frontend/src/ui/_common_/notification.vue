@@ -4,13 +4,13 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="$style.root">
-	<XNotification :notification="notification" class="notification _acrylic" :full="false"/>
-</div>
+	<div :class="$style.root">
+		<XNotification :full="false" :notification="notification" class="notification _acrylic"/>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import {} from 'vue';
 import * as Misskey from 'misskey-js';
 import XNotification from '@/components/MkNotification.vue';
 

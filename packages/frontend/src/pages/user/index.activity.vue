@@ -4,28 +4,28 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkContainer>
-	<template #icon><i class="ti ti-chart-line"></i></template>
-	<template #header>{{ i18n.ts.activity }}</template>
-	<template #func="{ buttonStyleClass }">
-		<button class="_button" :class="buttonStyleClass" @click="showMenu">
-			<i class="ti ti-dots"></i>
-		</button>
-	</template>
+	<MkContainer>
+		<template #icon><i class="ti ti-chart-line"></i></template>
+		<template #header>{{ i18n.ts.activity }}</template>
+		<template #func="{ buttonStyleClass }">
+			<button :class="buttonStyleClass" class="_button" @click="showMenu">
+				<i class="ti ti-dots"></i>
+			</button>
+		</template>
 
-	<div style="padding: 8px;">
-		<MkChart :src="chartSrc" :args="{ user, withoutAll: true }" span="day" :limit="limit" :bar="true" :stacked="true" :detailed="false" :aspectRatio="5"/>
-	</div>
-</MkContainer>
+		<div style="padding: 8px;">
+			<MkChart :args="{ user, withoutAll: true }" :aspectRatio="5" :bar="true" :detailed="false" :limit="limit" :src="chartSrc" :stacked="true" span="day"/>
+		</div>
+	</MkContainer>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import {ref} from 'vue';
 import * as Misskey from 'misskey-js';
 import MkContainer from '@/components/MkContainer.vue';
 import MkChart from '@/components/MkChart.vue';
 import * as os from '@/os.js';
-import { i18n } from '@/i18n.js';
+import {i18n} from '@/i18n.js';
 
 const props = withDefaults(defineProps<{
 	user: Misskey.entities.User;

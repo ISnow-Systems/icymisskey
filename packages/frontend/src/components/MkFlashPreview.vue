@@ -4,26 +4,26 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkA :to="`/play/${flash.id}`" class="vhpxefrk _panel" :class="[{ gray: flash.visibility === 'private' }]">
-	<article>
-		<header>
-			<h1 :title="flash.title">{{ flash.title }}</h1>
-		</header>
-		<p v-if="flash.summary" :title="flash.summary">
-			<Mfm class="summaryMfm" :text="flash.summary" :plain="true" :nowrap="true"/>
-		</p>
-		<footer>
-			<img class="icon" :src="flash.user.avatarUrl"/>
-			<p>{{ userName(flash.user) }}</p>
-		</footer>
-	</article>
-</MkA>
+	<MkA :class="[{ gray: flash.visibility === 'private' }]" :to="`/play/${flash.id}`" class="vhpxefrk _panel">
+		<article>
+			<header>
+				<h1 :title="flash.title">{{ flash.title }}</h1>
+			</header>
+			<p v-if="flash.summary" :title="flash.summary">
+				<Mfm :nowrap="true" :plain="true" :text="flash.summary" class="summaryMfm"/>
+			</p>
+			<footer>
+				<img :src="flash.user.avatarUrl" class="icon"/>
+				<p>{{ userName(flash.user) }}</p>
+			</footer>
+		</article>
+	</MkA>
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import {} from 'vue';
 import * as Misskey from 'misskey-js';
-import { userName } from '@/filters/user.js';
+import {userName} from '@/filters/user.js';
 
 const props = defineProps<{
 	flash: Misskey.entities.Flash;

@@ -8,7 +8,7 @@
  * https://en.wikipedia.org/wiki/Identicon
  */
 
-import { createCanvas } from '@napi-rs/canvas';
+import {createCanvas} from '@napi-rs/canvas';
 import gen from 'random-seed';
 
 const size = 128; // px

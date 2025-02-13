@@ -4,17 +4,17 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<canvas ref="chartEl"></canvas>
+	<canvas ref="chartEl"></canvas>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, shallowRef } from 'vue';
-import { Chart } from 'chart.js';
-import { defaultStore } from '@/store.js';
-import { useChartTooltip } from '@/scripts/use-chart-tooltip.js';
-import { chartVLine } from '@/scripts/chart-vline.js';
-import { alpha } from '@/scripts/color.js';
-import { initChart } from '@/scripts/init-chart.js';
+import {onMounted, shallowRef} from 'vue';
+import {Chart} from 'chart.js';
+import {defaultStore} from '@/store.js';
+import {useChartTooltip} from '@/scripts/use-chart-tooltip.js';
+import {chartVLine} from '@/scripts/chart-vline.js';
+import {alpha} from '@/scripts/color.js';
+import {initChart} from '@/scripts/init-chart.js';
 
 initChart();
 
@@ -24,7 +24,7 @@ const props = defineProps<{
 
 const chartEl = shallowRef<HTMLCanvasElement>(null);
 
-const { handler: externalTooltipHandler } = useChartTooltip();
+const {handler: externalTooltipHandler} = useChartTooltip();
 
 let chartInstance: Chart;
 
@@ -54,17 +54,17 @@ function pushData(value) {
 
 const label =
 	props.type === 'process' ? 'Process' :
-	props.type === 'active' ? 'Active' :
-	props.type === 'delayed' ? 'Delayed' :
-	props.type === 'waiting' ? 'Waiting' :
-	'?' as never;
+		props.type === 'active' ? 'Active' :
+			props.type === 'delayed' ? 'Delayed' :
+				props.type === 'waiting' ? 'Waiting' :
+					'?' as never;
 
 const color =
 	props.type === 'process' ? '#00E396' :
-	props.type === 'active' ? '#00BCD4' :
-	props.type === 'delayed' ? '#E53935' :
-	props.type === 'waiting' ? '#FFB300' :
-	'?' as never;
+		props.type === 'active' ? '#00BCD4' :
+			props.type === 'delayed' ? '#E53935' :
+				props.type === 'waiting' ? '#FFB300' :
+					'?' as never;
 
 onMounted(() => {
 	const vLineColor = defaultStore.state.darkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)';
@@ -107,8 +107,7 @@ onMounted(() => {
 				},
 				y: {
 					min: 0,
-					grid: {
-					},
+					grid: {},
 				},
 			},
 			interaction: {

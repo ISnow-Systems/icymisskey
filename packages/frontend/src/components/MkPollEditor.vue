@@ -4,63 +4,63 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="zmdxowus">
-	<p v-if="choices.length < 2" class="caution">
-		<i class="ti ti-alert-triangle"></i>{{ i18n.ts._poll.noOnlyOneChoice }}
-	</p>
-	<ul>
-		<li v-for="(choice, i) in choices" :key="i">
-			<MkInput class="input" small :modelValue="choice" :placeholder="i18n.tsx._poll.choiceN({ n: i + 1 })" @update:modelValue="onInput(i, $event)">
-			</MkInput>
-			<button class="_button" @click="remove(i)">
-				<i class="ti ti-x"></i>
-			</button>
-		</li>
-	</ul>
-	<MkButton v-if="choices.length < 10" class="add" @click="add">{{ i18n.ts.add }}</MkButton>
-	<MkButton v-else class="add" disabled>{{ i18n.ts._poll.noMore }}</MkButton>
-	<MkSwitch v-model="multiple">{{ i18n.ts._poll.canMultipleVote }}</MkSwitch>
-	<section>
-		<div>
-			<MkSelect v-model="expiration" small>
-				<template #label>{{ i18n.ts._poll.expiration }}</template>
-				<option value="infinite">{{ i18n.ts._poll.infinite }}</option>
-				<option value="at">{{ i18n.ts._poll.at }}</option>
-				<option value="after">{{ i18n.ts._poll.after }}</option>
-			</MkSelect>
-			<section v-if="expiration === 'at'">
-				<MkInput v-model="atDate" small type="date" class="input">
-					<template #label>{{ i18n.ts._poll.deadlineDate }}</template>
+	<div class="zmdxowus">
+		<p v-if="choices.length < 2" class="caution">
+			<i class="ti ti-alert-triangle"></i>{{ i18n.ts._poll.noOnlyOneChoice }}
+		</p>
+		<ul>
+			<li v-for="(choice, i) in choices" :key="i">
+				<MkInput :modelValue="choice" :placeholder="i18n.tsx._poll.choiceN({ n: i + 1 })" class="input" small @update:modelValue="onInput(i, $event)">
 				</MkInput>
-				<MkInput v-model="atTime" small type="time" class="input">
-					<template #label>{{ i18n.ts._poll.deadlineTime }}</template>
-				</MkInput>
-			</section>
-			<section v-else-if="expiration === 'after'">
-				<MkInput v-model="after" small type="number" min="1" class="input">
-					<template #label>{{ i18n.ts._poll.duration }}</template>
-				</MkInput>
-				<MkSelect v-model="unit" small>
-					<option value="second">{{ i18n.ts._time.second }}</option>
-					<option value="minute">{{ i18n.ts._time.minute }}</option>
-					<option value="hour">{{ i18n.ts._time.hour }}</option>
-					<option value="day">{{ i18n.ts._time.day }}</option>
+				<button class="_button" @click="remove(i)">
+					<i class="ti ti-x"></i>
+				</button>
+			</li>
+		</ul>
+		<MkButton v-if="choices.length < 10" class="add" @click="add">{{ i18n.ts.add }}</MkButton>
+		<MkButton v-else class="add" disabled>{{ i18n.ts._poll.noMore }}</MkButton>
+		<MkSwitch v-model="multiple">{{ i18n.ts._poll.canMultipleVote }}</MkSwitch>
+		<section>
+			<div>
+				<MkSelect v-model="expiration" small>
+					<template #label>{{ i18n.ts._poll.expiration }}</template>
+					<option value="infinite">{{ i18n.ts._poll.infinite }}</option>
+					<option value="at">{{ i18n.ts._poll.at }}</option>
+					<option value="after">{{ i18n.ts._poll.after }}</option>
 				</MkSelect>
-			</section>
-		</div>
-	</section>
-</div>
+				<section v-if="expiration === 'at'">
+					<MkInput v-model="atDate" class="input" small type="date">
+						<template #label>{{ i18n.ts._poll.deadlineDate }}</template>
+					</MkInput>
+					<MkInput v-model="atTime" class="input" small type="time">
+						<template #label>{{ i18n.ts._poll.deadlineTime }}</template>
+					</MkInput>
+				</section>
+				<section v-else-if="expiration === 'after'">
+					<MkInput v-model="after" class="input" min="1" small type="number">
+						<template #label>{{ i18n.ts._poll.duration }}</template>
+					</MkInput>
+					<MkSelect v-model="unit" small>
+						<option value="second">{{ i18n.ts._time.second }}</option>
+						<option value="minute">{{ i18n.ts._time.minute }}</option>
+						<option value="hour">{{ i18n.ts._time.hour }}</option>
+						<option value="day">{{ i18n.ts._time.day }}</option>
+					</MkSelect>
+				</section>
+			</div>
+		</section>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
+import {ref, watch} from 'vue';
 import MkInput from './MkInput.vue';
 import MkSelect from './MkSelect.vue';
 import MkSwitch from './MkSwitch.vue';
 import MkButton from './MkButton.vue';
-import { formatDateTimeString } from '@/scripts/format-time-string.js';
-import { addTime } from '@/scripts/time.js';
-import { i18n } from '@/i18n.js';
+import {formatDateTimeString} from '@/scripts/format-time-string.js';
+import {addTime} from '@/scripts/time.js';
+import {i18n} from '@/i18n.js';
 
 export type PollEditorModelValue = {
 	expiresAt: number | null;
@@ -121,14 +121,19 @@ function get(): PollEditorModelValue {
 		let base = parseInt(after.value.toString());
 		switch (unit.value) {
 			// @ts-expect-error fallthrough
-			case 'day': base *= 24;
+			case 'day':
+				base *= 24;
 			// @ts-expect-error fallthrough
-			case 'hour': base *= 60;
+			case 'hour':
+				base *= 60;
 			// @ts-expect-error fallthrough
-			case 'minute': base *= 60;
+			case 'minute':
+				base *= 60;
 			// eslint-disable-next-line no-fallthrough
-			case 'second': return base *= 1000;
-			default: return null;
+			case 'second':
+				return base *= 1000;
+			default:
+				return null;
 		}
 	};
 

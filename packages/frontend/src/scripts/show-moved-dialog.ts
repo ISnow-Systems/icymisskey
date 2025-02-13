@@ -4,8 +4,8 @@
  */
 
 import * as os from '@/os.js';
-import { $i } from '@/account.js';
-import { i18n } from '@/i18n.js';
+import {$i} from '@/account.js';
+import {i18n} from '@/i18n.js';
 
 export function showMovedDialog() {
 	if (!$i) return;

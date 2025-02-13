@@ -4,21 +4,21 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div>
-	<MkStickyContainer>
-		<template #header>
-			<MkPageHeader v-model:tab="headerTab" :tabs="headerTabs"/>
-		</template>
-		<XGridLocalComponent v-if="headerTab === 'local'" :class="$style.local"/>
-		<XGridRemoteComponent v-else/>
-	</MkStickyContainer>
-</div>
+	<div>
+		<MkStickyContainer>
+			<template #header>
+				<MkPageHeader v-model:tab="headerTab" :tabs="headerTabs"/>
+			</template>
+			<XGridLocalComponent v-if="headerTab === 'local'" :class="$style.local"/>
+			<XGridRemoteComponent v-else/>
+		</MkStickyContainer>
+	</div>
 </template>
 
-<script setup lang="ts">
-import { computed, ref } from 'vue';
-import { i18n } from '@/i18n.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
+<script lang="ts" setup>
+import {computed, ref} from 'vue';
+import {i18n} from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
 import XGridLocalComponent from '@/pages/admin/custom-emojis-manager.local.vue';
 import XGridRemoteComponent from '@/pages/admin/custom-emojis-manager.remote.vue';
 import MkPageHeader from '@/components/global/MkPageHeader.vue';

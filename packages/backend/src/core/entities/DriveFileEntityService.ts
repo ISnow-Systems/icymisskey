@@ -3,24 +3,24 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { In } from 'typeorm';
-import { DI } from '@/di-symbols.js';
-import type { DriveFilesRepository } from '@/models/_.js';
-import type { Config } from '@/config.js';
-import type { Packed } from '@/misc/json-schema.js';
-import { awaitAll } from '@/misc/prelude/await-all.js';
-import type { MiUser } from '@/models/User.js';
-import type { MiDriveFile } from '@/models/DriveFile.js';
-import { appendQuery, query } from '@/misc/prelude/url.js';
-import { deepClone } from '@/misc/clone.js';
-import { bindThis } from '@/decorators.js';
-import { isMimeImage } from '@/misc/is-mime-image.js';
-import { IdService } from '@/core/IdService.js';
-import { UtilityService } from '../UtilityService.js';
-import { VideoProcessingService } from '../VideoProcessingService.js';
-import { UserEntityService } from './UserEntityService.js';
-import { DriveFolderEntityService } from './DriveFolderEntityService.js';
+import {forwardRef, Inject, Injectable} from '@nestjs/common';
+import {In} from 'typeorm';
+import {DI} from '@/di-symbols.js';
+import type {DriveFilesRepository} from '@/models/_.js';
+import type {Config} from '@/config.js';
+import type {Packed} from '@/misc/json-schema.js';
+import {awaitAll} from '@/misc/prelude/await-all.js';
+import type {MiUser} from '@/models/User.js';
+import type {MiDriveFile} from '@/models/DriveFile.js';
+import {appendQuery, query} from '@/misc/prelude/url.js';
+import {deepClone} from '@/misc/clone.js';
+import {bindThis} from '@/decorators.js';
+import {isMimeImage} from '@/misc/is-mime-image.js';
+import {IdService} from '@/core/IdService.js';
+import {UtilityService} from '../UtilityService.js';
+import {VideoProcessingService} from '../VideoProcessingService.js';
+import {UserEntityService} from './UserEntityService.js';
+import {DriveFolderEntityService} from './DriveFolderEntityService.js';
 
 type PackOptions = {
 	detail?: boolean,
@@ -33,14 +33,11 @@ export class DriveFileEntityService {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.driveFilesRepository)
 		private driveFilesRepository: DriveFilesRepository,
-
 		// 循環参照のため / for circular dependency
 		@Inject(forwardRef(() => UserEntityService))
 		private userEntityService: UserEntityService,
-
 		private utilityService: UtilityService,
 		private driveFolderEntityService: DriveFolderEntityService,
 		private videoProcessingService: VideoProcessingService,
@@ -71,17 +68,6 @@ export class DriveFileEntityService {
 		}
 
 		return file.properties;
-	}
-
-	@bindThis
-	private getProxiedUrl(url: string, mode?: 'static' | 'avatar'): string {
-		return appendQuery(
-			`${this.config.mediaProxy}/${mode ?? 'image'}.webp`,
-			query({
-				url,
-				...(mode ? { [mode]: '1' } : {}),
-			}),
-		);
 	}
 
 	@bindThis
@@ -137,9 +123,9 @@ export class DriveFileEntityService {
 	public async calcDriveUsageOf(user: MiUser['id'] | { id: MiUser['id'] }): Promise<number> {
 		const id = typeof user === 'object' ? user.id : user;
 
-		const { sum } = await this.driveFilesRepository
+		const {sum} = await this.driveFilesRepository
 			.createQueryBuilder('file')
-			.where('file.userId = :id', { id: id })
+			.where('file.userId = :id', {id: id})
 			.andWhere('file.isLink = FALSE')
 			.select('SUM(file.size)', 'sum')
 			.getRawOne();
@@ -149,9 +135,9 @@ export class DriveFileEntityService {
 
 	@bindThis
 	public async calcDriveUsageOfHost(host: string): Promise<number> {
-		const { sum } = await this.driveFilesRepository
+		const {sum} = await this.driveFilesRepository
 			.createQueryBuilder('file')
-			.where('file.userHost = :host', { host: this.utilityService.toPuny(host) })
+			.where('file.userHost = :host', {host: this.utilityService.toPuny(host)})
 			.andWhere('file.isLink = FALSE')
 			.select('SUM(file.size)', 'sum')
 			.getRawOne();
@@ -161,7 +147,7 @@ export class DriveFileEntityService {
 
 	@bindThis
 	public async calcDriveUsageOfLocal(): Promise<number> {
-		const { sum } = await this.driveFilesRepository
+		const {sum} = await this.driveFilesRepository
 			.createQueryBuilder('file')
 			.where('file.userHost IS NULL')
 			.andWhere('file.isLink = FALSE')
@@ -173,7 +159,7 @@ export class DriveFileEntityService {
 
 	@bindThis
 	public async calcDriveUsageOfRemote(): Promise<number> {
-		const { sum } = await this.driveFilesRepository
+		const {sum} = await this.driveFilesRepository
 			.createQueryBuilder('file')
 			.where('file.userHost IS NOT NULL')
 			.andWhere('file.isLink = FALSE')
@@ -193,7 +179,7 @@ export class DriveFileEntityService {
 			self: false,
 		}, options);
 
-		const file = typeof src === 'object' ? src : await this.driveFilesRepository.findOneByOrFail({ id: src });
+		const file = typeof src === 'object' ? src : await this.driveFilesRepository.findOneByOrFail({id: src});
 
 		return await awaitAll<Packed<'DriveFile'>>({
 			id: file.id,
@@ -230,7 +216,7 @@ export class DriveFileEntityService {
 			self: false,
 		}, options);
 
-		const file = typeof src === 'object' ? src : await this.driveFilesRepository.findOneBy({ id: src });
+		const file = typeof src === 'object' ? src : await this.driveFilesRepository.findOneBy({id: src});
 		if (file == null) return null;
 
 		return await awaitAll<Packed<'DriveFile'>>({
@@ -260,10 +246,10 @@ export class DriveFileEntityService {
 		files: MiDriveFile[],
 		options?: PackOptions,
 	): Promise<Packed<'DriveFile'>[]> {
-		const _user = files.map(({ user, userId }) => user ?? userId).filter(x => x != null);
+		const _user = files.map(({user, userId}) => user ?? userId).filter(x => x != null);
 		const _userMap = await this.userEntityService.packMany(_user)
 			.then(users => new Map(users.map(user => [user.id, user])));
-		const items = await Promise.all(files.map(f => this.packNullable(f, options, f.userId ? { packedUser: _userMap.get(f.userId) } : {})));
+		const items = await Promise.all(files.map(f => this.packNullable(f, options, f.userId ? {packedUser: _userMap.get(f.userId)} : {})));
 		return items.filter(x => x != null);
 	}
 
@@ -273,7 +259,7 @@ export class DriveFileEntityService {
 		options?: PackOptions,
 	): Promise<Map<Packed<'DriveFile'>['id'], Packed<'DriveFile'> | null>> {
 		if (fileIds.length === 0) return new Map();
-		const files = await this.driveFilesRepository.findBy({ id: In(fileIds) });
+		const files = await this.driveFilesRepository.findBy({id: In(fileIds)});
 		const packedFiles = await this.packMany(files, options);
 		const map = new Map<Packed<'DriveFile'>['id'], Packed<'DriveFile'> | null>(packedFiles.map(f => [f.id, f]));
 		for (const id of fileIds) {
@@ -290,5 +276,16 @@ export class DriveFileEntityService {
 		if (fileIds.length === 0) return [];
 		const filesMap = await this.packManyByIdsMap(fileIds, options);
 		return fileIds.map(id => filesMap.get(id)).filter(x => x != null);
+	}
+
+	@bindThis
+	private getProxiedUrl(url: string, mode?: 'static' | 'avatar'): string {
+		return appendQuery(
+			`${this.config.mediaProxy}/${mode ?? 'image'}.webp`,
+			query({
+				url,
+				...(mode ? {[mode]: '1'} : {}),
+			}),
+		);
 	}
 }

@@ -4,37 +4,37 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="timctyfi" :class="{ disabled, easing }">
-	<div class="label">
-		<slot name="label"></slot>
-	</div>
-	<div v-adaptive-border class="body">
-		<div ref="containerEl" class="container">
-			<div class="track">
-				<div class="highlight" :style="{ width: (steppedRawValue * 100) + '%' }"></div>
+	<div :class="{ disabled, easing }" class="timctyfi">
+		<div class="label">
+			<slot name="label"></slot>
+		</div>
+		<div v-adaptive-border class="body">
+			<div ref="containerEl" class="container">
+				<div class="track">
+					<div :style="{ width: (steppedRawValue * 100) + '%' }" class="highlight"></div>
+				</div>
+				<div v-if="steps && showTicks" class="ticks">
+					<div v-for="i in (steps + 1)" :style="{ left: (((i - 1) / steps) * 100) + '%' }" class="tick"></div>
+				</div>
+				<div
+					ref="thumbEl"
+					:style="{ left: thumbPosition + 'px' }"
+					class="thumb"
+					@mousedown="onMousedown"
+					@touchstart="onMousedown"
+					@mouseenter.passive="onMouseenter"
+				></div>
 			</div>
-			<div v-if="steps && showTicks" class="ticks">
-				<div v-for="i in (steps + 1)" class="tick" :style="{ left: (((i - 1) / steps) * 100) + '%' }"></div>
-			</div>
-			<div
-				ref="thumbEl"
-				class="thumb"
-				:style="{ left: thumbPosition + 'px' }"
-				@mouseenter.passive="onMouseenter"
-				@mousedown="onMousedown"
-				@touchstart="onMousedown"
-			></div>
+		</div>
+		<div class="caption">
+			<slot name="caption"></slot>
 		</div>
 	</div>
-	<div class="caption">
-		<slot name="caption"></slot>
-	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, onMounted, onUnmounted, ref, shallowRef, watch } from 'vue';
-import { isTouchUsing } from '@/scripts/touch.js';
+import {computed, defineAsyncComponent, onMounted, onUnmounted, ref, shallowRef, watch} from 'vue';
+import {isTouchUsing} from '@/scripts/touch.js';
 import * as os from '@/os.js';
 
 const props = withDefaults(defineProps<{
@@ -121,7 +121,7 @@ function onMouseenter() {
 
 	tooltipForHoverShowing.value = true;
 
-	const { dispose } = os.popup(defineAsyncComponent(() => import('@/components/MkTooltip.vue')), {
+	const {dispose} = os.popup(defineAsyncComponent(() => import('@/components/MkTooltip.vue')), {
 		showing: computed(() => tooltipForHoverShowing.value && !tooltipForDragShowing.value),
 		text: computed(() => {
 			return props.textConverter(finalValue.value);
@@ -133,7 +133,7 @@ function onMouseenter() {
 
 	thumbEl.value!.addEventListener('mouseleave', () => {
 		tooltipForHoverShowing.value = false;
-	}, { once: true, passive: true });
+	}, {once: true, passive: true});
 }
 
 function onMousedown(ev: MouseEvent | TouchEvent) {
@@ -141,7 +141,7 @@ function onMousedown(ev: MouseEvent | TouchEvent) {
 
 	tooltipForDragShowing.value = true;
 
-	const { dispose } = os.popup(defineAsyncComponent(() => import('@/components/MkTooltip.vue')), {
+	const {dispose} = os.popup(defineAsyncComponent(() => import('@/components/MkTooltip.vue')), {
 		showing: tooltipForDragShowing,
 		text: computed(() => {
 			return props.textConverter(finalValue.value);
@@ -188,8 +188,8 @@ function onMousedown(ev: MouseEvent | TouchEvent) {
 
 	window.addEventListener('mousemove', onDrag);
 	window.addEventListener('touchmove', onDrag);
-	window.addEventListener('mouseup', onMouseup, { once: true });
-	window.addEventListener('touchend', onMouseup, { once: true });
+	window.addEventListener('mouseup', onMouseup, {once: true});
+	window.addEventListener('touchend', onMouseup, {once: true});
 }
 </script>
 

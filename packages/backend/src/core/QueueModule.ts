@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Module, OnApplicationShutdown } from '@nestjs/common';
+import {Inject, Module, OnApplicationShutdown} from '@nestjs/common';
 import * as Bull from 'bullmq';
-import { DI } from '@/di-symbols.js';
-import type { Config } from '@/config.js';
-import { baseQueueOptions, QUEUE } from '@/queue/const.js';
-import { allSettled } from '@/misc/promise-tracker.js';
+import {DI} from '@/di-symbols.js';
+import type {Config} from '@/config.js';
+import {baseQueueOptions, QUEUE} from '@/queue/const.js';
+import {allSettled} from '@/misc/promise-tracker.js';
 import {
 	DeliverJobData,
 	EndedPollNotificationJobData,
@@ -17,7 +17,7 @@ import {
 	UserWebhookDeliverJobData,
 	SystemWebhookDeliverJobData,
 } from '../queue/types.js';
-import type { Provider } from '@nestjs/common';
+import type {Provider} from '@nestjs/common';
 
 export type SystemQueue = Bull.Queue<Record<string, unknown>>;
 export type EndedPollNotificationQueue = Bull.Queue<EndedPollNotificationJobData>;
@@ -84,8 +84,7 @@ const $systemWebhookDeliver: Provider = {
 };
 
 @Module({
-	imports: [
-	],
+	imports: [],
 	providers: [
 		$system,
 		$endedPollNotification,
@@ -120,7 +119,8 @@ export class QueueModule implements OnApplicationShutdown {
 		@Inject('queue:objectStorage') public objectStorageQueue: ObjectStorageQueue,
 		@Inject('queue:userWebhookDeliver') public userWebhookDeliverQueue: UserWebhookDeliverQueue,
 		@Inject('queue:systemWebhookDeliver') public systemWebhookDeliverQueue: SystemWebhookDeliverQueue,
-	) {}
+	) {
+	}
 
 	public async dispose(): Promise<void> {
 		// Wait for all potential queue jobs

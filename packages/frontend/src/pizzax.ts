@@ -5,16 +5,16 @@
 
 // PIZZAX --- A lightweight store
 
-import { onUnmounted, ref, watch } from 'vue';
-import type { Ref } from 'vue';
-import { BroadcastChannel } from 'broadcast-channel';
-import { $i } from '@/account.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { get, set } from '@/scripts/idb-proxy.js';
-import { defaultStore } from '@/store.js';
-import { useStream } from '@/stream.js';
-import { deepClone } from '@/scripts/clone.js';
-import { deepMerge } from '@/scripts/merge.js';
+import {onUnmounted, ref, watch} from 'vue';
+import type {Ref} from 'vue';
+import {BroadcastChannel} from 'broadcast-channel';
+import {$i} from '@/account.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {get, set} from '@/scripts/idb-proxy.js';
+import {defaultStore} from '@/store.js';
+import {useStream} from '@/stream.js';
+import {deepClone} from '@/scripts/clone.js';
+import {deepMerge} from '@/scripts/merge.js';
 
 type StateDef = Record<string, {
 	where: 'account' | 'device' | 'deviceAccount';
@@ -52,14 +52,6 @@ export class Storage<T extends StateDef> {
 
 	// 簡易的にキューイングして占有ロックとする
 	private currentIdbJob: Promise<any> = Promise.resolve();
-	private addIdbSetJob<T>(job: () => Promise<T>) {
-		const promise = this.currentIdbJob.then(job, err => {
-			console.error('Pizzax failed to save data to idb!', err);
-			return job();
-		});
-		this.currentIdbJob = promise;
-		return promise;
-	}
 
 	constructor(key: string, def: T) {
 		this.key = key;
@@ -80,99 +72,6 @@ export class Storage<T extends StateDef> {
 
 		this.ready = this.init();
 		this.loaded = this.ready.then(() => this.load());
-	}
-
-	private isPureObject(value: unknown): value is Record<string | number | symbol, unknown> {
-		return typeof value === 'object' && value !== null && !Array.isArray(value);
-	}
-
-	private mergeState<X>(value: X, def: X): X {
-		if (this.isPureObject(value) && this.isPureObject(def)) {
-			const merged = deepMerge(value, def);
-
-			if (_DEV_) console.log('Merging state. Incoming: ', value, ' Default: ', def, ' Result: ', merged);
-
-			return merged as X;
-		}
-		return value;
-	}
-
-	private async init(): Promise<void> {
-		await this.migrate();
-
-		const deviceState: State<T> = await get(this.deviceStateKeyName) || {};
-		const deviceAccountState = $i ? await get(this.deviceAccountStateKeyName) || {} : {};
-		const registryCache = $i ? await get(this.registryCacheKeyName) || {} : {};
-
-		for (const [k, v] of Object.entries(this.def) as [keyof T, T[keyof T]['default']][]) {
-			if (v.where === 'device' && Object.prototype.hasOwnProperty.call(deviceState, k)) {
-				this.reactiveState[k].value = this.state[k] = this.mergeState<T[keyof T]['default']>(deviceState[k], v.default);
-			} else if (v.where === 'account' && $i && Object.prototype.hasOwnProperty.call(registryCache, k)) {
-				this.reactiveState[k].value = this.state[k] = this.mergeState<T[keyof T]['default']>(registryCache[k], v.default);
-			} else if (v.where === 'deviceAccount' && Object.prototype.hasOwnProperty.call(deviceAccountState, k)) {
-				this.reactiveState[k].value = this.state[k] = this.mergeState<T[keyof T]['default']>(deviceAccountState[k], v.default);
-			} else {
-				this.reactiveState[k].value = this.state[k] = v.default;
-				if (_DEV_) console.log('Use default value', k, v.default);
-			}
-		}
-
-		this.pizzaxChannel.addEventListener('message', ({ where, key, value, userId }) => {
-			// アカウント変更すればunisonReloadが効くため、このreturnが発火することは
-			// まずないと思うけど一応弾いておく
-			if (where === 'deviceAccount' && !($i && userId !== $i.id)) return;
-			this.reactiveState[key].value = this.state[key] = value;
-		});
-
-		if ($i) {
-			const connection = useStream().useChannel('main');
-
-			// streamingのuser storage updateイベントを監視して更新
-			connection.on('registryUpdated', ({ scope, key, value }: { scope?: string[], key: keyof T, value: T[typeof key]['default'] }) => {
-				if (!scope || scope.length !== 2 || scope[0] !== 'client' || scope[1] !== this.key || this.state[key] === value) return;
-
-				this.reactiveState[key].value = this.state[key] = value;
-
-				this.addIdbSetJob(async () => {
-					const cache = await get(this.registryCacheKeyName);
-					if (cache[key] !== value) {
-						cache[key] = value;
-						await set(this.registryCacheKeyName, cache);
-					}
-				});
-			});
-		}
-	}
-
-	private load(): Promise<void> {
-		return new Promise((resolve, reject) => {
-			if ($i) {
-				// api関数と循環参照なので一応setTimeoutしておく
-				window.setTimeout(async () => {
-					await defaultStore.ready;
-
-					misskeyApi('i/registry/get-all', { scope: ['client', this.key] })
-						.then(kvs => {
-							const cache: Partial<T> = {};
-							for (const [k, v] of Object.entries(this.def) as [keyof T, T[keyof T]['default']][]) {
-								if (v.where === 'account') {
-									if (Object.prototype.hasOwnProperty.call(kvs, k)) {
-										this.reactiveState[k].value = this.state[k] = (kvs as Partial<T>)[k];
-										cache[k] = (kvs as Partial<T>)[k];
-									} else {
-										this.reactiveState[k].value = this.state[k] = v.default;
-									}
-								}
-							}
-
-							return set(this.registryCacheKeyName, cache);
-						})
-						.then(() => resolve());
-				}, 1);
-			} else {
-				resolve();
-			}
-		});
 	}
 
 	public set<K extends keyof T>(key: K, value: T[K]['default']): Promise<void> {
@@ -276,6 +175,108 @@ export class Storage<T extends StateDef> {
 				valueRef.value = val;
 			},
 		};
+	}
+
+	private addIdbSetJob<T>(job: () => Promise<T>) {
+		const promise = this.currentIdbJob.then(job, err => {
+			console.error('Pizzax failed to save data to idb!', err);
+			return job();
+		});
+		this.currentIdbJob = promise;
+		return promise;
+	}
+
+	private isPureObject(value: unknown): value is Record<string | number | symbol, unknown> {
+		return typeof value === 'object' && value !== null && !Array.isArray(value);
+	}
+
+	private mergeState<X>(value: X, def: X): X {
+		if (this.isPureObject(value) && this.isPureObject(def)) {
+			const merged = deepMerge(value, def);
+
+			if (_DEV_) console.log('Merging state. Incoming: ', value, ' Default: ', def, ' Result: ', merged);
+
+			return merged as X;
+		}
+		return value;
+	}
+
+	private async init(): Promise<void> {
+		await this.migrate();
+
+		const deviceState: State<T> = await get(this.deviceStateKeyName) || {};
+		const deviceAccountState = $i ? await get(this.deviceAccountStateKeyName) || {} : {};
+		const registryCache = $i ? await get(this.registryCacheKeyName) || {} : {};
+
+		for (const [k, v] of Object.entries(this.def) as [keyof T, T[keyof T]['default']][]) {
+			if (v.where === 'device' && Object.prototype.hasOwnProperty.call(deviceState, k)) {
+				this.reactiveState[k].value = this.state[k] = this.mergeState<T[keyof T]['default']>(deviceState[k], v.default);
+			} else if (v.where === 'account' && $i && Object.prototype.hasOwnProperty.call(registryCache, k)) {
+				this.reactiveState[k].value = this.state[k] = this.mergeState<T[keyof T]['default']>(registryCache[k], v.default);
+			} else if (v.where === 'deviceAccount' && Object.prototype.hasOwnProperty.call(deviceAccountState, k)) {
+				this.reactiveState[k].value = this.state[k] = this.mergeState<T[keyof T]['default']>(deviceAccountState[k], v.default);
+			} else {
+				this.reactiveState[k].value = this.state[k] = v.default;
+				if (_DEV_) console.log('Use default value', k, v.default);
+			}
+		}
+
+		this.pizzaxChannel.addEventListener('message', ({where, key, value, userId}) => {
+			// アカウント変更すればunisonReloadが効くため、このreturnが発火することは
+			// まずないと思うけど一応弾いておく
+			if (where === 'deviceAccount' && !($i && userId !== $i.id)) return;
+			this.reactiveState[key].value = this.state[key] = value;
+		});
+
+		if ($i) {
+			const connection = useStream().useChannel('main');
+
+			// streamingのuser storage updateイベントを監視して更新
+			connection.on('registryUpdated', ({scope, key, value}: { scope?: string[], key: keyof T, value: T[typeof key]['default'] }) => {
+				if (!scope || scope.length !== 2 || scope[0] !== 'client' || scope[1] !== this.key || this.state[key] === value) return;
+
+				this.reactiveState[key].value = this.state[key] = value;
+
+				this.addIdbSetJob(async () => {
+					const cache = await get(this.registryCacheKeyName);
+					if (cache[key] !== value) {
+						cache[key] = value;
+						await set(this.registryCacheKeyName, cache);
+					}
+				});
+			});
+		}
+	}
+
+	private load(): Promise<void> {
+		return new Promise((resolve, reject) => {
+			if ($i) {
+				// api関数と循環参照なので一応setTimeoutしておく
+				window.setTimeout(async () => {
+					await defaultStore.ready;
+
+					misskeyApi('i/registry/get-all', {scope: ['client', this.key]})
+						.then(kvs => {
+							const cache: Partial<T> = {};
+							for (const [k, v] of Object.entries(this.def) as [keyof T, T[keyof T]['default']][]) {
+								if (v.where === 'account') {
+									if (Object.prototype.hasOwnProperty.call(kvs, k)) {
+										this.reactiveState[k].value = this.state[k] = (kvs as Partial<T>)[k];
+										cache[k] = (kvs as Partial<T>)[k];
+									} else {
+										this.reactiveState[k].value = this.state[k] = v.default;
+									}
+								}
+							}
+
+							return set(this.registryCacheKeyName, cache);
+						})
+						.then(() => resolve());
+				}, 1);
+			} else {
+				resolve();
+			}
+		});
 	}
 
 	// localStorage => indexedDBのマイグレーション

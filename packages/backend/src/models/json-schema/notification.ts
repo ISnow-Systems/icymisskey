@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { ACHIEVEMENT_TYPES } from '@/core/AchievementService.js';
-import { notificationTypes, userExportableEntities } from '@/types.js';
+import {ACHIEVEMENT_TYPES} from '@/core/AchievementService.js';
+import {notificationTypes, userExportableEntities} from '@/types.js';
 
 const baseSchema = {
 	type: 'object',

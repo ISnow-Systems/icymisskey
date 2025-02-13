@@ -3,31 +3,31 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import * as Redis from 'ioredis';
 import * as Reversi from 'misskey-reversi';
-import type { MiChannel } from '@/models/Channel.js';
-import type { MiUser } from '@/models/User.js';
-import type { MiUserProfile } from '@/models/UserProfile.js';
-import type { MiNote } from '@/models/Note.js';
-import type { MiAntenna } from '@/models/Antenna.js';
-import type { MiDriveFile } from '@/models/DriveFile.js';
-import type { MiDriveFolder } from '@/models/DriveFolder.js';
-import type { MiUserList } from '@/models/UserList.js';
-import type { MiAbuseUserReport } from '@/models/AbuseUserReport.js';
-import type { MiSignin } from '@/models/Signin.js';
-import type { MiPage } from '@/models/Page.js';
-import type { MiWebhook } from '@/models/Webhook.js';
-import type { MiSystemWebhook } from '@/models/SystemWebhook.js';
-import type { MiMeta } from '@/models/Meta.js';
-import { MiAvatarDecoration, MiReversiGame, MiRole, MiRoleAssignment } from '@/models/_.js';
-import type { Packed } from '@/misc/json-schema.js';
-import { DI } from '@/di-symbols.js';
-import type { Config } from '@/config.js';
-import { bindThis } from '@/decorators.js';
-import { Serialized } from '@/types.js';
+import type {MiChannel} from '@/models/Channel.js';
+import type {MiUser} from '@/models/User.js';
+import type {MiUserProfile} from '@/models/UserProfile.js';
+import type {MiNote} from '@/models/Note.js';
+import type {MiAntenna} from '@/models/Antenna.js';
+import type {MiDriveFile} from '@/models/DriveFile.js';
+import type {MiDriveFolder} from '@/models/DriveFolder.js';
+import type {MiUserList} from '@/models/UserList.js';
+import type {MiAbuseUserReport} from '@/models/AbuseUserReport.js';
+import type {MiSignin} from '@/models/Signin.js';
+import type {MiPage} from '@/models/Page.js';
+import type {MiWebhook} from '@/models/Webhook.js';
+import type {MiSystemWebhook} from '@/models/SystemWebhook.js';
+import type {MiMeta} from '@/models/Meta.js';
+import {MiAvatarDecoration, MiReversiGame, MiRole, MiRoleAssignment} from '@/models/_.js';
+import type {Packed} from '@/misc/json-schema.js';
+import {DI} from '@/di-symbols.js';
+import type {Config} from '@/config.js';
+import {bindThis} from '@/decorators.js';
+import {Serialized} from '@/types.js';
 import type Emitter from 'strict-event-emitter-types';
-import type { EventEmitter } from 'events';
+import type {EventEmitter} from 'events';
 
 //#region Stream type-body definitions
 export interface BroadcastTypes {
@@ -134,6 +134,7 @@ export interface NoteEventTypes {
 		userId: MiUser['id'];
 	};
 }
+
 type NoteStreamEventTypes = {
 	[key in keyof NoteEventTypes]: {
 		id: MiNote['id'];
@@ -194,6 +195,7 @@ export interface ReversiGameEventTypes {
 		userId: MiUser['id'];
 	};
 }
+
 //#endregion
 
 // 辞書(interface or type)から{ type, body }ユニオンを定義
@@ -322,22 +324,9 @@ export class GlobalEventService {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.redisForPub)
 		private redisForPub: Redis.Redis,
 	) {
-	}
-
-	@bindThis
-	private publish(channel: StreamChannels, type: string | null, value?: any): void {
-		const message = type == null ? value : value == null ?
-			{ type: type, body: null } :
-			{ type: type, body: value };
-
-		this.redisForPub.publish(this.config.host, JSON.stringify({
-			channel: channel,
-			message: message,
-		}));
 	}
 
 	@bindThis
@@ -401,5 +390,17 @@ export class GlobalEventService {
 	@bindThis
 	public publishReversiGameStream<K extends keyof ReversiGameEventTypes>(gameId: MiReversiGame['id'], type: K, value?: ReversiGameEventTypes[K]): void {
 		this.publish(`reversiGameStream:${gameId}`, type, typeof value === 'undefined' ? null : value);
+	}
+
+	@bindThis
+	private publish(channel: StreamChannels, type: string | null, value?: any): void {
+		const message = type == null ? value : value == null ?
+			{type: type, body: null} :
+			{type: type, body: value};
+
+		this.redisForPub.publish(this.config.host, JSON.stringify({
+			channel: channel,
+			message: message,
+		}));
 	}
 }

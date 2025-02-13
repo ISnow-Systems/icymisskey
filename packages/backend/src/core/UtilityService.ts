@@ -3,20 +3,19 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { URL, domainToASCII } from 'node:url';
-import { Inject, Injectable } from '@nestjs/common';
+import {URL, domainToASCII} from 'node:url';
+import {Inject, Injectable} from '@nestjs/common';
 import RE2 from 're2';
-import { DI } from '@/di-symbols.js';
-import type { Config } from '@/config.js';
-import { bindThis } from '@/decorators.js';
-import { MiMeta } from '@/models/Meta.js';
+import {DI} from '@/di-symbols.js';
+import type {Config} from '@/config.js';
+import {bindThis} from '@/decorators.js';
+import {MiMeta} from '@/models/Meta.js';
 
 @Injectable()
 export class UtilityService {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.meta)
 		private meta: MiMeta,
 	) {

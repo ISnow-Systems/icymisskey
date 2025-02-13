@@ -4,19 +4,21 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs"/>
+		</template>
 
-	<MkAntennaEditor @created="onAntennaCreated"/>
-</MkStickyContainer>
+		<MkAntennaEditor @created="onAntennaCreated"/>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-import { i18n } from '@/i18n.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
-import { antennasCache } from '@/cache.js';
-import { useRouter } from '@/router/supplier.js';
+import {computed} from 'vue';
+import {i18n} from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
+import {antennasCache} from '@/cache.js';
+import {useRouter} from '@/router/supplier.js';
 import MkAntennaEditor from '@/components/MkAntennaEditor.vue';
 
 const router = useRouter();

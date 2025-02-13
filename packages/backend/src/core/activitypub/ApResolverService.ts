@@ -3,24 +3,24 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { IsNull, Not } from 'typeorm';
-import type { MiLocalUser, MiRemoteUser } from '@/models/User.js';
-import { InstanceActorService } from '@/core/InstanceActorService.js';
-import type { NotesRepository, PollsRepository, NoteReactionsRepository, UsersRepository, FollowRequestsRepository, MiMeta } from '@/models/_.js';
-import type { Config } from '@/config.js';
-import { HttpRequestService } from '@/core/HttpRequestService.js';
-import { DI } from '@/di-symbols.js';
-import { UtilityService } from '@/core/UtilityService.js';
-import { bindThis } from '@/decorators.js';
-import { LoggerService } from '@/core/LoggerService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {IsNull, Not} from 'typeorm';
+import type {MiLocalUser, MiRemoteUser} from '@/models/User.js';
+import {InstanceActorService} from '@/core/InstanceActorService.js';
+import type {NotesRepository, PollsRepository, NoteReactionsRepository, UsersRepository, FollowRequestsRepository, MiMeta} from '@/models/_.js';
+import type {Config} from '@/config.js';
+import {HttpRequestService} from '@/core/HttpRequestService.js';
+import {DI} from '@/di-symbols.js';
+import {UtilityService} from '@/core/UtilityService.js';
+import {bindThis} from '@/decorators.js';
+import {LoggerService} from '@/core/LoggerService.js';
 import type Logger from '@/logger.js';
-import { isCollectionOrOrderedCollection } from './type.js';
-import { ApDbResolverService } from './ApDbResolverService.js';
-import { ApRendererService } from './ApRendererService.js';
-import { ApRequestService } from './ApRequestService.js';
-import type { IObject, ICollection, IOrderedCollection } from './type.js';
-import { IdentifiableError } from '@/misc/identifiable-error.js';
+import {isCollectionOrOrderedCollection} from './type.js';
+import {ApDbResolverService} from './ApDbResolverService.js';
+import {ApRendererService} from './ApRendererService.js';
+import {ApRequestService} from './ApRequestService.js';
+import type {IObject, ICollection, IOrderedCollection} from './type.js';
+import {IdentifiableError} from '@/misc/identifiable-error.js';
 
 export class Resolver {
 	private history: Set<string>;
@@ -141,7 +141,7 @@ export class Resolver {
 
 		switch (parsed.type) {
 			case 'notes':
-				return this.notesRepository.findOneByOrFail({ id: parsed.id })
+				return this.notesRepository.findOneByOrFail({id: parsed.id})
 					.then(async note => {
 						if (parsed.rest === 'activity') {
 							// this refers to the create activity and not the note itself
@@ -151,20 +151,20 @@ export class Resolver {
 						}
 					});
 			case 'users':
-				return this.usersRepository.findOneByOrFail({ id: parsed.id })
+				return this.usersRepository.findOneByOrFail({id: parsed.id})
 					.then(user => this.apRendererService.renderPerson(user as MiLocalUser));
 			case 'questions':
 				// Polls are indexed by the note they are attached to.
 				return Promise.all([
-					this.notesRepository.findOneByOrFail({ id: parsed.id }),
-					this.pollsRepository.findOneByOrFail({ noteId: parsed.id }),
+					this.notesRepository.findOneByOrFail({id: parsed.id}),
+					this.pollsRepository.findOneByOrFail({noteId: parsed.id}),
 				])
-					.then(([note, poll]) => this.apRendererService.renderQuestion({ id: note.userId }, note, poll));
+					.then(([note, poll]) => this.apRendererService.renderQuestion({id: note.userId}, note, poll));
 			case 'likes':
-				return this.noteReactionsRepository.findOneByOrFail({ id: parsed.id }).then(async reaction =>
-					this.apRendererService.addContext(await this.apRendererService.renderLike(reaction, { uri: null })));
+				return this.noteReactionsRepository.findOneByOrFail({id: parsed.id}).then(async reaction =>
+					this.apRendererService.addContext(await this.apRendererService.renderLike(reaction, {uri: null})));
 			case 'follows':
-				return this.followRequestsRepository.findOneBy({ id: parsed.id })
+				return this.followRequestsRepository.findOneBy({id: parsed.id})
 					.then(async followRequest => {
 						if (followRequest == null) throw new IdentifiableError('a9d946e5-d276-47f8-95fb-f04230289bb0', 'resolveLocal: invalid follow request ID');
 						const [follower, followee] = await Promise.all([
@@ -193,25 +193,18 @@ export class ApResolverService {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.meta)
 		private meta: MiMeta,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		@Inject(DI.pollsRepository)
 		private pollsRepository: PollsRepository,
-
 		@Inject(DI.noteReactionsRepository)
 		private noteReactionsRepository: NoteReactionsRepository,
-
 		@Inject(DI.followRequestsRepository)
 		private followRequestsRepository: FollowRequestsRepository,
-
 		private utilityService: UtilityService,
 		private instanceActorService: InstanceActorService,
 		private apRequestService: ApRequestService,

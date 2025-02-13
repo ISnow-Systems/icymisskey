@@ -4,13 +4,13 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<a :href="to" target="_blank" rel="noopener">
-	<slot></slot>
-</a>
+	<a :href="to" rel="noopener" target="_blank">
+		<slot></slot>
+	</a>
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import {} from 'vue';
 
 const props = withDefaults(defineProps<{
 	to: string;

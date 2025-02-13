@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Module } from '@nestjs/common';
-import { ServerModule } from '@/server/ServerModule.js';
-import { GlobalModule } from '@/GlobalModule.js';
-import { DaemonModule } from '@/daemons/DaemonModule.js';
+import {Module} from '@nestjs/common';
+import {ServerModule} from '@/server/ServerModule.js';
+import {GlobalModule} from '@/GlobalModule.js';
+import {DaemonModule} from '@/daemons/DaemonModule.js';
 
 @Module({
 	imports: [
@@ -15,4 +15,5 @@ import { DaemonModule } from '@/daemons/DaemonModule.js';
 		DaemonModule,
 	],
 })
-export class MainModule {}
+export class MainModule {
+}

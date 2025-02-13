@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { AnnouncementsRepository } from '@/models/_.js';
-import { DI } from '@/di-symbols.js';
-import { AnnouncementService } from '@/core/AnnouncementService.js';
-import { ApiError } from '../../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {AnnouncementsRepository} from '@/models/_.js';
+import {DI} from '@/di-symbols.js';
+import {AnnouncementService} from '@/core/AnnouncementService.js';
+import {ApiError} from '../../../error.js';
 
 export const meta = {
 	tags: ['admin'],
@@ -29,16 +29,16 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		id: { type: 'string', format: 'misskey:id' },
-		title: { type: 'string', minLength: 1 },
-		text: { type: 'string', minLength: 1 },
-		imageUrl: { type: 'string', nullable: true, minLength: 0 },
-		icon: { type: 'string', enum: ['info', 'warning', 'error', 'success'] },
-		display: { type: 'string', enum: ['normal', 'banner', 'dialog'] },
-		forExistingUsers: { type: 'boolean' },
-		silence: { type: 'boolean' },
-		needConfirmationToRead: { type: 'boolean' },
-		isActive: { type: 'boolean' },
+		id: {type: 'string', format: 'misskey:id'},
+		title: {type: 'string', minLength: 1},
+		text: {type: 'string', minLength: 1},
+		imageUrl: {type: 'string', nullable: true, minLength: 0},
+		icon: {type: 'string', enum: ['info', 'warning', 'error', 'success']},
+		display: {type: 'string', enum: ['normal', 'banner', 'dialog']},
+		forExistingUsers: {type: 'boolean'},
+		silence: {type: 'boolean'},
+		needConfirmationToRead: {type: 'boolean'},
+		isActive: {type: 'boolean'},
 	},
 	required: ['id'],
 } as const;
@@ -48,11 +48,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.announcementsRepository)
 		private announcementsRepository: AnnouncementsRepository,
-
 		private announcementService: AnnouncementService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const announcement = await this.announcementsRepository.findOneBy({ id: ps.id });
+			const announcement = await this.announcementsRepository.findOneBy({id: ps.id});
 
 			if (announcement == null) throw new ApiError(meta.errors.noSuchAnnouncement);
 

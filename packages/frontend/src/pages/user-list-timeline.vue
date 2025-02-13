@@ -4,34 +4,38 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="800">
-		<div ref="rootEl">
-			<div v-if="queue > 0" :class="$style.new"><button class="_buttonPrimary" :class="$style.newButton" @click="top()">{{ i18n.ts.newNoteRecived }}</button></div>
-			<div :class="$style.tl">
-				<MkTimeline
-					ref="tlEl" :key="listId"
-					src="list"
-					:list="listId"
-					:sound="true"
-					@queue="queueUpdated"
-				/>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs"/>
+		</template>
+		<MkSpacer :contentMax="800">
+			<div ref="rootEl">
+				<div v-if="queue > 0" :class="$style.new">
+					<button :class="$style.newButton" class="_buttonPrimary" @click="top()">{{ i18n.ts.newNoteRecived }}</button>
+				</div>
+				<div :class="$style.tl">
+					<MkTimeline
+						:key="listId" ref="tlEl"
+						:list="listId"
+						:sound="true"
+						src="list"
+						@queue="queueUpdated"
+					/>
+				</div>
 			</div>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { computed, watch, ref, shallowRef } from 'vue';
+import {computed, watch, ref, shallowRef} from 'vue';
 import * as Misskey from 'misskey-js';
 import MkTimeline from '@/components/MkTimeline.vue';
-import { scroll } from '@@/js/scroll.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
-import { i18n } from '@/i18n.js';
-import { useRouter } from '@/router/supplier.js';
+import {scroll} from '@@/js/scroll.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
+import {i18n} from '@/i18n.js';
+import {useRouter} from '@/router/supplier.js';
 
 const router = useRouter();
 
@@ -48,14 +52,14 @@ watch(() => props.listId, async () => {
 	list.value = await misskeyApi('users/lists/show', {
 		listId: props.listId,
 	});
-}, { immediate: true });
+}, {immediate: true});
 
 function queueUpdated(q) {
 	queue.value = q;
 }
 
 function top() {
-	scroll(rootEl.value, { top: 0 });
+	scroll(rootEl.value, {top: 0});
 }
 
 function settings() {

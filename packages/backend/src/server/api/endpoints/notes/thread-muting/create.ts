@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import ms from 'ms';
-import type { NotesRepository, NoteThreadMutingsRepository } from '@/models/_.js';
-import { IdService } from '@/core/IdService.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { GetterService } from '@/server/api/GetterService.js';
-import { NoteReadService } from '@/core/NoteReadService.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../../error.js';
+import type {NotesRepository, NoteThreadMutingsRepository} from '@/models/_.js';
+import {IdService} from '@/core/IdService.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {GetterService} from '@/server/api/GetterService.js';
+import {NoteReadService} from '@/core/NoteReadService.js';
+import {DI} from '@/di-symbols.js';
+import {ApiError} from '../../../error.js';
 
 export const meta = {
 	tags: ['notes'],
@@ -37,7 +37,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		noteId: { type: 'string', format: 'misskey:id' },
+		noteId: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['noteId'],
 } as const;
@@ -47,10 +47,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		@Inject(DI.noteThreadMutingsRepository)
 		private noteThreadMutingsRepository: NoteThreadMutingsRepository,
-
 		private getterService: GetterService,
 		private noteReadService: NoteReadService,
 		private idService: IdService,

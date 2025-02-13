@@ -4,21 +4,21 @@
  */
 
 import * as fs from 'node:fs';
-import { Inject, Injectable } from '@nestjs/common';
-import { IsNull } from 'typeorm';
-import { format as dateFormat } from 'date-fns';
+import {Inject, Injectable} from '@nestjs/common';
+import {IsNull} from 'typeorm';
+import {format as dateFormat} from 'date-fns';
 import mime from 'mime-types';
 import archiver from 'archiver';
-import { DI } from '@/di-symbols.js';
-import type { EmojisRepository, UsersRepository } from '@/models/_.js';
-import type { Config } from '@/config.js';
+import {DI} from '@/di-symbols.js';
+import type {EmojisRepository, UsersRepository} from '@/models/_.js';
+import type {Config} from '@/config.js';
 import type Logger from '@/logger.js';
-import { DriveService } from '@/core/DriveService.js';
-import { createTemp, createTempDir } from '@/misc/create-temp.js';
-import { DownloadService } from '@/core/DownloadService.js';
-import { NotificationService } from '@/core/NotificationService.js';
-import { bindThis } from '@/decorators.js';
-import { QueueLoggerService } from '../QueueLoggerService.js';
+import {DriveService} from '@/core/DriveService.js';
+import {createTemp, createTempDir} from '@/misc/create-temp.js';
+import {DownloadService} from '@/core/DownloadService.js';
+import {NotificationService} from '@/core/NotificationService.js';
+import {bindThis} from '@/decorators.js';
+import {QueueLoggerService} from '../QueueLoggerService.js';
 import type * as Bull from 'bullmq';
 
 @Injectable()
@@ -28,13 +28,10 @@ export class ExportCustomEmojisProcessorService {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.emojisRepository)
 		private emojisRepository: EmojisRepository,
-
 		private driveService: DriveService,
 		private downloadService: DownloadService,
 		private queueLoggerService: QueueLoggerService,
@@ -47,7 +44,7 @@ export class ExportCustomEmojisProcessorService {
 	public async process(job: Bull.Job): Promise<void> {
 		this.logger.info('Exporting custom emojis ...');
 
-		const user = await this.usersRepository.findOneBy({ id: job.data.user.id });
+		const user = await this.usersRepository.findOneBy({id: job.data.user.id});
 		if (user == null) {
 			return;
 		}
@@ -60,7 +57,7 @@ export class ExportCustomEmojisProcessorService {
 
 		fs.writeFileSync(metaPath, '', 'utf-8');
 
-		const metaStream = fs.createWriteStream(metaPath, { flags: 'a' });
+		const metaStream = fs.createWriteStream(metaPath, {flags: 'a'});
 
 		const writeMeta = (text: string): Promise<void> => {
 			return new Promise<void>((res, rej) => {
@@ -127,13 +124,13 @@ export class ExportCustomEmojisProcessorService {
 			const [archivePath, archiveCleanup] = await createTemp();
 			const archiveStream = fs.createWriteStream(archivePath);
 			const archive = archiver('zip', {
-				zlib: { level: 0 },
+				zlib: {level: 0},
 			});
 			archiveStream.on('close', async () => {
 				this.logger.succ(`Exported to: ${archivePath}`);
 
 				const fileName = 'custom-emojis-' + dateFormat(new Date(), 'yyyy-MM-dd-HH-mm-ss') + '.zip';
-				const driveFile = await this.driveService.addFile({ user, path: archivePath, name: fileName, force: true });
+				const driveFile = await this.driveService.addFile({user, path: archivePath, name: fileName, force: true});
 
 				this.logger.succ(`Exported to: ${driveFile.id}`);
 

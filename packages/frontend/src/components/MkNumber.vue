@@ -4,11 +4,11 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<span>{{ number(Math.floor(tweened.number)) }}</span>
+	<span>{{ number(Math.floor(tweened.number)) }}</span>
 </template>
 
 <script lang="ts" setup>
-import { reactive, watch } from 'vue';
+import {reactive, watch} from 'vue';
 import number from '@/filters/number.js';
 
 const props = defineProps<{

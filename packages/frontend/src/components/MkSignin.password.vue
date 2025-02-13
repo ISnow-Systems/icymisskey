@@ -4,37 +4,41 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="$style.wrapper" data-cy-signin-page-password>
-	<div class="_gaps" :class="$style.root">
-		<div :class="$style.avatar" :style="{ backgroundImage: user ? `url('${user.avatarUrl}')` : undefined }"></div>
-		<div :class="$style.welcomeBackMessage">
-			<I18n :src="i18n.ts.welcomeBackWithName" tag="span">
-				<template #name><Mfm :text="user.name ?? user.username" :plain="true"/></template>
-			</I18n>
-		</div>
-
-		<!-- password入力 -->
-		<form class="_gaps_s" @submit.prevent="onSubmit">
-			<!-- ブラウザ オートコンプリート用 -->
-			<input type="hidden" name="username" autocomplete="username" :value="user.username">
-
-			<MkInput v-model="password" :placeholder="i18n.ts.password" type="password" autocomplete="current-password webauthn" :withPasswordToggle="true" required autofocus data-cy-signin-password>
-				<template #prefix><i class="ti ti-lock"></i></template>
-				<template #caption><button class="_textButton" type="button" @click="resetPassword">{{ i18n.ts.forgotPassword }}</button></template>
-			</MkInput>
-
-			<div v-if="needCaptcha">
-				<MkCaptcha v-if="instance.enableHcaptcha" ref="hcaptcha" v-model="hCaptchaResponse" provider="hcaptcha" :sitekey="instance.hcaptchaSiteKey"/>
-				<MkCaptcha v-if="instance.enableMcaptcha" ref="mcaptcha" v-model="mCaptchaResponse" provider="mcaptcha" :sitekey="instance.mcaptchaSiteKey" :instanceUrl="instance.mcaptchaInstanceUrl"/>
-				<MkCaptcha v-if="instance.enableRecaptcha" ref="recaptcha" v-model="reCaptchaResponse" provider="recaptcha" :sitekey="instance.recaptchaSiteKey"/>
-				<MkCaptcha v-if="instance.enableTurnstile" ref="turnstile" v-model="turnstileResponse" provider="turnstile" :sitekey="instance.turnstileSiteKey"/>
-				<MkCaptcha v-if="instance.enableTestcaptcha" ref="testcaptcha" v-model="testcaptchaResponse" provider="testcaptcha"/>
+	<div :class="$style.wrapper" data-cy-signin-page-password>
+		<div :class="$style.root" class="_gaps">
+			<div :class="$style.avatar" :style="{ backgroundImage: user ? `url('${user.avatarUrl}')` : undefined }"></div>
+			<div :class="$style.welcomeBackMessage">
+				<I18n :src="i18n.ts.welcomeBackWithName" tag="span">
+					<template #name>
+						<Mfm :plain="true" :text="user.name ?? user.username"/>
+					</template>
+				</I18n>
 			</div>
 
-			<MkButton type="submit" :disabled="needCaptcha && captchaFailed" large primary rounded style="margin: 0 auto;" data-cy-signin-page-password-continue>{{ i18n.ts.continue }} <i class="ti ti-arrow-right"></i></MkButton>
-		</form>
+			<!-- password入力 -->
+			<form class="_gaps_s" @submit.prevent="onSubmit">
+				<!-- ブラウザ オートコンプリート用 -->
+				<input :value="user.username" autocomplete="username" name="username" type="hidden">
+
+				<MkInput v-model="password" :placeholder="i18n.ts.password" :withPasswordToggle="true" autocomplete="current-password webauthn" autofocus data-cy-signin-password required type="password">
+					<template #prefix><i class="ti ti-lock"></i></template>
+					<template #caption>
+						<button class="_textButton" type="button" @click="resetPassword">{{ i18n.ts.forgotPassword }}</button>
+					</template>
+				</MkInput>
+
+				<div v-if="needCaptcha">
+					<MkCaptcha v-if="instance.enableHcaptcha" ref="hcaptcha" v-model="hCaptchaResponse" :sitekey="instance.hcaptchaSiteKey" provider="hcaptcha"/>
+					<MkCaptcha v-if="instance.enableMcaptcha" ref="mcaptcha" v-model="mCaptchaResponse" :instanceUrl="instance.mcaptchaInstanceUrl" :sitekey="instance.mcaptchaSiteKey" provider="mcaptcha"/>
+					<MkCaptcha v-if="instance.enableRecaptcha" ref="recaptcha" v-model="reCaptchaResponse" :sitekey="instance.recaptchaSiteKey" provider="recaptcha"/>
+					<MkCaptcha v-if="instance.enableTurnstile" ref="turnstile" v-model="turnstileResponse" :sitekey="instance.turnstileSiteKey" provider="turnstile"/>
+					<MkCaptcha v-if="instance.enableTestcaptcha" ref="testcaptcha" v-model="testcaptchaResponse" provider="testcaptcha"/>
+				</div>
+
+				<MkButton :disabled="needCaptcha && captchaFailed" data-cy-signin-page-password-continue large primary rounded style="margin: 0 auto;" type="submit">{{ i18n.ts.continue }} <i class="ti ti-arrow-right"></i></MkButton>
+			</form>
+		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts">
@@ -50,12 +54,12 @@ export type PwResponse = {
 };
 </script>
 
-<script setup lang="ts">
-import { ref, computed, useTemplateRef, defineAsyncComponent } from 'vue';
+<script lang="ts" setup>
+import {ref, computed, useTemplateRef, defineAsyncComponent} from 'vue';
 import * as Misskey from 'misskey-js';
 
-import { instance } from '@/instance.js';
-import { i18n } from '@/i18n.js';
+import {instance} from '@/instance.js';
+import {i18n} from '@/i18n.js';
 import * as os from '@/os.js';
 
 import MkButton from '@/components/MkButton.vue';
@@ -96,7 +100,7 @@ const captchaFailed = computed((): boolean => {
 });
 
 function resetPassword(): void {
-	const { dispose } = os.popup(defineAsyncComponent(() => import('@/components/MkForgotPassword.vue')), {}, {
+	const {dispose} = os.popup(defineAsyncComponent(() => import('@/components/MkForgotPassword.vue')), {}, {
 		closed: () => dispose(),
 	});
 }

@@ -4,33 +4,35 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="800">
-		<MkHorizontalSwipe v-model:tab="tab" :tabs="headerTabs">
-			<div v-if="tab === 'all'" key="all">
-				<XNotifications :class="$style.notifications" :excludeTypes="excludeTypes"/>
-			</div>
-			<div v-else-if="tab === 'mentions'" key="mention">
-				<MkNotes :pagination="mentionsPagination"/>
-			</div>
-			<div v-else-if="tab === 'directNotes'" key="directNotes">
-				<MkNotes :pagination="directNotesPagination"/>
-			</div>
-		</MkHorizontalSwipe>
-	</MkSpacer>
-</MkStickyContainer>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/>
+		</template>
+		<MkSpacer :contentMax="800">
+			<MkHorizontalSwipe v-model:tab="tab" :tabs="headerTabs">
+				<div v-if="tab === 'all'" key="all">
+					<XNotifications :class="$style.notifications" :excludeTypes="excludeTypes"/>
+				</div>
+				<div v-else-if="tab === 'mentions'" key="mention">
+					<MkNotes :pagination="mentionsPagination"/>
+				</div>
+				<div v-else-if="tab === 'directNotes'" key="directNotes">
+					<MkNotes :pagination="directNotesPagination"/>
+				</div>
+			</MkHorizontalSwipe>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
+import {computed, ref} from 'vue';
 import XNotifications from '@/components/MkNotifications.vue';
 import MkNotes from '@/components/MkNotes.vue';
 import MkHorizontalSwipe from '@/components/MkHorizontalSwipe.vue';
 import * as os from '@/os.js';
-import { i18n } from '@/i18n.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
-import { notificationTypes } from '@@/js/const.js';
+import {i18n} from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
+import {notificationTypes} from '@@/js/const.js';
 
 const tab = ref('all');
 const includeTypes = ref<string[] | null>(null);
@@ -63,7 +65,7 @@ function setFilter(ev) {
 		action: () => {
 			includeTypes.value = null;
 		},
-	}, { type: 'divider' as const }, ...typeItems] : typeItems;
+	}, {type: 'divider' as const}, ...typeItems] : typeItems;
 	os.popupMenu(items, ev.currentTarget ?? ev.target);
 }
 
@@ -100,7 +102,7 @@ definePageMetadata(() => ({
 }));
 </script>
 
-<style module lang="scss">
+<style lang="scss" module>
 .notifications {
 	border-radius: var(--MI-radius);
 	overflow: clip;

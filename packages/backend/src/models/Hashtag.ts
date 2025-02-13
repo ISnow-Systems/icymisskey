@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Entity, PrimaryColumn, Index, Column } from 'typeorm';
-import { id } from './util/id.js';
-import type { MiUser } from './User.js';
+import {Entity, PrimaryColumn, Index, Column} from 'typeorm';
+import {id} from './util/id.js';
+import type {MiUser} from './User.js';
 
 @Entity('hashtag')
 export class MiHashtag {
 	@PrimaryColumn(id())
 	public id: string;
 
-	@Index({ unique: true })
+	@Index({unique: true})
 	@Column('varchar', {
 		length: 128,
 	})

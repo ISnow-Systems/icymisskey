@@ -3,22 +3,21 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { DI } from '@/di-symbols.js';
-import type { AbuseUserReportsRepository } from '@/models/_.js';
-import { awaitAll } from '@/misc/prelude/await-all.js';
-import type { MiAbuseUserReport } from '@/models/AbuseUserReport.js';
-import { bindThis } from '@/decorators.js';
-import { IdService } from '@/core/IdService.js';
-import type { Packed } from '@/misc/json-schema.js';
-import { UserEntityService } from './UserEntityService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {DI} from '@/di-symbols.js';
+import type {AbuseUserReportsRepository} from '@/models/_.js';
+import {awaitAll} from '@/misc/prelude/await-all.js';
+import type {MiAbuseUserReport} from '@/models/AbuseUserReport.js';
+import {bindThis} from '@/decorators.js';
+import {IdService} from '@/core/IdService.js';
+import type {Packed} from '@/misc/json-schema.js';
+import {UserEntityService} from './UserEntityService.js';
 
 @Injectable()
 export class AbuseUserReportEntityService {
 	constructor(
 		@Inject(DI.abuseUserReportsRepository)
 		private abuseUserReportsRepository: AbuseUserReportsRepository,
-
 		private userEntityService: UserEntityService,
 		private idService: IdService,
 	) {
@@ -33,7 +32,7 @@ export class AbuseUserReportEntityService {
 			packedAssignee?: Packed<'UserDetailedNotMe'>,
 		},
 	) {
-		const report = typeof src === 'object' ? src : await this.abuseUserReportsRepository.findOneByOrFail({ id: src });
+		const report = typeof src === 'object' ? src : await this.abuseUserReportsRepository.findOneByOrFail({id: src});
 
 		return await awaitAll({
 			id: report.id,
@@ -62,20 +61,20 @@ export class AbuseUserReportEntityService {
 	public async packMany(
 		reports: MiAbuseUserReport[],
 	) {
-		const _reporters = reports.map(({ reporter, reporterId }) => reporter ?? reporterId);
-		const _targetUsers = reports.map(({ targetUser, targetUserId }) => targetUser ?? targetUserId);
-		const _assignees = reports.map(({ assignee, assigneeId }) => assignee ?? assigneeId).filter(x => x != null);
+		const _reporters = reports.map(({reporter, reporterId}) => reporter ?? reporterId);
+		const _targetUsers = reports.map(({targetUser, targetUserId}) => targetUser ?? targetUserId);
+		const _assignees = reports.map(({assignee, assigneeId}) => assignee ?? assigneeId).filter(x => x != null);
 		const _userMap = await this.userEntityService.packMany(
 			[..._reporters, ..._targetUsers, ..._assignees],
 			null,
-			{ schema: 'UserDetailedNotMe' },
+			{schema: 'UserDetailedNotMe'},
 		).then(users => new Map(users.map(u => [u.id, u])));
 		return Promise.all(
 			reports.map(report => {
 				const packedReporter = _userMap.get(report.reporterId);
 				const packedTargetUser = _userMap.get(report.targetUserId);
 				const packedAssignee = report.assigneeId != null ? _userMap.get(report.assigneeId) : undefined;
-				return this.pack(report, { packedReporter, packedTargetUser, packedAssignee });
+				return this.pack(report, {packedReporter, packedTargetUser, packedAssignee});
 			}),
 		);
 	}

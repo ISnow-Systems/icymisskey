@@ -4,10 +4,11 @@
  */
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { expect } from '@storybook/test';
-import type { StoryObj } from '@storybook/vue3';
-import { userDetailed } from '../../../.storybook/fakes.js';
+import {expect} from '@storybook/test';
+import type {StoryObj} from '@storybook/vue3';
+import {userDetailed} from '../../../.storybook/fakes.js';
 import MkUserName from './MkUserName.vue';
+
 export const Default = {
 	render(args) {
 		return {
@@ -29,7 +30,7 @@ export const Default = {
 			template: '<MkUserName v-bind="props"/>',
 		};
 	},
-	async play({ canvasElement }) {
+	async play({canvasElement}) {
 		await expect(canvasElement).toHaveTextContent(userDetailed().name as string);
 	},
 	args: {
@@ -41,7 +42,7 @@ export const Default = {
 } satisfies StoryObj<typeof MkUserName>;
 export const Anonymous = {
 	...Default,
-	async play({ canvasElement }) {
+	async play({canvasElement}) {
 		await expect(canvasElement).toHaveTextContent(userDetailed().username);
 	},
 	args: {

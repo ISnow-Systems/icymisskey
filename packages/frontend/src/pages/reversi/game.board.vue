@@ -4,51 +4,53 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkSpacer :contentMax="500">
-	<div :class="$style.root" class="_gaps">
-		<div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-			<span>({{ i18n.ts._reversi.black }})</span>
-			<MkAvatar style="width: 32px; height: 32px;" :user="blackUser" :showIndicator="true"/>
-			<span> vs </span>
-			<MkAvatar style="width: 32px; height: 32px;" :user="whiteUser" :showIndicator="true"/>
-			<span>({{ i18n.ts._reversi.white }})</span>
-		</div>
+	<MkSpacer :contentMax="500">
+		<div :class="$style.root" class="_gaps">
+			<div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+				<span>({{ i18n.ts._reversi.black }})</span>
+				<MkAvatar :showIndicator="true" :user="blackUser" style="width: 32px; height: 32px;"/>
+				<span> vs </span>
+				<MkAvatar :showIndicator="true" :user="whiteUser" style="width: 32px; height: 32px;"/>
+				<span>({{ i18n.ts._reversi.white }})</span>
+			</div>
 
-		<div style="overflow: clip; line-height: 28px;">
-			<div v-if="!iAmPlayer && !game.isEnded && turnUser">
-				<Mfm :key="'turn:' + turnUser.id" :text="i18n.tsx._reversi.turnOf({ name: turnUser.name ?? turnUser.username })" :plain="true" :customEmojis="turnUser.emojis"/>
-				<MkEllipsis/>
-			</div>
-			<div v-if="(logPos !== game.logs.length) && turnUser">
-				<Mfm :key="'past-turn-of:' + turnUser.id" :text="i18n.tsx._reversi.pastTurnOf({ name: turnUser.name ?? turnUser.username })" :plain="true" :customEmojis="turnUser.emojis"/>
-			</div>
-			<div v-if="iAmPlayer && !game.isEnded && !isMyTurn">{{ i18n.ts._reversi.opponentTurn }}<MkEllipsis/><span style="margin-left: 1em; opacity: 0.7;">({{ i18n.tsx.remainingN({ n: opTurnTimerRmain }) }})</span></div>
-			<div v-if="iAmPlayer && !game.isEnded && isMyTurn"><span style="display: inline-block; font-weight: bold; animation: global-tada 1s linear infinite both;">{{ i18n.ts._reversi.myTurn }}</span><span style="margin-left: 1em; opacity: 0.7;">({{ i18n.tsx.remainingN({ n: myTurnTimerRmain }) }})</span></div>
-			<div v-if="game.isEnded && logPos == game.logs.length">
-				<template v-if="game.winner">
-					<Mfm :key="'won'" :text="i18n.tsx._reversi.won({ name: game.winner.name ?? game.winner.username })" :plain="true" :customEmojis="game.winner.emojis"/>
-					<span v-if="game.surrenderedUserId != null"> ({{ i18n.ts._reversi.surrendered }})</span>
-					<span v-if="game.timeoutUserId != null"> ({{ i18n.ts._reversi.timeout }})</span>
-				</template>
-				<template v-else>{{ i18n.ts._reversi.drawn }}</template>
-			</div>
-		</div>
-
-		<div class="_woodenFrame">
-			<div :class="$style.boardInner">
-				<div v-if="showBoardLabels" :class="$style.labelsX">
-					<span v-for="i in game.map[0].length" :key="i" :class="$style.labelsXLabel">{{ String.fromCharCode(64 + i) }}</span>
+			<div style="overflow: clip; line-height: 28px;">
+				<div v-if="!iAmPlayer && !game.isEnded && turnUser">
+					<Mfm :key="'turn:' + turnUser.id" :customEmojis="turnUser.emojis" :plain="true" :text="i18n.tsx._reversi.turnOf({ name: turnUser.name ?? turnUser.username })"/>
+					<MkEllipsis/>
 				</div>
-				<div style="display: flex;">
-					<div v-if="showBoardLabels" :class="$style.labelsY">
-						<div v-for="i in game.map.length" :key="i" :class="$style.labelsYLabel">{{ i }}</div>
+				<div v-if="(logPos !== game.logs.length) && turnUser">
+					<Mfm :key="'past-turn-of:' + turnUser.id" :customEmojis="turnUser.emojis" :plain="true" :text="i18n.tsx._reversi.pastTurnOf({ name: turnUser.name ?? turnUser.username })"/>
+				</div>
+				<div v-if="iAmPlayer && !game.isEnded && !isMyTurn">{{ i18n.ts._reversi.opponentTurn }}
+					<MkEllipsis/>
+					<span style="margin-left: 1em; opacity: 0.7;">({{ i18n.tsx.remainingN({n: opTurnTimerRmain}) }})</span></div>
+				<div v-if="iAmPlayer && !game.isEnded && isMyTurn"><span style="display: inline-block; font-weight: bold; animation: global-tada 1s linear infinite both;">{{ i18n.ts._reversi.myTurn }}</span><span style="margin-left: 1em; opacity: 0.7;">({{ i18n.tsx.remainingN({n: myTurnTimerRmain}) }})</span></div>
+				<div v-if="game.isEnded && logPos == game.logs.length">
+					<template v-if="game.winner">
+						<Mfm :key="'won'" :customEmojis="game.winner.emojis" :plain="true" :text="i18n.tsx._reversi.won({ name: game.winner.name ?? game.winner.username })"/>
+						<span v-if="game.surrenderedUserId != null"> ({{ i18n.ts._reversi.surrendered }})</span>
+						<span v-if="game.timeoutUserId != null"> ({{ i18n.ts._reversi.timeout }})</span>
+					</template>
+					<template v-else>{{ i18n.ts._reversi.drawn }}</template>
+				</div>
+			</div>
+
+			<div class="_woodenFrame">
+				<div :class="$style.boardInner">
+					<div v-if="showBoardLabels" :class="$style.labelsX">
+						<span v-for="i in game.map[0].length" :key="i" :class="$style.labelsXLabel">{{ String.fromCharCode(64 + i) }}</span>
 					</div>
-					<div :class="$style.boardCells" :style="cellsStyle">
-						<div
-							v-for="(stone, i) in engine.board"
-							:key="i"
-							v-tooltip="`${String.fromCharCode(65 + engine.posToXy(i)[0])}${engine.posToXy(i)[1] + 1}`"
-							:class="[$style.boardCell, {
+					<div style="display: flex;">
+						<div v-if="showBoardLabels" :class="$style.labelsY">
+							<div v-for="i in game.map.length" :key="i" :class="$style.labelsYLabel">{{ i }}</div>
+						</div>
+						<div :class="$style.boardCells" :style="cellsStyle">
+							<div
+								v-for="(stone, i) in engine.board"
+								:key="i"
+								v-tooltip="`${String.fromCharCode(65 + engine.posToXy(i)[0])}${engine.posToXy(i)[1] + 1}`"
+								:class="[$style.boardCell, {
 								[$style.boardCell_empty]: stone == null,
 								[$style.boardCell_none]: engine.map[i] === 'null',
 								[$style.boardCell_isEnded]: game.isEnded,
@@ -56,108 +58,112 @@ SPDX-License-Identifier: AGPL-3.0-only
 								[$style.boardCell_can]: turnUser ? engine.canPut(turnUser.id === blackUser.id, i) : null,
 								[$style.boardCell_prev]: engine.prevPos === i
 							}]"
-							@click="putStone(i)"
-						>
-							<Transition
-								:enterActiveClass="$style.transition_flip_enterActive"
-								:leaveActiveClass="$style.transition_flip_leaveActive"
-								:enterFromClass="$style.transition_flip_enterFrom"
-								:leaveToClass="$style.transition_flip_leaveTo"
-								mode="default"
+								@click="putStone(i)"
 							>
-								<template v-if="useAvatarAsStone">
-									<img v-if="stone === true" :class="$style.boardCellStone" :src="blackUser.avatarUrl ?? undefined"/>
-									<img v-else-if="stone === false" :class="$style.boardCellStone" :src="whiteUser.avatarUrl ?? undefined"/>
-								</template>
-								<template v-else>
-									<img v-if="stone === true" :class="$style.boardCellStone" src="/client-assets/reversi/stone_b.png"/>
-									<img v-else-if="stone === false" :class="$style.boardCellStone" src="/client-assets/reversi/stone_w.png"/>
-								</template>
-							</Transition>
+								<Transition
+									:enterActiveClass="$style.transition_flip_enterActive"
+									:enterFromClass="$style.transition_flip_enterFrom"
+									:leaveActiveClass="$style.transition_flip_leaveActive"
+									:leaveToClass="$style.transition_flip_leaveTo"
+									mode="default"
+								>
+									<template v-if="useAvatarAsStone">
+										<img v-if="stone === true" :class="$style.boardCellStone" :src="blackUser.avatarUrl ?? undefined"/>
+										<img v-else-if="stone === false" :class="$style.boardCellStone" :src="whiteUser.avatarUrl ?? undefined"/>
+									</template>
+									<template v-else>
+										<img v-if="stone === true" :class="$style.boardCellStone" src="/client-assets/reversi/stone_b.png"/>
+										<img v-else-if="stone === false" :class="$style.boardCellStone" src="/client-assets/reversi/stone_w.png"/>
+									</template>
+								</Transition>
+							</div>
+						</div>
+						<div v-if="showBoardLabels" :class="$style.labelsY">
+							<div v-for="i in game.map.length" :key="i" :class="$style.labelsYLabel">{{ i }}</div>
 						</div>
 					</div>
-					<div v-if="showBoardLabels" :class="$style.labelsY">
-						<div v-for="i in game.map.length" :key="i" :class="$style.labelsYLabel">{{ i }}</div>
+					<div v-if="showBoardLabels" :class="$style.labelsX">
+						<span v-for="i in game.map[0].length" :key="i" :class="$style.labelsXLabel">{{ String.fromCharCode(64 + i) }}</span>
 					</div>
 				</div>
-				<div v-if="showBoardLabels" :class="$style.labelsX">
-					<span v-for="i in game.map[0].length" :key="i" :class="$style.labelsXLabel">{{ String.fromCharCode(64 + i) }}</span>
+			</div>
+
+			<div v-if="game.isEnded" class="_panel _gaps_s" style="padding: 16px;">
+				<div>{{ logPos }} / {{ game.logs.length }}</div>
+				<div v-if="!autoplaying" class="_buttonsCenter">
+					<MkButton :disabled="logPos === 0" @click="logPos = 0"><i class="ti ti-chevrons-left"></i></MkButton>
+					<MkButton :disabled="logPos === 0" @click="logPos--"><i class="ti ti-chevron-left"></i></MkButton>
+					<MkButton :disabled="logPos === game.logs.length" @click="logPos++"><i class="ti ti-chevron-right"></i></MkButton>
+					<MkButton :disabled="logPos === game.logs.length" @click="logPos = game.logs.length"><i class="ti ti-chevrons-right"></i></MkButton>
+				</div>
+				<MkButton :disabled="autoplaying" style="margin: auto;" @click="autoplay()"><i class="ti ti-player-play"></i></MkButton>
+			</div>
+
+			<div class="_panel" style="padding: 16px;">
+				<div>
+					<b>{{ i18n.tsx._reversi.turnCount({count: logPos}) }}</b> {{ i18n.ts._reversi.black }}:{{ engine.blackCount }} {{ i18n.ts._reversi.white }}:{{ engine.whiteCount }} {{ i18n.ts._reversi.total }}:{{ engine.blackCount + engine.whiteCount }}
+				</div>
+				<div>
+					<div style="display: flex; align-items: center;">
+						<span style="margin-right: 8px;">({{ i18n.ts._reversi.black }})</span>
+						<MkAvatar :showIndicator="true" :user="blackUser" style="width: 32px; height: 32px; margin-right: 8px;"/>
+						<MkA :to="userPage(blackUser)">
+							<MkUserName :user="blackUser"/>
+						</MkA>
+					</div>
+					<div> vs</div>
+					<div style="display: flex; align-items: center;">
+						<span style="margin-right: 8px;">({{ i18n.ts._reversi.white }})</span>
+						<MkAvatar :showIndicator="true" :user="whiteUser" style="width: 32px; height: 32px; margin-right: 8px;"/>
+						<MkA :to="userPage(whiteUser)">
+							<MkUserName :user="whiteUser"/>
+						</MkA>
+					</div>
+				</div>
+				<div>
+					<p v-if="game.isLlotheo">{{ i18n.ts._reversi.isLlotheo }}</p>
+					<p v-if="game.loopedBoard">{{ i18n.ts._reversi.loopedMap }}</p>
+					<p v-if="game.canPutEverywhere">{{ i18n.ts._reversi.canPutEverywhere }}</p>
 				</div>
 			</div>
-		</div>
 
-		<div v-if="game.isEnded" class="_panel _gaps_s" style="padding: 16px;">
-			<div>{{ logPos }} / {{ game.logs.length }}</div>
-			<div v-if="!autoplaying" class="_buttonsCenter">
-				<MkButton :disabled="logPos === 0" @click="logPos = 0"><i class="ti ti-chevrons-left"></i></MkButton>
-				<MkButton :disabled="logPos === 0" @click="logPos--"><i class="ti ti-chevron-left"></i></MkButton>
-				<MkButton :disabled="logPos === game.logs.length" @click="logPos++"><i class="ti ti-chevron-right"></i></MkButton>
-				<MkButton :disabled="logPos === game.logs.length" @click="logPos = game.logs.length"><i class="ti ti-chevrons-right"></i></MkButton>
-			</div>
-			<MkButton style="margin: auto;" :disabled="autoplaying" @click="autoplay()"><i class="ti ti-player-play"></i></MkButton>
-		</div>
-
-		<div class="_panel" style="padding: 16px;">
-			<div>
-				<b>{{ i18n.tsx._reversi.turnCount({ count: logPos }) }}</b> {{ i18n.ts._reversi.black }}:{{ engine.blackCount }} {{ i18n.ts._reversi.white }}:{{ engine.whiteCount }} {{ i18n.ts._reversi.total }}:{{ engine.blackCount + engine.whiteCount }}
-			</div>
-			<div>
-				<div style="display: flex; align-items: center;">
-					<span style="margin-right: 8px;">({{ i18n.ts._reversi.black }})</span>
-					<MkAvatar style="width: 32px; height: 32px; margin-right: 8px;" :user="blackUser" :showIndicator="true"/>
-					<MkA :to="userPage(blackUser)"><MkUserName :user="blackUser"/></MkA>
+			<MkFolder>
+				<template #label>{{ i18n.ts.options }}</template>
+				<div class="_gaps_s" style="text-align: left;">
+					<MkSwitch v-model="showBoardLabels">{{ i18n.ts._reversi.showBoardLabels }}</MkSwitch>
+					<MkSwitch v-model="useAvatarAsStone">{{ i18n.ts._reversi.useAvatarAsStone }}</MkSwitch>
 				</div>
-				<div> vs </div>
-				<div style="display: flex; align-items: center;">
-					<span style="margin-right: 8px;">({{ i18n.ts._reversi.white }})</span>
-					<MkAvatar style="width: 32px; height: 32px; margin-right: 8px;" :user="whiteUser" :showIndicator="true"/>
-					<MkA :to="userPage(whiteUser)"><MkUserName :user="whiteUser"/></MkA>
-				</div>
+			</MkFolder>
+
+			<div class="_buttonsCenter">
+				<MkButton v-if="!game.isEnded && iAmPlayer" danger @click="surrender">{{ i18n.ts._reversi.surrender }}</MkButton>
+				<MkButton @click="share">{{ i18n.ts.share }}</MkButton>
 			</div>
-			<div>
-				<p v-if="game.isLlotheo">{{ i18n.ts._reversi.isLlotheo }}</p>
-				<p v-if="game.loopedBoard">{{ i18n.ts._reversi.loopedMap }}</p>
-				<p v-if="game.canPutEverywhere">{{ i18n.ts._reversi.canPutEverywhere }}</p>
-			</div>
+
+			<MkA v-if="game.isEnded" :to="`/reversi`">
+				<img src="/client-assets/reversi/logo.png" style="display: block; max-width: 100%; width: 200px; margin: auto;"/>
+			</MkA>
 		</div>
-
-		<MkFolder>
-			<template #label>{{ i18n.ts.options }}</template>
-			<div class="_gaps_s" style="text-align: left;">
-				<MkSwitch v-model="showBoardLabels">{{ i18n.ts._reversi.showBoardLabels }}</MkSwitch>
-				<MkSwitch v-model="useAvatarAsStone">{{ i18n.ts._reversi.useAvatarAsStone }}</MkSwitch>
-			</div>
-		</MkFolder>
-
-		<div class="_buttonsCenter">
-			<MkButton v-if="!game.isEnded && iAmPlayer" danger @click="surrender">{{ i18n.ts._reversi.surrender }}</MkButton>
-			<MkButton @click="share">{{ i18n.ts.share }}</MkButton>
-		</div>
-
-		<MkA v-if="game.isEnded" :to="`/reversi`">
-			<img src="/client-assets/reversi/logo.png" style="display: block; max-width: 100%; width: 200px; margin: auto;"/>
-		</MkA>
-	</div>
-</MkSpacer>
+	</MkSpacer>
 </template>
 
 <script lang="ts" setup>
-import { computed, onActivated, onDeactivated, onMounted, onUnmounted, ref, shallowRef, triggerRef, watch } from 'vue';
+import {computed, onActivated, onDeactivated, onMounted, onUnmounted, ref, shallowRef, triggerRef, watch} from 'vue';
 import * as Misskey from 'misskey-js';
 import * as Reversi from 'misskey-reversi';
 import MkButton from '@/components/MkButton.vue';
 import MkFolder from '@/components/MkFolder.vue';
 import MkSwitch from '@/components/MkSwitch.vue';
-import { deepClone } from '@/scripts/clone.js';
-import { useInterval } from '@@/js/use-interval.js';
-import { signinRequired } from '@/account.js';
-import { url } from '@@/js/config.js';
-import { i18n } from '@/i18n.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { userPage } from '@/filters/user.js';
+import {deepClone} from '@/scripts/clone.js';
+import {useInterval} from '@@/js/use-interval.js';
+import {signinRequired} from '@/account.js';
+import {url} from '@@/js/config.js';
+import {i18n} from '@/i18n.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {userPage} from '@/filters/user.js';
 import * as sound from '@/scripts/sound.js';
 import * as os from '@/os.js';
-import { confetti } from '@/scripts/confetti.js';
+import {confetti} from '@/scripts/confetti.js';
 
 const $i = signinRequired();
 
@@ -253,7 +259,7 @@ if (game.value.isStarted && !game.value.isEnded) {
 				restoreGame(res.game!);
 			}
 		});
-	}, 10000, { immediate: false, afterMounted: true });
+	}, 10000, {immediate: false, afterMounted: true});
 }
 
 const appliedOps: string[] = [];
@@ -301,10 +307,10 @@ if (!props.game.isEnded) {
 
 		if (iAmPlayer.value) {
 			if ((isMyTurn.value && myTurnTimerRmain.value === 0) || (!isMyTurn.value && opTurnTimerRmain.value === 0)) {
-			props.connection!.send('claimTimeIsUp', {});
+				props.connection!.send('claimTimeIsUp', {});
 			}
 		}
-	}, TIMER_INTERVAL_SEC * 1000, { immediate: false, afterMounted: true });
+	}, TIMER_INTERVAL_SEC * 1000, {immediate: false, afterMounted: true});
 }
 
 async function onStreamLog(log) {
@@ -400,7 +406,7 @@ function restoreGame(_game) {
 }
 
 async function surrender() {
-	const { canceled } = await os.confirm({
+	const {canceled} = await os.confirm({
 		type: 'warning',
 		text: i18n.ts.areYouSure,
 	});
@@ -485,10 +491,12 @@ onUnmounted(() => {
 	backface-visibility: hidden;
 	transition: opacity 0.5s ease, transform 0.5s ease;
 }
+
 .transition_flip_enterFrom {
 	transform: rotateY(-180deg);
 	opacity: 0;
 }
+
 .transition_flip_leaveTo {
 	transform: rotateY(180deg);
 	opacity: 0;

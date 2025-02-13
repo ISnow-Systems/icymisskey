@@ -6,14 +6,14 @@
 process.env.NODE_ENV = 'test';
 
 import * as assert from 'assert';
-import { host, origin, relativeFetch, signup } from '../utils.js';
+import {host, origin, relativeFetch, signup} from '../utils.js';
 import type * as misskey from 'misskey-js';
 
 describe('.well-known', () => {
 	let alice: misskey.entities.User;
 
 	beforeAll(async () => {
-		alice = await signup({ username: 'alice' });
+		alice = await signup({username: 'alice'});
 	}, 1000 * 60 * 2);
 
 	test('nodeinfo', async () => {

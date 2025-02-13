@@ -6,13 +6,13 @@
 import bcrypt from 'bcryptjs';
 import * as OTPAuth from 'otpauth';
 import * as QRCode from 'qrcode';
-import { Inject, Injectable } from '@nestjs/common';
-import type { UserProfilesRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
-import type { Config } from '@/config.js';
-import { ApiError } from '@/server/api/error.js';
-import { UserAuthService } from '@/core/UserAuthService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {UserProfilesRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {DI} from '@/di-symbols.js';
+import type {Config} from '@/config.js';
+import {ApiError} from '@/server/api/error.js';
+import {UserAuthService} from '@/core/UserAuthService.js';
 
 export const meta = {
 	requireCredential: true,
@@ -32,11 +32,11 @@ export const meta = {
 		nullable: false,
 		optional: false,
 		properties: {
-			qr: { type: 'string' },
-			url: { type: 'string' },
-			secret: { type: 'string' },
-			label: { type: 'string' },
-			issuer: { type: 'string' },
+			qr: {type: 'string'},
+			url: {type: 'string'},
+			secret: {type: 'string'},
+			label: {type: 'string'},
+			issuer: {type: 'string'},
 		},
 	},
 } as const;
@@ -44,8 +44,8 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		password: { type: 'string' },
-		token: { type: 'string', nullable: true },
+		password: {type: 'string'},
+		token: {type: 'string', nullable: true},
 	},
 	required: ['password'],
 } as const;
@@ -55,15 +55,13 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
-
 		private userAuthService: UserAuthService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			const token = ps.token;
-			const profile = await this.userProfilesRepository.findOneByOrFail({ userId: me.id });
+			const profile = await this.userProfilesRepository.findOneByOrFail({userId: me.id});
 
 			if (profile.twoFactorEnabled) {
 				if (token == null) {

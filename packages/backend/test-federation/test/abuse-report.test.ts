@@ -1,6 +1,6 @@
-import { rejects, strictEqual } from 'node:assert';
+import {rejects, strictEqual} from 'node:assert';
 import * as Misskey from 'misskey-js';
-import { createAccount, createModerator, resolveRemoteUser, sleep, type LoginUser } from './utils.js';
+import {createAccount, createModerator, resolveRemoteUser, sleep, type LoginUser} from './utils.js';
 
 describe('Abuse report', () => {
 	describe('Forwarding report', () => {
@@ -26,10 +26,10 @@ describe('Abuse report', () => {
 
 		test('Alice reports Bob, moderator in A forwards it, and B moderator receives it', async () => {
 			const comment = crypto.randomUUID();
-			await alice.client.request('users/report-abuse', { userId: bobInA.id, comment });
+			await alice.client.request('users/report-abuse', {userId: bobInA.id, comment});
 			const reports = await aModerator.client.request('admin/abuse-user-reports', {});
 			const report = reports.filter(report => report.comment === comment)[0];
-			await aModerator.client.request('admin/forward-abuse-user-report', { reportId: report.id });
+			await aModerator.client.request('admin/forward-abuse-user-report', {reportId: report.id});
 			await sleep();
 
 			const reportsInB = await bModerator.client.request('admin/abuse-user-reports', {});
@@ -40,7 +40,7 @@ describe('Abuse report', () => {
 
 			// NOTE: cannot forward multiple times
 			await rejects(
-				async () => await aModerator.client.request('admin/forward-abuse-user-report', { reportId: report.id }),
+				async () => await aModerator.client.request('admin/forward-abuse-user-report', {reportId: report.id}),
 				(err: any) => {
 					strictEqual(err.code, 'INTERNAL_ERROR');
 					strictEqual(err.info.e.message, 'The report has already been forwarded.');

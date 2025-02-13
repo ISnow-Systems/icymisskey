@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Brackets } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
-import type { UsersRepository, UserProfilesRepository } from '@/models/_.js';
-import type { MiUser } from '@/models/User.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { DI } from '@/di-symbols.js';
-import { sqlLikeEscape } from '@/misc/sql-like-escape.js';
+import {Brackets} from 'typeorm';
+import {Inject, Injectable} from '@nestjs/common';
+import type {UsersRepository, UserProfilesRepository} from '@/models/_.js';
+import type {MiUser} from '@/models/User.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {DI} from '@/di-symbols.js';
+import {sqlLikeEscape} from '@/misc/sql-like-escape.js';
 
 export const meta = {
 	tags: ['users'],
@@ -33,11 +33,11 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		query: { type: 'string' },
-		offset: { type: 'integer', default: 0 },
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
-		origin: { type: 'string', enum: ['local', 'remote', 'combined'], default: 'combined' },
-		detail: { type: 'boolean', default: true },
+		query: {type: 'string'},
+		offset: {type: 'integer', default: 0},
+		limit: {type: 'integer', minimum: 1, maximum: 100, default: 10},
+		origin: {type: 'string', enum: ['local', 'remote', 'combined'], default: 'combined'},
+		detail: {type: 'boolean', default: true},
 	},
 	required: ['query'],
 } as const;
@@ -47,10 +47,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
-
 		private userEntityService: UserEntityService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
@@ -63,18 +61,18 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			const nameQuery = this.usersRepository.createQueryBuilder('user')
 				.where(new Brackets(qb => {
-					qb.where('user.name ILIKE :query', { query: '%' + sqlLikeEscape(ps.query) + '%' });
+					qb.where('user.name ILIKE :query', {query: '%' + sqlLikeEscape(ps.query) + '%'});
 
 					if (isUsername) {
-						qb.orWhere('user.usernameLower LIKE :username', { username: sqlLikeEscape(ps.query.replace('@', '').toLowerCase()) + '%' });
+						qb.orWhere('user.usernameLower LIKE :username', {username: sqlLikeEscape(ps.query.replace('@', '').toLowerCase()) + '%'});
 					} else if (this.userEntityService.validateLocalUsername(ps.query)) { // Also search username if it qualifies as username
-						qb.orWhere('user.usernameLower LIKE :username', { username: '%' + sqlLikeEscape(ps.query.toLowerCase()) + '%' });
+						qb.orWhere('user.usernameLower LIKE :username', {username: '%' + sqlLikeEscape(ps.query.toLowerCase()) + '%'});
 					}
 				}))
 				.andWhere(new Brackets(qb => {
 					qb
 						.where('user.updatedAt IS NULL')
-						.orWhere('user.updatedAt > :activeThreshold', { activeThreshold: activeThreshold });
+						.orWhere('user.updatedAt > :activeThreshold', {activeThreshold: activeThreshold});
 				}))
 				.andWhere('user.isSuspended = FALSE');
 
@@ -93,7 +91,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			if (users.length < ps.limit) {
 				const profQuery = this.userProfilesRepository.createQueryBuilder('prof')
 					.select('prof.userId')
-					.where('prof.description ILIKE :query', { query: '%' + sqlLikeEscape(ps.query) + '%' });
+					.where('prof.description ILIKE :query', {query: '%' + sqlLikeEscape(ps.query) + '%'});
 
 				if (ps.origin === 'local') {
 					profQuery.andWhere('prof.userHost IS NULL');
@@ -102,11 +100,11 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				}
 
 				const query = this.usersRepository.createQueryBuilder('user')
-					.where(`user.id IN (${ profQuery.getQuery() })`)
+					.where(`user.id IN (${profQuery.getQuery()})`)
 					.andWhere(new Brackets(qb => {
 						qb
 							.where('user.updatedAt IS NULL')
-							.orWhere('user.updatedAt > :activeThreshold', { activeThreshold: activeThreshold });
+							.orWhere('user.updatedAt > :activeThreshold', {activeThreshold: activeThreshold});
 					}))
 					.andWhere('user.isSuspended = FALSE')
 					.setParameters(profQuery.getParameters());
@@ -119,7 +117,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				);
 			}
 
-			return await this.userEntityService.packMany(users, me, { schema: ps.detail ? 'UserDetailed' : 'UserLite' });
+			return await this.userEntityService.packMany(users, me, {schema: ps.detail ? 'UserDetailed' : 'UserLite'});
 		});
 	}
 }

@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { ref, watch, onUnmounted } from 'vue';
-import type { Ref } from 'vue';
+import {ref, watch, onUnmounted} from 'vue';
+import type {Ref} from 'vue';
 
 export function useTooltip(
 	elRef: Ref<HTMLElement | { $el: HTMLElement } | null | undefined>,
@@ -89,11 +89,11 @@ export function useTooltip(
 		if (elRef.value) {
 			stop();
 			const el = elRef.value instanceof Element ? elRef.value : elRef.value.$el;
-			el.addEventListener('mouseover', onMouseover, { passive: true });
-			el.addEventListener('mouseleave', onMouseleave, { passive: true });
-			el.addEventListener('touchstart', onTouchstart, { passive: true });
-			el.addEventListener('touchend', onTouchend, { passive: true });
-			el.addEventListener('click', close, { passive: true });
+			el.addEventListener('mouseover', onMouseover, {passive: true});
+			el.addEventListener('mouseleave', onMouseleave, {passive: true});
+			el.addEventListener('touchstart', onTouchstart, {passive: true});
+			el.addEventListener('touchend', onTouchend, {passive: true});
+			el.addEventListener('click', close, {passive: true});
 		}
 	}, {
 		immediate: true,

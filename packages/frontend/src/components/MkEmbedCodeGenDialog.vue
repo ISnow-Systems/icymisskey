@@ -4,95 +4,95 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkModalWindow
-	ref="dialogEl"
-	:width="1000"
-	:height="600"
-	:scroll="false"
-	:withOkButton="false"
-	@close="cancel()"
-	@closed="emit('closed')"
->
-	<template #header><i class="ti ti-code"></i> {{ i18n.ts._embedCodeGen.title }}</template>
+	<MkModalWindow
+		ref="dialogEl"
+		:height="600"
+		:scroll="false"
+		:width="1000"
+		:withOkButton="false"
+		@close="cancel()"
+		@closed="emit('closed')"
+	>
+		<template #header><i class="ti ti-code"></i> {{ i18n.ts._embedCodeGen.title }}</template>
 
-	<div :class="$style.embedCodeGenRoot">
-		<Transition
-			mode="out-in"
-			:enterActiveClass="$style.transition_x_enterActive"
-			:leaveActiveClass="$style.transition_x_leaveActive"
-			:enterFromClass="$style.transition_x_enterFrom"
-			:leaveToClass="$style.transition_x_leaveTo"
-		>
-			<div v-if="phase === 'input'" key="input" :class="$style.embedCodeGenInputRoot">
-				<div
-					:class="$style.embedCodeGenPreviewRoot"
-				>
-					<MkLoading v-if="iframeLoading" :class="$style.embedCodeGenPreviewSpinner"/>
-					<div :class="$style.embedCodeGenPreviewWrapper">
-						<div class="_acrylic" :class="$style.embedCodeGenPreviewTitle">{{ i18n.ts.preview }}</div>
-						<div ref="resizerRootEl" :class="$style.embedCodeGenPreviewResizerRoot" inert>
-							<div
-								:class="$style.embedCodeGenPreviewResizer"
-								:style="{ transform: iframeStyle }"
-							>
-								<iframe
-									ref="iframeEl"
-									:src="embedPreviewUrl"
-									:class="$style.embedCodeGenPreviewIframe"
-									:style="{ height: `${iframeHeight}px` }"
-									@load="iframeOnLoad"
-								></iframe>
+		<div :class="$style.embedCodeGenRoot">
+			<Transition
+				:enterActiveClass="$style.transition_x_enterActive"
+				:enterFromClass="$style.transition_x_enterFrom"
+				:leaveActiveClass="$style.transition_x_leaveActive"
+				:leaveToClass="$style.transition_x_leaveTo"
+				mode="out-in"
+			>
+				<div v-if="phase === 'input'" key="input" :class="$style.embedCodeGenInputRoot">
+					<div
+						:class="$style.embedCodeGenPreviewRoot"
+					>
+						<MkLoading v-if="iframeLoading" :class="$style.embedCodeGenPreviewSpinner"/>
+						<div :class="$style.embedCodeGenPreviewWrapper">
+							<div :class="$style.embedCodeGenPreviewTitle" class="_acrylic">{{ i18n.ts.preview }}</div>
+							<div ref="resizerRootEl" :class="$style.embedCodeGenPreviewResizerRoot" inert>
+								<div
+									:class="$style.embedCodeGenPreviewResizer"
+									:style="{ transform: iframeStyle }"
+								>
+									<iframe
+										ref="iframeEl"
+										:class="$style.embedCodeGenPreviewIframe"
+										:src="embedPreviewUrl"
+										:style="{ height: `${iframeHeight}px` }"
+										@load="iframeOnLoad"
+									></iframe>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-				<div :class="$style.embedCodeGenSettings" class="_gaps">
-					<MkInput v-if="isEmbedWithScrollbar" v-model="maxHeight" type="number" :min="0">
-						<template #label>{{ i18n.ts._embedCodeGen.maxHeight }}</template>
-						<template #suffix>px</template>
-						<template #caption>{{ i18n.ts._embedCodeGen.maxHeightDescription }}</template>
-					</MkInput>
-					<MkSelect v-model="colorMode">
-						<template #label>{{ i18n.ts.theme }}</template>
-						<option value="auto">{{ i18n.ts.syncDeviceDarkMode }}</option>
-						<option value="light">{{ i18n.ts.light }}</option>
-						<option value="dark">{{ i18n.ts.dark }}</option>
-					</MkSelect>
-					<MkSwitch v-if="isEmbedWithScrollbar" v-model="header">{{ i18n.ts._embedCodeGen.header }}</MkSwitch>
-					<MkSwitch v-model="rounded">{{ i18n.ts._embedCodeGen.rounded }}</MkSwitch>
-					<MkSwitch v-model="border">{{ i18n.ts._embedCodeGen.border }}</MkSwitch>
-					<MkInfo v-if="isEmbedWithScrollbar && (!maxHeight || maxHeight <= 0)" warn>{{ i18n.ts._embedCodeGen.maxHeightWarn }}</MkInfo>
-					<MkInfo v-if="typeof maxHeight === 'number' && (maxHeight <= 0 || maxHeight > 700)">{{ i18n.ts._embedCodeGen.previewIsNotActual }}</MkInfo>
-					<div class="_buttons">
-						<MkButton :disabled="iframeLoading" @click="applyToPreview">{{ i18n.ts._embedCodeGen.applyToPreview }}</MkButton>
-						<MkButton :disabled="iframeLoading" primary @click="generate">{{ i18n.ts._embedCodeGen.generateCode }} <i class="ti ti-arrow-right"></i></MkButton>
+					<div :class="$style.embedCodeGenSettings" class="_gaps">
+						<MkInput v-if="isEmbedWithScrollbar" v-model="maxHeight" :min="0" type="number">
+							<template #label>{{ i18n.ts._embedCodeGen.maxHeight }}</template>
+							<template #suffix>px</template>
+							<template #caption>{{ i18n.ts._embedCodeGen.maxHeightDescription }}</template>
+						</MkInput>
+						<MkSelect v-model="colorMode">
+							<template #label>{{ i18n.ts.theme }}</template>
+							<option value="auto">{{ i18n.ts.syncDeviceDarkMode }}</option>
+							<option value="light">{{ i18n.ts.light }}</option>
+							<option value="dark">{{ i18n.ts.dark }}</option>
+						</MkSelect>
+						<MkSwitch v-if="isEmbedWithScrollbar" v-model="header">{{ i18n.ts._embedCodeGen.header }}</MkSwitch>
+						<MkSwitch v-model="rounded">{{ i18n.ts._embedCodeGen.rounded }}</MkSwitch>
+						<MkSwitch v-model="border">{{ i18n.ts._embedCodeGen.border }}</MkSwitch>
+						<MkInfo v-if="isEmbedWithScrollbar && (!maxHeight || maxHeight <= 0)" warn>{{ i18n.ts._embedCodeGen.maxHeightWarn }}</MkInfo>
+						<MkInfo v-if="typeof maxHeight === 'number' && (maxHeight <= 0 || maxHeight > 700)">{{ i18n.ts._embedCodeGen.previewIsNotActual }}</MkInfo>
+						<div class="_buttons">
+							<MkButton :disabled="iframeLoading" @click="applyToPreview">{{ i18n.ts._embedCodeGen.applyToPreview }}</MkButton>
+							<MkButton :disabled="iframeLoading" primary @click="generate">{{ i18n.ts._embedCodeGen.generateCode }} <i class="ti ti-arrow-right"></i></MkButton>
+						</div>
 					</div>
 				</div>
-			</div>
-			<div v-else-if="phase === 'result'" key="result" :class="$style.embedCodeGenResultRoot">
-				<div :class="$style.embedCodeGenResultWrapper" class="_gaps">
-					<div class="_gaps_s">
-						<div :class="$style.embedCodeGenResultHeadingIcon"><i class="ti ti-check"></i></div>
-						<div :class="$style.embedCodeGenResultHeading">{{ i18n.ts._embedCodeGen.codeGenerated }}</div>
-						<div :class="$style.embedCodeGenResultDescription">{{ i18n.ts._embedCodeGen.codeGeneratedDescription }}</div>
+				<div v-else-if="phase === 'result'" key="result" :class="$style.embedCodeGenResultRoot">
+					<div :class="$style.embedCodeGenResultWrapper" class="_gaps">
+						<div class="_gaps_s">
+							<div :class="$style.embedCodeGenResultHeadingIcon"><i class="ti ti-check"></i></div>
+							<div :class="$style.embedCodeGenResultHeading">{{ i18n.ts._embedCodeGen.codeGenerated }}</div>
+							<div :class="$style.embedCodeGenResultDescription">{{ i18n.ts._embedCodeGen.codeGeneratedDescription }}</div>
+						</div>
+						<div class="_gaps_s">
+							<MkCode :class="$style.embedCodeGenResultCode" :code="result" :copyButton="false" :forceShow="true" lang="html"/>
+							<MkButton :class="$style.embedCodeGenResultButtons" primary rounded @click="doCopy"><i class="ti ti-copy"></i> {{ i18n.ts.copy }}</MkButton>
+						</div>
+						<MkButton :class="$style.embedCodeGenResultButtons" rounded transparent @click="close">{{ i18n.ts.close }}</MkButton>
 					</div>
-					<div class="_gaps_s">
-						<MkCode :code="result" lang="html" :forceShow="true" :copyButton="false" :class="$style.embedCodeGenResultCode"/>
-						<MkButton :class="$style.embedCodeGenResultButtons" rounded primary @click="doCopy"><i class="ti ti-copy"></i> {{ i18n.ts.copy }}</MkButton>
-					</div>
-					<MkButton :class="$style.embedCodeGenResultButtons" rounded transparent @click="close">{{ i18n.ts.close }}</MkButton>
 				</div>
-			</div>
-		</Transition>
-	</div>
-</MkModalWindow>
+			</Transition>
+		</div>
+	</MkModalWindow>
 </template>
 
-<script setup lang="ts">
-import { shallowRef, ref, computed, nextTick, onMounted, onDeactivated, onUnmounted } from 'vue';
-import { url } from '@@/js/config.js';
-import { embedRouteWithScrollbar } from '@@/js/embed-page.js';
-import type { EmbeddableEntity, EmbedParams } from '@@/js/embed-page.js';
+<script lang="ts" setup>
+import {shallowRef, ref, computed, nextTick, onMounted, onDeactivated, onUnmounted} from 'vue';
+import {url} from '@@/js/config.js';
+import {embedRouteWithScrollbar} from '@@/js/embed-page.js';
+import type {EmbeddableEntity, EmbedParams} from '@@/js/embed-page.js';
 import MkModalWindow from '@/components/MkModalWindow.vue';
 
 import MkInput from '@/components/MkInput.vue';
@@ -104,9 +104,9 @@ import MkCode from '@/components/MkCode.vue';
 import MkInfo from '@/components/MkInfo.vue';
 
 import * as os from '@/os.js';
-import { i18n } from '@/i18n.js';
-import { copyToClipboard } from '@/scripts/copy-to-clipboard.js';
-import { normalizeEmbedParams, getEmbedCode } from '@/scripts/get-embed-code.js';
+import {i18n} from '@/i18n.js';
+import {copyToClipboard} from '@/scripts/copy-to-clipboard.js';
+import {normalizeEmbedParams, getEmbedCode} from '@/scripts/get-embed-code.js';
 
 const emit = defineEmits<{
 	(ev: 'ok'): void;
@@ -196,6 +196,7 @@ function doCopy() {
 	copyToClipboard(result.value);
 	os.success();
 }
+
 //#endregion
 
 //#region プレビューのリサイズ
@@ -282,12 +283,14 @@ onUnmounted(() => {
 <style module>
 .transition_x_enterActive,
 .transition_x_leaveActive {
-	transition: opacity 0.3s cubic-bezier(0,0,.35,1), transform 0.3s cubic-bezier(0,0,.35,1);
+	transition: opacity 0.3s cubic-bezier(0, 0, .35, 1), transform 0.3s cubic-bezier(0, 0, .35, 1);
 }
+
 .transition_x_enterFrom {
 	opacity: 0;
 	transform: translateX(50px);
 }
+
 .transition_x_leaveTo {
 	opacity: 0;
 	transform: translateX(-50px);

@@ -4,62 +4,66 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="500">
-		<MkLoading v-if="uiPhase === 'fetching'"/>
-		<MkExtensionInstaller v-else-if="uiPhase === 'confirm' && data" :extension="data" @confirm="install()">
-			<template #additionalInfo>
-				<FormSection>
-					<template #label>{{ i18n.ts._externalResourceInstaller._vendorInfo.title }}</template>
-					<div class="_gaps_s">
-						<MkKeyValue>
-							<template #key>{{ i18n.ts._externalResourceInstaller._vendorInfo.endpoint }}</template>
-							<template #value><MkUrl :url="url" :showUrlPreview="false"></MkUrl></template>
-						</MkKeyValue>
-						<MkKeyValue>
-							<template #key>{{ i18n.ts._externalResourceInstaller._vendorInfo.hashVerify }}</template>
-							<template #value>
-								<!-- この画面が出ている時点でハッシュの検証には成功している -->
-								<i class="ti ti-check" style="color: var(--MI_THEME-accent)"></i>
-							</template>
-						</MkKeyValue>
-					</div>
-				</FormSection>
-			</template>
-		</MkExtensionInstaller>
-		<div v-else-if="uiPhase === 'error'" class="_gaps_m" :class="[$style.extInstallerRoot, $style.error]">
-			<div :class="$style.extInstallerIconWrapper">
-				<i class="ti ti-circle-x"></i>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs"/>
+		</template>
+		<MkSpacer :contentMax="500">
+			<MkLoading v-if="uiPhase === 'fetching'"/>
+			<MkExtensionInstaller v-else-if="uiPhase === 'confirm' && data" :extension="data" @confirm="install()">
+				<template #additionalInfo>
+					<FormSection>
+						<template #label>{{ i18n.ts._externalResourceInstaller._vendorInfo.title }}</template>
+						<div class="_gaps_s">
+							<MkKeyValue>
+								<template #key>{{ i18n.ts._externalResourceInstaller._vendorInfo.endpoint }}</template>
+								<template #value>
+									<MkUrl :showUrlPreview="false" :url="url"></MkUrl>
+								</template>
+							</MkKeyValue>
+							<MkKeyValue>
+								<template #key>{{ i18n.ts._externalResourceInstaller._vendorInfo.hashVerify }}</template>
+								<template #value>
+									<!-- この画面が出ている時点でハッシュの検証には成功している -->
+									<i class="ti ti-check" style="color: var(--MI_THEME-accent)"></i>
+								</template>
+							</MkKeyValue>
+						</div>
+					</FormSection>
+				</template>
+			</MkExtensionInstaller>
+			<div v-else-if="uiPhase === 'error'" :class="[$style.extInstallerRoot, $style.error]" class="_gaps_m">
+				<div :class="$style.extInstallerIconWrapper">
+					<i class="ti ti-circle-x"></i>
+				</div>
+				<h2 :class="$style.extInstallerTitle">{{ errorKV?.title }}</h2>
+				<div :class="$style.extInstallerNormDesc">{{ errorKV?.description }}</div>
+				<div class="_buttonsCenter">
+					<MkButton @click="goBack()">{{ i18n.ts.goBack }}</MkButton>
+					<MkButton @click="goToMisskey()">{{ i18n.ts.goToMisskey }}</MkButton>
+				</div>
 			</div>
-			<h2 :class="$style.extInstallerTitle">{{ errorKV?.title }}</h2>
-			<div :class="$style.extInstallerNormDesc">{{ errorKV?.description }}</div>
-			<div class="_buttonsCenter">
-				<MkButton @click="goBack()">{{ i18n.ts.goBack }}</MkButton>
-				<MkButton @click="goToMisskey()">{{ i18n.ts.goToMisskey }}</MkButton>
-			</div>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onActivated, onDeactivated, nextTick } from 'vue';
+import {ref, computed, onActivated, onDeactivated, nextTick} from 'vue';
 import MkLoading from '@/components/global/MkLoading.vue';
 import MkExtensionInstaller from '@/components/MkExtensionInstaller.vue';
-import type { Extension } from '@/components/MkExtensionInstaller.vue';
+import type {Extension} from '@/components/MkExtensionInstaller.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkKeyValue from '@/components/MkKeyValue.vue';
 import MkUrl from '@/components/global/MkUrl.vue';
 import FormSection from '@/components/form/section.vue';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { parsePluginMeta, installPlugin } from '@/scripts/install-plugin.js';
-import type { AiScriptPluginMeta } from '@/scripts/install-plugin.js';
-import { parseThemeCode, installTheme } from '@/scripts/install-theme.js';
-import { unisonReload } from '@/scripts/unison-reload.js';
-import { i18n } from '@/i18n.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {parsePluginMeta, installPlugin} from '@/scripts/install-plugin.js';
+import type {AiScriptPluginMeta} from '@/scripts/install-plugin.js';
+import {parseThemeCode, installTheme} from '@/scripts/install-theme.js';
+import {unisonReload} from '@/scripts/unison-reload.js';
+import {i18n} from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
 
 const uiPhase = ref<'fetching' | 'confirm' | 'error'>('fetching');
 const errorKV = ref<{
@@ -155,7 +159,7 @@ async function fetch() {
 			try {
 				const metaRaw = parseThemeCode(res.data);
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
-				const { id, props, desc: description, ...meta } = metaRaw;
+				const {id, props, desc: description, ...meta} = metaRaw;
 				data.value = {
 					type: 'theme',
 					meta: {

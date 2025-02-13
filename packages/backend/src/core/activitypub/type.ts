@@ -156,6 +156,7 @@ interface IQuestionChoice {
 	replies?: ICollection;
 	_misskey_votes?: number;
 }
+
 export interface ITombstone extends IObject {
 	type: 'Tombstone';
 	formerType?: string;

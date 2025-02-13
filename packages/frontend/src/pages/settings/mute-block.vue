@@ -4,151 +4,157 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="_gaps_m">
-	<MkFolder>
-		<template #icon><i class="ti ti-message-off"></i></template>
-		<template #label>{{ i18n.ts.wordMute }}</template>
+	<div class="_gaps_m">
+		<MkFolder>
+			<template #icon><i class="ti ti-message-off"></i></template>
+			<template #label>{{ i18n.ts.wordMute }}</template>
 
-		<div class="_gaps_m">
-			<MkInfo>{{ i18n.ts.wordMuteDescription }}</MkInfo>
-			<MkSwitch v-model="showSoftWordMutedWord">{{ i18n.ts.showMutedWord }}</MkSwitch>
-			<XWordMute :muted="$i.mutedWords" @save="saveMutedWords"/>
-		</div>
-	</MkFolder>
+			<div class="_gaps_m">
+				<MkInfo>{{ i18n.ts.wordMuteDescription }}</MkInfo>
+				<MkSwitch v-model="showSoftWordMutedWord">{{ i18n.ts.showMutedWord }}</MkSwitch>
+				<XWordMute :muted="$i.mutedWords" @save="saveMutedWords"/>
+			</div>
+		</MkFolder>
 
-	<MkFolder>
-		<template #icon><i class="ti ti-message-off"></i></template>
-		<template #label>{{ i18n.ts.hardWordMute }}</template>
+		<MkFolder>
+			<template #icon><i class="ti ti-message-off"></i></template>
+			<template #label>{{ i18n.ts.hardWordMute }}</template>
 
-		<div class="_gaps_m">
-			<MkInfo>{{ i18n.ts.hardWordMuteDescription }}</MkInfo>
-			<XWordMute :muted="$i.hardMutedWords" @save="saveHardMutedWords"/>
-		</div>
-	</MkFolder>
+			<div class="_gaps_m">
+				<MkInfo>{{ i18n.ts.hardWordMuteDescription }}</MkInfo>
+				<XWordMute :muted="$i.hardMutedWords" @save="saveHardMutedWords"/>
+			</div>
+		</MkFolder>
 
-	<MkFolder v-if="instance.federation !== 'none'">
-		<template #icon><i class="ti ti-planet-off"></i></template>
-		<template #label>{{ i18n.ts.instanceMute }}</template>
+		<MkFolder v-if="instance.federation !== 'none'">
+			<template #icon><i class="ti ti-planet-off"></i></template>
+			<template #label>{{ i18n.ts.instanceMute }}</template>
 
-		<XInstanceMute/>
-	</MkFolder>
+			<XInstanceMute/>
+		</MkFolder>
 
-	<MkFolder>
-		<template #icon><i class="ti ti-repeat-off"></i></template>
-		<template #label>{{ i18n.ts.mutedUsers }} ({{ i18n.ts.renote }})</template>
+		<MkFolder>
+			<template #icon><i class="ti ti-repeat-off"></i></template>
+			<template #label>{{ i18n.ts.mutedUsers }} ({{ i18n.ts.renote }})</template>
 
-		<MkPagination :pagination="renoteMutingPagination">
-			<template #empty>
-				<div class="_fullinfo">
-					<img :src="infoImageUrl" class="_ghost"/>
-					<div>{{ i18n.ts.noUsers }}</div>
-				</div>
-			</template>
+			<MkPagination :pagination="renoteMutingPagination">
+				<template #empty>
+					<div class="_fullinfo">
+						<img :src="infoImageUrl" class="_ghost"/>
+						<div>{{ i18n.ts.noUsers }}</div>
+					</div>
+				</template>
 
-			<template #default="{ items }">
-				<div class="_gaps_s">
-					<div v-for="item in items" :key="item.mutee.id" :class="[$style.userItem, { [$style.userItemOpend]: expandedRenoteMuteItems.includes(item.id) }]">
-						<div :class="$style.userItemMain">
-							<MkA :class="$style.userItemMainBody" :to="userPage(item.mutee)">
-								<MkUserCardMini :user="item.mutee"/>
-							</MkA>
-							<button class="_button" :class="$style.userToggle" @click="toggleRenoteMuteItem(item)"><i :class="$style.chevron" class="ti ti-chevron-down"></i></button>
-							<button class="_button" :class="$style.remove" @click="unrenoteMute(item.mutee, $event)"><i class="ti ti-x"></i></button>
-						</div>
-						<div v-if="expandedRenoteMuteItems.includes(item.id)" :class="$style.userItemSub">
-							<div>Muted at: <MkTime :time="item.createdAt" mode="detail"/></div>
+				<template #default="{ items }">
+					<div class="_gaps_s">
+						<div v-for="item in items" :key="item.mutee.id" :class="[$style.userItem, { [$style.userItemOpend]: expandedRenoteMuteItems.includes(item.id) }]">
+							<div :class="$style.userItemMain">
+								<MkA :class="$style.userItemMainBody" :to="userPage(item.mutee)">
+									<MkUserCardMini :user="item.mutee"/>
+								</MkA>
+								<button :class="$style.userToggle" class="_button" @click="toggleRenoteMuteItem(item)"><i :class="$style.chevron" class="ti ti-chevron-down"></i></button>
+								<button :class="$style.remove" class="_button" @click="unrenoteMute(item.mutee, $event)"><i class="ti ti-x"></i></button>
+							</div>
+							<div v-if="expandedRenoteMuteItems.includes(item.id)" :class="$style.userItemSub">
+								<div>Muted at:
+									<MkTime :time="item.createdAt" mode="detail"/>
+								</div>
+							</div>
 						</div>
 					</div>
-				</div>
-			</template>
-		</MkPagination>
-	</MkFolder>
+				</template>
+			</MkPagination>
+		</MkFolder>
 
-	<MkFolder>
-		<template #icon><i class="ti ti-eye-off"></i></template>
-		<template #label>{{ i18n.ts.mutedUsers }}</template>
+		<MkFolder>
+			<template #icon><i class="ti ti-eye-off"></i></template>
+			<template #label>{{ i18n.ts.mutedUsers }}</template>
 
-		<MkPagination :pagination="mutingPagination">
-			<template #empty>
-				<div class="_fullinfo">
-					<img :src="infoImageUrl" class="_ghost"/>
-					<div>{{ i18n.ts.noUsers }}</div>
-				</div>
-			</template>
+			<MkPagination :pagination="mutingPagination">
+				<template #empty>
+					<div class="_fullinfo">
+						<img :src="infoImageUrl" class="_ghost"/>
+						<div>{{ i18n.ts.noUsers }}</div>
+					</div>
+				</template>
 
-			<template #default="{ items }">
-				<div class="_gaps_s">
-					<div v-for="item in items" :key="item.mutee.id" :class="[$style.userItem, { [$style.userItemOpend]: expandedMuteItems.includes(item.id) }]">
-						<div :class="$style.userItemMain">
-							<MkA :class="$style.userItemMainBody" :to="userPage(item.mutee)">
-								<MkUserCardMini :user="item.mutee"/>
-							</MkA>
-							<button class="_button" :class="$style.userToggle" @click="toggleMuteItem(item)"><i :class="$style.chevron" class="ti ti-chevron-down"></i></button>
-							<button class="_button" :class="$style.remove" @click="unmute(item.mutee, $event)"><i class="ti ti-x"></i></button>
-						</div>
-						<div v-if="expandedMuteItems.includes(item.id)" :class="$style.userItemSub">
-							<div>Muted at: <MkTime :time="item.createdAt" mode="detail"/></div>
-							<div v-if="item.expiresAt">Period: {{ new Date(item.expiresAt).toLocaleString() }}</div>
-							<div v-else>Period: {{ i18n.ts.indefinitely }}</div>
+				<template #default="{ items }">
+					<div class="_gaps_s">
+						<div v-for="item in items" :key="item.mutee.id" :class="[$style.userItem, { [$style.userItemOpend]: expandedMuteItems.includes(item.id) }]">
+							<div :class="$style.userItemMain">
+								<MkA :class="$style.userItemMainBody" :to="userPage(item.mutee)">
+									<MkUserCardMini :user="item.mutee"/>
+								</MkA>
+								<button :class="$style.userToggle" class="_button" @click="toggleMuteItem(item)"><i :class="$style.chevron" class="ti ti-chevron-down"></i></button>
+								<button :class="$style.remove" class="_button" @click="unmute(item.mutee, $event)"><i class="ti ti-x"></i></button>
+							</div>
+							<div v-if="expandedMuteItems.includes(item.id)" :class="$style.userItemSub">
+								<div>Muted at:
+									<MkTime :time="item.createdAt" mode="detail"/>
+								</div>
+								<div v-if="item.expiresAt">Period: {{ new Date(item.expiresAt).toLocaleString() }}</div>
+								<div v-else>Period: {{ i18n.ts.indefinitely }}</div>
+							</div>
 						</div>
 					</div>
-				</div>
-			</template>
-		</MkPagination>
-	</MkFolder>
+				</template>
+			</MkPagination>
+		</MkFolder>
 
-	<MkFolder>
-		<template #icon><i class="ti ti-ban"></i></template>
-		<template #label>{{ i18n.ts.blockedUsers }}</template>
+		<MkFolder>
+			<template #icon><i class="ti ti-ban"></i></template>
+			<template #label>{{ i18n.ts.blockedUsers }}</template>
 
-		<MkPagination :pagination="blockingPagination">
-			<template #empty>
-				<div class="_fullinfo">
-					<img :src="infoImageUrl" class="_ghost"/>
-					<div>{{ i18n.ts.noUsers }}</div>
-				</div>
-			</template>
+			<MkPagination :pagination="blockingPagination">
+				<template #empty>
+					<div class="_fullinfo">
+						<img :src="infoImageUrl" class="_ghost"/>
+						<div>{{ i18n.ts.noUsers }}</div>
+					</div>
+				</template>
 
-			<template #default="{ items }">
-				<div class="_gaps_s">
-					<div v-for="item in items" :key="item.blockee.id" :class="[$style.userItem, { [$style.userItemOpend]: expandedBlockItems.includes(item.id) }]">
-						<div :class="$style.userItemMain">
-							<MkA :class="$style.userItemMainBody" :to="userPage(item.blockee)">
-								<MkUserCardMini :user="item.blockee"/>
-							</MkA>
-							<button class="_button" :class="$style.userToggle" @click="toggleBlockItem(item)"><i :class="$style.chevron" class="ti ti-chevron-down"></i></button>
-							<button class="_button" :class="$style.remove" @click="unblock(item.blockee, $event)"><i class="ti ti-x"></i></button>
-						</div>
-						<div v-if="expandedBlockItems.includes(item.id)" :class="$style.userItemSub">
-							<div>Blocked at: <MkTime :time="item.createdAt" mode="detail"/></div>
-							<div v-if="item.expiresAt">Period: {{ new Date(item.expiresAt).toLocaleString() }}</div>
-							<div v-else>Period: {{ i18n.ts.indefinitely }}</div>
+				<template #default="{ items }">
+					<div class="_gaps_s">
+						<div v-for="item in items" :key="item.blockee.id" :class="[$style.userItem, { [$style.userItemOpend]: expandedBlockItems.includes(item.id) }]">
+							<div :class="$style.userItemMain">
+								<MkA :class="$style.userItemMainBody" :to="userPage(item.blockee)">
+									<MkUserCardMini :user="item.blockee"/>
+								</MkA>
+								<button :class="$style.userToggle" class="_button" @click="toggleBlockItem(item)"><i :class="$style.chevron" class="ti ti-chevron-down"></i></button>
+								<button :class="$style.remove" class="_button" @click="unblock(item.blockee, $event)"><i class="ti ti-x"></i></button>
+							</div>
+							<div v-if="expandedBlockItems.includes(item.id)" :class="$style.userItemSub">
+								<div>Blocked at:
+									<MkTime :time="item.createdAt" mode="detail"/>
+								</div>
+								<div v-if="item.expiresAt">Period: {{ new Date(item.expiresAt).toLocaleString() }}</div>
+								<div v-else>Period: {{ i18n.ts.indefinitely }}</div>
+							</div>
 						</div>
 					</div>
-				</div>
-			</template>
-		</MkPagination>
-	</MkFolder>
-</div>
+				</template>
+			</MkPagination>
+		</MkFolder>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, watch } from 'vue';
+import {ref, computed, watch} from 'vue';
 import XInstanceMute from './mute-block.instance-mute.vue';
 import XWordMute from './mute-block.word-mute.vue';
 import MkPagination from '@/components/MkPagination.vue';
-import { userPage } from '@/filters/user.js';
-import { i18n } from '@/i18n.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
+import {userPage} from '@/filters/user.js';
+import {i18n} from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
 import MkUserCardMini from '@/components/MkUserCardMini.vue';
 import * as os from '@/os.js';
-import { instance, infoImageUrl } from '@/instance.js';
-import { signinRequired } from '@/account.js';
+import {instance, infoImageUrl} from '@/instance.js';
+import {signinRequired} from '@/account.js';
 import MkInfo from '@/components/MkInfo.vue';
 import MkFolder from '@/components/MkFolder.vue';
 import MkSwitch from '@/components/MkSwitch.vue';
-import { defaultStore } from '@/store';
-import { reloadAsk } from '@/scripts/reload-ask.js';
+import {defaultStore} from '@/store';
+import {reloadAsk} from '@/scripts/reload-ask.js';
 
 const $i = signinRequired();
 
@@ -176,7 +182,7 @@ const showSoftWordMutedWord = computed(defaultStore.makeGetterSetter('showSoftWo
 watch([
 	showSoftWordMutedWord,
 ], async () => {
-	await reloadAsk({ reason: i18n.ts.reloadToApplySetting, unison: true });
+	await reloadAsk({reason: i18n.ts.reloadToApplySetting, unison: true});
 });
 
 async function unrenoteMute(user, ev) {
@@ -184,7 +190,7 @@ async function unrenoteMute(user, ev) {
 		text: i18n.ts.renoteUnmute,
 		icon: 'ti ti-x',
 		action: async () => {
-			await os.apiWithDialog('renote-mute/delete', { userId: user.id });
+			await os.apiWithDialog('renote-mute/delete', {userId: user.id});
 			//role.users = role.users.filter(u => u.id !== user.id);
 		},
 	}], ev.currentTarget ?? ev.target);
@@ -195,7 +201,7 @@ async function unmute(user, ev) {
 		text: i18n.ts.unmute,
 		icon: 'ti ti-x',
 		action: async () => {
-			await os.apiWithDialog('mute/delete', { userId: user.id });
+			await os.apiWithDialog('mute/delete', {userId: user.id});
 			//role.users = role.users.filter(u => u.id !== user.id);
 		},
 	}], ev.currentTarget ?? ev.target);
@@ -206,7 +212,7 @@ async function unblock(user, ev) {
 		text: i18n.ts.unblock,
 		icon: 'ti ti-x',
 		action: async () => {
-			await os.apiWithDialog('blocking/delete', { userId: user.id });
+			await os.apiWithDialog('blocking/delete', {userId: user.id});
 			//role.users = role.users.filter(u => u.id !== user.id);
 		},
 	}], ev.currentTarget ?? ev.target);
@@ -237,11 +243,11 @@ async function toggleBlockItem(item) {
 }
 
 async function saveMutedWords(mutedWords: (string | string[])[]) {
-	await os.apiWithDialog('i/update', { mutedWords });
+	await os.apiWithDialog('i/update', {mutedWords});
 }
 
 async function saveHardMutedWords(hardMutedWords: (string | string[])[]) {
-	await os.apiWithDialog('i/update', { hardMutedWords });
+	await os.apiWithDialog('i/update', {hardMutedWords});
 }
 
 const headerActions = computed(() => []);

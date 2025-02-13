@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { PrimaryColumn, Entity, Column } from 'typeorm';
+import {PrimaryColumn, Entity, Column} from 'typeorm';
 
 @Entity('used_username')
 export class MiUsedUsername {

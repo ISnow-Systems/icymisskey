@@ -3,22 +3,20 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { DI } from '@/di-symbols.js';
-import type { AnnouncementsRepository, AnnouncementReadsRepository, MiAnnouncement, MiUser } from '@/models/_.js';
-import type { Packed } from '@/misc/json-schema.js';
-import { bindThis } from '@/decorators.js';
-import { IdService } from '@/core/IdService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {DI} from '@/di-symbols.js';
+import type {AnnouncementsRepository, AnnouncementReadsRepository, MiAnnouncement, MiUser} from '@/models/_.js';
+import type {Packed} from '@/misc/json-schema.js';
+import {bindThis} from '@/decorators.js';
+import {IdService} from '@/core/IdService.js';
 
 @Injectable()
 export class AnnouncementEntityService {
 	constructor(
 		@Inject(DI.announcementsRepository)
 		private announcementsRepository: AnnouncementsRepository,
-
 		@Inject(DI.announcementReadsRepository)
 		private announcementReadsRepository: AnnouncementReadsRepository,
-
 		private idService: IdService,
 	) {
 	}
@@ -63,7 +61,7 @@ export class AnnouncementEntityService {
 	public async packMany(
 		announcements: (MiAnnouncement['id'] | MiAnnouncement & { isRead?: boolean | null } | MiAnnouncement)[],
 		me?: { id: MiUser['id'] } | null | undefined,
-	) : Promise<Packed<'Announcement'>[]> {
+	): Promise<Packed<'Announcement'>[]> {
 		return (await Promise.allSettled(announcements.map(x => this.pack(x, me))))
 			.filter(result => result.status === 'fulfilled')
 			.map(result => (result as PromiseFulfilledResult<Packed<'Announcement'>>).value);

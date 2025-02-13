@@ -3,35 +3,33 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Brackets } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
+import {Brackets} from 'typeorm';
+import {Inject, Injectable} from '@nestjs/common';
 import JSON5 from 'json5';
-import type { Packed } from '@/misc/json-schema.js';
-import type { MiMeta } from '@/models/Meta.js';
-import type { AdsRepository } from '@/models/_.js';
-import { MAX_NOTE_TEXT_LENGTH } from '@/const.js';
-import { bindThis } from '@/decorators.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { InstanceActorService } from '@/core/InstanceActorService.js';
-import type { Config } from '@/config.js';
-import { DI } from '@/di-symbols.js';
-import { DEFAULT_POLICIES } from '@/core/RoleService.js';
+import type {Packed} from '@/misc/json-schema.js';
+import type {MiMeta} from '@/models/Meta.js';
+import type {AdsRepository} from '@/models/_.js';
+import {MAX_NOTE_TEXT_LENGTH} from '@/const.js';
+import {bindThis} from '@/decorators.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {InstanceActorService} from '@/core/InstanceActorService.js';
+import type {Config} from '@/config.js';
+import {DI} from '@/di-symbols.js';
+import {DEFAULT_POLICIES} from '@/core/RoleService.js';
 
 @Injectable()
 export class MetaEntityService {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.meta)
 		private meta: MiMeta,
-
 		@Inject(DI.adsRepository)
 		private adsRepository: AdsRepository,
-
 		private userEntityService: UserEntityService,
 		private instanceActorService: InstanceActorService,
-	) { }
+	) {
+	}
 
 	@bindThis
 	public async pack(meta?: MiMeta): Promise<Packed<'MetaLite'>> {
@@ -42,11 +40,11 @@ export class MetaEntityService {
 		}
 
 		const ads = await this.adsRepository.createQueryBuilder('ads')
-			.where('ads.expiresAt > :now', { now: new Date() })
-			.andWhere('ads.startsAt <= :now', { now: new Date() })
+			.where('ads.expiresAt > :now', {now: new Date()})
+			.andWhere('ads.startsAt <= :now', {now: new Date()})
 			.andWhere(new Brackets(qb => {
 				// 曜日のビットフラグを確認する
-				qb.where('ads.dayOfWeek & :dayOfWeek > 0', { dayOfWeek: 1 << new Date().getDay() })
+				qb.where('ads.dayOfWeek & :dayOfWeek > 0', {dayOfWeek: 1 << new Date().getDay()})
 					.orWhere('ads.dayOfWeek = 0');
 			}))
 			.getMany();
@@ -126,7 +124,7 @@ export class MetaEntityService {
 
 			serverRules: instance.serverRules,
 
-			policies: { ...DEFAULT_POLICIES, ...instance.policies },
+			policies: {...DEFAULT_POLICIES, ...instance.policies},
 
 			mediaProxy: this.config.mediaProxy,
 			enableUrlPreview: instance.urlPreviewEnabled,

@@ -3,23 +3,22 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { DI } from '@/di-symbols.js';
-import type { ReversiGamesRepository } from '@/models/_.js';
-import { awaitAll } from '@/misc/prelude/await-all.js';
-import type { Packed } from '@/misc/json-schema.js';
-import type { } from '@/models/Blocking.js';
-import type { MiReversiGame } from '@/models/ReversiGame.js';
-import { bindThis } from '@/decorators.js';
-import { IdService } from '@/core/IdService.js';
-import { UserEntityService } from './UserEntityService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {DI} from '@/di-symbols.js';
+import type {ReversiGamesRepository} from '@/models/_.js';
+import {awaitAll} from '@/misc/prelude/await-all.js';
+import type {Packed} from '@/misc/json-schema.js';
+import type {} from '@/models/Blocking.js';
+import type {MiReversiGame} from '@/models/ReversiGame.js';
+import {bindThis} from '@/decorators.js';
+import {IdService} from '@/core/IdService.js';
+import {UserEntityService} from './UserEntityService.js';
 
 @Injectable()
 export class ReversiGameEntityService {
 	constructor(
 		@Inject(DI.reversiGamesRepository)
 		private reversiGamesRepository: ReversiGamesRepository,
-
 		private userEntityService: UserEntityService,
 		private idService: IdService,
 	) {
@@ -33,7 +32,7 @@ export class ReversiGameEntityService {
 			packedUser2?: Packed<'UserLite'>,
 		},
 	): Promise<Packed<'ReversiGameDetailed'>> {
-		const game = typeof src === 'object' ? src : await this.reversiGamesRepository.findOneByOrFail({ id: src });
+		const game = typeof src === 'object' ? src : await this.reversiGamesRepository.findOneByOrFail({id: src});
 
 		const user1 = hint?.packedUser1 ?? await this.userEntityService.pack(game.user1 ?? game.user1Id);
 		const user2 = hint?.packedUser2 ?? await this.userEntityService.pack(game.user2 ?? game.user2Id);
@@ -73,8 +72,8 @@ export class ReversiGameEntityService {
 	public async packDetailMany(
 		games: MiReversiGame[],
 	) {
-		const _user1s = games.map(({ user1, user1Id }) => user1 ?? user1Id);
-		const _user2s = games.map(({ user2, user2Id }) => user2 ?? user2Id);
+		const _user1s = games.map(({user1, user1Id}) => user1 ?? user1Id);
+		const _user2s = games.map(({user2, user2Id}) => user2 ?? user2Id);
 		const _userMap = await this.userEntityService.packMany([..._user1s, ..._user2s])
 			.then(users => new Map(users.map(u => [u.id, u])));
 		return Promise.all(
@@ -95,7 +94,7 @@ export class ReversiGameEntityService {
 			packedUser2?: Packed<'UserLite'>,
 		},
 	): Promise<Packed<'ReversiGameLite'>> {
-		const game = typeof src === 'object' ? src : await this.reversiGamesRepository.findOneByOrFail({ id: src });
+		const game = typeof src === 'object' ? src : await this.reversiGamesRepository.findOneByOrFail({id: src});
 
 		const user1 = hint?.packedUser1 ?? await this.userEntityService.pack(game.user1 ?? game.user1Id);
 		const user2 = hint?.packedUser2 ?? await this.userEntityService.pack(game.user2 ?? game.user2Id);
@@ -129,8 +128,8 @@ export class ReversiGameEntityService {
 	public async packLiteMany(
 		games: MiReversiGame[],
 	) {
-		const _user1s = games.map(({ user1, user1Id }) => user1 ?? user1Id);
-		const _user2s = games.map(({ user2, user2Id }) => user2 ?? user2Id);
+		const _user1s = games.map(({user1, user1Id}) => user1 ?? user1Id);
+		const _user2s = games.map(({user2, user2Id}) => user2 ?? user2Id);
 		const _userMap = await this.userEntityService.packMany([..._user1s, ..._user2s])
 			.then(users => new Map(users.map(u => [u.id, u])));
 		return Promise.all(

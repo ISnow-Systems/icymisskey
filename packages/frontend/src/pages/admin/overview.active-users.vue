@@ -4,23 +4,23 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div>
-	<MkLoading v-if="fetching"/>
-	<div v-show="!fetching" :class="$style.root" class="_panel">
-		<canvas ref="chartEl"></canvas>
+	<div>
+		<MkLoading v-if="fetching"/>
+		<div v-show="!fetching" :class="$style.root" class="_panel">
+			<canvas ref="chartEl"></canvas>
+		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, shallowRef, ref } from 'vue';
-import { Chart } from 'chart.js';
+import {onMounted, shallowRef, ref} from 'vue';
+import {Chart} from 'chart.js';
 import gradient from 'chartjs-plugin-gradient';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { defaultStore } from '@/store.js';
-import { useChartTooltip } from '@/scripts/use-chart-tooltip.js';
-import { chartVLine } from '@/scripts/chart-vline.js';
-import { initChart } from '@/scripts/init-chart.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {defaultStore} from '@/store.js';
+import {useChartTooltip} from '@/scripts/use-chart-tooltip.js';
+import {chartVLine} from '@/scripts/chart-vline.js';
+import {initChart} from '@/scripts/init-chart.js';
 
 initChart();
 
@@ -30,7 +30,7 @@ let chartInstance: Chart = null;
 const chartLimit = 7;
 const fetching = ref(true);
 
-const { handler: externalTooltipHandler } = useChartTooltip();
+const {handler: externalTooltipHandler} = useChartTooltip();
 
 async function renderChart() {
 	if (chartInstance) {
@@ -52,7 +52,7 @@ async function renderChart() {
 		}));
 	};
 
-	const raw = await misskeyApi('charts/active-users', { limit: chartLimit, span: 'day' });
+	const raw = await misskeyApi('charts/active-users', {limit: chartLimit, span: 'day'});
 
 	const vLineColor = defaultStore.state.darkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)';
 

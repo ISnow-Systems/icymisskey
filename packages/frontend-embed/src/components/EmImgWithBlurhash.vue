@@ -4,17 +4,17 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div ref="root" :class="['chromatic-ignore', $style.root, { [$style.cover]: cover }]" :title="title ?? ''">
-	<canvas v-show="hide" key="canvas" ref="canvas" :class="$style.canvas" :width="canvasWidth" :height="canvasHeight" :title="title ?? undefined" tabindex="-1"/>
-	<img v-show="!hide" key="img" ref="img" :height="imgHeight ?? undefined" :width="imgWidth ?? undefined" :class="$style.img" :src="src ?? undefined" :title="title ?? undefined" :alt="alt ?? undefined" loading="eager" decoding="async" tabindex="-1"/>
-</div>
+	<div ref="root" :class="['chromatic-ignore', $style.root, { [$style.cover]: cover }]" :title="title ?? ''">
+		<canvas v-show="hide" key="canvas" ref="canvas" :class="$style.canvas" :height="canvasHeight" :title="title ?? undefined" :width="canvasWidth" tabindex="-1"/>
+		<img v-show="!hide" key="img" ref="img" :alt="alt ?? undefined" :class="$style.img" :height="imgHeight ?? undefined" :src="src ?? undefined" :title="title ?? undefined" :width="imgWidth ?? undefined" decoding="async" loading="eager" tabindex="-1"/>
+	</div>
 </template>
 
 <script lang="ts">
 import DrawBlurhash from '@/workers/draw-blurhash?worker';
 import TestWebGL2 from '@/workers/test-webgl2?worker';
-import { WorkerMultiDispatch } from '@@/js/worker-multi-dispatch.js';
-import { extractAvgColorFromBlurhash } from '@@/js/extract-avg-color-from-blurhash.js';
+import {WorkerMultiDispatch} from '@@/js/worker-multi-dispatch.js';
+import {extractAvgColorFromBlurhash} from '@@/js/extract-avg-color-from-blurhash.js';
 
 const canvasPromise = new Promise<WorkerMultiDispatch | HTMLCanvasElement>(resolve => {
 	// テスト環境で Web Worker インスタンスは作成できない
@@ -47,9 +47,9 @@ const canvasPromise = new Promise<WorkerMultiDispatch | HTMLCanvasElement>(resol
 </script>
 
 <script lang="ts" setup>
-import { computed, nextTick, onMounted, onUnmounted, shallowRef, watch, ref } from 'vue';
-import { v4 as uuid } from 'uuid';
-import { render } from 'buraha';
+import {computed, nextTick, onMounted, onUnmounted, shallowRef, watch, ref} from 'vue';
+import {v4 as uuid} from 'uuid';
+import {render} from 'buraha';
 
 const props = withDefaults(defineProps<{
 	src?: string | null;

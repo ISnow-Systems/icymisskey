@@ -4,52 +4,54 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="500">
-		<div v-if="state == 'fetch-session-error'">
-			<p>{{ i18n.ts.somethingHappened }}</p>
-		</div>
-		<div v-else-if="$i && !session">
-			<MkLoading/>
-		</div>
-		<div v-else-if="$i && session">
-			<XForm
-				v-if="state == 'waiting'"
-				class="form"
-				:session="session"
-				@denied="state = 'denied'"
-				@accepted="accepted"
-			/>
-			<div v-if="state == 'denied'">
-				<h1>{{ i18n.ts._auth.denied }}</h1>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs"/>
+		</template>
+		<MkSpacer :contentMax="500">
+			<div v-if="state == 'fetch-session-error'">
+				<p>{{ i18n.ts.somethingHappened }}</p>
 			</div>
-			<div v-if="state == 'accepted' && session">
-				<h1>{{ session.app.isAuthorized ? i18n.ts['already-authorized'] : i18n.ts.allowed }}</h1>
-				<p v-if="session.app.callbackUrl">
-					{{ i18n.ts._auth.callback }}
-					<MkEllipsis/>
-				</p>
-				<p v-if="!session.app.callbackUrl">{{ i18n.ts._auth.pleaseGoBack }}</p>
+			<div v-else-if="$i && !session">
+				<MkLoading/>
 			</div>
-		</div>
-		<div v-else>
-			<p :class="$style.loginMessage">{{ i18n.ts._auth.pleaseLogin }}</p>
-			<MkSignin @login="onLogin"/>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+			<div v-else-if="$i && session">
+				<XForm
+					v-if="state == 'waiting'"
+					:session="session"
+					class="form"
+					@accepted="accepted"
+					@denied="state = 'denied'"
+				/>
+				<div v-if="state == 'denied'">
+					<h1>{{ i18n.ts._auth.denied }}</h1>
+				</div>
+				<div v-if="state == 'accepted' && session">
+					<h1>{{ session.app.isAuthorized ? i18n.ts['already-authorized'] : i18n.ts.allowed }}</h1>
+					<p v-if="session.app.callbackUrl">
+						{{ i18n.ts._auth.callback }}
+						<MkEllipsis/>
+					</p>
+					<p v-if="!session.app.callbackUrl">{{ i18n.ts._auth.pleaseGoBack }}</p>
+				</div>
+			</div>
+			<div v-else>
+				<p :class="$style.loginMessage">{{ i18n.ts._auth.pleaseLogin }}</p>
+				<MkSignin @login="onLogin"/>
+			</div>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, computed } from 'vue';
+import {onMounted, ref, computed} from 'vue';
 import * as Misskey from 'misskey-js';
 import XForm from './auth.form.vue';
 import MkSignin from '@/components/MkSignin.vue';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { $i, login } from '@/account.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
-import { i18n } from '@/i18n.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {$i, login} from '@/account.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
+import {i18n} from '@/i18n.js';
 
 const props = defineProps<{
 	token: string;

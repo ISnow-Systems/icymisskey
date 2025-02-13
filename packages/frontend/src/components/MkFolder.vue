@@ -4,61 +4,65 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div ref="rootEl" :class="$style.root" role="group" :aria-expanded="opened">
-	<MkStickyContainer>
-		<template #header>
-			<button :class="[$style.header, { [$style.opened]: opened }]" class="_button" role="button" data-cy-folder-header @click="toggle">
-				<div :class="$style.headerIcon"><slot name="icon"></slot></div>
-				<div :class="$style.headerText">
-					<div :class="$style.headerTextMain">
-						<MkCondensedLine :minScale="2 / 3"><slot name="label"></slot></MkCondensedLine>
+	<div ref="rootEl" :aria-expanded="opened" :class="$style.root" role="group">
+		<MkStickyContainer>
+			<template #header>
+				<button :class="[$style.header, { [$style.opened]: opened }]" class="_button" data-cy-folder-header role="button" @click="toggle">
+					<div :class="$style.headerIcon">
+						<slot name="icon"></slot>
 					</div>
-					<div :class="$style.headerTextSub">
-						<slot name="caption"></slot>
+					<div :class="$style.headerText">
+						<div :class="$style.headerTextMain">
+							<MkCondensedLine :minScale="2 / 3">
+								<slot name="label"></slot>
+							</MkCondensedLine>
+						</div>
+						<div :class="$style.headerTextSub">
+							<slot name="caption"></slot>
+						</div>
 					</div>
-				</div>
-				<div :class="$style.headerRight">
-					<span :class="$style.headerRightText"><slot name="suffix"></slot></span>
-					<i v-if="opened" class="ti ti-chevron-up icon"></i>
-					<i v-else class="ti ti-chevron-down icon"></i>
-				</div>
-			</button>
-		</template>
+					<div :class="$style.headerRight">
+						<span :class="$style.headerRightText"><slot name="suffix"></slot></span>
+						<i v-if="opened" class="ti ti-chevron-up icon"></i>
+						<i v-else class="ti ti-chevron-down icon"></i>
+					</div>
+				</button>
+			</template>
 
-		<div v-if="openedAtLeastOnce" :class="[$style.body, { [$style.bgSame]: bgSame }]" :style="{ maxHeight: maxHeight ? `${maxHeight}px` : undefined, overflow: maxHeight ? `auto` : undefined }" :aria-hidden="!opened">
-			<Transition
-				:enterActiveClass="defaultStore.state.animation ? $style.transition_toggle_enterActive : ''"
-				:leaveActiveClass="defaultStore.state.animation ? $style.transition_toggle_leaveActive : ''"
-				:enterFromClass="defaultStore.state.animation ? $style.transition_toggle_enterFrom : ''"
-				:leaveToClass="defaultStore.state.animation ? $style.transition_toggle_leaveTo : ''"
-				@enter="enter"
-				@afterEnter="afterEnter"
-				@leave="leave"
-				@afterLeave="afterLeave"
-			>
-				<KeepAlive>
-					<div v-show="opened">
-						<MkSpacer v-if="withSpacer" :marginMin="spacerMin" :marginMax="spacerMax">
-							<slot></slot>
-						</MkSpacer>
-						<div v-else>
-							<slot></slot>
+			<div v-if="openedAtLeastOnce" :aria-hidden="!opened" :class="[$style.body, { [$style.bgSame]: bgSame }]" :style="{ maxHeight: maxHeight ? `${maxHeight}px` : undefined, overflow: maxHeight ? `auto` : undefined }">
+				<Transition
+					:enterActiveClass="defaultStore.state.animation ? $style.transition_toggle_enterActive : ''"
+					:enterFromClass="defaultStore.state.animation ? $style.transition_toggle_enterFrom : ''"
+					:leaveActiveClass="defaultStore.state.animation ? $style.transition_toggle_leaveActive : ''"
+					:leaveToClass="defaultStore.state.animation ? $style.transition_toggle_leaveTo : ''"
+					@afterEnter="afterEnter"
+					@afterLeave="afterLeave"
+					@enter="enter"
+					@leave="leave"
+				>
+					<KeepAlive>
+						<div v-show="opened">
+							<MkSpacer v-if="withSpacer" :marginMax="spacerMax" :marginMin="spacerMin">
+								<slot></slot>
+							</MkSpacer>
+							<div v-else>
+								<slot></slot>
+							</div>
+							<div v-if="$slots.footer" :class="$style.footer">
+								<slot name="footer"></slot>
+							</div>
 						</div>
-						<div v-if="$slots.footer" :class="$style.footer">
-							<slot name="footer"></slot>
-						</div>
-					</div>
-				</KeepAlive>
-			</Transition>
-		</div>
-	</MkStickyContainer>
-</div>
+					</KeepAlive>
+				</Transition>
+			</div>
+		</MkStickyContainer>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { nextTick, onMounted, ref, shallowRef } from 'vue';
-import { defaultStore } from '@/store.js';
-import { getBgColor } from '@/scripts/get-bg-color.js';
+import {nextTick, onMounted, ref, shallowRef} from 'vue';
+import {defaultStore} from '@/store.js';
+import {getBgColor} from '@/scripts/get-bg-color.js';
 
 const props = withDefaults(defineProps<{
 	defaultOpen?: boolean;
@@ -129,6 +133,7 @@ onMounted(() => {
 	overflow-y: clip;
 	transition: opacity 0.3s, height 0.3s, transform 0.3s !important;
 }
+
 .transition_toggle_enterFrom,
 .transition_toggle_leaveTo {
 	opacity: 0;

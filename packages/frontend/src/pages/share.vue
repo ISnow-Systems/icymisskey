@@ -4,43 +4,45 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="800">
-		<MkPostForm
-			v-if="state === 'writing'"
-			fixed
-			:instant="true"
-			:initialText="initialText"
-			:initialVisibility="visibility"
-			:initialFiles="files"
-			:initialLocalOnly="localOnly"
-			:reply="reply"
-			:renote="renote"
-			:initialVisibleUsers="visibleUsers"
-			class="_panel"
-			@posted="onPosted"
-		/>
-		<div v-else-if="state === 'posted'" class="_buttonsCenter">
-			<MkButton primary @click="close">{{ i18n.ts.close }}</MkButton>
-			<MkButton @click="goToMisskey">{{ i18n.ts.goToMisskey }}</MkButton>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs"/>
+		</template>
+		<MkSpacer :contentMax="800">
+			<MkPostForm
+				v-if="state === 'writing'"
+				:initialFiles="files"
+				:initialLocalOnly="localOnly"
+				:initialText="initialText"
+				:initialVisibility="visibility"
+				:initialVisibleUsers="visibleUsers"
+				:instant="true"
+				:renote="renote"
+				:reply="reply"
+				class="_panel"
+				fixed
+				@posted="onPosted"
+			/>
+			<div v-else-if="state === 'posted'" class="_buttonsCenter">
+				<MkButton primary @click="close">{{ i18n.ts.close }}</MkButton>
+				<MkButton @click="goToMisskey">{{ i18n.ts.goToMisskey }}</MkButton>
+			</div>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
 // SPECIFICATION: https://misskey-hub.net/docs/for-users/features/share-form/
 
-import { ref, computed } from 'vue';
+import {ref, computed} from 'vue';
 import * as Misskey from 'misskey-js';
 import MkButton from '@/components/MkButton.vue';
 import MkPostForm from '@/components/MkPostForm.vue';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
-import { postMessageToParentWindow } from '@/scripts/post-message.js';
-import { i18n } from '@/i18n.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
+import {postMessageToParentWindow} from '@/scripts/post-message.js';
+import {i18n} from '@/i18n.js';
 
 const urlParams = new URLSearchParams(window.location.search);
 const localOnlyQuery = urlParams.get('localOnly');
@@ -99,11 +101,11 @@ async function init() {
 		const visibleAccts = urlParams.get('visibleAccts');
 		await Promise.all(
 			[
-				...(visibleUserIds ? visibleUserIds.split(',').map(userId => ({ userId })) : []),
+				...(visibleUserIds ? visibleUserIds.split(',').map(userId => ({userId})) : []),
 				...(visibleAccts ? visibleAccts.split(',').map(Misskey.acct.parse) : []),
 			]
-			// TypeScriptの指示通りに変換する
-				.map(q => 'username' in q ? { username: q.username, host: q.host === null ? undefined : q.host } : q)
+				// TypeScriptの指示通りに変換する
+				.map(q => 'username' in q ? {username: q.username, host: q.host === null ? undefined : q.host} : q)
 				.map(q => misskeyApi('users/show', q)
 					.then(user => {
 						visibleUsers.value.push(user);
@@ -154,7 +156,7 @@ async function init() {
 		if (fileIds) {
 			await Promise.all(
 				fileIds.split(',')
-					.map(fileId => misskeyApi('drive/files/show', { fileId })
+					.map(fileId => misskeyApi('drive/files/show', {fileId})
 						.then(file => {
 							files.value.push(file);
 						}, () => {

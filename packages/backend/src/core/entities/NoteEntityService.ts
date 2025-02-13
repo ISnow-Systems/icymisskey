@@ -3,24 +3,24 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { In } from 'typeorm';
-import { ModuleRef } from '@nestjs/core';
-import { DI } from '@/di-symbols.js';
-import type { Packed } from '@/misc/json-schema.js';
-import { awaitAll } from '@/misc/prelude/await-all.js';
-import type { MiUser } from '@/models/User.js';
-import type { MiNote } from '@/models/Note.js';
-import type { UsersRepository, NotesRepository, FollowingsRepository, PollsRepository, PollVotesRepository, NoteReactionsRepository, ChannelsRepository, MiMeta } from '@/models/_.js';
-import { bindThis } from '@/decorators.js';
-import { DebounceLoader } from '@/misc/loader.js';
-import { IdService } from '@/core/IdService.js';
-import { ReactionsBufferingService } from '@/core/ReactionsBufferingService.js';
-import type { OnModuleInit } from '@nestjs/common';
-import type { CustomEmojiService } from '../CustomEmojiService.js';
-import type { ReactionService } from '../ReactionService.js';
-import type { UserEntityService } from './UserEntityService.js';
-import type { DriveFileEntityService } from './DriveFileEntityService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {In} from 'typeorm';
+import {ModuleRef} from '@nestjs/core';
+import {DI} from '@/di-symbols.js';
+import type {Packed} from '@/misc/json-schema.js';
+import {awaitAll} from '@/misc/prelude/await-all.js';
+import type {MiUser} from '@/models/User.js';
+import type {MiNote} from '@/models/Note.js';
+import type {UsersRepository, NotesRepository, FollowingsRepository, PollsRepository, PollVotesRepository, NoteReactionsRepository, ChannelsRepository, MiMeta} from '@/models/_.js';
+import {bindThis} from '@/decorators.js';
+import {DebounceLoader} from '@/misc/loader.js';
+import {IdService} from '@/core/IdService.js';
+import {ReactionsBufferingService} from '@/core/ReactionsBufferingService.js';
+import type {OnModuleInit} from '@nestjs/common';
+import type {CustomEmojiService} from '../CustomEmojiService.js';
+import type {ReactionService} from '../ReactionService.js';
+import type {UserEntityService} from './UserEntityService.js';
+import type {DriveFileEntityService} from './DriveFileEntityService.js';
 
 // is-renote.tsとよしなにリンク
 function isPureRenote(note: MiNote): note is MiNote & { renoteId: MiNote['id']; renote: MiNote } {
@@ -58,31 +58,22 @@ export class NoteEntityService implements OnModuleInit {
 
 	constructor(
 		private moduleRef: ModuleRef,
-
 		@Inject(DI.meta)
 		private meta: MiMeta,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		@Inject(DI.followingsRepository)
 		private followingsRepository: FollowingsRepository,
-
 		@Inject(DI.pollsRepository)
 		private pollsRepository: PollsRepository,
-
 		@Inject(DI.pollVotesRepository)
 		private pollVotesRepository: PollVotesRepository,
-
 		@Inject(DI.noteReactionsRepository)
 		private noteReactionsRepository: NoteReactionsRepository,
-
 		@Inject(DI.channelsRepository)
 		private channelsRepository: ChannelsRepository,
-
 		//private userEntityService: UserEntityService,
 		//private driveFileEntityService: DriveFileEntityService,
 		//private customEmojiService: CustomEmojiService,
@@ -99,138 +90,6 @@ export class NoteEntityService implements OnModuleInit {
 		this.reactionService = this.moduleRef.get('ReactionService');
 		this.reactionsBufferingService = this.moduleRef.get('ReactionsBufferingService');
 		this.idService = this.moduleRef.get('IdService');
-	}
-
-	@bindThis
-	private treatVisibility(packedNote: Packed<'Note'>): Packed<'Note'>['visibility'] {
-		if (packedNote.visibility === 'public' || packedNote.visibility === 'home') {
-			const followersOnlyBefore = packedNote.user.makeNotesFollowersOnlyBefore;
-			if ((followersOnlyBefore != null)
-				&& (
-					(followersOnlyBefore <= 0 && (Date.now() - new Date(packedNote.createdAt).getTime() > 0 - (followersOnlyBefore * 1000)))
-					|| (followersOnlyBefore > 0 && (new Date(packedNote.createdAt).getTime() < followersOnlyBefore * 1000))
-				)
-			) {
-				packedNote.visibility = 'followers';
-			}
-		}
-		return packedNote.visibility;
-	}
-
-	@bindThis
-	private async hideNote(packedNote: Packed<'Note'>, meId: MiUser['id'] | null): Promise<void> {
-		if (meId === packedNote.userId) return;
-
-		// TODO: isVisibleForMe を使うようにしても良さそう(型違うけど)
-		let hide = false;
-
-		if (packedNote.user.requireSigninToViewContents && meId == null) {
-			hide = true;
-		}
-
-		if (!hide) {
-			const hiddenBefore = packedNote.user.makeNotesHiddenBefore;
-			if ((hiddenBefore != null)
-				&& (
-					(hiddenBefore <= 0 && (Date.now() - new Date(packedNote.createdAt).getTime() > 0 - (hiddenBefore * 1000)))
-					|| (hiddenBefore > 0 && (new Date(packedNote.createdAt).getTime() < hiddenBefore * 1000))
-				)
-			) {
-				hide = true;
-			}
-		}
-
-		// visibility が specified かつ自分が指定されていなかったら非表示
-		if (!hide) {
-			if (packedNote.visibility === 'specified') {
-				if (meId == null) {
-					hide = true;
-				} else {
-					// 指定されているかどうか
-					const specified = packedNote.visibleUserIds!.some(id => meId === id);
-
-					if (!specified) {
-						hide = true;
-					}
-				}
-			}
-		}
-
-		// visibility が followers かつ自分が投稿者のフォロワーでなかったら非表示
-		if (!hide) {
-			if (packedNote.visibility === 'followers') {
-				if (meId == null) {
-					hide = true;
-				} else if (packedNote.reply && (meId === packedNote.reply.userId)) {
-					// 自分の投稿に対するリプライ
-					hide = false;
-				} else if (packedNote.mentions && packedNote.mentions.some(id => meId === id)) {
-					// 自分へのメンション
-					hide = false;
-				} else {
-					// フォロワーかどうか
-					// TODO: 当関数呼び出しごとにクエリが走るのは重そうだからなんとかする
-					const isFollowing = await this.followingsRepository.exists({
-						where: {
-							followeeId: packedNote.userId,
-							followerId: meId,
-						},
-					});
-
-					hide = !isFollowing;
-				}
-			}
-		}
-
-		if (hide) {
-			packedNote.visibleUserIds = undefined;
-			packedNote.fileIds = [];
-			packedNote.files = [];
-			packedNote.text = null;
-			packedNote.poll = undefined;
-			packedNote.cw = null;
-			packedNote.isHidden = true;
-			// TODO: hiddenReason みたいなのを提供しても良さそう
-		}
-	}
-
-	@bindThis
-	private async populatePoll(note: MiNote, meId: MiUser['id'] | null) {
-		const poll = await this.pollsRepository.findOneByOrFail({ noteId: note.id });
-		const choices = poll.choices.map(c => ({
-			text: c,
-			votes: poll.votes[poll.choices.indexOf(c)],
-			isVoted: false,
-		}));
-
-		if (meId) {
-			if (poll.multiple) {
-				const votes = await this.pollVotesRepository.findBy({
-					userId: meId,
-					noteId: note.id,
-				});
-
-				const myChoices = votes.map(v => v.choice);
-				for (const myChoice of myChoices) {
-					choices[myChoice].isVoted = true;
-				}
-			} else {
-				const vote = await this.pollVotesRepository.findOneBy({
-					userId: meId,
-					noteId: note.id,
-				});
-
-				if (vote) {
-					choices[vote.choice].isVoted = true;
-				}
-			}
-		}
-
-		return {
-			multiple: poll.multiple,
-			expiresAt: poll.expiresAt?.toISOString() ?? null,
-			choices,
-		};
 	}
 
 	@bindThis
@@ -311,7 +170,7 @@ export class NoteEntityService implements OnModuleInit {
 						},
 						take: 1,
 					}),
-					this.usersRepository.findOneByOrFail({ id: meId }),
+					this.usersRepository.findOneByOrFail({id: meId}),
 				]);
 
 				/* If we know the following, everyhting is fine.
@@ -370,10 +229,10 @@ export class NoteEntityService implements OnModuleInit {
 		const host = note.userHost;
 
 		const bufferedReactions = opts._hint_?.bufferedReactions != null
-			? (opts._hint_.bufferedReactions.get(note.id) ?? { deltas: {}, pairs: [] })
+			? (opts._hint_.bufferedReactions.get(note.id) ?? {deltas: {}, pairs: []})
 			: this.meta.enableReactionsBuffering
 				? await this.reactionsBufferingService.get(note.id)
-				: { deltas: {}, pairs: [] };
+				: {deltas: {}, pairs: []};
 		const reactions = this.reactionService.convertLegacyReactions(this.reactionsBufferingService.mergeReactions(note.reactions, bufferedReactions.deltas ?? {}));
 
 		const reactionAndUserPairCache = note.reactionAndUserPairCache.concat(bufferedReactions.pairs.map(x => x.join('/')));
@@ -387,7 +246,7 @@ export class NoteEntityService implements OnModuleInit {
 		const channel = note.channelId
 			? note.channel
 				? note.channel
-				: await this.channelsRepository.findOneBy({ id: note.channelId })
+				: await this.channelsRepository.findOneBy({id: note.channelId})
 			: null;
 
 		const reactionEmojiNames = Object.keys(reactions)
@@ -544,9 +403,9 @@ export class NoteEntityService implements OnModuleInit {
 		const fileIds = notes.map(n => [n.fileIds, n.renote?.fileIds, n.reply?.fileIds]).flat(2).filter(x => x != null);
 		const packedFiles = fileIds.length > 0 ? await this.driveFileEntityService.packManyByIdsMap(fileIds) : new Map();
 		const users = [
-			...notes.map(({ user, userId }) => user ?? userId),
-			...notes.map(({ replyUserId }) => replyUserId).filter(x => x != null),
-			...notes.map(({ renoteUserId }) => renoteUserId).filter(x => x != null),
+			...notes.map(({user, userId}) => user ?? userId),
+			...notes.map(({replyUserId}) => replyUserId).filter(x => x != null),
+			...notes.map(({renoteUserId}) => renoteUserId).filter(x => x != null),
 		];
 		const packedUsers = await this.userEntityService.packMany(users, me)
 			.then(users => new Map(users.map(u => [u.id, u])));
@@ -587,9 +446,141 @@ export class NoteEntityService implements OnModuleInit {
 	}
 
 	@bindThis
+	private treatVisibility(packedNote: Packed<'Note'>): Packed<'Note'>['visibility'] {
+		if (packedNote.visibility === 'public' || packedNote.visibility === 'home') {
+			const followersOnlyBefore = packedNote.user.makeNotesFollowersOnlyBefore;
+			if ((followersOnlyBefore != null)
+				&& (
+					(followersOnlyBefore <= 0 && (Date.now() - new Date(packedNote.createdAt).getTime() > 0 - (followersOnlyBefore * 1000)))
+					|| (followersOnlyBefore > 0 && (new Date(packedNote.createdAt).getTime() < followersOnlyBefore * 1000))
+				)
+			) {
+				packedNote.visibility = 'followers';
+			}
+		}
+		return packedNote.visibility;
+	}
+
+	@bindThis
+	private async hideNote(packedNote: Packed<'Note'>, meId: MiUser['id'] | null): Promise<void> {
+		if (meId === packedNote.userId) return;
+
+		// TODO: isVisibleForMe を使うようにしても良さそう(型違うけど)
+		let hide = false;
+
+		if (packedNote.user.requireSigninToViewContents && meId == null) {
+			hide = true;
+		}
+
+		if (!hide) {
+			const hiddenBefore = packedNote.user.makeNotesHiddenBefore;
+			if ((hiddenBefore != null)
+				&& (
+					(hiddenBefore <= 0 && (Date.now() - new Date(packedNote.createdAt).getTime() > 0 - (hiddenBefore * 1000)))
+					|| (hiddenBefore > 0 && (new Date(packedNote.createdAt).getTime() < hiddenBefore * 1000))
+				)
+			) {
+				hide = true;
+			}
+		}
+
+		// visibility が specified かつ自分が指定されていなかったら非表示
+		if (!hide) {
+			if (packedNote.visibility === 'specified') {
+				if (meId == null) {
+					hide = true;
+				} else {
+					// 指定されているかどうか
+					const specified = packedNote.visibleUserIds!.some(id => meId === id);
+
+					if (!specified) {
+						hide = true;
+					}
+				}
+			}
+		}
+
+		// visibility が followers かつ自分が投稿者のフォロワーでなかったら非表示
+		if (!hide) {
+			if (packedNote.visibility === 'followers') {
+				if (meId == null) {
+					hide = true;
+				} else if (packedNote.reply && (meId === packedNote.reply.userId)) {
+					// 自分の投稿に対するリプライ
+					hide = false;
+				} else if (packedNote.mentions && packedNote.mentions.some(id => meId === id)) {
+					// 自分へのメンション
+					hide = false;
+				} else {
+					// フォロワーかどうか
+					// TODO: 当関数呼び出しごとにクエリが走るのは重そうだからなんとかする
+					const isFollowing = await this.followingsRepository.exists({
+						where: {
+							followeeId: packedNote.userId,
+							followerId: meId,
+						},
+					});
+
+					hide = !isFollowing;
+				}
+			}
+		}
+
+		if (hide) {
+			packedNote.visibleUserIds = undefined;
+			packedNote.fileIds = [];
+			packedNote.files = [];
+			packedNote.text = null;
+			packedNote.poll = undefined;
+			packedNote.cw = null;
+			packedNote.isHidden = true;
+			// TODO: hiddenReason みたいなのを提供しても良さそう
+		}
+	}
+
+	@bindThis
+	private async populatePoll(note: MiNote, meId: MiUser['id'] | null) {
+		const poll = await this.pollsRepository.findOneByOrFail({noteId: note.id});
+		const choices = poll.choices.map(c => ({
+			text: c,
+			votes: poll.votes[poll.choices.indexOf(c)],
+			isVoted: false,
+		}));
+
+		if (meId) {
+			if (poll.multiple) {
+				const votes = await this.pollVotesRepository.findBy({
+					userId: meId,
+					noteId: note.id,
+				});
+
+				const myChoices = votes.map(v => v.choice);
+				for (const myChoice of myChoices) {
+					choices[myChoice].isVoted = true;
+				}
+			} else {
+				const vote = await this.pollVotesRepository.findOneBy({
+					userId: meId,
+					noteId: note.id,
+				});
+
+				if (vote) {
+					choices[vote.choice].isVoted = true;
+				}
+			}
+		}
+
+		return {
+			multiple: poll.multiple,
+			expiresAt: poll.expiresAt?.toISOString() ?? null,
+			choices,
+		};
+	}
+
+	@bindThis
 	private findNoteOrFail(id: string): Promise<MiNote> {
 		return this.notesRepository.findOneOrFail({
-			where: { id },
+			where: {id},
 			relations: ['user'],
 		});
 	}

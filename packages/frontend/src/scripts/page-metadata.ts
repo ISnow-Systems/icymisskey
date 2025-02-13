@@ -4,8 +4,8 @@
  */
 
 import * as Misskey from 'misskey-js';
-import { inject, isRef, onActivated, onBeforeUnmount, provide, ref, toValue, watch } from 'vue';
-import type { MaybeRefOrGetter, Ref } from 'vue';
+import {inject, isRef, onActivated, onBeforeUnmount, provide, ref, toValue, watch} from 'vue';
+import type {MaybeRefOrGetter, Ref} from 'vue';
 
 export type PageMetadata = {
 	title: string;
@@ -50,7 +50,7 @@ export const definePageMetadata = (maybeRefOrGetterMetadata: MaybeRefOrGetter<Pa
 			metadataRef.value = metadata;
 			receiver?.(metadataGetter);
 		},
-		{ deep: true },
+		{deep: true},
 	));
 	onActivated(() => {
 		receiver?.(metadataGetter);

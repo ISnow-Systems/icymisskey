@@ -5,9 +5,9 @@
 
 // NIRAX --- A lightweight router
 
-import { onMounted, shallowRef } from 'vue';
-import type { Component, ShallowRef } from 'vue';
-import { EventEmitter } from 'eventemitter3';
+import {onMounted, shallowRef} from 'vue';
+import type {Component, ShallowRef} from 'vue';
+import {EventEmitter} from 'eventemitter3';
 
 function safeURIDecode(str: string): string {
 	try {
@@ -190,17 +190,16 @@ export interface IRouter extends EventEmitter<RouterEvent> {
 }
 
 export class Router extends EventEmitter<RouterEvent> implements IRouter {
-	private routes: RouteDef[];
 	public current: Resolved;
 	public currentRef: ShallowRef<Resolved>;
 	public currentRoute: ShallowRef<RouteDef>;
+	public navHook: ((path: string, flag?: RouterFlag) => boolean) | null = null;
+	private routes: RouteDef[];
 	private currentPath: string;
 	private isLoggedIn: boolean;
 	private notFoundPageComponent: Component;
 	private currentKey = Date.now().toString();
 	private redirectCount = 0;
-
-	public navHook: ((path: string, flag?: RouterFlag) => boolean) | null = null;
 
 	constructor(routes: Router['routes'], currentPath: Router['currentPath'], isLoggedIn: boolean, notFoundPageComponent: Component) {
 		super();
@@ -246,98 +245,98 @@ export class Router extends EventEmitter<RouterEvent> implements IRouter {
 
 		function check(routes: RouteDef[], _parts: string[]): Resolved | null {
 			forEachRouteLoop:
-			for (const route of routes) {
-				let parts = [..._parts];
-				const props = new Map<string, string>();
+				for (const route of routes) {
+					let parts = [..._parts];
+					const props = new Map<string, string>();
 
-				pathMatchLoop:
-				for (const p of parsePath(route.path)) {
-					if (typeof p === 'string') {
-						if (p === parts[0]) {
-							parts.shift();
-						} else {
-							continue forEachRouteLoop;
-						}
-					} else {
-						if (parts[0] == null && !p.optional) {
-							continue forEachRouteLoop;
-						}
-						if (p.wildcard) {
-							if (parts.length !== 0) {
-								props.set(p.name, safeURIDecode(parts.join('/')));
-								parts = [];
-							}
-							break pathMatchLoop;
-						} else {
-							if (p.startsWith) {
-								if (parts[0] == null || !parts[0].startsWith(p.startsWith)) continue forEachRouteLoop;
-
-								props.set(p.name, safeURIDecode(parts[0].substring(p.startsWith.length)));
-								parts.shift();
-							} else {
-								if (parts[0]) {
-									props.set(p.name, safeURIDecode(parts[0]));
+					pathMatchLoop:
+						for (const p of parsePath(route.path)) {
+							if (typeof p === 'string') {
+								if (p === parts[0]) {
+									parts.shift();
+								} else {
+									continue forEachRouteLoop;
 								}
-								parts.shift();
+							} else {
+								if (parts[0] == null && !p.optional) {
+									continue forEachRouteLoop;
+								}
+								if (p.wildcard) {
+									if (parts.length !== 0) {
+										props.set(p.name, safeURIDecode(parts.join('/')));
+										parts = [];
+									}
+									break pathMatchLoop;
+								} else {
+									if (p.startsWith) {
+										if (parts[0] == null || !parts[0].startsWith(p.startsWith)) continue forEachRouteLoop;
+
+										props.set(p.name, safeURIDecode(parts[0].substring(p.startsWith.length)));
+										parts.shift();
+									} else {
+										if (parts[0]) {
+											props.set(p.name, safeURIDecode(parts[0]));
+										}
+										parts.shift();
+									}
+								}
 							}
 						}
-					}
-				}
 
-				if (parts.length === 0) {
-					if (route.children) {
-						const child = check(route.children, []);
-						if (child) {
-							return {
-								route,
-								props,
-								child,
-								_parsedRoute,
-							};
-						} else {
-							continue forEachRouteLoop;
-						}
-					}
-
-					if (route.hash != null && hash != null) {
-						props.set(route.hash, safeURIDecode(hash));
-					}
-
-					if (route.query != null && queryString != null) {
-						const queryObject = [...new URLSearchParams(queryString).entries()]
-							.reduce((obj, entry) => ({ ...obj, [entry[0]]: entry[1] }), {});
-
-						for (const q in route.query) {
-							const as = route.query[q];
-							if (queryObject[q]) {
-								props.set(as, safeURIDecode(queryObject[q]));
+					if (parts.length === 0) {
+						if (route.children) {
+							const child = check(route.children, []);
+							if (child) {
+								return {
+									route,
+									props,
+									child,
+									_parsedRoute,
+								};
+							} else {
+								continue forEachRouteLoop;
 							}
 						}
-					}
 
-					return {
-						route,
-						props,
-						_parsedRoute,
-					};
-				} else {
-					if (route.children) {
-						const child = check(route.children, parts);
-						if (child) {
-							return {
-								route,
-								props,
-								child,
-								_parsedRoute,
-							};
-						} else {
-							continue forEachRouteLoop;
+						if (route.hash != null && hash != null) {
+							props.set(route.hash, safeURIDecode(hash));
 						}
+
+						if (route.query != null && queryString != null) {
+							const queryObject = [...new URLSearchParams(queryString).entries()]
+								.reduce((obj, entry) => ({...obj, [entry[0]]: entry[1]}), {});
+
+							for (const q in route.query) {
+								const as = route.query[q];
+								if (queryObject[q]) {
+									props.set(as, safeURIDecode(queryObject[q]));
+								}
+							}
+						}
+
+						return {
+							route,
+							props,
+							_parsedRoute,
+						};
 					} else {
-						continue forEachRouteLoop;
+						if (route.children) {
+							const child = check(route.children, parts);
+							if (child) {
+								return {
+									route,
+									props,
+									child,
+									_parsedRoute,
+								};
+							} else {
+								continue forEachRouteLoop;
+							}
+						} else {
+							continue forEachRouteLoop;
+						}
 					}
 				}
-			}
 
 			return null;
 		}
@@ -345,6 +344,46 @@ export class Router extends EventEmitter<RouterEvent> implements IRouter {
 		const _parts = path.split('/').filter(part => part.length !== 0);
 
 		return check(this.routes, _parts);
+	}
+
+	public getCurrentPath() {
+		return this.currentPath;
+	}
+
+	public getCurrentKey() {
+		return this.currentKey;
+	}
+
+	public push(path: string, flag?: RouterFlag) {
+		const beforePath = this.currentPath;
+		if (path === beforePath) {
+			this.emit('same');
+			return;
+		}
+		if (this.navHook) {
+			const cancel = this.navHook(path, flag);
+			if (cancel) return;
+		}
+		const res = this.navigate(path, null);
+		if (res.route.path === '/:(*)') {
+			location.href = path;
+		} else {
+			this.emit('push', {
+				beforePath,
+				path: res._parsedRoute.fullPath,
+				route: res.route,
+				props: res.props,
+				key: this.currentKey,
+			});
+		}
+	}
+
+	public replace(path: string, key?: string | null) {
+		const res = this.navigate(path, key);
+		this.emit('replace', {
+			path: res._parsedRoute.fullPath,
+			key: this.currentKey,
+		});
 	}
 
 	private navigate(path: string, key: string | null | undefined, emitChange = true, _redirected = false): Resolved {
@@ -398,46 +437,6 @@ export class Router extends EventEmitter<RouterEvent> implements IRouter {
 			redirected: _redirected,
 		};
 	}
-
-	public getCurrentPath() {
-		return this.currentPath;
-	}
-
-	public getCurrentKey() {
-		return this.currentKey;
-	}
-
-	public push(path: string, flag?: RouterFlag) {
-		const beforePath = this.currentPath;
-		if (path === beforePath) {
-			this.emit('same');
-			return;
-		}
-		if (this.navHook) {
-			const cancel = this.navHook(path, flag);
-			if (cancel) return;
-		}
-		const res = this.navigate(path, null);
-		if (res.route.path === '/:(*)') {
-			location.href = path;
-		} else {
-			this.emit('push', {
-				beforePath,
-				path: res._parsedRoute.fullPath,
-				route: res.route,
-				props: res.props,
-				key: this.currentKey,
-			});
-		}
-	}
-
-	public replace(path: string, key?: string | null) {
-		const res = this.navigate(path, key);
-		this.emit('replace', {
-			path: res._parsedRoute.fullPath,
-			key: this.currentKey,
-		});
-	}
 }
 
 export function useScrollPositionManager(getScrollContainer: () => HTMLElement | null, router: IRouter) {
@@ -449,20 +448,20 @@ export function useScrollPositionManager(getScrollContainer: () => HTMLElement |
 
 		scrollContainer.addEventListener('scroll', () => {
 			scrollPosStore.set(router.getCurrentKey(), scrollContainer.scrollTop);
-		}, { passive: true });
+		}, {passive: true});
 
 		router.addListener('change', ctx => {
 			const scrollPos = scrollPosStore.get(ctx.key) ?? 0;
-			scrollContainer.scroll({ top: scrollPos, behavior: 'instant' });
+			scrollContainer.scroll({top: scrollPos, behavior: 'instant'});
 			if (scrollPos !== 0) {
 				window.setTimeout(() => { // 遷移直後はタイミングによってはコンポーネントが復元し切ってない可能性も考えられるため少し時間を空けて再度スクロール
-					scrollContainer.scroll({ top: scrollPos, behavior: 'instant' });
+					scrollContainer.scroll({top: scrollPos, behavior: 'instant'});
 				}, 100);
 			}
 		});
 
 		router.addListener('same', () => {
-			scrollContainer.scroll({ top: 0, behavior: 'smooth' });
+			scrollContainer.scroll({top: 0, behavior: 'smooth'});
 		});
 	});
 }

@@ -4,15 +4,15 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkTooltip ref="tooltip" :showing="showing" :targetElement="targetElement" :maxWidth="250" @closed="emit('closed')">
-	<div :class="$style.root">
-		{{ content }}
-	</div>
-</MkTooltip>
+	<MkTooltip ref="tooltip" :maxWidth="250" :showing="showing" :targetElement="targetElement" @closed="emit('closed')">
+		<div :class="$style.root">
+			{{ content }}
+		</div>
+	</MkTooltip>
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import {} from 'vue';
 import MkTooltip from '@/components/MkTooltip.vue';
 
 defineProps<{

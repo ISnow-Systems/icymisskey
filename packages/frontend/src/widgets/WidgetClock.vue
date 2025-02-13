@@ -4,40 +4,40 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkContainer :naked="widgetProps.transparent" :showHeader="false" data-cy-mkw-clock>
-	<div
-		:class="[$style.root, {
+	<MkContainer :naked="widgetProps.transparent" :showHeader="false" data-cy-mkw-clock>
+		<div
+			:class="[$style.root, {
 			[$style.small]: widgetProps.size === 'small',
 			[$style.medium]: widgetProps.size === 'medium',
 			[$style.large]: widgetProps.size === 'large',
 		}]"
-	>
-		<div v-if="widgetProps.label === 'tz' || widgetProps.label === 'timeAndTz'" class="_monospace" :class="[$style.label, $style.a]">{{ tzAbbrev }}</div>
-		<MkAnalogClock
-			:class="$style.clock"
-			:thickness="widgetProps.thickness"
-			:offset="tzOffset"
-			:graduations="widgetProps.graduations"
-			:fadeGraduations="widgetProps.fadeGraduations"
-			:twentyfour="widgetProps.twentyFour"
-			:sAnimation="widgetProps.sAnimation"
-		/>
-		<MkDigitalClock v-if="widgetProps.label === 'time' || widgetProps.label === 'timeAndTz'" :class="[$style.label, $style.c]" class="_monospace" :showS="false" :offset="tzOffset"/>
-		<div v-if="widgetProps.label === 'tz' || widgetProps.label === 'timeAndTz'" class="_monospace" :class="[$style.label, $style.d]">{{ tzOffsetLabel }}</div>
-	</div>
-</MkContainer>
+		>
+			<div v-if="widgetProps.label === 'tz' || widgetProps.label === 'timeAndTz'" :class="[$style.label, $style.a]" class="_monospace">{{ tzAbbrev }}</div>
+			<MkAnalogClock
+				:class="$style.clock"
+				:fadeGraduations="widgetProps.fadeGraduations"
+				:graduations="widgetProps.graduations"
+				:offset="tzOffset"
+				:sAnimation="widgetProps.sAnimation"
+				:thickness="widgetProps.thickness"
+				:twentyfour="widgetProps.twentyFour"
+			/>
+			<MkDigitalClock v-if="widgetProps.label === 'time' || widgetProps.label === 'timeAndTz'" :class="[$style.label, $style.c]" :offset="tzOffset" :showS="false" class="_monospace"/>
+			<div v-if="widgetProps.label === 'tz' || widgetProps.label === 'timeAndTz'" :class="[$style.label, $style.d]" class="_monospace">{{ tzOffsetLabel }}</div>
+		</div>
+	</MkContainer>
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-import { useWidgetPropsManager } from './widget.js';
-import type { WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget.js';
-import type { GetFormResultType } from '@/scripts/form.js';
+import {computed} from 'vue';
+import {useWidgetPropsManager} from './widget.js';
+import type {WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps} from './widget.js';
+import type {GetFormResultType} from '@/scripts/form.js';
 import MkContainer from '@/components/MkContainer.vue';
 import MkAnalogClock from '@/components/MkAnalogClock.vue';
 import MkDigitalClock from '@/components/MkDigitalClock.vue';
-import { timezones } from '@/scripts/timezones.js';
-import { i18n } from '@/i18n.js';
+import {timezones} from '@/scripts/timezones.js';
+import {i18n} from '@/i18n.js';
 
 const name = 'clock';
 
@@ -129,7 +129,7 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 const props = defineProps<WidgetComponentProps<WidgetProps>>();
 const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 
-const { widgetProps, configure } = useWidgetPropsManager(name,
+const {widgetProps, configure} = useWidgetPropsManager(name,
 	widgetPropsDef,
 	props,
 	emit,

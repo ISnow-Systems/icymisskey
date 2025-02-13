@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { ref } from 'vue';
+import {ref} from 'vue';
 import * as Misskey from 'misskey-js';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { useStream } from '@/stream.js';
-import { i18n } from '@/i18n.js';
-import { defaultStore } from '@/store.js';
-import { uploadFile } from '@/scripts/upload.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {useStream} from '@/stream.js';
+import {i18n} from '@/i18n.js';
+import {defaultStore} from '@/store.js';
+import {uploadFile} from '@/scripts/upload.js';
 
 export function chooseFileFromPc(
 	multiple: boolean,
@@ -67,7 +67,7 @@ export function chooseFileFromUrl(): Promise<Misskey.entities.DriveFile> {
 			title: i18n.ts.uploadFromUrl,
 			type: 'url',
 			placeholder: i18n.ts.uploadFromUrlDescription,
-		}).then(({ canceled, result: url }) => {
+		}).then(({canceled, result: url}) => {
 			if (canceled) return;
 
 			const marker = Math.random().toString(); // TODO: UUIDとか使う
@@ -108,7 +108,7 @@ function select(src: HTMLElement | EventTarget | null, label: string | null, mul
 		}, {
 			text: i18n.ts.upload,
 			icon: 'ti ti-upload',
-			action: () => chooseFileFromPc(multiple, { keepOriginal: keepOriginal.value }).then(files => res(files)),
+			action: () => chooseFileFromPc(multiple, {keepOriginal: keepOriginal.value}).then(files => res(files)),
 		}, {
 			text: i18n.ts.fromDrive,
 			icon: 'ti ti-cloud',

@@ -3,19 +3,19 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { URLSearchParams } from 'node:url';
+import {URLSearchParams} from 'node:url';
 import * as nodemailer from 'nodemailer';
 import juice from 'juice';
-import { Inject, Injectable } from '@nestjs/common';
-import { validate as validateEmail } from 'deep-email-validator';
-import { UtilityService } from '@/core/UtilityService.js';
-import { DI } from '@/di-symbols.js';
-import type { Config } from '@/config.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {validate as validateEmail} from 'deep-email-validator';
+import {UtilityService} from '@/core/UtilityService.js';
+import {DI} from '@/di-symbols.js';
+import type {Config} from '@/config.js';
 import type Logger from '@/logger.js';
-import type { MiMeta, UserProfilesRepository } from '@/models/_.js';
-import { LoggerService } from '@/core/LoggerService.js';
-import { bindThis } from '@/decorators.js';
-import { HttpRequestService } from '@/core/HttpRequestService.js';
+import type {MiMeta, UserProfilesRepository} from '@/models/_.js';
+import {LoggerService} from '@/core/LoggerService.js';
+import {bindThis} from '@/decorators.js';
+import {HttpRequestService} from '@/core/HttpRequestService.js';
 
 @Injectable()
 export class EmailService {
@@ -24,13 +24,10 @@ export class EmailService {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.meta)
 		private meta: MiMeta,
-
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
-
 		private loggerService: LoggerService,
 		private utilityService: UtilityService,
 		private httpRequestService: HttpRequestService,
@@ -63,7 +60,7 @@ export class EmailService {
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>${ subject }</title>
+		<title>${subject}</title>
 		<style>
 			html {
 				background: #eee;
@@ -124,18 +121,18 @@ export class EmailService {
 	<body>
 		<main>
 			<header>
-				<img src="${ this.meta.logoImageUrl ?? this.meta.iconUrl ?? iconUrl }"/>
+				<img src="${this.meta.logoImageUrl ?? this.meta.iconUrl ?? iconUrl}"/>
 			</header>
 			<article>
-				<h1>${ subject }</h1>
-				<div>${ html }</div>
+				<h1>${subject}</h1>
+				<div>${html}</div>
 			</article>
 			<footer>
-				<a href="${ emailSettingUrl }">${ 'Email setting' }</a>
+				<a href="${emailSettingUrl}">${'Email setting'}</a>
 			</footer>
 		</main>
 		<nav>
-			<a href="${ this.config.url }">${ this.config.host }</a>
+			<a href="${this.config.url}">${this.config.host}</a>
 		</nav>
 	</body>
 </html>`;
@@ -179,7 +176,7 @@ export class EmailService {
 		let validated: {
 			valid: boolean,
 			reason?: string | null,
-		} = { valid: true, reason: null };
+		} = {valid: true, reason: null};
 
 		if (this.meta.enableActiveEmailValidation) {
 			if (this.meta.enableVerifymailApi && this.meta.verifymailAuthKey != null) {

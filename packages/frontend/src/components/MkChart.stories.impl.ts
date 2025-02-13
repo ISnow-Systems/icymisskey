@@ -5,10 +5,10 @@
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable import/no-default-export */
-import type { StoryObj } from '@storybook/vue3';
-import { http } from 'msw';
-import { commonHandlers } from '../../.storybook/mocks.js';
-import { getChartResolver } from '../../.storybook/charts.js';
+import type {StoryObj} from '@storybook/vue3';
+import {http} from 'msw';
+import {commonHandlers} from '../../.storybook/mocks.js';
+import {getChartResolver} from '../../.storybook/charts.js';
 import MkChart from './MkChart.vue';
 
 const Base = {
@@ -47,11 +47,11 @@ const Base = {
 				)),
 				http.get('/api/charts/notes', getChartResolver(
 					['local.total', 'remote.total'],
-					{ accumulate: true },
+					{accumulate: true},
 				)),
 				http.get('/api/charts/drive', getChartResolver(
 					['local.incSize', 'local.decSize', 'remote.incSize', 'remote.decSize'],
-					{ mulMap: { 'local.incSize': 1e7, 'local.decSize': 5e6, 'remote.incSize': 1e6, 'remote.decSize': 5e5 } },
+					{mulMap: {'local.incSize': 1e7, 'local.decSize': 5e6, 'remote.incSize': 1e6, 'remote.decSize': 5e5}},
 				)),
 			],
 		},

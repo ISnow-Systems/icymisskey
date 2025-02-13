@@ -4,14 +4,14 @@
  */
 
 import bcrypt from 'bcryptjs';
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { UserProfilesRepository, UserSecurityKeysRepository } from '@/models/_.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '@/server/api/error.js';
-import { UserAuthService } from '@/core/UserAuthService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {UserProfilesRepository, UserSecurityKeysRepository} from '@/models/_.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {GlobalEventService} from '@/core/GlobalEventService.js';
+import {DI} from '@/di-symbols.js';
+import {ApiError} from '@/server/api/error.js';
+import {UserAuthService} from '@/core/UserAuthService.js';
 
 export const meta = {
 	requireCredential: true,
@@ -30,9 +30,9 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		password: { type: 'string' },
-		token: { type: 'string', nullable: true },
-		credentialId: { type: 'string' },
+		password: {type: 'string'},
+		token: {type: 'string', nullable: true},
+		credentialId: {type: 'string'},
 	},
 	required: ['password', 'credentialId'],
 } as const;
@@ -42,17 +42,15 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.userSecurityKeysRepository)
 		private userSecurityKeysRepository: UserSecurityKeysRepository,
-
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
-
 		private userEntityService: UserEntityService,
 		private userAuthService: UserAuthService,
 		private globalEventService: GlobalEventService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			const token = ps.token;
-			const profile = await this.userProfilesRepository.findOneByOrFail({ userId: me.id });
+			const profile = await this.userProfilesRepository.findOneByOrFail({userId: me.id});
 
 			if (profile.twoFactorEnabled) {
 				if (token == null) {

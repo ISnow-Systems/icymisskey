@@ -3,20 +3,20 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import * as Redis from 'ioredis';
 import {
 	generateAuthenticationOptions,
 	generateRegistrationOptions, verifyAuthenticationResponse,
 	verifyRegistrationResponse,
 } from '@simplewebauthn/server';
-import { AttestationFormat, isoCBOR, isoUint8Array } from '@simplewebauthn/server/helpers';
-import { DI } from '@/di-symbols.js';
-import type { MiMeta, UserSecurityKeysRepository } from '@/models/_.js';
-import type { Config } from '@/config.js';
-import { bindThis } from '@/decorators.js';
-import { MiUser } from '@/models/_.js';
-import { IdentifiableError } from '@/misc/identifiable-error.js';
+import {AttestationFormat, isoCBOR, isoUint8Array} from '@simplewebauthn/server/helpers';
+import {DI} from '@/di-symbols.js';
+import type {MiMeta, UserSecurityKeysRepository} from '@/models/_.js';
+import type {Config} from '@/config.js';
+import {bindThis} from '@/decorators.js';
+import {MiUser} from '@/models/_.js';
+import {IdentifiableError} from '@/misc/identifiable-error.js';
 import type {
 	AuthenticationResponseJSON,
 	AuthenticatorTransportFuture,
@@ -31,13 +31,10 @@ export class WebAuthnService {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.meta)
 		private meta: MiMeta,
-
 		@Inject(DI.redis)
 		private redisClient: Redis.Redis,
-
 		@Inject(DI.userSecurityKeysRepository)
 		private userSecurityKeysRepository: UserSecurityKeysRepository,
 	) {
@@ -118,13 +115,13 @@ export class WebAuthnService {
 			throw new IdentifiableError('5c1446f8-8ca7-4d31-9f39-656afe9c5d87', 'verification failed');
 		}
 
-		const { verified } = verification;
+		const {verified} = verification;
 
 		if (!verified || !verification.registrationInfo) {
 			throw new IdentifiableError('bb333667-3832-4a80-8bb5-c505be7d710d', 'verification failed');
 		}
 
-		const { registrationInfo } = verification;
+		const {registrationInfo} = verification;
 
 		return {
 			credentialID: registrationInfo.credentialID,
@@ -224,7 +221,7 @@ export class WebAuthnService {
 			throw new IdentifiableError('b18c89a7-5b5e-4cec-bb5b-0419f332d430', `verification failed: ${error}`);
 		}
 
-		const { verified, authenticationInfo } = verification;
+		const {verified, authenticationInfo} = verification;
 
 		if (!verified) {
 			return null;
@@ -305,7 +302,7 @@ export class WebAuthnService {
 			throw new IdentifiableError('b18c89a7-5b5e-4cec-bb5b-0419f332d430', 'verification failed');
 		}
 
-		const { verified, authenticationInfo } = verification;
+		const {verified, authenticationInfo} = verification;
 
 		if (!verified) {
 			return false;

@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { ApPersonService } from '@/core/activitypub/models/ApPersonService.js';
-import { GetterService } from '@/server/api/GetterService.js';
+import {Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {ApPersonService} from '@/core/activitypub/models/ApPersonService.js';
+import {GetterService} from '@/server/api/GetterService.js';
 
 export const meta = {
 	tags: ['federation'],
@@ -17,7 +17,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		userId: { type: 'string', format: 'misskey:id' },
+		userId: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['userId'],
 } as const;

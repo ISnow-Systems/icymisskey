@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: syuilo and misskey-project
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import { getHTMLElementOrNull } from "@/scripts/get-dom-node-or-null.js";
+import {getHTMLElementOrNull} from "@/scripts/get-dom-node-or-null.js";
 
 //#region types
 export type Keymap = Record<string, CallbackFunction | CallbackObject>;
@@ -74,7 +74,7 @@ const parseKeymap = (keymap: Keymap) => {
 		const patterns = parsePatterns(rawPatterns);
 		const callback = parseCallback(rawCallback);
 		const options = parseOptions(rawCallback);
-		return { patterns, callback, options } as const satisfies Action;
+		return {patterns, callback, options} as const satisfies Action;
 	});
 };
 
@@ -85,7 +85,7 @@ const parsePatterns = (rawPatterns: keyof Keymap) => {
 		const ctrl = keys.includes('ctrl');
 		const alt = keys.includes('alt');
 		const shift = keys.includes('shift');
-		return { which, ctrl, alt, shift } as const satisfies Pattern;
+		return {which, ctrl, alt, shift} as const satisfies Pattern;
 	});
 };
 
@@ -101,18 +101,18 @@ const parseOptions = (rawCallback: Keymap[keyof Keymap]) => {
 		allowRepeat: false,
 	} as const satisfies Action['options'];
 	if (typeof rawCallback === 'object') {
-		const { callback, ...rawOptions } = rawCallback;
-		const options = { ...defaultOptions, ...rawOptions };
-		return { ...options } as const satisfies Action['options'];
+		const {callback, ...rawOptions} = rawCallback;
+		const options = {...defaultOptions, ...rawOptions};
+		return {...options} as const satisfies Action['options'];
 	}
-	return { ...defaultOptions } as const satisfies Action['options'];
+	return {...defaultOptions} as const satisfies Action['options'];
 };
 
 const matchPatterns = (ev: KeyboardEvent, action: Action) => {
-	const { patterns, options, callback } = action;
+	const {patterns, options, callback} = action;
 	if (ev.repeat && !options.allowRepeat) return false;
 	const key = ev.key.toLowerCase();
-	return patterns.some(({ which, ctrl, shift, alt }) => {
+	return patterns.some(({which, ctrl, shift, alt}) => {
 		if (
 			options.allowRepeat === false &&
 			latestHotkey != null &&

@@ -107,6 +107,7 @@ export function country(seed?: string): string {
 }
 
 const TIME2000 = 946684800000;
+
 export function fakeId(seed?: string): string {
 	let time = new Date().getTime();
 

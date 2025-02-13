@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { execa } from 'execa';
+import {execa} from 'execa';
 
 (async () => {
 	// なぜかchokidarが動かない影響で、watchされない

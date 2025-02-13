@@ -84,6 +84,17 @@ export class Game {
 		return this.board.filter(x => x === WHITE).length;
 	}
 
+	public get isEnded(): boolean {
+		return this.turn === null;
+	}
+
+	public get winner(): Color | null {
+		return this.isEnded ?
+			this.blackCount === this.whiteCount ? null :
+				this.opts.isLlotheo === this.blackCount > this.whiteCount ? WHITE : BLACK :
+			undefined as never;
+	}
+
 	public posToXy(pos: number): number[] {
 		const x = pos % this.mapWidth;
 		const y = Math.floor(pos / this.mapWidth);
@@ -123,14 +134,6 @@ export class Game {
 		this.calcTurn();
 	}
 
-	private calcTurn() {
-		// ターン計算
-		this.turn =
-			this.canPutSomewhere(!this.prevColor) ? !this.prevColor :
-			this.canPutSomewhere(this.prevColor!) ? this.prevColor : //eslint-disable-line @typescript-eslint/no-non-null-assertion
-			null;
-	}
-
 	public undo() {
 		const undo = this.logs.pop();
 		if (undo == null) return;
@@ -160,8 +163,8 @@ export class Game {
 	public canPut(color: Color, pos: number): boolean {
 		return (
 			this.board[pos] !== null ? false : // 既に石が置いてある場所には打てない
-			this.opts.canPutEverywhere ? this.mapDataGet(pos) === 'empty' : // 挟んでなくても置けるモード
-			this.effects(color, pos).length !== 0); // 相手の石を1つでも反転させられるか
+				this.opts.canPutEverywhere ? this.mapDataGet(pos) === 'empty' : // 挟んでなくても置けるモード
+					this.effects(color, pos).length !== 0); // 相手の石を1つでも反転させられるか
 	}
 
 	/**
@@ -218,14 +221,11 @@ export class Game {
 		}));
 	}
 
-	public get isEnded(): boolean {
-		return this.turn === null;
-	}
-
-	public get winner(): Color | null {
-		return this.isEnded ?
-			this.blackCount === this.whiteCount ? null :
-			this.opts.isLlotheo === this.blackCount > this.whiteCount ? WHITE : BLACK :
-			undefined as never;
+	private calcTurn() {
+		// ターン計算
+		this.turn =
+			this.canPutSomewhere(!this.prevColor) ? !this.prevColor :
+				this.canPutSomewhere(this.prevColor!) ? this.prevColor : //eslint-disable-line @typescript-eslint/no-non-null-assertion
+					null;
 	}
 }

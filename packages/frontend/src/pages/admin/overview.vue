@@ -4,68 +4,68 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkSpacer :contentMax="1000">
-	<div ref="rootEl" :class="$style.root">
-		<MkFoldableSection class="item">
-			<template #header>Stats</template>
-			<XStats/>
-		</MkFoldableSection>
+	<MkSpacer :contentMax="1000">
+		<div ref="rootEl" :class="$style.root">
+			<MkFoldableSection class="item">
+				<template #header>Stats</template>
+				<XStats/>
+			</MkFoldableSection>
 
-		<MkFoldableSection class="item">
-			<template #header>Active users</template>
-			<XActiveUsers/>
-		</MkFoldableSection>
+			<MkFoldableSection class="item">
+				<template #header>Active users</template>
+				<XActiveUsers/>
+			</MkFoldableSection>
 
-		<MkFoldableSection class="item">
-			<template #header>Heatmap</template>
-			<XHeatmap/>
-		</MkFoldableSection>
+			<MkFoldableSection class="item">
+				<template #header>Heatmap</template>
+				<XHeatmap/>
+			</MkFoldableSection>
 
-		<MkFoldableSection class="item">
-			<template #header>Retention rate</template>
-			<XRetention/>
-		</MkFoldableSection>
+			<MkFoldableSection class="item">
+				<template #header>Retention rate</template>
+				<XRetention/>
+			</MkFoldableSection>
 
-		<MkFoldableSection class="item">
-			<template #header>Moderators</template>
-			<XModerators/>
-		</MkFoldableSection>
+			<MkFoldableSection class="item">
+				<template #header>Moderators</template>
+				<XModerators/>
+			</MkFoldableSection>
 
-		<MkFoldableSection class="item">
-			<template #header>Federation</template>
-			<XFederation/>
-		</MkFoldableSection>
+			<MkFoldableSection class="item">
+				<template #header>Federation</template>
+				<XFederation/>
+			</MkFoldableSection>
 
-		<MkFoldableSection class="item">
-			<template #header>Instances</template>
-			<XInstances/>
-		</MkFoldableSection>
+			<MkFoldableSection class="item">
+				<template #header>Instances</template>
+				<XInstances/>
+			</MkFoldableSection>
 
-		<MkFoldableSection class="item">
-			<template #header>Ap requests</template>
-			<XApRequests/>
-		</MkFoldableSection>
+			<MkFoldableSection class="item">
+				<template #header>Ap requests</template>
+				<XApRequests/>
+			</MkFoldableSection>
 
-		<MkFoldableSection class="item">
-			<template #header>New users</template>
-			<XUsers/>
-		</MkFoldableSection>
+			<MkFoldableSection class="item">
+				<template #header>New users</template>
+				<XUsers/>
+			</MkFoldableSection>
 
-		<MkFoldableSection class="item">
-			<template #header>Deliver queue</template>
-			<XQueue domain="deliver"/>
-		</MkFoldableSection>
+			<MkFoldableSection class="item">
+				<template #header>Deliver queue</template>
+				<XQueue domain="deliver"/>
+			</MkFoldableSection>
 
-		<MkFoldableSection class="item">
-			<template #header>Inbox queue</template>
-			<XQueue domain="inbox"/>
-		</MkFoldableSection>
-	</div>
-</MkSpacer>
+			<MkFoldableSection class="item">
+				<template #header>Inbox queue</template>
+				<XQueue domain="inbox"/>
+			</MkFoldableSection>
+		</div>
+	</MkSpacer>
 </template>
 
 <script lang="ts" setup>
-import { markRaw, onMounted, onBeforeUnmount, nextTick, shallowRef, ref, computed } from 'vue';
+import {markRaw, onMounted, onBeforeUnmount, nextTick, shallowRef, ref, computed} from 'vue';
 import * as Misskey from 'misskey-js';
 import XFederation from './overview.federation.vue';
 import XInstances from './overview.instances.vue';
@@ -77,12 +77,12 @@ import XStats from './overview.stats.vue';
 import XRetention from './overview.retention.vue';
 import XModerators from './overview.moderators.vue';
 import XHeatmap from './overview.heatmap.vue';
-import type { InstanceForPie } from './overview.pie.vue';
+import type {InstanceForPie} from './overview.pie.vue';
 import * as os from '@/os.js';
-import { misskeyApi, misskeyApiGet } from '@/scripts/misskey-api.js';
-import { useStream } from '@/stream.js';
-import { i18n } from '@/i18n.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
+import {misskeyApi, misskeyApiGet} from '@/scripts/misskey-api.js';
+import {useStream} from '@/stream.js';
+import {i18n} from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
 import MkFoldableSection from '@/components/MkFoldableSection.vue';
 
 const rootEl = shallowRef<HTMLElement>();
@@ -118,14 +118,14 @@ onMounted(async () => {
 	magicGrid.listen();
 	*/
 
-	misskeyApiGet('charts/federation', { limit: 2, span: 'day' }).then(chart => {
+	misskeyApiGet('charts/federation', {limit: 2, span: 'day'}).then(chart => {
 		federationPubActive.value = chart.pubActive[0];
 		federationPubActiveDiff.value = chart.pubActive[0] - chart.pubActive[1];
 		federationSubActive.value = chart.subActive[0];
 		federationSubActiveDiff.value = chart.subActive[0] - chart.subActive[1];
 	});
 
-	misskeyApiGet('federation/stats', { limit: 10 }).then(res => {
+	misskeyApiGet('federation/stats', {limit: 10}).then(res => {
 		topSubInstancesForPie.value = [
 			...res.topSubInstances.map(x => ({
 				name: x.host,
@@ -135,7 +135,7 @@ onMounted(async () => {
 					os.pageWindow(`/instance-info/${x.host}`);
 				},
 			})),
-			{ name: '(other)', color: '#80808080', value: res.otherFollowersCount },
+			{name: '(other)', color: '#80808080', value: res.otherFollowersCount},
 		];
 		topPubInstancesForPie.value = [
 			...res.topPubInstances.map(x => ({
@@ -146,7 +146,7 @@ onMounted(async () => {
 					os.pageWindow(`/instance-info/${x.host}`);
 				},
 			})),
-			{ name: '(other)', color: '#80808080', value: res.otherFollowingCount },
+			{name: '(other)', color: '#80808080', value: res.otherFollowingCount},
 		];
 	});
 

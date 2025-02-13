@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import type { ClipsRepository, ClipFavoritesRepository } from '@/models/_.js';
-import { IdService } from '@/core/IdService.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {ClipsRepository, ClipFavoritesRepository} from '@/models/_.js';
+import {IdService} from '@/core/IdService.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {DI} from '@/di-symbols.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['clip'],
@@ -37,7 +37,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		clipId: { type: 'string', format: 'misskey:id' },
+		clipId: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['clipId'],
 } as const;
@@ -47,14 +47,12 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.clipsRepository)
 		private clipsRepository: ClipsRepository,
-
 		@Inject(DI.clipFavoritesRepository)
 		private clipFavoritesRepository: ClipFavoritesRepository,
-
 		private idService: IdService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const clip = await this.clipsRepository.findOneBy({ id: ps.clipId });
+			const clip = await this.clipsRepository.findOneBy({id: ps.clipId});
 			if (clip == null) {
 				throw new ApiError(meta.errors.noSuchClip);
 			}

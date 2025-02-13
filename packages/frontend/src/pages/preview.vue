@@ -4,16 +4,16 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div>
-	<MkSample/>
-</div>
+	<div>
+		<MkSample/>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+import {computed} from 'vue';
 import MkSample from '@/components/MkPreview.vue';
-import { i18n } from '@/i18n.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
+import {i18n} from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
 
 const headerActions = computed(() => []);
 

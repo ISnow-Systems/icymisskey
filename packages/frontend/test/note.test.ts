@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { describe, test, assert, afterEach } from 'vitest';
-import { render, cleanup, type RenderResult } from '@testing-library/vue';
+import {describe, test, assert, afterEach} from 'vitest';
+import {render, cleanup, type RenderResult} from '@testing-library/vue';
 import './init';
 import * as Misskey from 'misskey-js';
-import { components } from '@/components/index.js';
-import { directives } from '@/directives/index.js';
+import {components} from '@/components/index.js';
+import {directives} from '@/directives/index.js';
 import MkMediaImage from '@/components/MkMediaImage.vue';
 
 describe('MkMediaImage', () => {
@@ -31,7 +31,7 @@ describe('MkMediaImage', () => {
 					...image,
 				} as DriveFile,
 			},
-			global: { directives, components },
+			global: {directives, components},
 		});
 	};
 

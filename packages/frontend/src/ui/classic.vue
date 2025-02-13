@@ -4,61 +4,61 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="gbhvwtnk" :class="{ wallpaper }" :style="`--globalHeaderHeight:${globalHeaderHeight}px`">
-	<XHeaderMenu v-if="showMenuOnTop" v-get-size="(w, h) => globalHeaderHeight = h"/>
+	<div :class="{ wallpaper }" :style="`--globalHeaderHeight:${globalHeaderHeight}px`" class="gbhvwtnk">
+		<XHeaderMenu v-if="showMenuOnTop" v-get-size="(w, h) => globalHeaderHeight = h"/>
 
-	<div class="columns" :class="{ fullView, withGlobalHeader: showMenuOnTop }">
-		<div v-if="!showMenuOnTop" class="sidebar">
-			<XSidebar/>
-		</div>
-		<div v-else-if="!pageMetadata?.needWideArea" ref="widgetsLeft" class="widgets left">
-			<XWidgets place="left" :marginTop="'var(--MI-margin)'" @mounted="attachSticky(widgetsLeft)"/>
-		</div>
-
-		<main class="main" @contextmenu.stop="onContextmenu">
-			<div class="content" style="container-type: inline-size;">
-				<RouterView/>
+		<div :class="{ fullView, withGlobalHeader: showMenuOnTop }" class="columns">
+			<div v-if="!showMenuOnTop" class="sidebar">
+				<XSidebar/>
 			</div>
-		</main>
+			<div v-else-if="!pageMetadata?.needWideArea" ref="widgetsLeft" class="widgets left">
+				<XWidgets :marginTop="'var(--MI-margin)'" place="left" @mounted="attachSticky(widgetsLeft)"/>
+			</div>
 
-		<div v-if="isDesktop && !pageMetadata?.needWideArea" ref="widgetsRight" class="widgets right">
-			<XWidgets :place="showMenuOnTop ? 'right' : null" :marginTop="showMenuOnTop ? '0' : 'var(--MI-margin)'" @mounted="attachSticky(widgetsRight)"/>
+			<main class="main" @contextmenu.stop="onContextmenu">
+				<div class="content" style="container-type: inline-size;">
+					<RouterView/>
+				</div>
+			</main>
+
+			<div v-if="isDesktop && !pageMetadata?.needWideArea" ref="widgetsRight" class="widgets right">
+				<XWidgets :marginTop="showMenuOnTop ? '0' : 'var(--MI-margin)'" :place="showMenuOnTop ? 'right' : null" @mounted="attachSticky(widgetsRight)"/>
+			</div>
 		</div>
+
+		<Transition :name="defaultStore.state.animation ? 'tray-back' : ''">
+			<div
+				v-if="widgetsShowing"
+				class="tray-back _modalBg"
+				@click="widgetsShowing = false"
+				@touchstart.passive="widgetsShowing = false"
+			></div>
+		</Transition>
+
+		<Transition :name="defaultStore.state.animation ? 'tray' : ''">
+			<XWidgets v-if="widgetsShowing" class="tray"/>
+		</Transition>
+
+		<iframe v-if="defaultStore.state.aiChanMode" ref="live2d" class="ivnzpscs" src="https://misskey-dev.github.io/mascot-web/?scale=2&y=1.4"></iframe>
+
+		<XCommon/>
 	</div>
-
-	<Transition :name="defaultStore.state.animation ? 'tray-back' : ''">
-		<div
-			v-if="widgetsShowing"
-			class="tray-back _modalBg"
-			@click="widgetsShowing = false"
-			@touchstart.passive="widgetsShowing = false"
-		></div>
-	</Transition>
-
-	<Transition :name="defaultStore.state.animation ? 'tray' : ''">
-		<XWidgets v-if="widgetsShowing" class="tray"/>
-	</Transition>
-
-	<iframe v-if="defaultStore.state.aiChanMode" ref="live2d" class="ivnzpscs" src="https://misskey-dev.github.io/mascot-web/?scale=2&y=1.4"></iframe>
-
-	<XCommon/>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, onMounted, provide, ref, computed, shallowRef } from 'vue';
+import {defineAsyncComponent, onMounted, provide, ref, computed, shallowRef} from 'vue';
 import XSidebar from './classic.sidebar.vue';
 import XCommon from './_common_/common.vue';
-import { instanceName } from '@@/js/config.js';
-import { StickySidebar } from '@/scripts/sticky-sidebar.js';
+import {instanceName} from '@@/js/config.js';
+import {StickySidebar} from '@/scripts/sticky-sidebar.js';
 import * as os from '@/os.js';
-import { provideMetadataReceiver, provideReactiveMetadata } from '@/scripts/page-metadata.js';
-import type { PageMetadata } from '@/scripts/page-metadata.js';
-import { defaultStore } from '@/store.js';
-import { i18n } from '@/i18n.js';
-import { miLocalStorage } from '@/local-storage.js';
-import { mainRouter } from '@/router/main.js';
-import { isLink } from '@@/js/is-link.js';
+import {provideMetadataReceiver, provideReactiveMetadata} from '@/scripts/page-metadata.js';
+import type {PageMetadata} from '@/scripts/page-metadata.js';
+import {defaultStore} from '@/store.js';
+import {i18n} from '@/i18n.js';
+import {miLocalStorage} from '@/local-storage.js';
+import {mainRouter} from '@/router/main.js';
+import {isLink} from '@@/js/is-link.js';
 
 const XHeaderMenu = defineAsyncComponent(() => import('./classic.header.vue'));
 const XWidgets = defineAsyncComponent(() => import('./universal.widgets.vue'));
@@ -99,11 +99,11 @@ function attachSticky(el: HTMLElement) {
 	const sticky = new StickySidebar(el, 0, defaultStore.state.menuDisplay === 'top' ? 60 : 0); // TODO: ヘッダーの高さを60pxと決め打ちしているのを直す
 	window.addEventListener('scroll', () => {
 		sticky.calc(window.scrollY);
-	}, { passive: true });
+	}, {passive: true});
 }
 
 function top() {
-	window.scroll({ top: 0, behavior: 'smooth' });
+	window.scroll({top: 0, behavior: 'smooth'});
 }
 
 function onContextmenu(ev: MouseEvent) {
@@ -160,7 +160,7 @@ defaultStore.loaded.then(() => {
 onMounted(() => {
 	window.addEventListener('resize', () => {
 		isDesktop.value = (window.innerWidth >= DESKTOP_THRESHOLD);
-	}, { passive: true });
+	}, {passive: true});
 
 	if (defaultStore.state.aiChanMode) {
 		const iframeRect = live2d.value.getBoundingClientRect();
@@ -172,7 +172,7 @@ onMounted(() => {
 					y: ev.clientY - iframeRect.top,
 				},
 			}, '*');
-		}, { passive: true });
+		}, {passive: true});
 		window.addEventListener('touchmove', ev => {
 			live2d.value.contentWindow.postMessage({
 				type: 'moveCursor',
@@ -181,7 +181,7 @@ onMounted(() => {
 					y: ev.touches[0].clientY - iframeRect.top,
 				},
 			}, '*');
-		}, { passive: true });
+		}, {passive: true});
 	}
 });
 </script>
@@ -193,6 +193,7 @@ onMounted(() => {
 	transform: translateX(0);
 	transition: transform 300ms cubic-bezier(0.23, 1, 0.32, 1), opacity 300ms cubic-bezier(0.23, 1, 0.32, 1);
 }
+
 .tray-enter-from,
 .tray-leave-active {
 	opacity: 0;
@@ -204,6 +205,7 @@ onMounted(() => {
 	opacity: 1;
 	transition: opacity 300ms cubic-bezier(0.23, 1, 0.32, 1);
 }
+
 .tray-back-enter-from,
 .tray-back-leave-active {
 	opacity: 0;

@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { ref } from 'vue';
-import { Interpreter, Parser, utils, values } from '@syuilo/aiscript';
-import { aiScriptReadline, createAiScriptEnv } from '@/scripts/aiscript/api.js';
-import { inputText } from '@/os.js';
-import { noteActions, notePostInterruptors, noteViewInterruptors, postFormActions, userActions, pageViewInterruptors } from '@/store.js';
-import type { Plugin } from '@/store.js';
+import {ref} from 'vue';
+import {Interpreter, Parser, utils, values} from '@syuilo/aiscript';
+import {aiScriptReadline, createAiScriptEnv} from '@/scripts/aiscript/api.js';
+import {inputText} from '@/os.js';
+import {noteActions, notePostInterruptors, noteViewInterruptors, postFormActions, userActions, pageViewInterruptors} from '@/store.js';
+import type {Plugin} from '@/store.js';
 
 const parser = new Parser();
 const pluginContexts = new Map<string, Interpreter>();
@@ -35,7 +35,7 @@ export async function install(plugin: Plugin): Promise<void> {
 		},
 	});
 
-	initPlugin({ plugin, aiscript });
+	initPlugin({plugin, aiscript});
 
 	aiscript.exec(parser.parse(plugin.src)).then(
 		() => {
@@ -55,41 +55,41 @@ function createPluginEnv(opts: { plugin: Plugin; storageKey: string }): Record<s
 	}
 
 	return {
-		...createAiScriptEnv({ ...opts, token: opts.plugin.token }),
+		...createAiScriptEnv({...opts, token: opts.plugin.token}),
 		//#region Deprecated
 		'Mk:register_post_form_action': values.FN_NATIVE(([title, handler]) => {
 			utils.assertString(title);
-			registerPostFormAction({ pluginId: opts.plugin.id, title: title.value, handler });
+			registerPostFormAction({pluginId: opts.plugin.id, title: title.value, handler});
 		}),
 		'Mk:register_user_action': values.FN_NATIVE(([title, handler]) => {
 			utils.assertString(title);
-			registerUserAction({ pluginId: opts.plugin.id, title: title.value, handler });
+			registerUserAction({pluginId: opts.plugin.id, title: title.value, handler});
 		}),
 		'Mk:register_note_action': values.FN_NATIVE(([title, handler]) => {
 			utils.assertString(title);
-			registerNoteAction({ pluginId: opts.plugin.id, title: title.value, handler });
+			registerNoteAction({pluginId: opts.plugin.id, title: title.value, handler});
 		}),
 		//#endregion
 		'Plugin:register_post_form_action': values.FN_NATIVE(([title, handler]) => {
 			utils.assertString(title);
-			registerPostFormAction({ pluginId: opts.plugin.id, title: title.value, handler });
+			registerPostFormAction({pluginId: opts.plugin.id, title: title.value, handler});
 		}),
 		'Plugin:register_user_action': values.FN_NATIVE(([title, handler]) => {
 			utils.assertString(title);
-			registerUserAction({ pluginId: opts.plugin.id, title: title.value, handler });
+			registerUserAction({pluginId: opts.plugin.id, title: title.value, handler});
 		}),
 		'Plugin:register_note_action': values.FN_NATIVE(([title, handler]) => {
 			utils.assertString(title);
-			registerNoteAction({ pluginId: opts.plugin.id, title: title.value, handler });
+			registerNoteAction({pluginId: opts.plugin.id, title: title.value, handler});
 		}),
 		'Plugin:register_note_view_interruptor': values.FN_NATIVE(([handler]) => {
-			registerNoteViewInterruptor({ pluginId: opts.plugin.id, handler });
+			registerNoteViewInterruptor({pluginId: opts.plugin.id, handler});
 		}),
 		'Plugin:register_note_post_interruptor': values.FN_NATIVE(([handler]) => {
-			registerNotePostInterruptor({ pluginId: opts.plugin.id, handler });
+			registerNotePostInterruptor({pluginId: opts.plugin.id, handler});
 		}),
 		'Plugin:register_page_view_interruptor': values.FN_NATIVE(([handler]) => {
-			registerPageViewInterruptor({ pluginId: opts.plugin.id, handler });
+			registerPageViewInterruptor({pluginId: opts.plugin.id, handler});
 		}),
 		'Plugin:open_url': values.FN_NATIVE(([url]) => {
 			utils.assertString(url);
@@ -99,12 +99,12 @@ function createPluginEnv(opts: { plugin: Plugin; storageKey: string }): Record<s
 	};
 }
 
-function initPlugin({ plugin, aiscript }): void {
+function initPlugin({plugin, aiscript}): void {
 	pluginContexts.set(plugin.id, aiscript);
 	pluginLogs.value.set(plugin.id, []);
 }
 
-function registerPostFormAction({ pluginId, title, handler }): void {
+function registerPostFormAction({pluginId, title, handler}): void {
 	postFormActions.push({
 		title, handler: (form, update) => {
 			const pluginContext = pluginContexts.get(pluginId);
@@ -121,7 +121,7 @@ function registerPostFormAction({ pluginId, title, handler }): void {
 	});
 }
 
-function registerUserAction({ pluginId, title, handler }): void {
+function registerUserAction({pluginId, title, handler}): void {
 	userActions.push({
 		title, handler: (user) => {
 			const pluginContext = pluginContexts.get(pluginId);
@@ -133,7 +133,7 @@ function registerUserAction({ pluginId, title, handler }): void {
 	});
 }
 
-function registerNoteAction({ pluginId, title, handler }): void {
+function registerNoteAction({pluginId, title, handler}): void {
 	noteActions.push({
 		title, handler: (note) => {
 			const pluginContext = pluginContexts.get(pluginId);
@@ -145,7 +145,7 @@ function registerNoteAction({ pluginId, title, handler }): void {
 	});
 }
 
-function registerNoteViewInterruptor({ pluginId, handler }): void {
+function registerNoteViewInterruptor({pluginId, handler}): void {
 	noteViewInterruptors.push({
 		handler: async (note) => {
 			const pluginContext = pluginContexts.get(pluginId);
@@ -157,7 +157,7 @@ function registerNoteViewInterruptor({ pluginId, handler }): void {
 	});
 }
 
-function registerNotePostInterruptor({ pluginId, handler }): void {
+function registerNotePostInterruptor({pluginId, handler}): void {
 	notePostInterruptors.push({
 		handler: async (note) => {
 			const pluginContext = pluginContexts.get(pluginId);
@@ -169,7 +169,7 @@ function registerNotePostInterruptor({ pluginId, handler }): void {
 	});
 }
 
-function registerPageViewInterruptor({ pluginId, handler }): void {
+function registerPageViewInterruptor({pluginId, handler}): void {
 	pageViewInterruptors.push({
 		handler: async (page) => {
 			const pluginContext = pluginContexts.get(pluginId);

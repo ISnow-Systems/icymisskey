@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import type { UserListsRepository, UserListMembershipsRepository, BlockingsRepository } from '@/models/_.js';
-import { IdService } from '@/core/IdService.js';
-import type { MiUserList } from '@/models/UserList.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { GetterService } from '@/server/api/GetterService.js';
-import { UserListEntityService } from '@/core/entities/UserListEntityService.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '@/server/api/error.js';
-import { RoleService } from '@/core/RoleService.js';
-import { UserListService } from '@/core/UserListService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {UserListsRepository, UserListMembershipsRepository, BlockingsRepository} from '@/models/_.js';
+import {IdService} from '@/core/IdService.js';
+import type {MiUserList} from '@/models/UserList.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {GetterService} from '@/server/api/GetterService.js';
+import {UserListEntityService} from '@/core/entities/UserListEntityService.js';
+import {DI} from '@/di-symbols.js';
+import {ApiError} from '@/server/api/error.js';
+import {RoleService} from '@/core/RoleService.js';
+import {UserListService} from '@/core/UserListService.js';
 
 export const meta = {
 	requireCredential: true,
@@ -65,8 +65,8 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		name: { type: 'string', minLength: 1, maxLength: 100 },
-		listId: { type: 'string', format: 'misskey:id' },
+		name: {type: 'string', minLength: 1, maxLength: 100},
+		listId: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['name', 'listId'],
 } as const;
@@ -76,13 +76,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.userListsRepository)
 		private userListsRepository: UserListsRepository,
-
 		@Inject(DI.userListMembershipsRepository)
 		private userListMembershipsRepository: UserListMembershipsRepository,
-
 		@Inject(DI.blockingsRepository)
 		private blockingsRepository: BlockingsRepository,
-
 		private userListService: UserListService,
 		private userListEntityService: UserListEntityService,
 		private idService: IdService,

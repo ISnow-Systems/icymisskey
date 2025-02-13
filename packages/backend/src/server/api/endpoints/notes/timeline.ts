@@ -3,19 +3,19 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Brackets } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
-import type { NotesRepository, ChannelFollowingsRepository, MiMeta } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { QueryService } from '@/core/QueryService.js';
+import {Brackets} from 'typeorm';
+import {Inject, Injectable} from '@nestjs/common';
+import type {NotesRepository, ChannelFollowingsRepository, MiMeta} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {QueryService} from '@/core/QueryService.js';
 import ActiveUsersChart from '@/core/chart/charts/active-users.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { DI } from '@/di-symbols.js';
-import { IdService } from '@/core/IdService.js';
-import { CacheService } from '@/core/CacheService.js';
-import { UserFollowingService } from '@/core/UserFollowingService.js';
-import { MiLocalUser } from '@/models/User.js';
-import { FanoutTimelineEndpointService } from '@/core/FanoutTimelineEndpointService.js';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
+import {DI} from '@/di-symbols.js';
+import {IdService} from '@/core/IdService.js';
+import {CacheService} from '@/core/CacheService.js';
+import {UserFollowingService} from '@/core/UserFollowingService.js';
+import {MiLocalUser} from '@/models/User.js';
+import {FanoutTimelineEndpointService} from '@/core/FanoutTimelineEndpointService.js';
 
 export const meta = {
 	tags: ['notes'],
@@ -37,17 +37,17 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
-		sinceDate: { type: 'integer' },
-		untilDate: { type: 'integer' },
-		allowPartial: { type: 'boolean', default: false }, // true is recommended but for compatibility false by default
-		includeMyRenotes: { type: 'boolean', default: true },
-		includeRenotedMyNotes: { type: 'boolean', default: true },
-		includeLocalRenotes: { type: 'boolean', default: true },
-		withFiles: { type: 'boolean', default: false },
-		withRenotes: { type: 'boolean', default: true },
+		limit: {type: 'integer', minimum: 1, maximum: 100, default: 10},
+		sinceId: {type: 'string', format: 'misskey:id'},
+		untilId: {type: 'string', format: 'misskey:id'},
+		sinceDate: {type: 'integer'},
+		untilDate: {type: 'integer'},
+		allowPartial: {type: 'boolean', default: false}, // true is recommended but for compatibility false by default
+		includeMyRenotes: {type: 'boolean', default: true},
+		includeRenotedMyNotes: {type: 'boolean', default: true},
+		includeLocalRenotes: {type: 'boolean', default: true},
+		withFiles: {type: 'boolean', default: false},
+		withRenotes: {type: 'boolean', default: true},
 	},
 	required: [],
 } as const;
@@ -57,13 +57,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.meta)
 		private serverSettings: MiMeta,
-
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		@Inject(DI.channelFollowingsRepository)
 		private channelFollowingsRepository: ChannelFollowingsRepository,
-
 		private noteEntityService: NoteEntityService,
 		private activeUsersChart: ActiveUsersChart,
 		private idService: IdService,
@@ -162,30 +159,30 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				qb
 					.where(new Brackets(qb2 => {
 						qb2
-							.where('note.userId IN (:...meOrFolloweeIds)', { meOrFolloweeIds: meOrFolloweeIds })
+							.where('note.userId IN (:...meOrFolloweeIds)', {meOrFolloweeIds: meOrFolloweeIds})
 							.andWhere('note.channelId IS NULL');
 					}))
-					.orWhere('note.channelId IN (:...followingChannelIds)', { followingChannelIds });
+					.orWhere('note.channelId IN (:...followingChannelIds)', {followingChannelIds});
 			}));
 		} else if (followees.length > 0) {
 			// ユーザーフォローのみ（チャンネルフォローなし）
 			const meOrFolloweeIds = [me.id, ...followees.map(f => f.followeeId)];
 			query
 				.andWhere('note.channelId IS NULL')
-				.andWhere('note.userId IN (:...meOrFolloweeIds)', { meOrFolloweeIds: meOrFolloweeIds });
+				.andWhere('note.userId IN (:...meOrFolloweeIds)', {meOrFolloweeIds: meOrFolloweeIds});
 		} else if (followingChannels.length > 0) {
 			// チャンネルフォローのみ（ユーザーフォローなし）
 			const followingChannelIds = followingChannels.map(x => x.followeeId);
 			query.andWhere(new Brackets(qb => {
 				qb
-					.where('note.channelId IN (:...followingChannelIds)', { followingChannelIds })
-					.orWhere('note.userId = :meId', { meId: me.id });
+					.where('note.channelId IN (:...followingChannelIds)', {followingChannelIds})
+					.orWhere('note.userId = :meId', {meId: me.id});
 			}));
 		} else {
 			// フォローなし
 			query
 				.andWhere('note.channelId IS NULL')
-				.andWhere('note.userId = :meId', { meId: me.id });
+				.andWhere('note.userId = :meId', {meId: me.id});
 		}
 
 		query.andWhere(new Brackets(qb => {
@@ -205,7 +202,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 		if (ps.includeMyRenotes === false) {
 			query.andWhere(new Brackets(qb => {
-				qb.orWhere('note.userId != :meId', { meId: me.id });
+				qb.orWhere('note.userId != :meId', {meId: me.id});
 				qb.orWhere('note.renoteId IS NULL');
 				qb.orWhere('note.text IS NOT NULL');
 				qb.orWhere('note.fileIds != \'{}\'');
@@ -215,7 +212,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 		if (ps.includeRenotedMyNotes === false) {
 			query.andWhere(new Brackets(qb => {
-				qb.orWhere('note.renoteUserId != :meId', { meId: me.id });
+				qb.orWhere('note.renoteUserId != :meId', {meId: me.id});
 				qb.orWhere('note.renoteId IS NULL');
 				qb.orWhere('note.text IS NOT NULL');
 				qb.orWhere('note.fileIds != \'{}\'');

@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { AccessTokensRepository } from '@/models/_.js';
-import { DI } from '@/di-symbols.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {AccessTokensRepository} from '@/models/_.js';
+import {DI} from '@/di-symbols.js';
 
 export const meta = {
 	requireCredential: true,
@@ -17,12 +17,12 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		tokenId: { type: 'string', format: 'misskey:id' },
-		token: { type: 'string', nullable: true },
+		tokenId: {type: 'string', format: 'misskey:id'},
+		token: {type: 'string', nullable: true},
 	},
 	anyOf: [
-		{ required: ['tokenId'] },
-		{ required: ['token'] },
+		{required: ['tokenId']},
+		{required: ['token']},
 	],
 } as const;
 
@@ -34,7 +34,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			if (ps.tokenId) {
-				const tokenExist = await this.accessTokensRepository.exists({ where: { id: ps.tokenId } });
+				const tokenExist = await this.accessTokensRepository.exists({where: {id: ps.tokenId}});
 
 				if (tokenExist) {
 					await this.accessTokensRepository.delete({
@@ -43,7 +43,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 					});
 				}
 			} else if (ps.token) {
-				const tokenExist = await this.accessTokensRepository.exists({ where: { token: ps.token } });
+				const tokenExist = await this.accessTokensRepository.exists({where: {token: ps.token}});
 
 				if (tokenExist) {
 					await this.accessTokensRepository.delete({

@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { MoreThan } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { RegistrationTicketsRepository } from '@/models/_.js';
-import { InviteCodeEntityService } from '@/core/entities/InviteCodeEntityService.js';
-import { IdService } from '@/core/IdService.js';
-import { RoleService } from '@/core/RoleService.js';
-import { DI } from '@/di-symbols.js';
-import { generateInviteCode } from '@/misc/generate-invite-code.js';
-import { ApiError } from '../../error.js';
+import {MoreThan} from 'typeorm';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {RegistrationTicketsRepository} from '@/models/_.js';
+import {InviteCodeEntityService} from '@/core/entities/InviteCodeEntityService.js';
+import {IdService} from '@/core/IdService.js';
+import {RoleService} from '@/core/RoleService.js';
+import {DI} from '@/di-symbols.js';
+import {generateInviteCode} from '@/misc/generate-invite-code.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['meta'],
@@ -47,7 +47,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.registrationTicketsRepository)
 		private registrationTicketsRepository: RegistrationTicketsRepository,
-
 		private inviteCodeEntityService: InviteCodeEntityService,
 		private idService: IdService,
 		private roleService: RoleService,

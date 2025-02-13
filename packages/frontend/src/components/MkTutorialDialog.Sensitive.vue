@@ -4,34 +4,34 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="_gaps">
-	<div style="text-align: center; padding: 0 16px;">{{ i18n.ts._initialTutorial._howToMakeAttachmentsSensitive.description }}</div>
-	<div>{{ i18n.ts._initialTutorial._howToMakeAttachmentsSensitive.tryThisFile }}</div>
-	<MkInfo>{{ i18n.ts._initialTutorial._howToMakeAttachmentsSensitive.method }}</MkInfo>
-	<MkPostForm
-		:class="$style.exampleRoot"
-		:mock="true"
-		:autofocus="false"
-		:initialNote="exampleNote"
-		@fileChangeSensitive="doSucceeded"
-	></MkPostForm>
-	<div v-if="onceSucceeded"><b style="color: var(--MI_THEME-accent);"><i class="ti ti-check"></i> {{ i18n.ts._initialTutorial.wellDone }}</b> {{ i18n.ts._initialTutorial._howToMakeAttachmentsSensitive.sensitiveSucceeded }}</div>
-	<MkFolder>
-		<template #label>{{ i18n.ts.previewNoteText }}</template>
-		<MkNote :mock="true" :note="exampleNote" :class="$style.exampleRoot"></MkNote>
-	</MkFolder>
-</div>
+	<div class="_gaps">
+		<div style="text-align: center; padding: 0 16px;">{{ i18n.ts._initialTutorial._howToMakeAttachmentsSensitive.description }}</div>
+		<div>{{ i18n.ts._initialTutorial._howToMakeAttachmentsSensitive.tryThisFile }}</div>
+		<MkInfo>{{ i18n.ts._initialTutorial._howToMakeAttachmentsSensitive.method }}</MkInfo>
+		<MkPostForm
+			:autofocus="false"
+			:class="$style.exampleRoot"
+			:initialNote="exampleNote"
+			:mock="true"
+			@fileChangeSensitive="doSucceeded"
+		></MkPostForm>
+		<div v-if="onceSucceeded"><b style="color: var(--MI_THEME-accent);"><i class="ti ti-check"></i> {{ i18n.ts._initialTutorial.wellDone }}</b> {{ i18n.ts._initialTutorial._howToMakeAttachmentsSensitive.sensitiveSucceeded }}</div>
+		<MkFolder>
+			<template #label>{{ i18n.ts.previewNoteText }}</template>
+			<MkNote :class="$style.exampleRoot" :mock="true" :note="exampleNote"></MkNote>
+		</MkFolder>
+	</div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import * as Misskey from 'misskey-js';
-import { ref, reactive } from 'vue';
-import { i18n } from '@/i18n.js';
+import {ref, reactive} from 'vue';
+import {i18n} from '@/i18n.js';
 import MkPostForm from '@/components/MkPostForm.vue';
 import MkFolder from '@/components/MkFolder.vue';
 import MkInfo from '@/components/MkInfo.vue';
 import MkNote from '@/components/MkNote.vue';
-import { $i } from '@/account.js';
+import {$i} from '@/account.js';
 
 const emit = defineEmits<{
 	(ev: 'succeeded'): void;

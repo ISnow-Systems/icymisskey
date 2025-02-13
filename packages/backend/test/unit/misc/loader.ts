@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { DebounceLoader } from '@/misc/loader.js';
+import {DebounceLoader} from '@/misc/loader.js';
 
 class Mock {
 	loadCountByKey = new Map<number, number>();
@@ -16,6 +16,7 @@ class Mock {
 		}
 		return key * 2;
 	};
+
 	reset() {
 		this.loadCountByKey.clear();
 	}

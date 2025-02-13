@@ -4,85 +4,85 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<svg :class="$style.root" viewBox="0 0 10 10" preserveAspectRatio="none">
-	<template v-if="props.graduations === 'dots'">
-		<circle
-			v-for="(angle, i) in graduationsMajor"
-			:cx="5 + (Math.sin(angle) * (5 - graduationsPadding))"
-			:cy="5 - (Math.cos(angle) * (5 - graduationsPadding))"
-			:r="0.125"
-			:fill="(props.twentyfour ? h : h % 12) === i ? nowColor : majorGraduationColor"
-			:opacity="!props.fadeGraduations || (props.twentyfour ? h : h % 12) === i ? 1 : Math.max(0, 1 - (angleDiff(hAngle, angle) / Math.PI) - numbersOpacityFactor)"
+	<svg :class="$style.root" preserveAspectRatio="none" viewBox="0 0 10 10">
+		<template v-if="props.graduations === 'dots'">
+			<circle
+				v-for="(angle, i) in graduationsMajor"
+				:cx="5 + (Math.sin(angle) * (5 - graduationsPadding))"
+				:cy="5 - (Math.cos(angle) * (5 - graduationsPadding))"
+				:fill="(props.twentyfour ? h : h % 12) === i ? nowColor : majorGraduationColor"
+				:opacity="!props.fadeGraduations || (props.twentyfour ? h : h % 12) === i ? 1 : Math.max(0, 1 - (angleDiff(hAngle, angle) / Math.PI) - numbersOpacityFactor)"
+				:r="0.125"
+			/>
+		</template>
+		<template v-else-if="props.graduations === 'numbers'">
+			<text
+				v-for="(angle, i) in texts"
+				:fill="(props.twentyfour ? h : h % 12) === i ? nowColor : 'currentColor'"
+				:font-size="(props.twentyfour ? h : h % 12) === i ? 1 : 0.7"
+				:font-weight="(props.twentyfour ? h : h % 12) === i ? 'bold' : 'normal'"
+				:opacity="!props.fadeGraduations || (props.twentyfour ? h : h % 12) === i ? 1 : Math.max(0, 1 - (angleDiff(hAngle, angle) / Math.PI) - numbersOpacityFactor)"
+				:x="5 + (Math.sin(angle) * (5 - textsPadding))"
+				:y="5 - (Math.cos(angle) * (5 - textsPadding))"
+				dominant-baseline="middle"
+				text-anchor="middle"
+			>
+				{{ i === 0 ? (props.twentyfour ? '24' : '12') : i }}
+			</text>
+		</template>
+
+		<!--
+		<line
+			:x1="5 - (Math.sin(sAngle) * (sHandLengthRatio * handsTailLength))"
+			:y1="5 + (Math.cos(sAngle) * (sHandLengthRatio * handsTailLength))"
+			:x2="5 + (Math.sin(sAngle) * ((sHandLengthRatio * 5) - handsPadding))"
+			:y2="5 - (Math.cos(sAngle) * ((sHandLengthRatio * 5) - handsPadding))"
+			:stroke="sHandColor"
+			:stroke-width="thickness / 2"
+			stroke-linecap="round"
 		/>
-	</template>
-	<template v-else-if="props.graduations === 'numbers'">
-		<text
-			v-for="(angle, i) in texts"
-			:x="5 + (Math.sin(angle) * (5 - textsPadding))"
-			:y="5 - (Math.cos(angle) * (5 - textsPadding))"
-			text-anchor="middle"
-			dominant-baseline="middle"
-			:font-size="(props.twentyfour ? h : h % 12) === i ? 1 : 0.7"
-			:font-weight="(props.twentyfour ? h : h % 12) === i ? 'bold' : 'normal'"
-			:fill="(props.twentyfour ? h : h % 12) === i ? nowColor : 'currentColor'"
-			:opacity="!props.fadeGraduations || (props.twentyfour ? h : h % 12) === i ? 1 : Math.max(0, 1 - (angleDiff(hAngle, angle) / Math.PI) - numbersOpacityFactor)"
-		>
-			{{ i === 0 ? (props.twentyfour ? '24' : '12') : i }}
-		</text>
-	</template>
+		-->
 
-	<!--
-	<line
-		:x1="5 - (Math.sin(sAngle) * (sHandLengthRatio * handsTailLength))"
-		:y1="5 + (Math.cos(sAngle) * (sHandLengthRatio * handsTailLength))"
-		:x2="5 + (Math.sin(sAngle) * ((sHandLengthRatio * 5) - handsPadding))"
-		:y2="5 - (Math.cos(sAngle) * ((sHandLengthRatio * 5) - handsPadding))"
-		:stroke="sHandColor"
-		:stroke-width="thickness / 2"
-		stroke-linecap="round"
-	/>
-	-->
+		<line
+			ref="sLine"
+			:class="[$style.s, { [$style.animate]: !disableSAnimate && sAnimation !== 'none', [$style.elastic]: sAnimation === 'elastic', [$style.easeOut]: sAnimation === 'easeOut' }]"
+			:stroke="sHandColor"
+			:stroke-width="thickness / 2"
+			:style="`transform: rotateZ(${sAngle}rad)`"
+			:x1="5 - (0 * (sHandLengthRatio * handsTailLength))"
+			:x2="5 + (0 * ((sHandLengthRatio * 5) - handsPadding))"
+			:y1="5 + (1 * (sHandLengthRatio * handsTailLength))"
+			:y2="5 - (1 * ((sHandLengthRatio * 5) - handsPadding))"
+			stroke-linecap="round"
+		/>
 
-	<line
-		ref="sLine"
-		:class="[$style.s, { [$style.animate]: !disableSAnimate && sAnimation !== 'none', [$style.elastic]: sAnimation === 'elastic', [$style.easeOut]: sAnimation === 'easeOut' }]"
-		:x1="5 - (0 * (sHandLengthRatio * handsTailLength))"
-		:y1="5 + (1 * (sHandLengthRatio * handsTailLength))"
-		:x2="5 + (0 * ((sHandLengthRatio * 5) - handsPadding))"
-		:y2="5 - (1 * ((sHandLengthRatio * 5) - handsPadding))"
-		:stroke="sHandColor"
-		:stroke-width="thickness / 2"
-		:style="`transform: rotateZ(${sAngle}rad)`"
-		stroke-linecap="round"
-	/>
+		<line
+			:stroke="mHandColor"
+			:stroke-width="thickness"
+			:x1="5 - (Math.sin(mAngle) * (mHandLengthRatio * handsTailLength))"
+			:x2="5 + (Math.sin(mAngle) * ((mHandLengthRatio * 5) - handsPadding))"
+			:y1="5 + (Math.cos(mAngle) * (mHandLengthRatio * handsTailLength))"
+			:y2="5 - (Math.cos(mAngle) * ((mHandLengthRatio * 5) - handsPadding))"
+			stroke-linecap="round"
+		/>
 
-	<line
-		:x1="5 - (Math.sin(mAngle) * (mHandLengthRatio * handsTailLength))"
-		:y1="5 + (Math.cos(mAngle) * (mHandLengthRatio * handsTailLength))"
-		:x2="5 + (Math.sin(mAngle) * ((mHandLengthRatio * 5) - handsPadding))"
-		:y2="5 - (Math.cos(mAngle) * ((mHandLengthRatio * 5) - handsPadding))"
-		:stroke="mHandColor"
-		:stroke-width="thickness"
-		stroke-linecap="round"
-	/>
-
-	<line
-		:x1="5 - (Math.sin(hAngle) * (hHandLengthRatio * handsTailLength))"
-		:y1="5 + (Math.cos(hAngle) * (hHandLengthRatio * handsTailLength))"
-		:x2="5 + (Math.sin(hAngle) * ((hHandLengthRatio * 5) - handsPadding))"
-		:y2="5 - (Math.cos(hAngle) * ((hHandLengthRatio * 5) - handsPadding))"
-		:stroke="hHandColor"
-		:stroke-width="thickness"
-		stroke-linecap="round"
-	/>
-</svg>
+		<line
+			:stroke="hHandColor"
+			:stroke-width="thickness"
+			:x1="5 - (Math.sin(hAngle) * (hHandLengthRatio * handsTailLength))"
+			:x2="5 + (Math.sin(hAngle) * ((hHandLengthRatio * 5) - handsPadding))"
+			:y1="5 + (Math.cos(hAngle) * (hHandLengthRatio * handsTailLength))"
+			:y2="5 - (Math.cos(hAngle) * ((hHandLengthRatio * 5) - handsPadding))"
+			stroke-linecap="round"
+		/>
+	</svg>
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, onBeforeUnmount, ref } from 'vue';
+import {computed, onMounted, onBeforeUnmount, ref} from 'vue';
 import tinycolor from 'tinycolor2';
-import { globalEvents } from '@/events.js';
-import { defaultIdlingRenderScheduler } from '@/scripts/idle-render.js';
+import {globalEvents} from '@/events.js';
+import {defaultIdlingRenderScheduler} from '@/scripts/idle-render.js';
 
 // https://stackoverflow.com/questions/1878907/how-can-i-find-the-difference-between-two-angles
 const angleDiff = (a: number, b: number) => {
@@ -182,7 +182,7 @@ function tick() {
 					}
 				});
 			});
-		}, { once: true });
+		}, {once: true});
 	} else {
 		sAngle.value = Math.PI * s.value / 30;
 	}
@@ -227,11 +227,11 @@ onBeforeUnmount(() => {
 	transform-origin: 50% 50%;
 
 	&.animate.elastic {
-		transition: transform .2s cubic-bezier(.4,2.08,.55,.44);
+		transition: transform .2s cubic-bezier(.4, 2.08, .55, .44);
 	}
 
 	&.animate.easeOut {
-		transition: transform .7s cubic-bezier(0,.7,.3,1);
+		transition: transform .7s cubic-bezier(0, .7, .3, 1);
 	}
 }
 </style>

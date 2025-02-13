@@ -4,18 +4,18 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<Sortable :modelValue="modelValue" tag="div" itemKey="id" handle=".drag-handle" :group="{ name: 'blocks' }" :animation="150" :swapThreshold="0.5" @update:modelValue="v => emit('update:modelValue', v)">
-	<template #item="{element}">
-		<div :class="$style.item">
-			<!-- divが無いとエラーになる https://github.com/SortableJS/vue.draggable.next/issues/189 -->
-			<component :is="getComponent(element.type)" :modelValue="element" @update:modelValue="updateItem" @remove="() => removeItem(element)"/>
-		</div>
-	</template>
-</Sortable>
+	<Sortable :animation="150" :group="{ name: 'blocks' }" :modelValue="modelValue" :swapThreshold="0.5" handle=".drag-handle" itemKey="id" tag="div" @update:modelValue="v => emit('update:modelValue', v)">
+		<template #item="{element}">
+			<div :class="$style.item">
+				<!-- divが無いとエラーになる https://github.com/SortableJS/vue.draggable.next/issues/189 -->
+				<component :is="getComponent(element.type)" :modelValue="element" @remove="() => removeItem(element)" @update:modelValue="updateItem"/>
+			</div>
+		</template>
+	</Sortable>
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent } from 'vue';
+import {defineAsyncComponent} from 'vue';
 import * as Misskey from 'misskey-js';
 import XSection from './els/page-editor.el.section.vue';
 import XText from './els/page-editor.el.text.vue';
@@ -24,11 +24,16 @@ import XNote from './els/page-editor.el.note.vue';
 
 function getComponent(type: string) {
 	switch (type) {
-		case 'section': return XSection;
-		case 'text': return XText;
-		case 'image': return XImage;
-		case 'note': return XNote;
-		default: return null;
+		case 'section':
+			return XSection;
+		case 'text':
+			return XText;
+		case 'image':
+			return XImage;
+		case 'note':
+			return XNote;
+		default:
+			return null;
 	}
 }
 

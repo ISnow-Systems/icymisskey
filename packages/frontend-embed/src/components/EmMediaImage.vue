@@ -4,49 +4,49 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="[hide ? $style.hidden : $style.visible]" @click="onclick">
-	<a
-		:title="image.name"
-		:class="$style.imageContainer"
-		:href="href ?? image.url"
-		target="_blank"
-		rel="noopener"
-	>
-		<ImgWithBlurhash
-			:hash="image.blurhash"
-			:src="hide ? null : url"
-			:forceBlurhash="hide"
-			:cover="hide || cover"
-			:alt="image.comment || image.name"
-			:title="image.comment || image.name"
-			:width="image.properties.width"
-			:height="image.properties.height"
-			:style="hide ? 'filter: brightness(0.7);' : null"
-		/>
-	</a>
-	<template v-if="hide">
-		<div :class="$style.hiddenText">
-			<div :class="$style.hiddenTextWrapper">
-				<b v-if="image.isSensitive" style="display: block;"><i class="ti ti-eye-exclamation"></i> {{ i18n.ts.sensitive }}</b>
-				<b v-else style="display: block;"><i class="ti ti-photo"></i> {{ i18n.ts.image }}</b>
-				<span style="display: block;">{{ i18n.ts.clickToShow }}</span>
+	<div :class="[hide ? $style.hidden : $style.visible]" @click="onclick">
+		<a
+			:class="$style.imageContainer"
+			:href="href ?? image.url"
+			:title="image.name"
+			rel="noopener"
+			target="_blank"
+		>
+			<ImgWithBlurhash
+				:alt="image.comment || image.name"
+				:cover="hide || cover"
+				:forceBlurhash="hide"
+				:hash="image.blurhash"
+				:height="image.properties.height"
+				:src="hide ? null : url"
+				:style="hide ? 'filter: brightness(0.7);' : null"
+				:title="image.comment || image.name"
+				:width="image.properties.width"
+			/>
+		</a>
+		<template v-if="hide">
+			<div :class="$style.hiddenText">
+				<div :class="$style.hiddenTextWrapper">
+					<b v-if="image.isSensitive" style="display: block;"><i class="ti ti-eye-exclamation"></i> {{ i18n.ts.sensitive }}</b>
+					<b v-else style="display: block;"><i class="ti ti-photo"></i> {{ i18n.ts.image }}</b>
+					<span style="display: block;">{{ i18n.ts.clickToShow }}</span>
+				</div>
 			</div>
+		</template>
+		<div :class="$style.indicators">
+			<div v-if="['image/gif', 'image/apng'].includes(image.type)" :class="$style.indicator">GIF</div>
+			<div v-if="image.comment" :class="$style.indicator">ALT</div>
+			<div v-if="image.isSensitive" :class="$style.indicator" :title="i18n.ts.sensitive" style="color: var(--MI_THEME-warn);"><i class="ti ti-eye-exclamation"></i></div>
 		</div>
-	</template>
-	<div :class="$style.indicators">
-		<div v-if="['image/gif', 'image/apng'].includes(image.type)" :class="$style.indicator">GIF</div>
-		<div v-if="image.comment" :class="$style.indicator">ALT</div>
-		<div v-if="image.isSensitive" :class="$style.indicator" style="color: var(--MI_THEME-warn);" :title="i18n.ts.sensitive"><i class="ti ti-eye-exclamation"></i></div>
+		<i v-if="!hide" :class="$style.hide" class="ti ti-eye-off" @click.stop="hide = true"></i>
 	</div>
-	<i v-if="!hide" class="ti ti-eye-off" :class="$style.hide" @click.stop="hide = true"></i>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
+import {ref, computed} from 'vue';
 import * as Misskey from 'misskey-js';
 import ImgWithBlurhash from '@/components/EmImgWithBlurhash.vue';
-import { i18n } from '@/i18n.js';
+import {i18n} from '@/i18n.js';
 
 const props = withDefaults(defineProps<{
 	image: Misskey.entities.DriveFile;

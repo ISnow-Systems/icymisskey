@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { GalleryPostsRepository } from '@/models/_.js';
-import { GalleryPostEntityService } from '@/core/entities/GalleryPostEntityService.js';
-import { DI } from '@/di-symbols.js';
-import { FeaturedService } from '@/core/FeaturedService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {GalleryPostsRepository} from '@/models/_.js';
+import {GalleryPostEntityService} from '@/core/entities/GalleryPostEntityService.js';
+import {DI} from '@/di-symbols.js';
+import {FeaturedService} from '@/core/FeaturedService.js';
 
 export const meta = {
 	tags: ['gallery'],
@@ -29,8 +29,8 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
-		untilId: { type: 'string', format: 'misskey:id' },
+		limit: {type: 'integer', minimum: 1, maximum: 100, default: 10},
+		untilId: {type: 'string', format: 'misskey:id'},
 	},
 	required: [],
 } as const;
@@ -43,7 +43,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.galleryPostsRepository)
 		private galleryPostsRepository: GalleryPostsRepository,
-
 		private galleryPostEntityService: GalleryPostEntityService,
 		private featuredService: FeaturedService,
 	) {
@@ -68,7 +67,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			}
 
 			const query = this.galleryPostsRepository.createQueryBuilder('post')
-				.where('post.id IN (:...postIds)', { postIds: postIds });
+				.where('post.id IN (:...postIds)', {postIds: postIds});
 
 			const posts = await query.getMany();
 

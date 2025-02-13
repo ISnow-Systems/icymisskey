@@ -4,18 +4,18 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="$style.root" :style="{ zIndex, top: top + 'px', left: left + 'px' }">
-	<Transition :name="defaultStore.state.animation ? '_transition_zoom' : ''" @afterLeave="emit('closed')">
-		<MkUrlPreview v-if="showing" class="_popup _shadow" :url="url" :showActions="false"/>
-	</Transition>
-</div>
+	<div :class="$style.root" :style="{ zIndex, top: top + 'px', left: left + 'px' }">
+		<Transition :name="defaultStore.state.animation ? '_transition_zoom' : ''" @afterLeave="emit('closed')">
+			<MkUrlPreview v-if="showing" :showActions="false" :url="url" class="_popup _shadow"/>
+		</Transition>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import MkUrlPreview from '@/components/MkUrlPreview.vue';
 import * as os from '@/os.js';
-import { defaultStore } from '@/store.js';
+import {defaultStore} from '@/store.js';
 
 const props = defineProps<{
 	showing: boolean;

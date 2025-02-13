@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { setTimeout } from 'node:timers/promises';
-import { entities } from 'misskey-js';
-import { beforeEach, describe, test } from '@jest/globals';
+import {setTimeout} from 'node:timers/promises';
+import {entities} from 'misskey-js';
+import {beforeEach, describe, test} from '@jest/globals';
 import {
 	api,
 	captureWebhook,
@@ -16,7 +16,7 @@ import {
 	UserToken,
 	WEBHOOK_HOST,
 } from '../../utils.js';
-import type { INestApplicationContext } from '@nestjs/common';
+import type {INestApplicationContext} from '@nestjs/common';
 
 describe('[シナリオ] ユーザ作成', () => {
 	let queue: INestApplicationContext;
@@ -42,9 +42,9 @@ describe('[シナリオ] ユーザ作成', () => {
 
 	beforeAll(async () => {
 		queue = await startJobQueue();
-		admin = await signup({ username: 'admin' });
+		admin = await signup({username: 'admin'});
 
-		await role(admin, { isAdministrator: true });
+		await role(admin, {isAdministrator: true});
 	}, 1000 * 60 * 2);
 
 	afterAll(async () => {
@@ -57,7 +57,7 @@ describe('[シナリオ] ユーザ作成', () => {
 		beforeEach(async () => {
 			const webhooks = await api('admin/system-webhook/list', {}, admin);
 			for (const webhook of webhooks.body) {
-				await api('admin/system-webhook/delete', { id: webhook.id }, admin);
+				await api('admin/system-webhook/delete', {id: webhook.id}, admin);
 			}
 		});
 
@@ -69,7 +69,7 @@ describe('[シナリオ] ユーザ作成', () => {
 
 			let alice: any = null;
 			const webhookBody = await captureWebhook(async () => {
-				alice = await signup({ username: 'alice' });
+				alice = await signup({username: 'alice'});
 			});
 
 			// webhookの送出後にいろいろやってるのでちょっと待つ必要がある
@@ -105,7 +105,7 @@ describe('[シナリオ] ユーザ作成', () => {
 
 			let alice: any = null;
 			const webhookBody = await captureWebhook(async () => {
-				alice = await signup({ username: 'alice' });
+				alice = await signup({username: 'alice'});
 			}).catch(e => e.message);
 
 			expect(webhookBody).toBe('timeout');
@@ -120,7 +120,7 @@ describe('[シナリオ] ユーザ作成', () => {
 
 			let alice: any = null;
 			const webhookBody = await captureWebhook(async () => {
-				alice = await signup({ username: 'alice' });
+				alice = await signup({username: 'alice'});
 			}).catch(e => e.message);
 
 			expect(webhookBody).toBe('timeout');

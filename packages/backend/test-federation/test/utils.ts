@@ -1,14 +1,14 @@
-import { deepStrictEqual, strictEqual } from 'assert';
-import { readFile } from 'fs/promises';
-import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
+import {deepStrictEqual, strictEqual} from 'assert';
+import {readFile} from 'fs/promises';
+import {dirname, join} from 'path';
+import {fileURLToPath} from 'url';
 import * as Misskey from 'misskey-js';
-import { WebSocket } from 'ws';
+import {WebSocket} from 'ws';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-export const ADMIN_PARAMS = { username: 'admin', password: 'admin' };
+export const ADMIN_PARAMS = {username: 'admin', password: 'admin'};
 const ADMIN_CACHE = new Map<Host, SigninResponse>();
 
 await Promise.all([
@@ -47,13 +47,13 @@ async function signin(
 	// wait for a second to prevent hit rate limit
 	await sleep(1000);
 
-	return await (new Misskey.api.APIClient({ origin: `https://${host}` }).request as Request)('signin-flow', params)
+	return await (new Misskey.api.APIClient({origin: `https://${host}`}).request as Request)('signin-flow', params)
 		.then(res => {
 			strictEqual(res.finished, true);
 			if (params.username === ADMIN_PARAMS.username) ADMIN_CACHE.set(host, res);
 			return res;
 		})
-		.then(({ id, i }) => ({ id, i }))
+		.then(({id, i}) => ({id, i}))
 		.catch(async err => {
 			if (err.code === 'TOO_MANY_AUTHENTICATION_FAILURES') {
 				await sleep(Math.random() * 2000);
@@ -64,7 +64,7 @@ async function signin(
 }
 
 async function createAdmin(host: Host): Promise<Misskey.entities.SignupResponse | undefined> {
-	const client = new Misskey.api.APIClient({ origin: `https://${host}` });
+	const client = new Misskey.api.APIClient({origin: `https://${host}`});
 	return await client.request('admin/accounts/create', ADMIN_PARAMS).then(res => {
 		ADMIN_CACHE.set(host, {
 			id: res.id,
@@ -98,7 +98,7 @@ export async function fetchAdmin(host: Host): Promise<LoginUser> {
 
 	return {
 		...admin,
-		client: new Misskey.api.APIClient({ origin: `https://${host}`, credential: admin.i }),
+		client: new Misskey.api.APIClient({origin: `https://${host}`, credential: admin.i}),
 		...ADMIN_PARAMS,
 	};
 }
@@ -107,12 +107,12 @@ export async function createAccount(host: Host): Promise<LoginUser> {
 	const username = crypto.randomUUID().replaceAll('-', '').substring(0, 20);
 	const password = crypto.randomUUID().replaceAll('-', '');
 	const admin = await fetchAdmin(host);
-	await admin.client.request('admin/accounts/create', { username, password });
-	const signinRes = await signin(host, { username, password });
+	await admin.client.request('admin/accounts/create', {username, password});
+	const signinRes = await signin(host, {username, password});
 
 	return {
 		...signinRes,
-		client: new Misskey.api.APIClient({ origin: `https://${host}`, credential: signinRes.i }),
+		client: new Misskey.api.APIClient({origin: `https://${host}`, credential: signinRes.i}),
 		username,
 		password,
 	};
@@ -125,7 +125,7 @@ export async function createModerator(host: Host): Promise<LoginUser> {
 		isModerator: true,
 	});
 	const admin = await fetchAdmin(host);
-	await admin.client.request('admin/roles/assign', { roleId: role.id, userId: user.id });
+	await admin.client.request('admin/roles/assign', {roleId: role.id, userId: user.id});
 	return user;
 }
 
@@ -159,7 +159,7 @@ export async function resolveRemoteUser(
 	from: LoginUser,
 ): Promise<Misskey.entities.UserDetailedNotMe> {
 	const uri = `https://${host}/users/${id}`;
-	return await from.client.request('ap/show', { uri })
+	return await from.client.request('ap/show', {uri})
 		.then(res => {
 			strictEqual(res.type, 'User');
 			strictEqual(res.object.uri, uri);
@@ -173,7 +173,7 @@ export async function resolveRemoteNote(
 	from: LoginUser,
 ): Promise<Misskey.entities.Note> {
 	const uri = `https://${host}/notes/${id}`;
-	return await from.client.request('ap/show', { uri })
+	return await from.client.request('ap/show', {uri})
 		.then(res => {
 			strictEqual(res.type, 'Note');
 			strictEqual(res.object.uri, uri);
@@ -195,7 +195,7 @@ export async function uploadFile(
 	body.append('file', blob);
 	body.append('name', filename);
 
-	return await fetch(`https://${host}/api/drive/files/create`, { method: 'POST', body })
+	return await fetch(`https://${host}/api/drive/files/create`, {method: 'POST', body})
 		.then(async res => await res.json());
 }
 
@@ -207,7 +207,7 @@ export async function addCustomEmoji(
 	const admin = await fetchAdmin(host);
 	const name = crypto.randomUUID().replaceAll('-', '');
 	const file = await uploadFile(host, admin, path);
-	return await admin.client.request('admin/emoji/add', { name, fileId: file.id, ...param });
+	return await admin.client.request('admin/emoji/add', {name, fileId: file.id, ...param});
 }
 
 export function deepStrictEqualWithExcludedFields<T>(actual: T, expected: T, excludedFields: (keyof T)[]) {
@@ -232,7 +232,7 @@ export async function isFired<C extends keyof Misskey.Channels, T extends keyof 
 	params?: Misskey.Channels[C]['params'],
 ): Promise<boolean> {
 	return new Promise<boolean>(async (resolve, reject) => {
-		const stream = new Misskey.Stream(`wss://${host}`, { token: user.i }, { WebSocket });
+		const stream = new Misskey.Stream(`wss://${host}`, {token: user.i}, {WebSocket});
 		const connection = stream.useChannel(channel, params);
 		connection.on(type as any, ((msg: any) => {
 			if (cond(msg)) {
@@ -265,8 +265,8 @@ export async function isNoteUpdatedEventFired(
 	cond: (msg: Parameters<Misskey.StreamEvents['noteUpdated']>[0]) => boolean,
 ): Promise<boolean> {
 	return new Promise<boolean>(async (resolve, reject) => {
-		const stream = new Misskey.Stream(`wss://${host}`, { token: user.i }, { WebSocket });
-		stream.send('s', { id: noteId });
+		const stream = new Misskey.Stream(`wss://${host}`, {token: user.i}, {WebSocket});
+		stream.send('s', {id: noteId});
 		stream.on('noteUpdated', msg => {
 			if (cond(msg)) {
 				stream.close();

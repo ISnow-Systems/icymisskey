@@ -60,9 +60,11 @@ html {
 	stroke-linejoin: round;
 	stroke-miterlimit: 1.5;
 }
+
 #splashSpinner > .spinner.bg {
 	opacity: 0.275;
 }
+
 #splashSpinner > .spinner.fg {
 	animation: splashSpinner 0.5s linear infinite;
 }

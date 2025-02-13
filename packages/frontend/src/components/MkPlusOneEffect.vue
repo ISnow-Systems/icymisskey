@@ -4,13 +4,13 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="$style.root" :style="{ zIndex, top: `${y - 64}px`, left: `${x - 64}px` }">
-	<span class="text" :class="{ up }">+{{ value }}</span>
-</div>
+	<div :class="$style.root" :style="{ zIndex, top: `${y - 64}px`, left: `${x - 64}px` }">
+		<span :class="{ up }" class="text">+{{ value }}</span>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import * as os from '@/os.js';
 
 const props = withDefaults(defineProps<{
@@ -64,7 +64,7 @@ onMounted(() => {
 			font-size: 18px;
 			font-weight: bold;
 			transform: translateY(0px);
-			transition: transform 1s cubic-bezier(0,.5,0,1), opacity 1s cubic-bezier(.5,0,1,.5);
+			transition: transform 1s cubic-bezier(0, .5, 0, 1), opacity 1s cubic-bezier(.5, 0, 1, .5);
 			will-change: opacity, transform;
 
 			&.up {

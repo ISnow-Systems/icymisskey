@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { URL } from 'node:url';
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { RelayService } from '@/core/RelayService.js';
-import { ApiError } from '../../../error.js';
+import {URL} from 'node:url';
+import {Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {RelayService} from '@/core/RelayService.js';
+import {ApiError} from '../../../error.js';
 
 export const meta = {
 	tags: ['admin'],
@@ -55,7 +55,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		inbox: { type: 'string' },
+		inbox: {type: 'string'},
 	},
 	required: ['inbox'],
 } as const;

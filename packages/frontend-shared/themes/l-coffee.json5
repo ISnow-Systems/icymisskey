@@ -1,11 +1,8 @@
 {
 	id: '6ed80faa-74f0-42c2-98e4-a64d9e138eab',
-
 	name: 'Mi Coffee Light',
 	author: 'syuilo',
-
 	base: 'light',
-
 	props: {
 		accent: '#9f8989',
 		bg: '#f5f3f3',

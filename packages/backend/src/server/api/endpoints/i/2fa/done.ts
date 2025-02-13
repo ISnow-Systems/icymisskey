@@ -4,12 +4,12 @@
  */
 
 import * as OTPAuth from 'otpauth';
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import type { UserProfilesRepository } from '@/models/_.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { DI } from '@/di-symbols.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import type {UserProfilesRepository} from '@/models/_.js';
+import {GlobalEventService} from '@/core/GlobalEventService.js';
+import {DI} from '@/di-symbols.js';
 
 export const meta = {
 	requireCredential: true,
@@ -33,7 +33,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		token: { type: 'string' },
+		token: {type: 'string'},
 	},
 	required: ['token'],
 } as const;
@@ -43,14 +43,13 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
-
 		private userEntityService: UserEntityService,
 		private globalEventService: GlobalEventService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			const token = ps.token.replace(/\s/g, '');
 
-			const profile = await this.userProfilesRepository.findOneByOrFail({ userId: me.id });
+			const profile = await this.userProfilesRepository.findOneByOrFail({userId: me.id});
 
 			if (profile.twoFactorTempSecret == null) {
 				throw new Error('二段階認証の設定が開始されていません');
@@ -67,7 +66,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				throw new Error('not verified');
 			}
 
-			const backupCodes = Array.from({ length: 5 }, () => new OTPAuth.Secret().base32);
+			const backupCodes = Array.from({length: 5}, () => new OTPAuth.Secret().base32);
 
 			await this.userProfilesRepository.update(me.id, {
 				twoFactorSecret: profile.twoFactorTempSecret,

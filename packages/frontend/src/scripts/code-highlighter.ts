@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { createHighlighterCore } from 'shiki/core';
-import { createOnigurumaEngine } from 'shiki/engine/oniguruma';
+import {createHighlighterCore} from 'shiki/core';
+import {createOnigurumaEngine} from 'shiki/engine/oniguruma';
 import darkPlus from 'shiki/themes/dark-plus.mjs';
-import { bundledThemesInfo } from 'shiki/themes';
-import { bundledLanguagesInfo } from 'shiki/langs';
+import {bundledThemesInfo} from 'shiki/themes';
+import {bundledLanguagesInfo} from 'shiki/langs';
 import lightTheme from '@@/themes/_light.json5';
 import darkTheme from '@@/themes/_dark.json5';
-import { unique } from './array.js';
-import { deepClone } from './clone.js';
-import { deepMerge } from './merge.js';
-import type { HighlighterCore, LanguageRegistration, ThemeRegistration, ThemeRegistrationRaw } from 'shiki/core';
-import { ColdDeviceStorage } from '@/store.js';
+import {unique} from './array.js';
+import {deepClone} from './clone.js';
+import {deepMerge} from './merge.js';
+import type {HighlighterCore, LanguageRegistration, ThemeRegistration, ThemeRegistrationRaw} from 'shiki/core';
+import {ColdDeviceStorage} from '@/store.js';
 
 let _highlighter: HighlighterCore | null = null;
 

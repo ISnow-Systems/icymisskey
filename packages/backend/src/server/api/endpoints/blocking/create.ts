@@ -4,14 +4,14 @@
  */
 
 import ms from 'ms';
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { UsersRepository, BlockingsRepository } from '@/models/_.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { UserBlockingService } from '@/core/UserBlockingService.js';
-import { DI } from '@/di-symbols.js';
-import { GetterService } from '@/server/api/GetterService.js';
-import { ApiError } from '../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {UsersRepository, BlockingsRepository} from '@/models/_.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {UserBlockingService} from '@/core/UserBlockingService.js';
+import {DI} from '@/di-symbols.js';
+import {GetterService} from '@/server/api/GetterService.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['account'],
@@ -55,7 +55,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		userId: { type: 'string', format: 'misskey:id' },
+		userId: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['userId'],
 } as const;
@@ -65,16 +65,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.blockingsRepository)
 		private blockingsRepository: BlockingsRepository,
-
 		private userEntityService: UserEntityService,
 		private getterService: GetterService,
 		private userBlockingService: UserBlockingService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const blocker = await this.usersRepository.findOneByOrFail({ id: me.id });
+			const blocker = await this.usersRepository.findOneByOrFail({id: me.id});
 
 			// 自分自身
 			if (me.id === ps.userId) {

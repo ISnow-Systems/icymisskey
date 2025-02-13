@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Global, Inject, Module } from '@nestjs/common';
+import {Global, Inject, Module} from '@nestjs/common';
 import * as Redis from 'ioredis';
-import { DataSource } from 'typeorm';
-import { MeiliSearch } from 'meilisearch';
-import { MiMeta } from '@/models/Meta.js';
-import { DI } from './di-symbols.js';
-import { Config, loadConfig } from './config.js';
-import { createPostgresDataSource } from './postgres.js';
-import { RepositoryModule } from './models/RepositoryModule.js';
-import { allSettled } from './misc/promise-tracker.js';
-import { GlobalEvents } from './core/GlobalEventService.js';
-import type { Provider, OnApplicationShutdown } from '@nestjs/common';
+import {DataSource} from 'typeorm';
+import {MeiliSearch} from 'meilisearch';
+import {MiMeta} from '@/models/Meta.js';
+import {DI} from './di-symbols.js';
+import {Config, loadConfig} from './config.js';
+import {createPostgresDataSource} from './postgres.js';
+import {RepositoryModule} from './models/RepositoryModule.js';
+import {allSettled} from './misc/promise-tracker.js';
+import {GlobalEvents} from './core/GlobalEventService.js';
+import type {Provider, OnApplicationShutdown} from '@nestjs/common';
 
 const $config: Provider = {
 	provide: DI.config,
@@ -127,7 +127,7 @@ const $meta: Provider = {
 			const obj = JSON.parse(data);
 
 			if (obj.channel === 'internal') {
-				const { type, body } = obj.message as GlobalEvents['internal']['payload'];
+				const {type, body} = obj.message as GlobalEvents['internal']['payload'];
 				switch (type) {
 					case 'metaUpdated': {
 						for (const key in body.after) {
@@ -163,7 +163,8 @@ export class GlobalModule implements OnApplicationShutdown {
 		@Inject(DI.redisForSub) private redisForSub: Redis.Redis,
 		@Inject(DI.redisForTimelines) private redisForTimelines: Redis.Redis,
 		@Inject(DI.redisForReactions) private redisForReactions: Redis.Redis,
-	) { }
+	) {
+	}
 
 	public async dispose(): Promise<void> {
 		// Wait for all potential DB queries

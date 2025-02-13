@@ -1,10 +1,10 @@
 import fs from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { dirname } from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {dirname} from 'node:path';
 import * as esbuild from 'esbuild';
-import { build } from 'esbuild';
-import { globSync } from 'glob';
-import { execa } from 'execa';
+import {build} from 'esbuild';
+import {globSync} from 'glob';
+import {execa} from 'execa';
 
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
@@ -27,7 +27,7 @@ const args = process.argv.slice(2).map(arg => arg.toLowerCase());
 
 // built配下をすべて削除する
 if (!args.includes('--no-clean')) {
-	fs.rmSync('./built', { recursive: true, force: true });
+	fs.rmSync('./built', {recursive: true, force: true});
 }
 
 if (args.includes('--watch')) {
@@ -92,7 +92,7 @@ async function watchSrc() {
 
 	console.log(`[${_package.name}] start watching...`);
 
-	const context = await esbuild.context({ ...options, plugins });
+	const context = await esbuild.context({...options, plugins});
 	await context.watch();
 
 	await new Promise((resolve, reject) => {

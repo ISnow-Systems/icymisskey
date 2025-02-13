@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { $i } from '@/account.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {$i} from '@/account.js';
 
 export const ACHIEVEMENT_TYPES = [
 	'notes1',
@@ -478,13 +478,13 @@ export const ACHIEVEMENT_BADGES = {
 		bg: 'linear-gradient(0deg, rgb(255 77 77), rgb(247 155 214))',
 		frame: 'silver',
 	},
-/* @see <https://github.com/misskey-dev/misskey/pull/10365#discussion_r1155511107>
-} as const satisfies Record<typeof ACHIEVEMENT_TYPES[number], {
-	img: string;
-	bg: string | null;
-	frame: 'bronze' | 'silver' | 'gold' | 'platinum';
-}>;
- */
+	/* @see <https://github.com/misskey-dev/misskey/pull/10365#discussion_r1155511107>
+	} as const satisfies Record<typeof ACHIEVEMENT_TYPES[number], {
+		img: string;
+		bg: string | null;
+		frame: 'bronze' | 'silver' | 'gold' | 'platinum';
+	}>;
+	 */
 } as const;
 
 export const claimedAchievements: typeof ACHIEVEMENT_TYPES[number][] = ($i && $i.achievements) ? $i.achievements.map(x => x.name) : [];
@@ -501,7 +501,7 @@ export async function claimAchievement(type: typeof ACHIEVEMENT_TYPES[number]) {
 	window.setTimeout(() => {
 		claimingQueue.delete(type);
 	}, 500);
-	misskeyApi('i/claim-achievement', { name: type });
+	misskeyApi('i/claim-achievement', {name: type});
 }
 
 if (_DEV_) {

@@ -4,40 +4,40 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkModalWindow
-	ref="dialog"
-	:width="400"
-	:height="450"
-	:withOkButton="true"
-	:okButtonDisabled="false"
-	@ok="ok()"
-	@close="dialog?.close()"
-	@closed="emit('closed')"
->
-	<template #header>{{ i18n.ts.notificationSetting }}</template>
+	<MkModalWindow
+		ref="dialog"
+		:height="450"
+		:okButtonDisabled="false"
+		:width="400"
+		:withOkButton="true"
+		@close="dialog?.close()"
+		@closed="emit('closed')"
+		@ok="ok()"
+	>
+		<template #header>{{ i18n.ts.notificationSetting }}</template>
 
-	<MkSpacer :marginMin="20" :marginMax="28">
-		<div class="_gaps_m">
-			<MkInfo>{{ i18n.ts.notificationSettingDesc }}</MkInfo>
-			<div class="_buttons">
-				<MkButton inline @click="disableAll">{{ i18n.ts.disableAll }}</MkButton>
-				<MkButton inline @click="enableAll">{{ i18n.ts.enableAll }}</MkButton>
+		<MkSpacer :marginMax="28" :marginMin="20">
+			<div class="_gaps_m">
+				<MkInfo>{{ i18n.ts.notificationSettingDesc }}</MkInfo>
+				<div class="_buttons">
+					<MkButton inline @click="disableAll">{{ i18n.ts.disableAll }}</MkButton>
+					<MkButton inline @click="enableAll">{{ i18n.ts.enableAll }}</MkButton>
+				</div>
+				<MkSwitch v-for="ntype in notificationTypes" :key="ntype" v-model="typesMap[ntype].value">{{ i18n.ts._notification._types[ntype] }}</MkSwitch>
 			</div>
-			<MkSwitch v-for="ntype in notificationTypes" :key="ntype" v-model="typesMap[ntype].value">{{ i18n.ts._notification._types[ntype] }}</MkSwitch>
-		</div>
-	</MkSpacer>
-</MkModalWindow>
+		</MkSpacer>
+	</MkModalWindow>
 </template>
 
 <script lang="ts" setup>
-import { ref, shallowRef } from 'vue';
-import type { Ref } from 'vue';
+import {ref, shallowRef} from 'vue';
+import type {Ref} from 'vue';
 import MkSwitch from './MkSwitch.vue';
 import MkInfo from './MkInfo.vue';
 import MkButton from './MkButton.vue';
 import MkModalWindow from '@/components/MkModalWindow.vue';
-import { notificationTypes } from '@@/js/const.js';
-import { i18n } from '@/i18n.js';
+import {notificationTypes} from '@@/js/const.js';
+import {i18n} from '@/i18n.js';
 
 type TypesMap = Record<typeof notificationTypes[number], Ref<boolean>>
 
@@ -54,7 +54,7 @@ const props = withDefaults(defineProps<{
 
 const dialog = shallowRef<InstanceType<typeof MkModalWindow>>();
 
-const typesMap = notificationTypes.reduce((p, t) => ({ ...p, [t]: ref<boolean>(!props.excludeTypes.includes(t)) }), {} as TypesMap);
+const typesMap = notificationTypes.reduce((p, t) => ({...p, [t]: ref<boolean>(!props.excludeTypes.includes(t))}), {} as TypesMap);
 
 function ok() {
 	emit('done', {

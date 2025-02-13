@@ -4,15 +4,15 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="$style.root" :style="{ zIndex, top: `${y - 64}px`, left: `${x - 64}px` }">
+	<div :class="$style.root" :style="{ zIndex, top: `${y - 64}px`, left: `${x - 64}px` }">
 	<span :class="[$style.text, { [$style.up]: up }]">
-		<MkReactionIcon class="icon" :reaction="reaction"/>
+		<MkReactionIcon :reaction="reaction" class="icon"/>
 	</span>
-</div>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import * as os from '@/os.js';
 import MkReactionIcon from '@/components/MkReactionIcon.vue';
 
@@ -20,8 +20,7 @@ const props = withDefaults(defineProps<{
 	reaction: string;
 	x: number;
 	y: number;
-}>(), {
-});
+}>(), {});
 
 const emit = defineEmits<{
 	(ev: 'end'): void;
@@ -64,7 +63,7 @@ onMounted(() => {
 	font-size: 18px;
 	font-weight: bold;
 	transform: translateY(-30px);
-	transition: transform 1s cubic-bezier(0,.5,0,1), opacity 1s cubic-bezier(.5,0,1,.5);
+	transition: transform 1s cubic-bezier(0, .5, 0, 1), opacity 1s cubic-bezier(.5, 0, 1, .5);
 	will-change: opacity, transform;
 
 	&.up {

@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { isRef } from 'vue';
-import type { Ref } from 'vue';
-import type { DataSource, SizeStyle } from '@/components/grid/grid.js';
-import { CELL_ADDRESS_NONE } from '@/components/grid/cell.js';
-import type { CellAddress, CellValue, GridCell } from '@/components/grid/cell.js';
-import type { GridRow } from '@/components/grid/row.js';
-import type { GridContext } from '@/components/grid/grid-event.js';
-import { copyToClipboard } from '@/scripts/copy-to-clipboard.js';
-import type { GridColumn, GridColumnSetting } from '@/components/grid/column.js';
+import {isRef} from 'vue';
+import type {Ref} from 'vue';
+import type {DataSource, SizeStyle} from '@/components/grid/grid.js';
+import {CELL_ADDRESS_NONE} from '@/components/grid/cell.js';
+import type {CellAddress, CellValue, GridCell} from '@/components/grid/cell.js';
+import type {GridRow} from '@/components/grid/row.js';
+import type {GridContext} from '@/components/grid/grid-event.js';
+import {copyToClipboard} from '@/scripts/copy-to-clipboard.js';
+import type {GridColumn, GridColumnSetting} from '@/components/grid/column.js';
 
 export function isCellElement(elem: HTMLElement): boolean {
 	return elem.hasAttribute('data-grid-cell');
@@ -60,7 +60,7 @@ export function getCellAddress(elem: HTMLElement, parentNodeCount = 10): CellAdd
 			const row = getCellRowByAttribute(node);
 			const col = getCellColByAttribute(node);
 
-			return { row, col };
+			return {row, col};
 		}
 
 		node = node.parentElement;
@@ -104,7 +104,7 @@ export function copyGridDataToClipboard(
 	for (let row = bounds.leftTop.row; row <= bounds.rightBottom.row; row++) {
 		const rowItems = Array.of<string>();
 		for (let col = bounds.leftTop.col; col <= bounds.rightBottom.col; col++) {
-			const { bindTo, events } = context.columns[col].setting;
+			const {bindTo, events} = context.columns[col].setting;
 			const value = items[row][bindTo];
 			const transformValue = events?.copy
 				? events.copy(value)
@@ -172,7 +172,7 @@ export async function pasteToGridFromClipboard(
 		// 表形式文字列の場合は表形式にパースし、選択範囲に合うように貼り付ける
 		const offsetRow = bounds.leftTop.row;
 		const offsetCol = bounds.leftTop.col;
-		const { columns, rows } = context;
+		const {columns, rows} = context;
 		for (let row = bounds.leftTop.row; row <= bounds.rightBottom.row; row++) {
 			const rowIdx = row - offsetRow;
 			if (lines.length <= rowIdx) {
@@ -205,7 +205,7 @@ export function removeDataFromGrid(
 	callback: (cell: GridCell) => void,
 ) {
 	for (const cell of context.rangedCells) {
-		const { editable, events } = cell.column.setting;
+		const {editable, events} = cell.column.setting;
 		if (editable) {
 			if (events?.delete) {
 				events.delete(cell, context);

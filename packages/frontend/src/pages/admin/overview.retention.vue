@@ -4,9 +4,9 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="_panel" :class="$style.root">
-	<MkRetentionHeatmap/>
-</div>
+	<div :class="$style.root" class="_panel">
+		<MkRetentionHeatmap/>
+	</div>
 </template>
 
 <script lang="ts" setup>

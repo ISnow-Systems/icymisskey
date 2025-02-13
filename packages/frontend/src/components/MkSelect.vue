@@ -4,46 +4,52 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div>
-	<div :class="$style.label" @click="focus"><slot name="label"></slot></div>
-	<div
-		ref="container"
-		tabindex="0"
-		:class="[$style.input, { [$style.inline]: inline, [$style.disabled]: disabled, [$style.focused]: focused || opening }]"
-		@focus="focused = true"
-		@blur="focused = false"
-		@mousedown.prevent="show"
-		@keydown.space.enter="show"
-	>
-		<div ref="prefixEl" :class="$style.prefix"><slot name="prefix"></slot></div>
-		<div
-			ref="inputEl"
-			v-adaptive-border
-			tabindex="-1"
-			:class="$style.inputCore"
-			:disabled="disabled"
-			:required="required"
-			:readonly="readonly"
-			:placeholder="placeholder"
-			@mousedown.prevent="() => {}"
-			@keydown.prevent="() => {}"
-		>
-			<div style="pointer-events: none;">{{ currentValueText ?? '' }}</div>
-			<div style="display: none;">
-				<slot></slot>
-			</div>
+	<div>
+		<div :class="$style.label" @click="focus">
+			<slot name="label"></slot>
 		</div>
-		<div ref="suffixEl" :class="$style.suffix"><i class="ti ti-chevron-down" :class="[$style.chevron, { [$style.chevronOpening]: opening }]"></i></div>
+		<div
+			ref="container"
+			:class="[$style.input, { [$style.inline]: inline, [$style.disabled]: disabled, [$style.focused]: focused || opening }]"
+			tabindex="0"
+			@blur="focused = false"
+			@focus="focused = true"
+			@mousedown.prevent="show"
+			@keydown.space.enter="show"
+		>
+			<div ref="prefixEl" :class="$style.prefix">
+				<slot name="prefix"></slot>
+			</div>
+			<div
+				ref="inputEl"
+				v-adaptive-border
+				:class="$style.inputCore"
+				:disabled="disabled"
+				:placeholder="placeholder"
+				:readonly="readonly"
+				:required="required"
+				tabindex="-1"
+				@mousedown.prevent="() => {}"
+				@keydown.prevent="() => {}"
+			>
+				<div style="pointer-events: none;">{{ currentValueText ?? '' }}</div>
+				<div style="display: none;">
+					<slot></slot>
+				</div>
+			</div>
+			<div ref="suffixEl" :class="$style.suffix"><i :class="[$style.chevron, { [$style.chevronOpening]: opening }]" class="ti ti-chevron-down"></i></div>
+		</div>
+		<div :class="$style.caption">
+			<slot name="caption"></slot>
+		</div>
 	</div>
-	<div :class="$style.caption"><slot name="caption"></slot></div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, nextTick, ref, watch, computed, toRefs, useSlots } from 'vue';
-import type { VNode, VNodeChild } from 'vue';
-import { useInterval } from '@@/js/use-interval.js';
-import type { MenuItem } from '@/types/menu.js';
+import {onMounted, nextTick, ref, watch, computed, toRefs, useSlots} from 'vue';
+import type {VNode, VNodeChild} from 'vue';
+import {useInterval} from '@@/js/use-interval.js';
+import type {MenuItem} from '@/types/menu.js';
 import * as os from '@/os.js';
 
 const props = defineProps<{
@@ -64,7 +70,7 @@ const emit = defineEmits<{
 
 const slots = useSlots();
 
-const { modelValue, autofocus } = toRefs(props);
+const {modelValue, autofocus} = toRefs(props);
 const focused = ref(false);
 const opening = ref(false);
 const currentValueText = ref<string | null>(null);
@@ -74,8 +80,8 @@ const suffixEl = ref<HTMLElement | null>(null);
 const container = ref<HTMLElement | null>(null);
 const height =
 	props.small ? 33 :
-	props.large ? 39 :
-	36;
+		props.large ? 39 :
+			36;
 
 const focus = () => container.value?.focus();
 
@@ -130,7 +136,7 @@ watch(modelValue, () => {
 	};
 
 	scanOptions(slots.default!());
-}, { immediate: true });
+}, {immediate: true});
 
 function show() {
 	if (opening.value) return;

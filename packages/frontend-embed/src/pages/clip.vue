@@ -4,54 +4,54 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div>
-	<EmTimelineContainer v-if="clip" :showHeader="embedParams.header">
-		<template #header>
-			<div :class="$style.clipHeader">
-				<div :class="$style.headerClipIconRoot">
-					<i class="ti ti-paperclip"></i>
+	<div>
+		<EmTimelineContainer v-if="clip" :showHeader="embedParams.header">
+			<template #header>
+				<div :class="$style.clipHeader">
+					<div :class="$style.headerClipIconRoot">
+						<i class="ti ti-paperclip"></i>
+					</div>
+					<div :class="$style.headerTitle" @click="top">
+						<div class="_nowrap"><a :href="`/clips/${clip.id}`" rel="noopener" target="_blank">{{ clip.name }}</a></div>
+						<div :class="$style.sub">{{ i18n.tsx.fromX({x: instanceName}) }}</div>
+					</div>
+					<a :class="$style.instanceIconLink" :href="url" rel="noopener noreferrer" target="_blank">
+						<img
+							:class="$style.instanceIcon"
+							:src="serverMetadata.iconUrl || '/favicon.ico'"
+						/>
+					</a>
 				</div>
-				<div :class="$style.headerTitle" @click="top">
-					<div class="_nowrap"><a :href="`/clips/${clip.id}`" target="_blank" rel="noopener">{{ clip.name }}</a></div>
-					<div :class="$style.sub">{{ i18n.tsx.fromX({ x: instanceName }) }}</div>
-				</div>
-				<a :href="url" :class="$style.instanceIconLink" target="_blank" rel="noopener noreferrer">
-					<img
-						:class="$style.instanceIcon"
-						:src="serverMetadata.iconUrl || '/favicon.ico'"
-					/>
-				</a>
-			</div>
-		</template>
-		<template #body>
-			<EmNotes
-				ref="notesEl"
-				:pagination="pagination"
-				:disableAutoLoad="!embedParams.autoload"
-				:noGap="true"
-				:ad="false"
-			/>
-		</template>
-	</EmTimelineContainer>
-	<XNotFound v-else/>
-</div>
+			</template>
+			<template #body>
+				<EmNotes
+					ref="notesEl"
+					:ad="false"
+					:disableAutoLoad="!embedParams.autoload"
+					:noGap="true"
+					:pagination="pagination"
+				/>
+			</template>
+		</EmTimelineContainer>
+		<XNotFound v-else/>
+	</div>
 </template>
 
-<script setup lang="ts">
-import { ref, computed, inject, useTemplateRef } from 'vue';
+<script lang="ts" setup>
+import {ref, computed, inject, useTemplateRef} from 'vue';
 import * as Misskey from 'misskey-js';
-import { scrollToTop } from '@@/js/scroll.js';
-import { url, instanceName } from '@@/js/config.js';
-import { isLink } from '@@/js/is-link.js';
-import { defaultEmbedParams } from '@@/js/embed-page.js';
-import type { Paging } from '@/components/EmPagination.vue';
+import {scrollToTop} from '@@/js/scroll.js';
+import {url, instanceName} from '@@/js/config.js';
+import {isLink} from '@@/js/is-link.js';
+import {defaultEmbedParams} from '@@/js/embed-page.js';
+import type {Paging} from '@/components/EmPagination.vue';
 import EmNotes from '@/components/EmNotes.vue';
 import XNotFound from '@/pages/not-found.vue';
 import EmTimelineContainer from '@/components/EmTimelineContainer.vue';
-import { misskeyApi } from '@/misskey-api.js';
-import { i18n } from '@/i18n.js';
-import { assertServerContext } from '@/server-context.js';
-import { DI } from '@/di.js';
+import {misskeyApi} from '@/misskey-api.js';
+import {i18n} from '@/i18n.js';
+import {assertServerContext} from '@/server-context.js';
+import {DI} from '@/di.js';
 
 const props = defineProps<{
 	clipId: string;
@@ -89,7 +89,7 @@ function top(ev: MouseEvent) {
 	if (target && isLink(target)) return;
 
 	if (notesEl.value) {
-		scrollToTop(notesEl.value.$el as HTMLElement, { behavior: 'smooth' });
+		scrollToTop(notesEl.value.$el as HTMLElement, {behavior: 'smooth'});
 	}
 }
 </script>

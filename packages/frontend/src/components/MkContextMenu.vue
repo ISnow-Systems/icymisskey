@@ -4,25 +4,25 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<Transition
-	appear
-	:enterActiveClass="defaultStore.state.animation ? $style.transition_fade_enterActive : ''"
-	:leaveActiveClass="defaultStore.state.animation ? $style.transition_fade_leaveActive : ''"
-	:enterFromClass="defaultStore.state.animation ? $style.transition_fade_enterFrom : ''"
-	:leaveToClass="defaultStore.state.animation ? $style.transition_fade_leaveTo : ''"
->
-	<div ref="rootEl" :class="$style.root" :style="{ zIndex }" @contextmenu.prevent.stop="() => {}">
-		<MkMenu :items="items" :align="'left'" @close="emit('closed')"/>
-	</div>
-</Transition>
+	<Transition
+		:enterActiveClass="defaultStore.state.animation ? $style.transition_fade_enterActive : ''"
+		:enterFromClass="defaultStore.state.animation ? $style.transition_fade_enterFrom : ''"
+		:leaveActiveClass="defaultStore.state.animation ? $style.transition_fade_leaveActive : ''"
+		:leaveToClass="defaultStore.state.animation ? $style.transition_fade_leaveTo : ''"
+		appear
+	>
+		<div ref="rootEl" :class="$style.root" :style="{ zIndex }" @contextmenu.prevent.stop="() => {}">
+			<MkMenu :align="'left'" :items="items" @close="emit('closed')"/>
+		</div>
+	</Transition>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onBeforeUnmount, shallowRef, ref } from 'vue';
+import {onMounted, onBeforeUnmount, shallowRef, ref} from 'vue';
 import MkMenu from './MkMenu.vue';
-import type { MenuItem } from '@/types/menu.js';
+import type {MenuItem} from '@/types/menu.js';
 import contains from '@/scripts/contains.js';
-import { defaultStore } from '@/store.js';
+import {defaultStore} from '@/store.js';
 import * as os from '@/os.js';
 
 const props = defineProps<{
@@ -86,6 +86,7 @@ function onMousedown(evt: Event) {
 	transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 	transform-origin: left top;
 }
+
 .transition_fade_enterFrom,
 .transition_fade_leaveTo {
 	opacity: 0;

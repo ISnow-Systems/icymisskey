@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Not, In, IsNull } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
-import { maximum } from '@/misc/prelude/array.js';
-import type { NotesRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { DI } from '@/di-symbols.js';
-import { GetterService } from '@/server/api/GetterService.js';
-import { ApiError } from '../../error.js';
+import {Not, In, IsNull} from 'typeorm';
+import {Inject, Injectable} from '@nestjs/common';
+import {maximum} from '@/misc/prelude/array.js';
+import type {NotesRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {DI} from '@/di-symbols.js';
+import {GetterService} from '@/server/api/GetterService.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['users'],
@@ -52,8 +52,8 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		userId: { type: 'string', format: 'misskey:id' },
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
+		userId: {type: 'string', format: 'misskey:id'},
+		limit: {type: 'integer', minimum: 1, maximum: 100, default: 10},
 	},
 	required: ['userId'],
 } as const;
@@ -63,7 +63,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		private userEntityService: UserEntityService,
 		private getterService: GetterService,
 	) {
@@ -121,10 +120,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			const topRepliedUserIds = repliedUsersSorted.slice(0, ps.limit);
 
 			// Make replies object (includes weights)
-			const _userMap = await this.userEntityService.packMany(topRepliedUserIds, me, { schema: 'UserDetailed' })
+			const _userMap = await this.userEntityService.packMany(topRepliedUserIds, me, {schema: 'UserDetailed'})
 				.then(users => new Map(users.map(u => [u.id, u])));
 			const repliesObj = await Promise.all(topRepliedUserIds.map(async (userId) => ({
-				user: _userMap.get(userId) ?? await this.userEntityService.pack(userId, me, { schema: 'UserDetailed' }),
+				user: _userMap.get(userId) ?? await this.userEntityService.pack(userId, me, {schema: 'UserDetailed'}),
 				weight: repliedUsers[userId] / peak,
 			})));
 

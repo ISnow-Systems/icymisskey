@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { defineAsyncComponent } from 'vue';
+import {defineAsyncComponent} from 'vue';
 import * as Misskey from 'misskey-js';
 import * as os from '@/os.js';
 
@@ -25,16 +25,16 @@ export type MkSystemWebhookResult = {
 };
 
 export async function showSystemWebhookEditorDialog(props: MkSystemWebhookEditorProps): Promise<MkSystemWebhookResult | null> {
-	const { result } = await new Promise<{ result: MkSystemWebhookResult | null }>(async resolve => {
-		const { dispose } = os.popup(
+	const {result} = await new Promise<{ result: MkSystemWebhookResult | null }>(async resolve => {
+		const {dispose} = os.popup(
 			defineAsyncComponent(() => import('@/components/MkSystemWebhookEditor.vue')),
 			props,
 			{
 				submitted: (ev: MkSystemWebhookResult) => {
-					resolve({ result: ev });
+					resolve({result: ev});
 				},
 				canceled: () => {
-					resolve({ result: null });
+					resolve({result: null});
 				},
 				closed: () => {
 					dispose();

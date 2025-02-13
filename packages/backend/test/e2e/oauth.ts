@@ -19,9 +19,9 @@ import {
 	ResourceOwnerPassword,
 } from 'simple-oauth2';
 import pkceChallenge from 'pkce-challenge';
-import { JSDOM } from 'jsdom';
-import Fastify, { type FastifyInstance, type FastifyReply } from 'fastify';
-import { api, port, sendEnvUpdateRequest, signup } from '../utils.js';
+import {JSDOM} from 'jsdom';
+import Fastify, {type FastifyInstance, type FastifyReply} from 'fastify';
+import {api, port, sendEnvUpdateRequest, signup} from '../utils.js';
 import type * as misskey from 'misskey-js';
 
 const host = `http://127.0.0.1:${port}`;
@@ -80,7 +80,7 @@ function getMeta(html: string): { transactionId: string | undefined, clientName:
 	};
 }
 
-function fetchDecision(transactionId: string, user: misskey.entities.SignupResponse, { cancel }: { cancel?: boolean } = {}): Promise<Response> {
+function fetchDecision(transactionId: string, user: misskey.entities.SignupResponse, {cancel}: { cancel?: boolean } = {}): Promise<Response> {
 	return fetch(new URL('/oauth/decision', host), {
 		method: 'post',
 		body: new URLSearchParams({
@@ -95,11 +95,11 @@ function fetchDecision(transactionId: string, user: misskey.entities.SignupRespo
 	});
 }
 
-async function fetchDecisionFromResponse(response: Response, user: misskey.entities.SignupResponse, { cancel }: { cancel?: boolean } = {}): Promise<Response> {
-	const { transactionId } = getMeta(await response.text());
+async function fetchDecisionFromResponse(response: Response, user: misskey.entities.SignupResponse, {cancel}: { cancel?: boolean } = {}): Promise<Response> {
+	const {transactionId} = getMeta(await response.text());
 	assert.ok(transactionId);
 
-	return await fetchDecision(transactionId, user, { cancel });
+	return await fetchDecision(transactionId, user, {cancel});
 }
 
 async function fetchAuthorizationCode(user: misskey.entities.SignupResponse, scope: string, code_challenge: string): Promise<{ client: AuthorizationCode, code: string }> {
@@ -126,7 +126,7 @@ async function fetchAuthorizationCode(user: misskey.entities.SignupResponse, sco
 	const code = new URL(location).searchParams.get('code');
 	assert.ok(code);
 
-	return { client, code };
+	return {client, code};
 }
 
 function assertIndirectError(response: Response, error: string): void {
@@ -160,18 +160,18 @@ describe('OAuth', () => {
 	let sender: (reply: FastifyReply) => void;
 
 	beforeAll(async () => {
-		alice = await signup({ username: 'alice' });
-		bob = await signup({ username: 'bob' });
+		alice = await signup({username: 'alice'});
+		bob = await signup({username: 'bob'});
 
 		fastify = Fastify();
 		fastify.get('/', async (request, reply) => {
 			sender(reply);
 		});
-		await fastify.listen({ port: clientPort });
+		await fastify.listen({port: clientPort});
 	}, 1000 * 60 * 2);
 
 	beforeEach(async () => {
-		await sendEnvUpdateRequest({ key: 'MISSKEY_TEST_CHECK_IP_RANGE', value: '' });
+		await sendEnvUpdateRequest({key: 'MISSKEY_TEST_CHECK_IP_RANGE', value: ''});
 		sender = (reply): void => {
 			reply.send(`
 				<!DOCTYPE html>
@@ -186,7 +186,7 @@ describe('OAuth', () => {
 	});
 
 	test('Full flow', async () => {
-		const { code_challenge, code_verifier } = await pkceChallenge(128);
+		const {code_challenge, code_verifier} = await pkceChallenge(128);
 
 		const client = new AuthorizationCode(clientConfig);
 
@@ -230,7 +230,7 @@ describe('OAuth', () => {
 		assert.strictEqual(token.token.token_type, 'Bearer');
 		assert.strictEqual(token.token.scope, 'write:notes');
 
-		const createResult = await api('notes/create', { text: 'test' }, {
+		const createResult = await api('notes/create', {text: 'test'}, {
 			token: token.token.access_token as string,
 			bearer: true,
 		});
@@ -295,13 +295,13 @@ describe('OAuth', () => {
 			code_verifier: pkceBob.code_verifier,
 		} as AuthorizationTokenConfigExtended);
 
-		const createResultAlice = await api('notes/create', { text: 'test' }, {
+		const createResultAlice = await api('notes/create', {text: 'test'}, {
 			token: tokenAlice.token.access_token as string,
 			bearer: true,
 		});
 		assert.strictEqual(createResultAlice.status, 200);
 
-		const createResultBob = await api('notes/create', { text: 'test' }, {
+		const createResultBob = await api('notes/create', {text: 'test'}, {
 			token: tokenBob.token.access_token as string,
 			bearer: true,
 		});
@@ -327,7 +327,7 @@ describe('OAuth', () => {
 				redirect_uri,
 				scope: 'write:notes',
 				state: 'state',
-			}), { redirect: 'manual' });
+			}), {redirect: 'manual'});
 			assertIndirectError(response, 'invalid_request');
 
 			// Pattern 2: Only code_challenge
@@ -336,7 +336,7 @@ describe('OAuth', () => {
 				scope: 'write:notes',
 				state: 'state',
 				code_challenge: 'code',
-			} as AuthorizationParamsExtended), { redirect: 'manual' });
+			} as AuthorizationParamsExtended), {redirect: 'manual'});
 			assertIndirectError(response, 'invalid_request');
 
 			// Pattern 3: Only code_challenge_method
@@ -345,7 +345,7 @@ describe('OAuth', () => {
 				scope: 'write:notes',
 				state: 'state',
 				code_challenge_method: 'S256',
-			} as AuthorizationParamsExtended), { redirect: 'manual' });
+			} as AuthorizationParamsExtended), {redirect: 'manual'});
 			assertIndirectError(response, 'invalid_request');
 
 			// Pattern 4: Unsupported code_challenge_method
@@ -355,7 +355,7 @@ describe('OAuth', () => {
 				state: 'state',
 				code_challenge: 'code',
 				code_challenge_method: 'SSSS',
-			} as AuthorizationParamsExtended), { redirect: 'manual' });
+			} as AuthorizationParamsExtended), {redirect: 'manual'});
 			assertIndirectError(response, 'invalid_request');
 		});
 
@@ -373,7 +373,7 @@ describe('OAuth', () => {
 		describe('Verify PKCE', () => {
 			for (const [title, wrong_verifier] of Object.entries(tests)) {
 				test(title, async () => {
-					const { client, code } = await fetchAuthorizationCode(alice, 'write:notes', code_challenge);
+					const {client, code} = await fetchAuthorizationCode(alice, 'write:notes', code_challenge);
 
 					await assert.rejects(client.getToken({
 						code,
@@ -394,8 +394,8 @@ describe('OAuth', () => {
 	// previously issued based on that authorization code."
 	describe('Revoking authorization code', () => {
 		test('On success', async () => {
-			const { code_challenge, code_verifier } = await pkceChallenge(128);
-			const { client, code } = await fetchAuthorizationCode(alice, 'write:notes', code_challenge);
+			const {code_challenge, code_verifier} = await pkceChallenge(128);
+			const {client, code} = await fetchAuthorizationCode(alice, 'write:notes', code_challenge);
 
 			await client.getToken({
 				code,
@@ -414,10 +414,10 @@ describe('OAuth', () => {
 		});
 
 		test('On failure', async () => {
-			const { code_challenge, code_verifier } = await pkceChallenge(128);
-			const { client, code } = await fetchAuthorizationCode(alice, 'write:notes', code_challenge);
+			const {code_challenge, code_verifier} = await pkceChallenge(128);
+			const {client, code} = await fetchAuthorizationCode(alice, 'write:notes', code_challenge);
 
-			await assert.rejects(client.getToken({ code, redirect_uri }), (err: GetTokenError) => {
+			await assert.rejects(client.getToken({code, redirect_uri}), (err: GetTokenError) => {
 				assert.strictEqual(err.data.payload.error, 'invalid_grant');
 				return true;
 			});
@@ -433,8 +433,8 @@ describe('OAuth', () => {
 		});
 
 		test('Revoke the already granted access token', async () => {
-			const { code_challenge, code_verifier } = await pkceChallenge(128);
-			const { client, code } = await fetchAuthorizationCode(alice, 'write:notes', code_challenge);
+			const {code_challenge, code_verifier} = await pkceChallenge(128);
+			const {client, code} = await fetchAuthorizationCode(alice, 'write:notes', code_challenge);
 
 			const token = await client.getToken({
 				code,
@@ -442,7 +442,7 @@ describe('OAuth', () => {
 				code_verifier,
 			} as AuthorizationTokenConfigExtended);
 
-			const createResult = await api('notes/create', { text: 'test' }, {
+			const createResult = await api('notes/create', {text: 'test'}, {
 				token: token.token.access_token as string,
 				bearer: true,
 			});
@@ -457,7 +457,7 @@ describe('OAuth', () => {
 				return true;
 			});
 
-			const createResult2 = await api('notes/create', { text: 'test' }, {
+			const createResult2 = await api('notes/create', {text: 'test'}, {
 				token: token.token.access_token as string,
 				bearer: true,
 			});
@@ -477,7 +477,7 @@ describe('OAuth', () => {
 		} as AuthorizationParamsExtended));
 		assert.strictEqual(response.status, 200);
 
-		const decisionResponse = await fetchDecisionFromResponse(response, alice, { cancel: true });
+		const decisionResponse = await fetchDecisionFromResponse(response, alice, {cancel: true});
 		assert.strictEqual(decisionResponse.status, 302);
 
 		const locationHeader = decisionResponse.headers.get('location');
@@ -503,7 +503,7 @@ describe('OAuth', () => {
 				state: 'state',
 				code_challenge: 'code',
 				code_challenge_method: 'S256',
-			} as AuthorizationParamsExtended), { redirect: 'manual' });
+			} as AuthorizationParamsExtended), {redirect: 'manual'});
 			assertIndirectError(response, 'invalid_scope');
 		});
 
@@ -516,7 +516,7 @@ describe('OAuth', () => {
 				state: 'state',
 				code_challenge: 'code',
 				code_challenge_method: 'S256',
-			} as AuthorizationParamsExtended), { redirect: 'manual' });
+			} as AuthorizationParamsExtended), {redirect: 'manual'});
 			assertIndirectError(response, 'invalid_scope');
 		});
 
@@ -529,7 +529,7 @@ describe('OAuth', () => {
 				state: 'state',
 				code_challenge: 'code',
 				code_challenge_method: 'S256',
-			} as AuthorizationParamsExtended), { redirect: 'manual' });
+			} as AuthorizationParamsExtended), {redirect: 'manual'});
 			assertIndirectError(response, 'invalid_scope');
 		});
 
@@ -539,10 +539,10 @@ describe('OAuth', () => {
 		// client of the actual scope granted."
 		// (Although Misskey always return scope, which is also fine)
 		test('Partially known scopes', async () => {
-			const { code_challenge, code_verifier } = await pkceChallenge(128);
+			const {code_challenge, code_verifier} = await pkceChallenge(128);
 
 			// Just get the known scope for this case for backward compatibility
-			const { client, code } = await fetchAuthorizationCode(
+			const {client, code} = await fetchAuthorizationCode(
 				alice,
 				'write:notes test:unknown test:unknown2',
 				code_challenge,
@@ -572,9 +572,9 @@ describe('OAuth', () => {
 		});
 
 		test('Duplicated scopes', async () => {
-			const { code_challenge, code_verifier } = await pkceChallenge(128);
+			const {code_challenge, code_verifier} = await pkceChallenge(128);
 
-			const { client, code } = await fetchAuthorizationCode(
+			const {client, code} = await fetchAuthorizationCode(
 				alice,
 				'write:notes write:notes read:account read:account',
 				code_challenge,
@@ -589,9 +589,9 @@ describe('OAuth', () => {
 		});
 
 		test('Scope check by API', async () => {
-			const { code_challenge, code_verifier } = await pkceChallenge(128);
+			const {code_challenge, code_verifier} = await pkceChallenge(128);
 
-			const { client, code } = await fetchAuthorizationCode(alice, 'read:account', code_challenge);
+			const {client, code} = await fetchAuthorizationCode(alice, 'read:account', code_challenge);
 
 			const token = await client.getToken({
 				code,
@@ -600,7 +600,7 @@ describe('OAuth', () => {
 			} as AuthorizationTokenConfigExtended);
 			assert.strictEqual(typeof token.token.access_token, 'string');
 
-			const createResult = await api('notes/create', { text: 'test' }, {
+			const createResult = await api('notes/create', {text: 'test'}, {
 				token: token.token.access_token as string,
 				bearer: true,
 			});
@@ -654,9 +654,9 @@ describe('OAuth', () => {
 		});
 
 		test('Invalid redirect_uri at token endpoint', async () => {
-			const { code_challenge, code_verifier } = await pkceChallenge(128);
+			const {code_challenge, code_verifier} = await pkceChallenge(128);
 
-			const { client, code } = await fetchAuthorizationCode(alice, 'write:notes', code_challenge);
+			const {client, code} = await fetchAuthorizationCode(alice, 'write:notes', code_challenge);
 
 			await assert.rejects(client.getToken({
 				code,
@@ -669,9 +669,9 @@ describe('OAuth', () => {
 		});
 
 		test('Invalid redirect_uri including the valid one at token endpoint', async () => {
-			const { code_challenge, code_verifier } = await pkceChallenge(128);
+			const {code_challenge, code_verifier} = await pkceChallenge(128);
 
-			const { client, code } = await fetchAuthorizationCode(alice, 'write:notes', code_challenge);
+			const {client, code} = await fetchAuthorizationCode(alice, 'write:notes', code_challenge);
 
 			await assert.rejects(client.getToken({
 				code,
@@ -684,9 +684,9 @@ describe('OAuth', () => {
 		});
 
 		test('No redirect_uri at token endpoint', async () => {
-			const { code_challenge, code_verifier } = await pkceChallenge(128);
+			const {code_challenge, code_verifier} = await pkceChallenge(128);
 
-			const { client, code } = await fetchAuthorizationCode(alice, 'write:notes', code_challenge);
+			const {client, code} = await fetchAuthorizationCode(alice, 'write:notes', code_challenge);
 
 			await assert.rejects(client.getToken({
 				code,
@@ -717,7 +717,7 @@ describe('OAuth', () => {
 			const response = await fetch(client.authorizeURL(basicAuthParams));
 			assert.strictEqual(response.status, 200);
 
-			const { transactionId } = getMeta(await response.text());
+			const {transactionId} = getMeta(await response.text());
 			assert.ok(transactionId);
 
 			const decisionResponse = await fetch(new URL('/oauth/decision', host), {
@@ -883,7 +883,7 @@ describe('OAuth', () => {
 		});
 
 		test('Disallow loopback', async () => {
-			await sendEnvUpdateRequest({ key: 'MISSKEY_TEST_CHECK_IP_RANGE', value: '1' });
+			await sendEnvUpdateRequest({key: 'MISSKEY_TEST_CHECK_IP_RANGE', value: '1'});
 
 			const client = new AuthorizationCode(clientConfig);
 			const response = await fetch(client.authorizeURL({
@@ -946,19 +946,19 @@ describe('OAuth', () => {
 
 	describe('CORS', () => {
 		test('Token endpoint should support CORS', async () => {
-			const response = await fetch(new URL('/oauth/token', host), { method: 'POST' });
+			const response = await fetch(new URL('/oauth/token', host), {method: 'POST'});
 			assert.ok(!response.ok);
 			assert.strictEqual(response.headers.get('Access-Control-Allow-Origin'), '*');
 		});
 
 		test('Authorize endpoint should not support CORS', async () => {
-			const response = await fetch(new URL('/oauth/authorize', host), { method: 'GET' });
+			const response = await fetch(new URL('/oauth/authorize', host), {method: 'GET'});
 			assert.ok(!response.ok);
 			assert.ok(!response.headers.has('Access-Control-Allow-Origin'));
 		});
 
 		test('Decision endpoint should not support CORS', async () => {
-			const response = await fetch(new URL('/oauth/decision', host), { method: 'POST' });
+			const response = await fetch(new URL('/oauth/decision', host), {method: 'POST'});
 			assert.ok(!response.ok);
 			assert.ok(!response.headers.has('Access-Control-Allow-Origin'));
 		});

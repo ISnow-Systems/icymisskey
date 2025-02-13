@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { PrimaryColumn, Entity, Index, Column, ManyToOne, JoinColumn, OneToOne } from 'typeorm';
-import { id } from './util/id.js';
-import { MiUser } from './User.js';
+import {PrimaryColumn, Entity, Index, Column, ManyToOne, JoinColumn, OneToOne} from 'typeorm';
+import {id} from './util/id.js';
+import {MiUser} from './User.js';
 
 @Entity('registration_ticket')
 export class MiRegistrationTicket {
 	@PrimaryColumn(id())
 	public id: string;
 
-	@Index({ unique: true })
+	@Index({unique: true})
 	@Column('varchar', {
 		length: 64,
 	})

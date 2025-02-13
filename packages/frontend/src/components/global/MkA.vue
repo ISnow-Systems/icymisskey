@@ -4,9 +4,9 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<a ref="el" :href="to" :class="active ? activeClass : null" @click.prevent="nav" @contextmenu.prevent.stop="onContextmenu">
-	<slot></slot>
-</a>
+	<a ref="el" :class="active ? activeClass : null" :href="to" @click.prevent="nav" @contextmenu.prevent.stop="onContextmenu">
+		<slot></slot>
+	</a>
 </template>
 
 <script lang="ts">
@@ -14,12 +14,12 @@ export type MkABehavior = 'window' | 'browser' | null;
 </script>
 
 <script lang="ts" setup>
-import { computed, inject, shallowRef } from 'vue';
+import {computed, inject, shallowRef} from 'vue';
 import * as os from '@/os.js';
-import { copyToClipboard } from '@/scripts/copy-to-clipboard.js';
-import { url } from '@@/js/config.js';
-import { i18n } from '@/i18n.js';
-import { useRouter } from '@/router/supplier.js';
+import {copyToClipboard} from '@/scripts/copy-to-clipboard.js';
+import {url} from '@@/js/config.js';
+import {i18n} from '@/i18n.js';
+import {useRouter} from '@/router/supplier.js';
 
 const props = withDefaults(defineProps<{
 	to: string;
@@ -34,7 +34,7 @@ const behavior = props.behavior ?? inject<MkABehavior>('linkNavigationBehavior',
 
 const el = shallowRef<HTMLElement>();
 
-defineExpose({ $el: el });
+defineExpose({$el: el});
 
 const router = useRouter();
 
@@ -66,7 +66,7 @@ function onContextmenu(ev) {
 		action: () => {
 			router.push(props.to, 'forcePage');
 		},
-	}, { type: 'divider' }, {
+	}, {type: 'divider'}, {
 		icon: 'ti ti-external-link',
 		text: i18n.ts.openInNewTab,
 		action: () => {

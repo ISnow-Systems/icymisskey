@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import ms from 'ms';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { QueueService } from '@/core/QueueService.js';
-import { AccountMoveService } from '@/core/AccountMoveService.js';
-import type { DriveFilesRepository } from '@/models/_.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../error.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {QueueService} from '@/core/QueueService.js';
+import {AccountMoveService} from '@/core/AccountMoveService.js';
+import type {DriveFilesRepository} from '@/models/_.js';
+import {DI} from '@/di-symbols.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	secure: true,
@@ -52,8 +52,8 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		fileId: { type: 'string', format: 'misskey:id' },
-		withReplies: { type: 'boolean' },
+		fileId: {type: 'string', format: 'misskey:id'},
+		withReplies: {type: 'boolean'},
 	},
 	required: ['fileId'],
 } as const;
@@ -63,12 +63,11 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.driveFilesRepository)
 		private driveFilesRepository: DriveFilesRepository,
-
 		private queueService: QueueService,
 		private accountMoveService: AccountMoveService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const file = await this.driveFilesRepository.findOneBy({ id: ps.fileId });
+			const file = await this.driveFilesRepository.findOneBy({id: ps.fileId});
 
 			if (file == null) throw new ApiError(meta.errors.noSuchFile);
 			//if (!file.type.endsWith('/csv')) throw new ApiError(meta.errors.unexpectedFileType);

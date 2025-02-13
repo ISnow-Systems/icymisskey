@@ -3,20 +3,20 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import type { MiUserListMembership, UserListMembershipsRepository, UserListsRepository } from '@/models/_.js';
-import type { Packed } from '@/misc/json-schema.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { DI } from '@/di-symbols.js';
-import { bindThis } from '@/decorators.js';
-import { isRenotePacked, isQuotePacked } from '@/misc/is-renote.js';
-import type { JsonObject } from '@/misc/json-value.js';
-import Channel, { type MiChannelService } from '../channel.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {MiUserListMembership, UserListMembershipsRepository, UserListsRepository} from '@/models/_.js';
+import type {Packed} from '@/misc/json-schema.js';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
+import {DI} from '@/di-symbols.js';
+import {bindThis} from '@/decorators.js';
+import {isRenotePacked, isQuotePacked} from '@/misc/is-renote.js';
+import type {JsonObject} from '@/misc/json-value.js';
+import Channel, {type MiChannelService} from '../channel.js';
 
 class UserListChannel extends Channel {
-	public readonly chName = 'userList';
 	public static shouldShare = false;
 	public static requireCredential = false as const;
+	public readonly chName = 'userList';
 	private listId: string;
 	private membershipsMap: Record<string, Pick<MiUserListMembership, 'withReplies'> | undefined> = {};
 	private listUsersClock: NodeJS.Timeout;
@@ -27,7 +27,6 @@ class UserListChannel extends Channel {
 		private userListsRepository: UserListsRepository,
 		private userListMembershipsRepository: UserListMembershipsRepository,
 		private noteEntityService: NoteEntityService,
-
 		id: string,
 		connection: Channel['connection'],
 	) {
@@ -59,6 +58,15 @@ class UserListChannel extends Channel {
 
 		this.updateListUsers();
 		this.listUsersClock = setInterval(this.updateListUsers, 5000);
+	}
+
+	@bindThis
+	public dispose() {
+		// Unsubscribe events
+		this.subscriber.off(`userListStream:${this.listId}`, this.send);
+		this.subscriber.off('notesStream', this.onNote);
+
+		clearInterval(this.listUsersClock);
 	}
 
 	@bindThis
@@ -122,15 +130,6 @@ class UserListChannel extends Channel {
 
 		this.send('note', note);
 	}
-
-	@bindThis
-	public dispose() {
-		// Unsubscribe events
-		this.subscriber.off(`userListStream:${this.listId}`, this.send);
-		this.subscriber.off('notesStream', this.onNote);
-
-		clearInterval(this.listUsersClock);
-	}
 }
 
 @Injectable()
@@ -142,10 +141,8 @@ export class UserListChannelService implements MiChannelService<false> {
 	constructor(
 		@Inject(DI.userListsRepository)
 		private userListsRepository: UserListsRepository,
-
 		@Inject(DI.userListMembershipsRepository)
 		private userListMembershipsRepository: UserListMembershipsRepository,
-
 		private noteEntityService: NoteEntityService,
 	) {
 	}

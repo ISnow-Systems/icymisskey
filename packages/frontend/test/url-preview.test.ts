@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { describe, test, assert, afterEach } from 'vitest';
-import { render, cleanup, type RenderResult } from '@testing-library/vue';
+import {describe, test, assert, afterEach} from 'vitest';
+import {render, cleanup, type RenderResult} from '@testing-library/vue';
 import './init';
-import type { summaly } from '@misskey-dev/summaly';
-import { components } from '@/components/index.js';
-import { directives } from '@/directives/index.js';
+import type {summaly} from '@misskey-dev/summaly';
+import {components} from '@/components/index.js';
+import {directives} from '@/directives/index.js';
 import MkUrlPreview from '@/components/MkUrlPreview.vue';
 
 type SummalyResult = Awaited<ReturnType<typeof summaly>>;
@@ -32,8 +32,8 @@ describe('MkUrlPreview', () => {
 		});
 
 		const result = render(MkUrlPreview, {
-			props: { url: summary.url },
-			global: { directives, components },
+			props: {url: summary.url},
+			global: {directives, components},
 		});
 
 		await new Promise<void>(resolve => {
@@ -41,7 +41,7 @@ describe('MkUrlPreview', () => {
 				resolve();
 				observer.disconnect();
 			});
-			observer.observe(result.container, { childList: true, subtree: true });
+			observer.observe(result.container, {childList: true, subtree: true});
 		});
 
 		return result;

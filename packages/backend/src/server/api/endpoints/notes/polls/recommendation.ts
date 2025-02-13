@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Brackets, In } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
-import type { NotesRepository, MutingsRepository, PollsRepository, PollVotesRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { DI } from '@/di-symbols.js';
+import {Brackets, In} from 'typeorm';
+import {Inject, Injectable} from '@nestjs/common';
+import type {NotesRepository, MutingsRepository, PollsRepository, PollVotesRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
+import {DI} from '@/di-symbols.js';
 
 export const meta = {
 	tags: ['notes'],
@@ -30,9 +30,9 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
-		offset: { type: 'integer', default: 0 },
-		excludeChannels: { type: 'boolean', default: false },
+		limit: {type: 'integer', minimum: 1, maximum: 100, default: 10},
+		offset: {type: 'integer', default: 0},
+		excludeChannels: {type: 'boolean', default: false},
 	},
 	required: [],
 } as const;
@@ -42,36 +42,32 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		@Inject(DI.pollsRepository)
 		private pollsRepository: PollsRepository,
-
 		@Inject(DI.pollVotesRepository)
 		private pollVotesRepository: PollVotesRepository,
-
 		@Inject(DI.mutingsRepository)
 		private mutingsRepository: MutingsRepository,
-
 		private noteEntityService: NoteEntityService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			const query = this.pollsRepository.createQueryBuilder('poll')
 				.where('poll.userHost IS NULL')
-				.andWhere('poll.userId != :meId', { meId: me.id })
+				.andWhere('poll.userId != :meId', {meId: me.id})
 				.andWhere('poll.noteVisibility = \'public\'')
 				.andWhere(new Brackets(qb => {
 					qb
 						.where('poll.expiresAt IS NULL')
-						.orWhere('poll.expiresAt > :now', { now: new Date() });
+						.orWhere('poll.expiresAt > :now', {now: new Date()});
 				}));
 
 			//#region exclude arleady voted polls
 			const votedQuery = this.pollVotesRepository.createQueryBuilder('vote')
 				.select('vote.noteId')
-				.where('vote.userId = :meId', { meId: me.id });
+				.where('vote.userId = :meId', {meId: me.id});
 
 			query
-				.andWhere(`poll.noteId NOT IN (${ votedQuery.getQuery() })`);
+				.andWhere(`poll.noteId NOT IN (${votedQuery.getQuery()})`);
 
 			query.setParameters(votedQuery.getParameters());
 			//#endregion
@@ -79,10 +75,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			//#region mute
 			const mutingQuery = this.mutingsRepository.createQueryBuilder('muting')
 				.select('muting.muteeId')
-				.where('muting.muterId = :muterId', { muterId: me.id });
+				.where('muting.muterId = :muterId', {muterId: me.id});
 
 			query
-				.andWhere(`poll.userId NOT IN (${ mutingQuery.getQuery() })`);
+				.andWhere(`poll.userId NOT IN (${mutingQuery.getQuery()})`);
 
 			query.setParameters(mutingQuery.getParameters());
 			//#endregion

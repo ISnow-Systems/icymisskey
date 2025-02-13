@@ -4,25 +4,25 @@
  */
 
 import * as fs from 'node:fs';
-import { Writable } from 'node:stream';
-import { Inject, Injectable, StreamableFile } from '@nestjs/common';
-import { MoreThan } from 'typeorm';
-import { format as dateFormat } from 'date-fns';
-import { DI } from '@/di-symbols.js';
-import type { ClipNotesRepository, ClipsRepository, MiClip, MiClipNote, MiUser, NotesRepository, PollsRepository, UsersRepository } from '@/models/_.js';
+import {Writable} from 'node:stream';
+import {Inject, Injectable, StreamableFile} from '@nestjs/common';
+import {MoreThan} from 'typeorm';
+import {format as dateFormat} from 'date-fns';
+import {DI} from '@/di-symbols.js';
+import type {ClipNotesRepository, ClipsRepository, MiClip, MiClipNote, MiUser, NotesRepository, PollsRepository, UsersRepository} from '@/models/_.js';
 import type Logger from '@/logger.js';
-import { DriveService } from '@/core/DriveService.js';
-import { createTemp } from '@/misc/create-temp.js';
-import type { MiPoll } from '@/models/Poll.js';
-import type { MiNote } from '@/models/Note.js';
-import { bindThis } from '@/decorators.js';
-import { DriveFileEntityService } from '@/core/entities/DriveFileEntityService.js';
-import { Packed } from '@/misc/json-schema.js';
-import { IdService } from '@/core/IdService.js';
-import { NotificationService } from '@/core/NotificationService.js';
-import { QueueLoggerService } from '../QueueLoggerService.js';
+import {DriveService} from '@/core/DriveService.js';
+import {createTemp} from '@/misc/create-temp.js';
+import type {MiPoll} from '@/models/Poll.js';
+import type {MiNote} from '@/models/Note.js';
+import {bindThis} from '@/decorators.js';
+import {DriveFileEntityService} from '@/core/entities/DriveFileEntityService.js';
+import {Packed} from '@/misc/json-schema.js';
+import {IdService} from '@/core/IdService.js';
+import {NotificationService} from '@/core/NotificationService.js';
+import {QueueLoggerService} from '../QueueLoggerService.js';
 import type * as Bull from 'bullmq';
-import type { DbJobDataWithUser } from '../types.js';
+import type {DbJobDataWithUser} from '../types.js';
 
 @Injectable()
 export class ExportClipsProcessorService {
@@ -31,16 +31,12 @@ export class ExportClipsProcessorService {
 	constructor(
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.pollsRepository)
 		private pollsRepository: PollsRepository,
-
 		@Inject(DI.clipsRepository)
 		private clipsRepository: ClipsRepository,
-
 		@Inject(DI.clipNotesRepository)
 		private clipNotesRepository: ClipNotesRepository,
-
 		private driveService: DriveService,
 		private queueLoggerService: QueueLoggerService,
 		private idService: IdService,
@@ -53,7 +49,7 @@ export class ExportClipsProcessorService {
 	public async process(job: Bull.Job<DbJobDataWithUser>): Promise<void> {
 		this.logger.info(`Exporting clips of ${job.data.user.id} ...`);
 
-		const user = await this.usersRepository.findOneBy({ id: job.data.user.id });
+		const user = await this.usersRepository.findOneBy({id: job.data.user.id});
 		if (user == null) {
 			return;
 		}
@@ -64,7 +60,7 @@ export class ExportClipsProcessorService {
 		this.logger.info(`Temp file is ${path}`);
 
 		try {
-			const stream = Writable.toWeb(fs.createWriteStream(path, { flags: 'a' }));
+			const stream = Writable.toWeb(fs.createWriteStream(path, {flags: 'a'}));
 			const writer = stream.getWriter();
 			writer.closed.catch(this.logger.error);
 
@@ -78,7 +74,7 @@ export class ExportClipsProcessorService {
 			this.logger.succ(`Exported to: ${path}`);
 
 			const fileName = 'clips-' + dateFormat(new Date(), 'yyyy-MM-dd-HH-mm-ss') + '.json';
-			const driveFile = await this.driveService.addFile({ user, path, name: fileName, force: true, ext: 'json' });
+			const driveFile = await this.driveService.addFile({user, path, name: fileName, force: true, ext: 'json'});
 
 			this.logger.succ(`Exported to: ${driveFile.id}`);
 
@@ -99,7 +95,7 @@ export class ExportClipsProcessorService {
 			const clips = await this.clipsRepository.find({
 				where: {
 					userId: user.id,
-					...(cursor ? { id: MoreThan(cursor) } : {}),
+					...(cursor ? {id: MoreThan(cursor)} : {}),
 				},
 				take: 100,
 				order: {
@@ -142,7 +138,7 @@ export class ExportClipsProcessorService {
 			const clipNotes = await this.clipNotesRepository.find({
 				where: {
 					clipId,
-					...(cursor ? { id: MoreThan(cursor) } : {}),
+					...(cursor ? {id: MoreThan(cursor)} : {}),
 				},
 				take: 100,
 				order: {
@@ -160,7 +156,7 @@ export class ExportClipsProcessorService {
 			for (const clipNote of clipNotes) {
 				let poll: MiPoll | undefined;
 				if (clipNote.note.hasPoll) {
-					poll = await this.pollsRepository.findOneByOrFail({ noteId: clipNote.note.id });
+					poll = await this.pollsRepository.findOneByOrFail({noteId: clipNote.note.id});
 				}
 				const content = JSON.stringify(this.serializeClipNote(clipNote, poll));
 				const isFirst = exportedClipNotesCount === 0;

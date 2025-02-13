@@ -4,35 +4,39 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="900">
-		<div class="_gaps">
-			<div :class="$style.decorations">
-				<div
-					v-for="avatarDecoration in avatarDecorations"
-					:key="avatarDecoration.id"
-					v-panel
-					:class="$style.decoration"
-					@click="edit(avatarDecoration)"
-				>
-					<div :class="$style.decorationName"><MkCondensedLine :minScale="0.5">{{ avatarDecoration.name }}</MkCondensedLine></div>
-					<MkAvatar style="width: 60px; height: 60px;" :user="$i" :decorations="[{ url: avatarDecoration.url }]" forceShowDecoration/>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs"/>
+		</template>
+		<MkSpacer :contentMax="900">
+			<div class="_gaps">
+				<div :class="$style.decorations">
+					<div
+						v-for="avatarDecoration in avatarDecorations"
+						:key="avatarDecoration.id"
+						v-panel
+						:class="$style.decoration"
+						@click="edit(avatarDecoration)"
+					>
+						<div :class="$style.decorationName">
+							<MkCondensedLine :minScale="0.5">{{ avatarDecoration.name }}</MkCondensedLine>
+						</div>
+						<MkAvatar :decorations="[{ url: avatarDecoration.url }]" :user="$i" forceShowDecoration style="width: 60px; height: 60px;"/>
+					</div>
 				</div>
 			</div>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, defineAsyncComponent } from 'vue';
+import {ref, computed, defineAsyncComponent} from 'vue';
 import * as Misskey from 'misskey-js';
-import { signinRequired } from '@/account.js';
+import {signinRequired} from '@/account.js';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { i18n } from '@/i18n.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {i18n} from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
 
 const $i = signinRequired();
 
@@ -47,8 +51,7 @@ function load() {
 load();
 
 async function add(ev: MouseEvent) {
-	const { dispose } = os.popup(defineAsyncComponent(() => import('./avatar-decoration-edit-dialog.vue')), {
-	}, {
+	const {dispose} = os.popup(defineAsyncComponent(() => import('./avatar-decoration-edit-dialog.vue')), {}, {
 		done: result => {
 			if (result.created) {
 				avatarDecorations.value.unshift(result.created);
@@ -59,7 +62,7 @@ async function add(ev: MouseEvent) {
 }
 
 function edit(avatarDecoration) {
-	const { dispose } = os.popup(defineAsyncComponent(() => import('./avatar-decoration-edit-dialog.vue')), {
+	const {dispose} = os.popup(defineAsyncComponent(() => import('./avatar-decoration-edit-dialog.vue')), {
 		avatarDecoration: avatarDecoration,
 	}, {
 		done: result => {

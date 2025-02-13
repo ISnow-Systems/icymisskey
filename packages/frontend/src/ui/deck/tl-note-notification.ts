@@ -4,11 +4,11 @@
  */
 
 import * as Misskey from 'misskey-js';
-import type { Ref } from 'vue';
-import type { SoundStore } from '@/store.js';
-import type { SoundType } from '@/scripts/sound.js';
-import { getSoundDuration, playMisskeySfxFile, soundsTypes } from '@/scripts/sound.js';
-import { i18n } from '@/i18n.js';
+import type {Ref} from 'vue';
+import type {SoundStore} from '@/store.js';
+import type {SoundType} from '@/scripts/sound.js';
+import {getSoundDuration, playMisskeySfxFile, soundsTypes} from '@/scripts/sound.js';
+import {i18n} from '@/i18n.js';
 import * as os from '@/os.js';
 
 export async function soundSettingsButton(soundSetting: Ref<SoundStore>): Promise<void> {
@@ -23,7 +23,7 @@ export async function soundSettingsButton(soundSetting: Ref<SoundStore>): Promis
 		}
 	}
 
-	const { canceled, result } = await os.form(i18n.ts.sound, {
+	const {canceled, result} = await os.form(i18n.ts.sound, {
 		type: {
 			type: 'enum',
 			label: i18n.ts.sound,
@@ -49,7 +49,7 @@ export async function soundSettingsButton(soundSetting: Ref<SoundStore>): Promis
 
 				const duration = await getSoundDuration(file.url);
 				if (duration >= 2000) {
-					const { canceled } = await os.confirm({
+					const {canceled} = await os.confirm({
 						type: 'warning',
 						title: i18n.ts._soundSettings.driveFileDurationWarn,
 						text: i18n.ts._soundSettings.driveFileDurationWarnDescription,
@@ -100,9 +100,9 @@ export async function soundSettingsButton(soundSetting: Ref<SoundStore>): Promis
 				});
 				return null;
 			}
-			return { type, volume, fileId, fileUrl };
+			return {type, volume, fileId, fileUrl};
 		} else {
-			return { type, volume };
+			return {type, volume};
 		}
 	}
 }

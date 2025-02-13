@@ -4,31 +4,31 @@
  */
 
 import * as fs from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { dirname } from 'node:path';
-import { Inject, Injectable } from '@nestjs/common';
+import {fileURLToPath} from 'node:url';
+import {dirname} from 'node:path';
+import {Inject, Injectable} from '@nestjs/common';
 import rename from 'rename';
 import sharp from 'sharp';
-import { sharpBmp } from '@misskey-dev/sharp-read-bmp';
-import type { Config } from '@/config.js';
-import type { MiDriveFile, DriveFilesRepository } from '@/models/_.js';
-import { DI } from '@/di-symbols.js';
-import { createTemp } from '@/misc/create-temp.js';
-import { FILE_TYPE_BROWSERSAFE } from '@/const.js';
-import { StatusError } from '@/misc/status-error.js';
+import {sharpBmp} from '@misskey-dev/sharp-read-bmp';
+import type {Config} from '@/config.js';
+import type {MiDriveFile, DriveFilesRepository} from '@/models/_.js';
+import {DI} from '@/di-symbols.js';
+import {createTemp} from '@/misc/create-temp.js';
+import {FILE_TYPE_BROWSERSAFE} from '@/const.js';
+import {StatusError} from '@/misc/status-error.js';
 import type Logger from '@/logger.js';
-import { DownloadService } from '@/core/DownloadService.js';
-import { IImageStreamable, ImageProcessingService, webpDefault } from '@/core/ImageProcessingService.js';
-import { VideoProcessingService } from '@/core/VideoProcessingService.js';
-import { InternalStorageService } from '@/core/InternalStorageService.js';
-import { contentDisposition } from '@/misc/content-disposition.js';
-import { FileInfoService } from '@/core/FileInfoService.js';
-import { LoggerService } from '@/core/LoggerService.js';
-import { bindThis } from '@/decorators.js';
-import { isMimeImage } from '@/misc/is-mime-image.js';
-import { correctFilename } from '@/misc/correct-filename.js';
-import { handleRequestRedirectToOmitSearch } from '@/misc/fastify-hook-handlers.js';
-import type { FastifyInstance, FastifyRequest, FastifyReply, FastifyPluginOptions } from 'fastify';
+import {DownloadService} from '@/core/DownloadService.js';
+import {IImageStreamable, ImageProcessingService, webpDefault} from '@/core/ImageProcessingService.js';
+import {VideoProcessingService} from '@/core/VideoProcessingService.js';
+import {InternalStorageService} from '@/core/InternalStorageService.js';
+import {contentDisposition} from '@/misc/content-disposition.js';
+import {FileInfoService} from '@/core/FileInfoService.js';
+import {LoggerService} from '@/core/LoggerService.js';
+import {bindThis} from '@/decorators.js';
+import {isMimeImage} from '@/misc/is-mime-image.js';
+import {correctFilename} from '@/misc/correct-filename.js';
+import {handleRequestRedirectToOmitSearch} from '@/misc/fastify-hook-handlers.js';
+import type {FastifyInstance, FastifyRequest, FastifyReply, FastifyPluginOptions} from 'fastify';
 
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
@@ -42,10 +42,8 @@ export class FileServerService {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.driveFilesRepository)
 		private driveFilesRepository: DriveFilesRepository,
-
 		private fileInfoService: FileInfoService,
 		private downloadService: DownloadService,
 		private imageProcessingService: ImageProcessingService,
@@ -365,7 +363,7 @@ export class FileServerService {
 						type: file.mime,
 					};
 				} else {
-					const data = (await sharpBmp(file.path, file.mime, { animated: !('static' in request.query) }))
+					const data = (await sharpBmp(file.path, file.mime, {animated: !('static' in request.query)}))
 						.resize({
 							height: 'emoji' in request.query ? 128 : 320,
 							withoutEnlargement: true,
@@ -392,7 +390,7 @@ export class FileServerService {
 					.greyscale()
 					.normalise()
 					.linear(1.75, -(128 * 1.75) + 128) // 1.75x contrast
-					.flatten({ background: '#000' })
+					.flatten({background: '#000'})
 					.toColorspace('b-w');
 
 				const stats = await mask.clone().stats();
@@ -403,7 +401,7 @@ export class FileServerService {
 				}
 
 				const data = sharp({
-					create: { width: 96, height: 96, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } },
+					create: {width: 96, height: 96, channels: 4, background: {r: 0, g: 0, b: 0, alpha: 0}},
 				})
 					.pipelineColorspace('b-w')
 					.boolean(await mask.png().toBuffer(), 'eor');
@@ -497,13 +495,13 @@ export class FileServerService {
 
 	@bindThis
 	private async downloadAndDetectTypeFromUrl(url: string): Promise<
-		{ state: 'remote' ; mime: string; ext: string | null; path: string; cleanup: () => void; filename: string; }
+		{ state: 'remote'; mime: string; ext: string | null; path: string; cleanup: () => void; filename: string; }
 	> {
 		const [path, cleanup] = await createTemp();
 		try {
-			const { filename } = await this.downloadService.downloadUrl(url, path);
+			const {filename} = await this.downloadService.downloadUrl(url, path);
 
-			const { mime, ext } = await this.fileInfoService.detectType(path);
+			const {mime, ext} = await this.fileInfoService.detectType(path);
 
 			return {
 				state: 'remote',
@@ -526,9 +524,9 @@ export class FileServerService {
 	> {
 		// Fetch drive file
 		const file = await this.driveFilesRepository.createQueryBuilder('file')
-			.where('file.accessKey = :accessKey', { accessKey: key })
-			.orWhere('file.thumbnailAccessKey = :thumbnailAccessKey', { thumbnailAccessKey: key })
-			.orWhere('file.webpublicAccessKey = :webpublicAccessKey', { webpublicAccessKey: key })
+			.where('file.accessKey = :accessKey', {accessKey: key})
+			.orWhere('file.thumbnailAccessKey = :thumbnailAccessKey', {thumbnailAccessKey: key})
+			.orWhere('file.webpublicAccessKey = :webpublicAccessKey', {webpublicAccessKey: key})
 			.getOne();
 
 		if (file == null) return '404';
@@ -552,7 +550,7 @@ export class FileServerService {
 		const path = this.internalStorageService.resolvePath(key);
 
 		if (isThumbnail || isWebpublic) {
-			const { mime, ext } = await this.fileInfoService.detectType(path);
+			const {mime, ext} = await this.fileInfoService.detectType(path);
 			return {
 				state: 'stored_internal',
 				fileRole: isThumbnail ? 'thumbnail' : 'webpublic',

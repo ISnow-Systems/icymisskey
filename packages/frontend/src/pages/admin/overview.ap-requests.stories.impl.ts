@@ -3,11 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { StoryObj } from '@storybook/vue3';
-import { http, HttpResponse } from 'msw';
-import { action } from '@storybook/addon-actions';
-import { commonHandlers } from '../../../.storybook/mocks.js';
+import type {StoryObj} from '@storybook/vue3';
+import {http, HttpResponse} from 'msw';
+import {action} from '@storybook/addon-actions';
+import {commonHandlers} from '../../../.storybook/mocks.js';
 import overview_ap_requests from './overview.ap-requests.vue';
+
 export const Default = {
 	render(args) {
 		return {
@@ -27,7 +28,7 @@ export const Default = {
 		msw: {
 			handlers: [
 				...commonHandlers,
-				http.post('/api/charts/ap-request', async ({ request }) => {
+				http.post('/api/charts/ap-request', async ({request}) => {
 					action('POST /api/charts/ap-request')(await request.json());
 					return HttpResponse.json({
 						deliverFailed: [0, 0, 0, 2, 0, 0, 1, 0, 0, 2, 0, 0, 0, 0, 0, 0, 2, 0, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 1, 0, 0, 0, 3, 1, 1, 2, 0, 0],

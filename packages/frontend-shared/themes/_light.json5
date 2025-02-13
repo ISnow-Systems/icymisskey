@@ -2,12 +2,10 @@
 // このテーマが直接使われることは無い
 {
 	id: 'light',
-
 	name: 'Light',
 	author: 'syuilo',
 	desc: 'Default light theme',
 	kind: 'light',
-
 	props: {
 		accent: '#86b300',
 		accentDarken: ':darken<10<@accent',
@@ -80,7 +78,6 @@
 		deckBg: ':darken<3<@bg',
 		htmlThemeColor: '@bg',
 	},
-
 	codeHighlighter: {
 		base: 'catppuccin-latte',
 	},

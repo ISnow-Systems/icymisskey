@@ -1,4 +1,5 @@
 # misskey.js
+
 **Strongly-typed official Misskey SDK for browsers/Node.js.**
 
 [![Test](https://github.com/misskey-dev/misskey.js/actions/workflows/test.yml/badge.svg)](https://github.com/misskey-dev/misskey.js/actions/workflows/test.yml)
@@ -9,6 +10,7 @@
 JavaScript(TypeScript)用の公式MisskeySDKです。ブラウザ/Node.js上で動作します。
 
 以下が提供されています:
+
 - ユーザー認証
 - APIリクエスト
 - ストリーミング
@@ -18,11 +20,13 @@ JavaScript(TypeScript)用の公式MisskeySDKです。ブラウザ/Node.js上で�
 対応するMisskeyのバージョンは12以上です。
 
 ## Install
+
 ```
 npm i misskey-js
 ```
 
 # Usage
+
 インポートは以下のようにまとめて行うと便利です。
 
 ``` ts
@@ -38,9 +42,11 @@ import { api as misskeyApi } from 'misskey-js';
 ```
 
 ## Authenticate
+
 todo
 
 ## API request
+
 APIを利用する際は、利用するサーバーの情報とアクセストークンを与えて`APIClient`クラスのインスタンスを初期化し、そのインスタンスの`request`メソッドを呼び出してリクエストを行います。
 
 ``` ts
@@ -55,6 +61,7 @@ const meta = await cli.request('meta', { detail: true });
 `request`の第一引数には呼び出すエンドポイント名、第二引数にはパラメータオブジェクトを渡します。レスポンスはPromiseとして返ります。
 
 ## Streaming
+
 misskey.jsのストリーミングでは、二つのクラスが提供されます。
 ひとつは、ストリーミングのコネクション自体を司る`Stream`クラスと、もうひとつはストリーミング上のチャンネルの概念を表す`Channel`クラスです。
 ストリーミングを利用する際は、まず`Stream`クラスのインスタンスを初期化し、その後で`Stream`インスタンスのメソッドを利用して`Channel`クラスのインスタンスを取得する形になります。
@@ -70,9 +77,11 @@ mainChannel.on('notification', notification => {
 コネクションが途切れても自動で再接続されます。
 
 ### チャンネルへの接続
+
 チャンネルへの接続は`Stream`クラスの`useChannel`メソッドを使用します。
 
 パラメータなし
+
 ``` ts
 const stream = new Misskey.Stream('https://misskey.test', { token: 'TOKEN' });
 
@@ -80,6 +89,7 @@ const mainChannel = stream.useChannel('main');
 ```
 
 パラメータあり
+
 ``` ts
 const stream = new Misskey.Stream('https://misskey.test', { token: 'TOKEN' });
 
@@ -89,6 +99,7 @@ const messagingChannel = stream.useChannel('messaging', {
 ```
 
 ### チャンネルから切断
+
 `Channel`クラスの`dispose`メソッドを呼び出します。
 
 ``` ts
@@ -100,6 +111,7 @@ mainChannel.dispose();
 ```
 
 ### メッセージの受信
+
 `Channel`クラスはEventEmitterを継承しており、メッセージがサーバーから受信されると受け取ったイベント名でペイロードをemitします。
 
 ``` ts
@@ -111,6 +123,7 @@ mainChannel.on('notification', notification => {
 ```
 
 ### メッセージの送信
+
 `Channel`クラスの`send`メソッドを使用してメッセージをサーバーに送信することができます。
 
 ``` ts
@@ -125,6 +138,7 @@ messagingChannel.send('read', {
 ```
 
 ### コネクション確立イベント
+
 `Stream`クラスの`_connected_`イベントが利用可能です。
 
 ``` ts
@@ -135,6 +149,7 @@ stream.on('_connected_', () => {
 ```
 
 ### コネクション切断イベント
+
 `Stream`クラスの`_disconnected_`イベントが利用可能です。
 
 ``` ts
@@ -145,6 +160,7 @@ stream.on('_disconnected_', () => {
 ```
 
 ### コネクションの状態
+
 `Stream`クラスの`state`プロパティで確認できます。
 
 - `initializing`: 接続確立前

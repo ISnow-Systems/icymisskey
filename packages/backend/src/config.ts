@@ -4,11 +4,11 @@
  */
 
 import * as fs from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { dirname, resolve } from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {dirname, resolve} from 'node:path';
 import * as yaml from 'js-yaml';
 import * as Sentry from '@sentry/node';
-import type { RedisOptions } from 'ioredis';
+import type {RedisOptions} from 'ioredis';
 
 type RedisOptionsSource = Partial<RedisOptions> & {
 	host: string;
@@ -105,8 +105,8 @@ type Source = {
 
 	logging?: {
 		sql?: {
-			disableQueryTruncation? : boolean,
-			enableQueryParamLogging? : boolean,
+			disableQueryTruncation?: boolean,
+			enableQueryParamLogging?: boolean,
 		}
 	}
 };
@@ -166,8 +166,8 @@ export type Config = {
 	signToActivityPubGet: boolean | undefined;
 	logging?: {
 		sql?: {
-			disableQueryTruncation? : boolean,
-			enableQueryParamLogging? : boolean,
+			disableQueryTruncation?: boolean,
+			enableQueryParamLogging?: boolean,
 		}
 	}
 
@@ -229,10 +229,10 @@ export function loadConfig(): Config {
 	const frontendEmbedManifestExists = fs.existsSync(_dirname + '/../../../built/_frontend_embed_vite_/manifest.json');
 	const frontendManifest = frontendManifestExists ?
 		JSON.parse(fs.readFileSync(`${_dirname}/../../../built/_frontend_vite_/manifest.json`, 'utf-8'))
-		: { 'src/_boot_.ts': { file: 'src/_boot_.ts' } };
+		: {'src/_boot_.ts': {file: 'src/_boot_.ts'}};
 	const frontendEmbedManifest = frontendEmbedManifestExists ?
 		JSON.parse(fs.readFileSync(`${_dirname}/../../../built/_frontend_embed_vite_/manifest.json`, 'utf-8'))
-		: { 'src/boot.ts': { file: 'src/boot.ts' } };
+		: {'src/boot.ts': {file: 'src/boot.ts'}};
 
 	const config = yaml.load(fs.readFileSync(path, 'utf-8')) as Source;
 
@@ -270,7 +270,7 @@ export function loadConfig(): Config {
 		apiUrl: `${scheme}://${host}/api`,
 		authUrl: `${scheme}://${host}/auth`,
 		driveUrl: `${scheme}://${host}/files`,
-		db: { ...config.db, db: dbDb, user: dbUser, pass: dbPass },
+		db: {...config.db, db: dbDb, user: dbUser, pass: dbPass},
 		dbReplications: config.dbReplications,
 		dbSlaves: config.dbSlaves,
 		fulltextSearch: config.fulltextSearch,

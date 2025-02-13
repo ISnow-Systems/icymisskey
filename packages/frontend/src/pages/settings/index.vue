@@ -4,42 +4,46 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="900" :marginMin="20" :marginMax="32">
-		<div ref="el" class="vvcocwet" :class="{ wide: !narrow }">
-			<div class="body">
-				<div v-if="!narrow || currentPage?.route.name == null" class="nav">
-					<div class="baaadecd">
-						<MkInfo v-if="emailNotConfigured" warn class="info">{{ i18n.ts.emailNotConfiguredWarning }} <MkA to="/settings/email" class="_link">{{ i18n.ts.configure }}</MkA></MkInfo>
-						<MkSuperMenu :def="menuDef" :grid="narrow"></MkSuperMenu>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs"/>
+		</template>
+		<MkSpacer :contentMax="900" :marginMax="32" :marginMin="20">
+			<div ref="el" :class="{ wide: !narrow }" class="vvcocwet">
+				<div class="body">
+					<div v-if="!narrow || currentPage?.route.name == null" class="nav">
+						<div class="baaadecd">
+							<MkInfo v-if="emailNotConfigured" class="info" warn>{{ i18n.ts.emailNotConfiguredWarning }}
+								<MkA class="_link" to="/settings/email">{{ i18n.ts.configure }}</MkA>
+							</MkInfo>
+							<MkSuperMenu :def="menuDef" :grid="narrow"></MkSuperMenu>
+						</div>
 					</div>
-				</div>
-				<div v-if="!(narrow && currentPage?.route.name == null)" class="main">
-					<div class="bkzroven" style="container-type: inline-size;">
-						<RouterView nested/>
+					<div v-if="!(narrow && currentPage?.route.name == null)" class="main">
+						<div class="bkzroven" style="container-type: inline-size;">
+							<RouterView nested/>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-	</MkSpacer>
-	<MkFooterSpacer/>
-</mkstickycontainer>
+		</MkSpacer>
+		<MkFooterSpacer/>
+	</mkstickycontainer>
 </template>
 
-<script setup lang="ts">
-import { computed, onActivated, onMounted, onUnmounted, ref, shallowRef, watch } from 'vue';
-import { i18n } from '@/i18n.js';
+<script lang="ts" setup>
+import {computed, onActivated, onMounted, onUnmounted, ref, shallowRef, watch} from 'vue';
+import {i18n} from '@/i18n.js';
 import MkInfo from '@/components/MkInfo.vue';
 import MkSuperMenu from '@/components/MkSuperMenu.vue';
-import { signout, $i } from '@/account.js';
-import { clearCache } from '@/scripts/clear-cache.js';
-import { instance } from '@/instance.js';
-import { definePageMetadata, provideMetadataReceiver, provideReactiveMetadata } from '@/scripts/page-metadata.js';
+import {signout, $i} from '@/account.js';
+import {clearCache} from '@/scripts/clear-cache.js';
+import {instance} from '@/instance.js';
+import {definePageMetadata, provideMetadataReceiver, provideReactiveMetadata} from '@/scripts/page-metadata.js';
 import * as os from '@/os.js';
-import { useRouter } from '@/router/supplier.js';
-import type { PageMetadata } from '@/scripts/page-metadata.js';
-import type { SuperMenuDef } from '@/components/MkSuperMenu.vue';
+import {useRouter} from '@/router/supplier.js';
+import type {PageMetadata} from '@/scripts/page-metadata.js';
+import type {SuperMenuDef} from '@/components/MkSuperMenu.vue';
 
 const indexInfo = {
 	title: i18n.ts.settings,
@@ -189,7 +193,7 @@ const menuDef = computed<SuperMenuDef[]>(() => [{
 		icon: 'ti ti-power',
 		text: i18n.ts.logout,
 		action: async () => {
-			const { canceled } = await os.confirm({
+			const {canceled} = await os.confirm({
 				type: 'warning',
 				text: i18n.ts.logoutConfirm,
 			});

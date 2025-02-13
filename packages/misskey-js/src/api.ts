@@ -1,7 +1,7 @@
 import './autogen/apiClientJSDoc.js';
 
-import { endpointReqTypes } from './autogen/endpoint.js';
-import type { SwitchCaseResponseType, Endpoints } from './api.types.js';
+import {endpointReqTypes} from './autogen/endpoint.js';
+import type {SwitchCaseResponseType, Endpoints} from './api.types.js';
 
 export type {
 	SwitchCaseResponseType,
@@ -49,15 +49,6 @@ export class APIClient {
 		// ネイティブ関数をそのまま変数に代入して使おうとするとChromiumではIllegal invocationエラーが発生するため、
 		// 環境で実装されているfetchを使う場合は無名関数でラップして使用する
 		this.fetch = opts.fetch ?? ((...args) => fetch(...args));
-	}
-
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	private assertIsRecord<T>(obj: T): obj is T & Record<string, any> {
-		return obj !== null && typeof obj === 'object' && !Array.isArray(obj);
-	}
-
-	private assertSpecialEpReqType(ep: keyof Endpoints): ep is keyof typeof endpointReqTypes {
-		return ep in endpointReqTypes;
 	}
 
 	public request<E extends keyof Endpoints, P extends Endpoints[E]['req']>(
@@ -124,5 +115,14 @@ export class APIClient {
 				}
 			}).catch(reject);
 		});
+	}
+
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	private assertIsRecord<T>(obj: T): obj is T & Record<string, any> {
+		return obj !== null && typeof obj === 'object' && !Array.isArray(obj);
+	}
+
+	private assertSpecialEpReqType(ep: keyof Endpoints): ep is keyof typeof endpointReqTypes {
+		return ep in endpointReqTypes;
 	}
 }

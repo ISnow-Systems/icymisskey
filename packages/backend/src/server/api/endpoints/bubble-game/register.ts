@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import ms from 'ms';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { IdService } from '@/core/IdService.js';
-import type { BubbleGameRecordsRepository } from '@/models/_.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../error.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {IdService} from '@/core/IdService.js';
+import type {BubbleGameRecordsRepository} from '@/models/_.js';
+import {DI} from '@/di-symbols.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	requireCredential: true,
@@ -34,8 +34,8 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		score: { type: 'integer', minimum: 0 },
-		seed: { type: 'string', minLength: 1, maxLength: 1024 },
+		score: {type: 'integer', minimum: 0},
+		seed: {type: 'string', minLength: 1, maxLength: 1024},
 		logs: {
 			type: 'array',
 			items: {
@@ -45,8 +45,8 @@ export const paramDef = {
 				},
 			},
 		},
-		gameMode: { type: 'string' },
-		gameVersion: { type: 'integer' },
+		gameMode: {type: 'string'},
+		gameVersion: {type: 'integer'},
 	},
 	required: ['score', 'seed', 'logs', 'gameMode', 'gameVersion'],
 } as const;
@@ -56,7 +56,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.bubbleGameRecordsRepository)
 		private bubbleGameRecordsRepository: BubbleGameRecordsRepository,
-
 		private idService: IdService,
 	) {
 		super(meta, paramDef, async (ps, me) => {

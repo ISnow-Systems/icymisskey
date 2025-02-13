@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { SearchService } from '@/core/SearchService.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { RoleService } from '@/core/RoleService.js';
-import { ApiError } from '../../error.js';
+import {Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {SearchService} from '@/core/SearchService.js';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
+import {RoleService} from '@/core/RoleService.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['notes'],
@@ -37,17 +37,17 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		query: { type: 'string' },
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
-		offset: { type: 'integer', default: 0 },
+		query: {type: 'string'},
+		sinceId: {type: 'string', format: 'misskey:id'},
+		untilId: {type: 'string', format: 'misskey:id'},
+		limit: {type: 'integer', minimum: 1, maximum: 100, default: 10},
+		offset: {type: 'integer', default: 0},
 		host: {
 			type: 'string',
 			description: 'The local host is represented with `.`.',
 		},
-		userId: { type: 'string', format: 'misskey:id', nullable: true, default: null },
-		channelId: { type: 'string', format: 'misskey:id', nullable: true, default: null },
+		userId: {type: 'string', format: 'misskey:id', nullable: true, default: null},
+		channelId: {type: 'string', format: 'misskey:id', nullable: true, default: null},
 	},
 	required: ['query'],
 } as const;

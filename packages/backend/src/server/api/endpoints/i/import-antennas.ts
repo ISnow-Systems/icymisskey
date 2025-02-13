@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import ms from 'ms';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { QueueService } from '@/core/QueueService.js';
-import type { AntennasRepository, DriveFilesRepository, UsersRepository, MiAntenna as _Antenna } from '@/models/_.js';
-import { DI } from '@/di-symbols.js';
-import { RoleService } from '@/core/RoleService.js';
-import { DownloadService } from '@/core/DownloadService.js';
-import { ApiError } from '../../error.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {QueueService} from '@/core/QueueService.js';
+import type {AntennasRepository, DriveFilesRepository, UsersRepository, MiAntenna as _Antenna} from '@/models/_.js';
+import {DI} from '@/di-symbols.js';
+import {RoleService} from '@/core/RoleService.js';
+import {DownloadService} from '@/core/DownloadService.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	secure: true,
@@ -50,35 +50,32 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		fileId: { type: 'string', format: 'misskey:id' },
+		fileId: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['fileId'],
 } as const;
 
 @Injectable() // eslint-disable-next-line import/no-default-export
 export default class extends Endpoint<typeof meta, typeof paramDef> {
-	constructor (
+	constructor(
 		@Inject(DI.driveFilesRepository)
 		private driveFilesRepository: DriveFilesRepository,
-
 		@Inject(DI.antennasRepository)
 		private antennasRepository: AntennasRepository,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		private roleService: RoleService,
 		private queueService: QueueService,
 		private downloadService: DownloadService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const userExist = await this.usersRepository.exists({ where: { id: me.id } });
+			const userExist = await this.usersRepository.exists({where: {id: me.id}});
 			if (!userExist) throw new ApiError(meta.errors.noSuchUser);
-			const file = await this.driveFilesRepository.findOneBy({ id: ps.fileId });
+			const file = await this.driveFilesRepository.findOneBy({id: ps.fileId});
 			if (file === null) throw new ApiError(meta.errors.noSuchFile);
 			if (file.size === 0) throw new ApiError(meta.errors.emptyFile);
 			const antennas: (_Antenna & { userListAccts: string[] | null })[] = JSON.parse(await this.downloadService.downloadTextFile(file.url));
-			const currentAntennasCount = await this.antennasRepository.countBy({ userId: me.id });
+			const currentAntennasCount = await this.antennasRepository.countBy({userId: me.id});
 			if (currentAntennasCount + antennas.length >= (await this.roleService.getUserPolicies(me.id)).antennaLimit) {
 				throw new ApiError(meta.errors.tooManyAntennas);
 			}

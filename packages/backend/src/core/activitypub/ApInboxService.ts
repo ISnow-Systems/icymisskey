@@ -3,42 +3,42 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { In } from 'typeorm';
-import { DI } from '@/di-symbols.js';
-import type { Config } from '@/config.js';
-import { UserFollowingService } from '@/core/UserFollowingService.js';
-import { ReactionService } from '@/core/ReactionService.js';
-import { RelayService } from '@/core/RelayService.js';
-import { NotePiningService } from '@/core/NotePiningService.js';
-import { UserBlockingService } from '@/core/UserBlockingService.js';
-import { NoteDeleteService } from '@/core/NoteDeleteService.js';
-import { NoteCreateService } from '@/core/NoteCreateService.js';
-import { concat, toArray, toSingle, unique } from '@/misc/prelude/array.js';
-import { AppLockService } from '@/core/AppLockService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {In} from 'typeorm';
+import {DI} from '@/di-symbols.js';
+import type {Config} from '@/config.js';
+import {UserFollowingService} from '@/core/UserFollowingService.js';
+import {ReactionService} from '@/core/ReactionService.js';
+import {RelayService} from '@/core/RelayService.js';
+import {NotePiningService} from '@/core/NotePiningService.js';
+import {UserBlockingService} from '@/core/UserBlockingService.js';
+import {NoteDeleteService} from '@/core/NoteDeleteService.js';
+import {NoteCreateService} from '@/core/NoteCreateService.js';
+import {concat, toArray, toSingle, unique} from '@/misc/prelude/array.js';
+import {AppLockService} from '@/core/AppLockService.js';
 import type Logger from '@/logger.js';
-import { IdService } from '@/core/IdService.js';
-import { StatusError } from '@/misc/status-error.js';
-import { UtilityService } from '@/core/UtilityService.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { QueueService } from '@/core/QueueService.js';
-import type { UsersRepository, NotesRepository, FollowingsRepository, AbuseUserReportsRepository, FollowRequestsRepository, MiMeta } from '@/models/_.js';
-import { bindThis } from '@/decorators.js';
-import type { MiRemoteUser } from '@/models/User.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { AbuseReportService } from '@/core/AbuseReportService.js';
-import { IdentifiableError } from '@/misc/identifiable-error.js';
-import { getApHrefNullable, getApId, getApIds, getApType, isAccept, isActor, isAdd, isAnnounce, isBlock, isCollection, isCollectionOrOrderedCollection, isCreate, isDelete, isFlag, isFollow, isLike, isMove, isPost, isReject, isRemove, isTombstone, isUndo, isUpdate, validActor, validPost } from './type.js';
-import { ApNoteService } from './models/ApNoteService.js';
-import { ApLoggerService } from './ApLoggerService.js';
-import { ApDbResolverService } from './ApDbResolverService.js';
-import { ApResolverService } from './ApResolverService.js';
-import { ApAudienceService } from './ApAudienceService.js';
-import { ApPersonService } from './models/ApPersonService.js';
-import { ApQuestionService } from './models/ApQuestionService.js';
-import type { Resolver } from './ApResolverService.js';
-import type { IAccept, IAdd, IAnnounce, IBlock, ICreate, IDelete, IFlag, IFollow, ILike, IObject, IReject, IRemove, IUndo, IUpdate, IMove, IPost } from './type.js';
+import {IdService} from '@/core/IdService.js';
+import {StatusError} from '@/misc/status-error.js';
+import {UtilityService} from '@/core/UtilityService.js';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {QueueService} from '@/core/QueueService.js';
+import type {UsersRepository, NotesRepository, FollowingsRepository, AbuseUserReportsRepository, FollowRequestsRepository, MiMeta} from '@/models/_.js';
+import {bindThis} from '@/decorators.js';
+import type {MiRemoteUser} from '@/models/User.js';
+import {GlobalEventService} from '@/core/GlobalEventService.js';
+import {AbuseReportService} from '@/core/AbuseReportService.js';
+import {IdentifiableError} from '@/misc/identifiable-error.js';
+import {getApHrefNullable, getApId, getApIds, getApType, isAccept, isActor, isAdd, isAnnounce, isBlock, isCollection, isCollectionOrOrderedCollection, isCreate, isDelete, isFlag, isFollow, isLike, isMove, isPost, isReject, isRemove, isTombstone, isUndo, isUpdate, validActor, validPost} from './type.js';
+import {ApNoteService} from './models/ApNoteService.js';
+import {ApLoggerService} from './ApLoggerService.js';
+import {ApDbResolverService} from './ApDbResolverService.js';
+import {ApResolverService} from './ApResolverService.js';
+import {ApAudienceService} from './ApAudienceService.js';
+import {ApPersonService} from './models/ApPersonService.js';
+import {ApQuestionService} from './models/ApQuestionService.js';
+import type {Resolver} from './ApResolverService.js';
+import type {IAccept, IAdd, IAnnounce, IBlock, ICreate, IDelete, IFlag, IFollow, ILike, IObject, IReject, IRemove, IUndo, IUpdate, IMove, IPost} from './type.js';
 
 @Injectable()
 export class ApInboxService {
@@ -47,22 +47,16 @@ export class ApInboxService {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.meta)
 		private meta: MiMeta,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		@Inject(DI.followingsRepository)
 		private followingsRepository: FollowingsRepository,
-
 		@Inject(DI.followRequestsRepository)
 		private followRequestsRepository: FollowRequestsRepository,
-
 		private userEntityService: UserEntityService,
 		private noteEntityService: NoteEntityService,
 		private utilityService: UtilityService,
@@ -189,7 +183,7 @@ export class ApInboxService {
 		}
 
 		// don't queue because the sender may attempt again when timeout
-		await this.userFollowingService.follow(actor, followee, { requestId: activity.id });
+		await this.userFollowingService.follow(actor, followee, {requestId: activity.id});
 		return 'ok';
 	}
 
@@ -268,7 +262,7 @@ export class ApInboxService {
 		}
 
 		if (activity.target === actor.featured) {
-			const note = await this.apNoteService.resolveNote(activity.object, { resolver });
+			const note = await this.apNoteService.resolveNote(activity.object, {resolver});
 			if (note == null) return 'note not found';
 			await this.notePiningService.addPinned(actor, note.id);
 			return;
@@ -323,7 +317,7 @@ export class ApInboxService {
 			// Announce対象をresolve
 			let renote;
 			try {
-				renote = await this.apNoteService.resolveNote(target, { resolver });
+				renote = await this.apNoteService.resolveNote(target, {resolver});
 				if (renote == null) return 'announce target is null';
 			} catch (err) {
 				// 対象が4xxならスキップ
@@ -375,7 +369,7 @@ export class ApInboxService {
 			return 'skip: ブロックしようとしているユーザーはローカルユーザーではありません';
 		}
 
-		await this.userBlockingService.block(await this.usersRepository.findOneByOrFail({ id: actor.id }), await this.usersRepository.findOneByOrFail({ id: blockee.id }));
+		await this.userBlockingService.block(await this.usersRepository.findOneByOrFail({id: actor.id}), await this.usersRepository.findOneByOrFail({id: blockee.id}));
 		return 'ok';
 	}
 
@@ -507,7 +501,7 @@ export class ApInboxService {
 			return `skip: delete actor ${actor.uri} !== ${uri}`;
 		}
 
-		const user = await this.usersRepository.findOneBy({ id: actor.id });
+		const user = await this.usersRepository.findOneBy({id: actor.id});
 		if (user == null) {
 			return 'skip: actor not found';
 		} else if (user.isDeleted) {
@@ -520,7 +514,7 @@ export class ApInboxService {
 			isDeleted: true,
 		});
 
-		this.globalEventService.publishInternalEvent('remoteUserUpdated', { id: actor.id });
+		this.globalEventService.publishInternalEvent('remoteUserUpdated', {id: actor.id});
 
 		return `ok: queued ${job.name} ${job.id}`;
 	}
@@ -629,7 +623,7 @@ export class ApInboxService {
 		}
 
 		if (activity.target === actor.featured) {
-			const note = await this.apNoteService.resolveNote(activity.object, { resolver });
+			const note = await this.apNoteService.resolveNote(activity.object, {resolver});
 			if (note == null) return 'note not found';
 			await this.notePiningService.removePinned(actor, note.id);
 			return;
@@ -715,7 +709,7 @@ export class ApInboxService {
 			return 'skip: ブロック解除しようとしているユーザーはローカルユーザーではありません';
 		}
 
-		await this.userBlockingService.unblock(await this.usersRepository.findOneByOrFail({ id: actor.id }), blockee);
+		await this.userBlockingService.unblock(await this.usersRepository.findOneByOrFail({id: actor.id}), blockee);
 		return 'ok';
 	}
 

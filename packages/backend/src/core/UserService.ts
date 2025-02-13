@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import type { FollowingsRepository, UsersRepository } from '@/models/_.js';
-import type { MiUser } from '@/models/User.js';
-import { DI } from '@/di-symbols.js';
-import { bindThis } from '@/decorators.js';
-import { SystemWebhookService } from '@/core/SystemWebhookService.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {FollowingsRepository, UsersRepository} from '@/models/_.js';
+import type {MiUser} from '@/models/User.js';
+import {DI} from '@/di-symbols.js';
+import {bindThis} from '@/decorators.js';
+import {SystemWebhookService} from '@/core/SystemWebhookService.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
 
 @Injectable()
 export class UserService {
@@ -30,7 +30,7 @@ export class UserService {
 				.set({
 					lastActiveDate: new Date(),
 				})
-				.where('id = :id', { id: user.id })
+				.where('id = :id', {id: user.id})
 				.returning('*')
 				.execute()
 				.then((response) => {
@@ -62,7 +62,7 @@ export class UserService {
 	 */
 	@bindThis
 	public async notifySystemWebhook(user: MiUser, type: 'userCreated') {
-		const packedUser = await this.userEntityService.pack(user, null, { schema: 'UserLite' });
+		const packedUser = await this.userEntityService.pack(user, null, {schema: 'UserLite'});
 		return this.systemWebhookService.enqueueSystemWebhook(type, packedUser);
 	}
 }

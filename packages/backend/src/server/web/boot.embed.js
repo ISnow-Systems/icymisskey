@@ -101,6 +101,7 @@
 			importAppScript();
 		});
 	}
+
 	//#endregion
 
 	async function addStyle(styleText) {

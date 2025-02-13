@@ -4,118 +4,118 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="omfetrab" :class="['s' + size, 'w' + width, 'h' + height, { asDrawer, asWindow }]" :style="{ maxHeight: maxHeight ? maxHeight + 'px' : undefined }">
-	<input
-		ref="searchEl"
-		:value="q"
-		class="search"
-		data-prevent-emoji-insert
-		:class="{ filled: q != null && q != '' }"
-		:placeholder="i18n.ts.search"
-		type="search"
-		autocapitalize="off"
-		@input="input()"
-		@paste.stop="paste"
-		@keydown="onKeydown"
-	>
-	<!-- FirefoxのTabフォーカスが想定外の挙動となるためtabindex="-1"を追加 https://github.com/misskey-dev/misskey/issues/10744 -->
-	<div ref="emojisEl" class="emojis" tabindex="-1">
-		<section class="result">
-			<div v-if="searchResultCustom.length > 0" class="body">
-				<button
-					v-for="emoji in searchResultCustom"
-					:key="emoji.name"
-					class="_button item"
-					:disabled="!canReact(emoji)"
-					:title="emoji.name"
-					tabindex="0"
-					@click="chosen(emoji, $event)"
-				>
-					<MkCustomEmoji class="emoji" :name="emoji.name" :fallbackToImage="true"/>
-				</button>
-			</div>
-			<div v-if="searchResultUnicode.length > 0" class="body">
-				<button
-					v-for="emoji in searchResultUnicode"
-					:key="emoji.name"
-					class="_button item"
-					:title="emoji.name"
-					tabindex="0"
-					@click="chosen(emoji, $event)"
-				>
-					<MkEmoji class="emoji" :emoji="emoji.char"/>
-				</button>
-			</div>
-		</section>
-
-		<div v-if="tab === 'index'" class="group index">
-			<section v-if="showPinned && (pinned && pinned.length > 0)">
-				<div class="body">
+	<div :class="['s' + size, 'w' + width, 'h' + height, { asDrawer, asWindow }]" :style="{ maxHeight: maxHeight ? maxHeight + 'px' : undefined }" class="omfetrab">
+		<input
+			ref="searchEl"
+			:class="{ filled: q != null && q != '' }"
+			:placeholder="i18n.ts.search"
+			:value="q"
+			autocapitalize="off"
+			class="search"
+			data-prevent-emoji-insert
+			type="search"
+			@input="input()"
+			@keydown="onKeydown"
+			@paste.stop="paste"
+		>
+		<!-- FirefoxのTabフォーカスが想定外の挙動となるためtabindex="-1"を追加 https://github.com/misskey-dev/misskey/issues/10744 -->
+		<div ref="emojisEl" class="emojis" tabindex="-1">
+			<section class="result">
+				<div v-if="searchResultCustom.length > 0" class="body">
 					<button
-						v-for="emoji in pinnedEmojisDef"
-						:key="getKey(emoji)"
-						:data-emoji="getKey(emoji)"
-						class="_button item"
+						v-for="emoji in searchResultCustom"
+						:key="emoji.name"
 						:disabled="!canReact(emoji)"
+						:title="emoji.name"
+						class="_button item"
 						tabindex="0"
-						@pointerenter="computeButtonTitle"
 						@click="chosen(emoji, $event)"
 					>
-						<MkCustomEmoji v-if="!emoji.hasOwnProperty('char')" class="emoji" :name="getKey(emoji)" :normal="true"/>
-						<MkEmoji v-else class="emoji" :emoji="getKey(emoji)" :normal="true"/>
+						<MkCustomEmoji :fallbackToImage="true" :name="emoji.name" class="emoji"/>
+					</button>
+				</div>
+				<div v-if="searchResultUnicode.length > 0" class="body">
+					<button
+						v-for="emoji in searchResultUnicode"
+						:key="emoji.name"
+						:title="emoji.name"
+						class="_button item"
+						tabindex="0"
+						@click="chosen(emoji, $event)"
+					>
+						<MkEmoji :emoji="emoji.char" class="emoji"/>
 					</button>
 				</div>
 			</section>
 
-			<section>
-				<header class="_acrylic"><i class="ti ti-clock ti-fw"></i> {{ i18n.ts.recentUsed }}</header>
-				<div class="body">
-					<button
-						v-for="emoji in recentlyUsedEmojisDef"
-						:key="getKey(emoji)"
-						class="_button item"
-						:disabled="!canReact(emoji)"
-						:data-emoji="getKey(emoji)"
-						@pointerenter="computeButtonTitle"
-						@click="chosen(emoji, $event)"
-					>
-						<MkCustomEmoji v-if="!emoji.hasOwnProperty('char')" class="emoji" :name="getKey(emoji)" :normal="true"/>
-						<MkEmoji v-else class="emoji" :emoji="getKey(emoji)" :normal="true"/>
-					</button>
-				</div>
-			</section>
+			<div v-if="tab === 'index'" class="group index">
+				<section v-if="showPinned && (pinned && pinned.length > 0)">
+					<div class="body">
+						<button
+							v-for="emoji in pinnedEmojisDef"
+							:key="getKey(emoji)"
+							:data-emoji="getKey(emoji)"
+							:disabled="!canReact(emoji)"
+							class="_button item"
+							tabindex="0"
+							@click="chosen(emoji, $event)"
+							@pointerenter="computeButtonTitle"
+						>
+							<MkCustomEmoji v-if="!emoji.hasOwnProperty('char')" :name="getKey(emoji)" :normal="true" class="emoji"/>
+							<MkEmoji v-else :emoji="getKey(emoji)" :normal="true" class="emoji"/>
+						</button>
+					</div>
+				</section>
+
+				<section>
+					<header class="_acrylic"><i class="ti ti-clock ti-fw"></i> {{ i18n.ts.recentUsed }}</header>
+					<div class="body">
+						<button
+							v-for="emoji in recentlyUsedEmojisDef"
+							:key="getKey(emoji)"
+							:data-emoji="getKey(emoji)"
+							:disabled="!canReact(emoji)"
+							class="_button item"
+							@click="chosen(emoji, $event)"
+							@pointerenter="computeButtonTitle"
+						>
+							<MkCustomEmoji v-if="!emoji.hasOwnProperty('char')" :name="getKey(emoji)" :normal="true" class="emoji"/>
+							<MkEmoji v-else :emoji="getKey(emoji)" :normal="true" class="emoji"/>
+						</button>
+					</div>
+				</section>
+			</div>
+			<div v-once class="group">
+				<header class="_acrylic">{{ i18n.ts.customEmojis }}</header>
+				<XSection
+					v-for="child in customEmojiFolderRoot.children"
+					:key="`custom:${child.value}`"
+					:customEmojiTree="child.children"
+					:disabledEmojis="computed(() => customEmojis.filter(e => filterCategory(e, child.value)).filter(e => !canReact(e)).map(e => `:${e.name}:`))"
+					:emojis="computed(() => customEmojis.filter(e => filterCategory(e, child.value)).map(e => `:${e.name}:`))"
+					:hasChildSection="child.children.length !== 0"
+					:initialShown="false"
+					@chosen="chosen"
+				>
+					{{ child.value || i18n.ts.other }}
+				</XSection>
+			</div>
+			<div v-once class="group">
+				<header class="_acrylic">{{ i18n.ts.emoji }}</header>
+				<XSection v-for="category in categories" :key="category" :emojis="emojiCharByCategory.get(category) ?? []" :hasChildSection="false" @chosen="chosen">{{ category }}</XSection>
+			</div>
 		</div>
-		<div v-once class="group">
-			<header class="_acrylic">{{ i18n.ts.customEmojis }}</header>
-			<XSection
-				v-for="child in customEmojiFolderRoot.children"
-				:key="`custom:${child.value}`"
-				:initialShown="false"
-				:emojis="computed(() => customEmojis.filter(e => filterCategory(e, child.value)).map(e => `:${e.name}:`))"
-				:disabledEmojis="computed(() => customEmojis.filter(e => filterCategory(e, child.value)).filter(e => !canReact(e)).map(e => `:${e.name}:`))"
-				:hasChildSection="child.children.length !== 0"
-				:customEmojiTree="child.children"
-				@chosen="chosen"
-			>
-				{{ child.value || i18n.ts.other }}
-			</XSection>
-		</div>
-		<div v-once class="group">
-			<header class="_acrylic">{{ i18n.ts.emoji }}</header>
-			<XSection v-for="category in categories" :key="category" :emojis="emojiCharByCategory.get(category) ?? []" :hasChildSection="false" @chosen="chosen">{{ category }}</XSection>
+		<div class="tabs">
+			<button :class="{ active: tab === 'index' }" class="_button tab" @click="tab = 'index'"><i class="ti ti-asterisk ti-fw"></i></button>
+			<button :class="{ active: tab === 'custom' }" class="_button tab" @click="tab = 'custom'"><i class="ti ti-mood-happy ti-fw"></i></button>
+			<button :class="{ active: tab === 'unicode' }" class="_button tab" @click="tab = 'unicode'"><i class="ti ti-leaf ti-fw"></i></button>
+			<button :class="{ active: tab === 'tags' }" class="_button tab" @click="tab = 'tags'"><i class="ti ti-hash ti-fw"></i></button>
 		</div>
 	</div>
-	<div class="tabs">
-		<button class="_button tab" :class="{ active: tab === 'index' }" @click="tab = 'index'"><i class="ti ti-asterisk ti-fw"></i></button>
-		<button class="_button tab" :class="{ active: tab === 'custom' }" @click="tab = 'custom'"><i class="ti ti-mood-happy ti-fw"></i></button>
-		<button class="_button tab" :class="{ active: tab === 'unicode' }" @click="tab = 'unicode'"><i class="ti ti-leaf ti-fw"></i></button>
-		<button class="_button tab" :class="{ active: tab === 'tags' }" @click="tab = 'tags'"><i class="ti ti-hash ti-fw"></i></button>
-	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { ref, shallowRef, computed, watch, onMounted } from 'vue';
+import {ref, shallowRef, computed, watch, onMounted} from 'vue';
 import * as Misskey from 'misskey-js';
 import {
 	emojilist,
@@ -131,17 +131,17 @@ import type {
 import XSection from '@/components/MkEmojiPicker.section.vue';
 import MkRippleEffect from '@/components/MkRippleEffect.vue';
 import * as os from '@/os.js';
-import { isTouchUsing } from '@/scripts/touch.js';
-import { deviceKind } from '@/scripts/device-kind.js';
-import { i18n } from '@/i18n.js';
-import { defaultStore } from '@/store.js';
-import { customEmojiCategories, customEmojis, customEmojisMap } from '@/custom-emojis.js';
-import { $i } from '@/account.js';
-import { checkReactionPermissions } from '@/scripts/check-reaction-permissions.js';
+import {isTouchUsing} from '@/scripts/touch.js';
+import {deviceKind} from '@/scripts/device-kind.js';
+import {i18n} from '@/i18n.js';
+import {defaultStore} from '@/store.js';
+import {customEmojiCategories, customEmojis, customEmojisMap} from '@/custom-emojis.js';
+import {$i} from '@/account.js';
+import {checkReactionPermissions} from '@/scripts/check-reaction-permissions.js';
 
 const props = withDefaults(defineProps<{
 	showPinned?: boolean;
-  pinnedEmojis?: string[];
+	pinnedEmojis?: string[];
 	maxHeight?: number;
 	asDrawer?: boolean;
 	asWindow?: boolean;
@@ -182,7 +182,7 @@ const searchResultCustom = ref<Misskey.entities.EmojiSimple[]>([]);
 const searchResultUnicode = ref<UnicodeEmojiDef[]>([]);
 const tab = ref<'index' | 'custom' | 'unicode' | 'tags'>('index');
 
-const customEmojiFolderRoot: CustomEmojiFolderTree = { value: '', category: '', children: [] };
+const customEmojiFolderRoot: CustomEmojiFolderTree = {value: '', category: '', children: []};
 
 function parseAndMergeCategories(input: string, root: CustomEmojiFolderTree): CustomEmojiFolderTree {
 	const parts = input.split('/').map(p => p.trim());
@@ -192,7 +192,7 @@ function parseAndMergeCategories(input: string, root: CustomEmojiFolderTree): Cu
 		let existingNode = currentNode.children.find((node) => node.value === part);
 
 		if (!existingNode) {
-			const newNode: CustomEmojiFolderTree = { value: part, category: input, children: [] };
+			const newNode: CustomEmojiFolderTree = {value: part, category: input, children: []};
 			currentNode.children.push(newNode);
 			existingNode = newNode;
 		}
@@ -417,7 +417,7 @@ function chosen(emoji: string | Misskey.entities.EmojiSimple | UnicodeEmojiDef, 
 		const rect = el.getBoundingClientRect();
 		const x = rect.left + (el.offsetWidth / 2);
 		const y = rect.top + (el.offsetHeight / 2);
-		const { dispose } = os.popup(MkRippleEffect, { x, y }, {
+		const {dispose} = os.popup(MkRippleEffect, {x, y}, {
 			end: () => dispose(),
 		});
 	}

@@ -3,22 +3,22 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { jest } from '@jest/globals';
-import { Test, TestingModule } from '@nestjs/testing';
+import {jest} from '@jest/globals';
+import {Test, TestingModule} from '@nestjs/testing';
 import * as lolex from '@sinonjs/fake-timers';
-import { addHours, addSeconds, subDays, subHours, subSeconds } from 'date-fns';
-import { CheckModeratorsActivityProcessorService } from '@/queue/processors/CheckModeratorsActivityProcessorService.js';
-import { MiSystemWebhook, MiUser, MiUserProfile, UserProfilesRepository, UsersRepository } from '@/models/_.js';
-import { IdService } from '@/core/IdService.js';
-import { RoleService } from '@/core/RoleService.js';
-import { GlobalModule } from '@/GlobalModule.js';
-import { MetaService } from '@/core/MetaService.js';
-import { DI } from '@/di-symbols.js';
-import { QueueLoggerService } from '@/queue/QueueLoggerService.js';
-import { EmailService } from '@/core/EmailService.js';
-import { SystemWebhookService } from '@/core/SystemWebhookService.js';
-import { AnnouncementService } from '@/core/AnnouncementService.js';
-import { SystemWebhookEventType } from '@/models/SystemWebhook.js';
+import {addHours, addSeconds, subDays, subHours, subSeconds} from 'date-fns';
+import {CheckModeratorsActivityProcessorService} from '@/queue/processors/CheckModeratorsActivityProcessorService.js';
+import {MiSystemWebhook, MiUser, MiUserProfile, UserProfilesRepository, UsersRepository} from '@/models/_.js';
+import {IdService} from '@/core/IdService.js';
+import {RoleService} from '@/core/RoleService.js';
+import {GlobalModule} from '@/GlobalModule.js';
+import {MetaService} from '@/core/MetaService.js';
+import {DI} from '@/di-symbols.js';
+import {QueueLoggerService} from '@/queue/QueueLoggerService.js';
+import {EmailService} from '@/core/EmailService.js';
+import {SystemWebhookService} from '@/core/SystemWebhookService.js';
+import {AnnouncementService} from '@/core/AnnouncementService.js';
+import {SystemWebhookEventType} from '@/models/SystemWebhook.js';
 
 const baseDate = new Date(Date.UTC(2000, 11, 15, 12, 0, 0));
 
@@ -94,16 +94,16 @@ describe('CheckModeratorsActivityProcessorService', () => {
 					CheckModeratorsActivityProcessorService,
 					IdService,
 					{
-						provide: RoleService, useFactory: () => ({ getModerators: jest.fn() }),
+						provide: RoleService, useFactory: () => ({getModerators: jest.fn()}),
 					},
 					{
-						provide: MetaService, useFactory: () => ({ fetch: jest.fn() }),
+						provide: MetaService, useFactory: () => ({fetch: jest.fn()}),
 					},
 					{
-						provide: AnnouncementService, useFactory: () => ({ create: jest.fn() }),
+						provide: AnnouncementService, useFactory: () => ({create: jest.fn()}),
 					},
 					{
-						provide: EmailService, useFactory: () => ({ sendEmail: jest.fn() }),
+						provide: EmailService, useFactory: () => ({sendEmail: jest.fn()}),
 					},
 					{
 						provide: SystemWebhookService, useFactory: () => ({
@@ -145,9 +145,9 @@ describe('CheckModeratorsActivityProcessorService', () => {
 			shouldClearNativeTimers: true,
 		});
 
-		systemWebhook1 = crateSystemWebhook({ on: ['inactiveModeratorsWarning'] });
-		systemWebhook2 = crateSystemWebhook({ on: ['inactiveModeratorsWarning', 'inactiveModeratorsInvitationOnlyChanged'] });
-		systemWebhook3 = crateSystemWebhook({ on: ['abuseReport'] });
+		systemWebhook1 = crateSystemWebhook({on: ['inactiveModeratorsWarning']});
+		systemWebhook2 = crateSystemWebhook({on: ['inactiveModeratorsWarning', 'inactiveModeratorsInvitationOnlyChanged']});
+		systemWebhook3 = crateSystemWebhook({on: ['abuseReport']});
 
 		emailService.sendEmail.mockReturnValue(Promise.resolve());
 		announcementService.create.mockReturnValue(Promise.resolve({} as never));
@@ -175,13 +175,13 @@ describe('CheckModeratorsActivityProcessorService', () => {
 		test('[isModeratorsInactive] inactiveなモデレーターがいても他のモデレーターがアクティブなら"運営が非アクティブ"としてみなされない', async () => {
 			const [user1, user2, user3, user4] = await Promise.all([
 				// 期限よりも1秒新しいタイミングでアクティブ化（セーフ）
-				createUser({ lastActiveDate: subDays(addSeconds(baseDate, 1), 7) }),
+				createUser({lastActiveDate: subDays(addSeconds(baseDate, 1), 7)}),
 				// 期限ちょうどにアクティブ化（セーフ）
-				createUser({ lastActiveDate: subDays(baseDate, 7) }),
+				createUser({lastActiveDate: subDays(baseDate, 7)}),
 				// 期限よりも1秒古いタイミングでアクティブ化（アウト）
-				createUser({ lastActiveDate: subDays(subSeconds(baseDate, 1), 7) }),
+				createUser({lastActiveDate: subDays(subSeconds(baseDate, 1), 7)}),
 				// 対象外
-				createUser({ lastActiveDate: null }),
+				createUser({lastActiveDate: null}),
 			]);
 
 			mockModeratorRole([user1, user2, user3, user4]);
@@ -194,9 +194,9 @@ describe('CheckModeratorsActivityProcessorService', () => {
 		test('[isModeratorsInactive] 全員非アクティブなら"運営が非アクティブ"としてみなされる', async () => {
 			const [user1, user2] = await Promise.all([
 				// 期限よりも1秒古いタイミングでアクティブ化（アウト）
-				createUser({ lastActiveDate: subDays(subSeconds(baseDate, 1), 7) }),
+				createUser({lastActiveDate: subDays(subSeconds(baseDate, 1), 7)}),
 				// 対象外
-				createUser({ lastActiveDate: null }),
+				createUser({lastActiveDate: null}),
 			]);
 
 			mockModeratorRole([user1, user2]);
@@ -208,10 +208,10 @@ describe('CheckModeratorsActivityProcessorService', () => {
 
 		test('[remainingTime] 猶予まで24時間ある場合、猶予1日として計算される', async () => {
 			const [user1, user2] = await Promise.all([
-				createUser({ lastActiveDate: subDays(baseDate, 8) }),
+				createUser({lastActiveDate: subDays(baseDate, 8)}),
 				// 猶予はこのユーザ基準で計算される想定。
 				// 期限まで残り24時間->猶予1日として計算されるはずである
-				createUser({ lastActiveDate: subDays(baseDate, 6) }),
+				createUser({lastActiveDate: subDays(baseDate, 6)}),
 			]);
 
 			mockModeratorRole([user1, user2]);
@@ -225,10 +225,10 @@ describe('CheckModeratorsActivityProcessorService', () => {
 
 		test('[remainingTime] 猶予まで25時間ある場合、猶予1日として計算される', async () => {
 			const [user1, user2] = await Promise.all([
-				createUser({ lastActiveDate: subDays(baseDate, 8) }),
+				createUser({lastActiveDate: subDays(baseDate, 8)}),
 				// 猶予はこのユーザ基準で計算される想定。
 				// 期限まで残り25時間->猶予1日として計算されるはずである
-				createUser({ lastActiveDate: subDays(addHours(baseDate, 1), 6) }),
+				createUser({lastActiveDate: subDays(addHours(baseDate, 1), 6)}),
 			]);
 
 			mockModeratorRole([user1, user2]);
@@ -242,10 +242,10 @@ describe('CheckModeratorsActivityProcessorService', () => {
 
 		test('[remainingTime] 猶予まで23時間ある場合、猶予0日として計算される', async () => {
 			const [user1, user2] = await Promise.all([
-				createUser({ lastActiveDate: subDays(baseDate, 8) }),
+				createUser({lastActiveDate: subDays(baseDate, 8)}),
 				// 猶予はこのユーザ基準で計算される想定。
 				// 期限まで残り23時間->猶予0日として計算されるはずである
-				createUser({ lastActiveDate: subDays(subHours(baseDate, 1), 6) }),
+				createUser({lastActiveDate: subDays(subHours(baseDate, 1), 6)}),
 			]);
 
 			mockModeratorRole([user1, user2]);
@@ -259,10 +259,10 @@ describe('CheckModeratorsActivityProcessorService', () => {
 
 		test('[remainingTime] 期限ちょうどの場合、猶予0日として計算される', async () => {
 			const [user1, user2] = await Promise.all([
-				createUser({ lastActiveDate: subDays(baseDate, 8) }),
+				createUser({lastActiveDate: subDays(baseDate, 8)}),
 				// 猶予はこのユーザ基準で計算される想定。
 				// 期限ちょうど->猶予0日として計算されるはずである
-				createUser({ lastActiveDate: subDays(baseDate, 7) }),
+				createUser({lastActiveDate: subDays(baseDate, 7)}),
 			]);
 
 			mockModeratorRole([user1, user2]);
@@ -276,10 +276,10 @@ describe('CheckModeratorsActivityProcessorService', () => {
 
 		test('[remainingTime] 期限より1時間超過している場合、猶予-1日として計算される', async () => {
 			const [user1, user2] = await Promise.all([
-				createUser({ lastActiveDate: subDays(baseDate, 8) }),
+				createUser({lastActiveDate: subDays(baseDate, 8)}),
 				// 猶予はこのユーザ基準で計算される想定。
 				// 期限より1時間超過->猶予-1日として計算されるはずである
-				createUser({ lastActiveDate: subDays(subHours(baseDate, 1), 7) }),
+				createUser({lastActiveDate: subDays(subHours(baseDate, 1), 7)}),
 			]);
 
 			mockModeratorRole([user1, user2]);
@@ -293,10 +293,10 @@ describe('CheckModeratorsActivityProcessorService', () => {
 
 		test('[remainingTime] 期限より25時間超過している場合、猶予-2日として計算される', async () => {
 			const [user1, user2] = await Promise.all([
-				createUser({ lastActiveDate: subDays(baseDate, 10) }),
+				createUser({lastActiveDate: subDays(baseDate, 10)}),
 				// 猶予はこのユーザ基準で計算される想定。
 				// 期限より1時間超過->猶予-1日として計算されるはずである
-				createUser({ lastActiveDate: subDays(subHours(baseDate, 25), 7) }),
+				createUser({lastActiveDate: subDays(subHours(baseDate, 25), 7)}),
 			]);
 
 			mockModeratorRole([user1, user2]);
@@ -312,15 +312,15 @@ describe('CheckModeratorsActivityProcessorService', () => {
 	describe('notifyInactiveModeratorsWarning', () => {
 		test('[notification + mail] 通知はモデレータ全員に発信され、メールはメールアドレスが存在＋認証済みの場合のみ', async () => {
 			const [user1, user2, user3, user4, root] = await Promise.all([
-				createUser({}, { email: 'user1@example.com', emailVerified: true }),
-				createUser({}, { email: 'user2@example.com', emailVerified: false }),
-				createUser({}, { email: null, emailVerified: false }),
-				createUser({}, { email: 'user4@example.com', emailVerified: true }),
-				createUser({ isRoot: true }, { email: 'root@example.com', emailVerified: true }),
+				createUser({}, {email: 'user1@example.com', emailVerified: true}),
+				createUser({}, {email: 'user2@example.com', emailVerified: false}),
+				createUser({}, {email: null, emailVerified: false}),
+				createUser({}, {email: 'user4@example.com', emailVerified: true}),
+				createUser({isRoot: true}, {email: 'root@example.com', emailVerified: true}),
 			]);
 
 			mockModeratorRole([user1, user2, user3, root]);
-			await service.notifyInactiveModeratorsWarning({ time: 1, asDays: 0, asHours: 0 });
+			await service.notifyInactiveModeratorsWarning({time: 1, asDays: 0, asHours: 0});
 
 			expect(emailService.sendEmail).toHaveBeenCalledTimes(2);
 			expect(emailService.sendEmail.mock.calls[0][0]).toBe('user1@example.com');
@@ -329,11 +329,11 @@ describe('CheckModeratorsActivityProcessorService', () => {
 
 		test('[systemWebhook] "inactiveModeratorsWarning"が有効なSystemWebhookに対して送信される', async () => {
 			const [user1] = await Promise.all([
-				createUser({}, { email: 'user1@example.com', emailVerified: true }),
+				createUser({}, {email: 'user1@example.com', emailVerified: true}),
 			]);
 
 			mockModeratorRole([user1]);
-			await service.notifyInactiveModeratorsWarning({ time: 1, asDays: 0, asHours: 0 });
+			await service.notifyInactiveModeratorsWarning({time: 1, asDays: 0, asHours: 0});
 
 			// typeとactiveによる絞り込みが機能しているかはSystemWebhookServiceのテストで確認する.
 			// ここでは呼び出されているか、typeが正しいかのみを確認する
@@ -345,11 +345,11 @@ describe('CheckModeratorsActivityProcessorService', () => {
 	describe('notifyChangeToInvitationOnly', () => {
 		test('[notification + mail] 通知はモデレータ全員に発信され、メールはメールアドレスが存在＋認証済みの場合のみ', async () => {
 			const [user1, user2, user3, user4, root] = await Promise.all([
-				createUser({}, { email: 'user1@example.com', emailVerified: true }),
-				createUser({}, { email: 'user2@example.com', emailVerified: false }),
-				createUser({}, { email: null, emailVerified: false }),
-				createUser({}, { email: 'user4@example.com', emailVerified: true }),
-				createUser({ isRoot: true }, { email: 'root@example.com', emailVerified: true }),
+				createUser({}, {email: 'user1@example.com', emailVerified: true}),
+				createUser({}, {email: 'user2@example.com', emailVerified: false}),
+				createUser({}, {email: null, emailVerified: false}),
+				createUser({}, {email: 'user4@example.com', emailVerified: true}),
+				createUser({isRoot: true}, {email: 'root@example.com', emailVerified: true}),
 			]);
 
 			mockModeratorRole([user1, user2, user3, root]);
@@ -368,7 +368,7 @@ describe('CheckModeratorsActivityProcessorService', () => {
 
 		test('[systemWebhook] "inactiveModeratorsInvitationOnlyChanged"が有効なSystemWebhookに対して送信される', async () => {
 			const [user1] = await Promise.all([
-				createUser({}, { email: 'user1@example.com', emailVerified: true }),
+				createUser({}, {email: 'user1@example.com', emailVerified: true}),
 			]);
 
 			mockModeratorRole([user1]);

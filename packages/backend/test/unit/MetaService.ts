@@ -5,14 +5,14 @@
 
 process.env.NODE_ENV = 'test';
 
-import { jest } from '@jest/globals';
-import { Test } from '@nestjs/testing';
-import { GlobalModule } from '@/GlobalModule.js';
-import { DI } from '@/di-symbols.js';
-import { MetaService } from '@/core/MetaService.js';
-import { CoreModule } from '@/core/CoreModule.js';
-import type { TestingModule } from '@nestjs/testing';
-import type { DataSource } from 'typeorm';
+import {jest} from '@jest/globals';
+import {Test} from '@nestjs/testing';
+import {GlobalModule} from '@/GlobalModule.js';
+import {DI} from '@/di-symbols.js';
+import {MetaService} from '@/core/MetaService.js';
+import {CoreModule} from '@/core/CoreModule.js';
+import type {TestingModule} from '@nestjs/testing';
+import type {DataSource} from 'typeorm';
 
 describe('MetaService', () => {
 	let app: TestingModule;
@@ -28,7 +28,7 @@ describe('MetaService', () => {
 
 		app.enableShutdownHooks();
 
-		metaService = app.get<MetaService>(MetaService, { strict: false });
+		metaService = app.get<MetaService>(MetaService, {strict: false});
 
 		// Make it cached
 		await metaService.fetch();

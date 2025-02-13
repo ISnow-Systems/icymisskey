@@ -6,7 +6,7 @@
 process.env.NODE_ENV = 'test';
 
 import * as assert from 'assert';
-import { IncomingMessage } from 'http';
+import {IncomingMessage} from 'http';
 import {
 	api,
 	connectStream,
@@ -25,8 +25,8 @@ describe('API', () => {
 	let bob: misskey.entities.SignupResponse;
 
 	beforeAll(async () => {
-		alice = await signup({ username: 'alice' });
-		bob = await signup({ username: 'bob' });
+		alice = await signup({username: 'alice'});
+		bob = await signup({username: 'bob'});
 	}, 1000 * 60 * 2);
 
 	describe('General validation', () => {
@@ -130,7 +130,7 @@ describe('API', () => {
 		await failedApiCall({
 			endpoint: 'admin/get-index-stats',
 			parameters: {},
-			user: { token: 'tsukawasete' },
+			user: {token: 'tsukawasete'},
 		}, {
 			status: 401,
 			code: 'AUTHENTICATION_FAILED',
@@ -140,13 +140,13 @@ describe('API', () => {
 		await successfulApiCall({
 			endpoint: 'admin/get-index-stats',
 			parameters: {},
-			user: { token: application2 },
+			user: {token: application2},
 		});
 
 		await failedApiCall({
 			endpoint: 'admin/get-index-stats',
 			parameters: {},
-			user: { token: application },
+			user: {token: application},
 		}, {
 			status: 403,
 			code: 'PERMISSION_DENIED',
@@ -156,7 +156,7 @@ describe('API', () => {
 		await failedApiCall({
 			endpoint: 'admin/get-index-stats',
 			parameters: {},
-			user: { token: application3 },
+			user: {token: application3},
 		}, {
 			status: 403,
 			code: 'ROLE_PERMISSION_DENIED',
@@ -166,7 +166,7 @@ describe('API', () => {
 		await failedApiCall({
 			endpoint: 'admin/get-index-stats',
 			parameters: {},
-			user: { token: application4 },
+			user: {token: application4},
 		}, {
 			status: 403,
 			code: 'ROLE_PERMISSION_DENIED',
@@ -201,7 +201,7 @@ describe('API', () => {
 					bearer: true,
 				},
 				'homeTimeline',
-				() => api('notes/create', { text: 'foo' }, alice),
+				() => api('notes/create', {text: 'foo'}, alice),
 				msg => msg.type === 'note' && msg.body.text === 'foo',
 			);
 			assert.strictEqual(fired, true);
@@ -235,7 +235,8 @@ describe('API', () => {
 						bearer: true,
 					},
 					'homeTimeline',
-					() => { },
+					() => {
+					},
 				), (err: IncomingMessage) => {
 					assert.strictEqual(err.statusCode, 401);
 					assert.ok(err.headers['www-authenticate']?.startsWith('Bearer realm="Misskey", error="invalid_token", error_description'));
@@ -260,7 +261,7 @@ describe('API', () => {
 
 		test('invalid_request', async () => {
 			// @ts-expect-error text must be string
-			const result = await api('notes/create', { text: true }, {
+			const result = await api('notes/create', {text: true}, {
 				token: alice.token,
 				bearer: true,
 			});
@@ -276,7 +277,7 @@ describe('API', () => {
 						Authorization: alice.token,
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({ text: 'test' }),
+					body: JSON.stringify({text: 'test'}),
 				});
 				assert.strictEqual(result.status, 401);
 			});
@@ -288,7 +289,7 @@ describe('API', () => {
 						Authorization: `bearer ${alice.token}`,
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({ text: 'test' }),
+					body: JSON.stringify({text: 'test'}),
 				});
 				assert.strictEqual(result.status, 401);
 			});
@@ -300,7 +301,7 @@ describe('API', () => {
 						Authorization: `Bearer${alice.token}`,
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({ text: 'test' }),
+					body: JSON.stringify({text: 'test'}),
 				});
 				assert.strictEqual(result.status, 401);
 			});

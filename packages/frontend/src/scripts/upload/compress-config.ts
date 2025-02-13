@@ -4,21 +4,21 @@
  */
 
 import isAnimated from 'is-file-animated';
-import { isWebpSupported } from './isWebpSupported.js';
-import type { BrowserImageResizerConfigWithConvertedOutput } from '@misskey-dev/browser-image-resizer';
+import {isWebpSupported} from './isWebpSupported.js';
+import type {BrowserImageResizerConfigWithConvertedOutput} from '@misskey-dev/browser-image-resizer';
 
 const compressTypeMap = {
-	'image/jpeg': { quality: 0.90, mimeType: 'image/webp' },
-	'image/png': { quality: 1, mimeType: 'image/webp' },
-	'image/webp': { quality: 0.90, mimeType: 'image/webp' },
-	'image/svg+xml': { quality: 1, mimeType: 'image/webp' },
+	'image/jpeg': {quality: 0.90, mimeType: 'image/webp'},
+	'image/png': {quality: 1, mimeType: 'image/webp'},
+	'image/webp': {quality: 0.90, mimeType: 'image/webp'},
+	'image/svg+xml': {quality: 1, mimeType: 'image/webp'},
 } as const;
 
 const compressTypeMapFallback = {
-	'image/jpeg': { quality: 0.85, mimeType: 'image/jpeg' },
-	'image/png': { quality: 1, mimeType: 'image/png' },
-	'image/webp': { quality: 0.85, mimeType: 'image/jpeg' },
-	'image/svg+xml': { quality: 1, mimeType: 'image/png' },
+	'image/jpeg': {quality: 0.85, mimeType: 'image/jpeg'},
+	'image/png': {quality: 1, mimeType: 'image/png'},
+	'image/webp': {quality: 0.85, mimeType: 'image/jpeg'},
+	'image/svg+xml': {quality: 1, mimeType: 'image/png'},
 } as const;
 
 export async function getCompressionConfig(file: File): Promise<BrowserImageResizerConfigWithConvertedOutput | undefined> {

@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { IsNull, MoreThan, Not } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
-import type { FollowingsRepository, InstancesRepository } from '@/models/_.js';
-import { awaitAll } from '@/misc/prelude/await-all.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { InstanceEntityService } from '@/core/entities/InstanceEntityService.js';
-import { DI } from '@/di-symbols.js';
+import {IsNull, MoreThan, Not} from 'typeorm';
+import {Inject, Injectable} from '@nestjs/common';
+import type {FollowingsRepository, InstancesRepository} from '@/models/_.js';
+import {awaitAll} from '@/misc/prelude/await-all.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {InstanceEntityService} from '@/core/entities/InstanceEntityService.js';
+import {DI} from '@/di-symbols.js';
 
 export const meta = {
 	tags: ['federation'],
@@ -35,7 +35,7 @@ export const meta = {
 					ref: 'FederationInstance',
 				},
 			},
-			otherFollowersCount: { type: 'number' },
+			otherFollowersCount: {type: 'number'},
 			topPubInstances: {
 				type: 'array',
 				optional: false,
@@ -47,7 +47,7 @@ export const meta = {
 					ref: 'FederationInstance',
 				},
 			},
-			otherFollowingCount: { type: 'number' },
+			otherFollowingCount: {type: 'number'},
 		},
 	},
 } as const;
@@ -55,7 +55,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
+		limit: {type: 'integer', minimum: 1, maximum: 100, default: 10},
 	},
 	required: [],
 } as const;
@@ -65,10 +65,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.instancesRepository)
 		private instancesRepository: InstancesRepository,
-
 		@Inject(DI.followingsRepository)
 		private followingsRepository: FollowingsRepository,
-
 		private instanceEntityService: InstanceEntityService,
 	) {
 		super(meta, paramDef, async (ps, me) => {

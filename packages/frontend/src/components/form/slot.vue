@@ -4,17 +4,21 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div>
-	<div :class="$style.label" @click="focus"><slot name="label"></slot></div>
 	<div>
-		<slot></slot>
+		<div :class="$style.label" @click="focus">
+			<slot name="label"></slot>
+		</div>
+		<div>
+			<slot></slot>
+		</div>
+		<div :class="$style.caption">
+			<slot name="caption"></slot>
+		</div>
 	</div>
-	<div :class="$style.caption"><slot name="caption"></slot></div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import {} from 'vue';
 
 function focus() {
 	// TODO

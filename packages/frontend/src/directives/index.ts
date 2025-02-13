@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { App } from 'vue';
+import type {App} from 'vue';
 
 import userPreview from './user-preview.js';
 import getSize from './get-size.js';
@@ -17,7 +17,7 @@ import panel from './panel.js';
 import adaptiveBorder from './adaptive-border.js';
 import adaptiveBg from './adaptive-bg.js';
 
-export default function(app: App) {
+export default function (app: App) {
 	for (const [key, value] of Object.entries(directives)) {
 		app.directive(key, value);
 	}

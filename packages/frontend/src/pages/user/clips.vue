@@ -4,20 +4,20 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkSpacer :contentMax="700">
-	<div>
-		<MkPagination v-slot="{items}" ref="list" :pagination="pagination">
-			<MkA v-for="item in items" :key="item.id" :to="`/clips/${item.id}`" :class="$style.item" class="_panel _margin">
-				<b>{{ item.name }}</b>
-				<div v-if="item.description" :class="$style.description">{{ item.description }}</div>
-			</MkA>
-		</MkPagination>
-	</div>
-</MkSpacer>
+	<MkSpacer :contentMax="700">
+		<div>
+			<MkPagination ref="list" v-slot="{items}" :pagination="pagination">
+				<MkA v-for="item in items" :key="item.id" :class="$style.item" :to="`/clips/${item.id}`" class="_panel _margin">
+					<b>{{ item.name }}</b>
+					<div v-if="item.description" :class="$style.description">{{ item.description }}</div>
+				</MkA>
+			</MkPagination>
+		</div>
+	</MkSpacer>
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+import {computed} from 'vue';
 import * as Misskey from 'misskey-js';
 import MkPagination from '@/components/MkPagination.vue';
 

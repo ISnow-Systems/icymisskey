@@ -4,112 +4,114 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div
-	v-show="!isDeleted"
-	ref="rootEl"
-	:class="[$style.root]"
-	:tabindex="isDeleted ? '-1' : '0'"
->
-	<EmNoteSub v-if="appearNote.reply" :note="appearNote.reply" :class="$style.replyTo"/>
-	<div v-if="pinned" :class="$style.tip"><i class="ti ti-pin"></i> {{ i18n.ts.pinnedNote }}</div>
-	<!--<div v-if="appearNote._prId_" class="tip"><i class="ti ti-speakerphone"></i> {{ i18n.ts.promotion }}<button class="_textButton hide" @click="readPromo()">{{ i18n.ts.hideThisNote }} <i class="ti ti-x"></i></button></div>-->
-	<!--<div v-if="appearNote._featuredId_" class="tip"><i class="ti ti-bolt"></i> {{ i18n.ts.featured }}</div>-->
-	<div v-if="isRenote" :class="$style.renote">
-		<div v-if="note.channel" :class="$style.colorBar" :style="{ background: note.channel.color }"></div>
-		<EmAvatar :class="$style.renoteAvatar" :user="note.user" link/>
-		<i class="ti ti-repeat" style="margin-right: 4px;"></i>
-		<I18n :src="i18n.ts.renotedBy" tag="span" :class="$style.renoteText">
-			<template #user>
-				<EmA :class="$style.renoteUserName" :to="userPage(note.user)">
-					<EmUserName :user="note.user"/>
-				</EmA>
-			</template>
-		</I18n>
-		<div :class="$style.renoteInfo">
-			<button ref="renoteTime" :class="$style.renoteTime" class="_button">
-				<i class="ti ti-dots" :class="$style.renoteMenu"></i>
-				<EmTime :time="note.createdAt"/>
-			</button>
-			<span v-if="note.visibility !== 'public'" style="margin-left: 0.5em;" :title="i18n.ts._visibility[note.visibility]">
+	<div
+		v-show="!isDeleted"
+		ref="rootEl"
+		:class="[$style.root]"
+		:tabindex="isDeleted ? '-1' : '0'"
+	>
+		<EmNoteSub v-if="appearNote.reply" :class="$style.replyTo" :note="appearNote.reply"/>
+		<div v-if="pinned" :class="$style.tip"><i class="ti ti-pin"></i> {{ i18n.ts.pinnedNote }}</div>
+		<!--<div v-if="appearNote._prId_" class="tip"><i class="ti ti-speakerphone"></i> {{ i18n.ts.promotion }}<button class="_textButton hide" @click="readPromo()">{{ i18n.ts.hideThisNote }} <i class="ti ti-x"></i></button></div>-->
+		<!--<div v-if="appearNote._featuredId_" class="tip"><i class="ti ti-bolt"></i> {{ i18n.ts.featured }}</div>-->
+		<div v-if="isRenote" :class="$style.renote">
+			<div v-if="note.channel" :class="$style.colorBar" :style="{ background: note.channel.color }"></div>
+			<EmAvatar :class="$style.renoteAvatar" :user="note.user" link/>
+			<i class="ti ti-repeat" style="margin-right: 4px;"></i>
+			<I18n :class="$style.renoteText" :src="i18n.ts.renotedBy" tag="span">
+				<template #user>
+					<EmA :class="$style.renoteUserName" :to="userPage(note.user)">
+						<EmUserName :user="note.user"/>
+					</EmA>
+				</template>
+			</I18n>
+			<div :class="$style.renoteInfo">
+				<button ref="renoteTime" :class="$style.renoteTime" class="_button">
+					<i :class="$style.renoteMenu" class="ti ti-dots"></i>
+					<EmTime :time="note.createdAt"/>
+				</button>
+				<span v-if="note.visibility !== 'public'" :title="i18n.ts._visibility[note.visibility]" style="margin-left: 0.5em;">
 				<i v-if="note.visibility === 'home'" class="ti ti-home"></i>
 				<i v-else-if="note.visibility === 'followers'" class="ti ti-lock"></i>
 				<i v-else-if="note.visibility === 'specified'" ref="specified" class="ti ti-mail"></i>
 			</span>
-			<span v-if="note.localOnly" style="margin-left: 0.5em;" :title="i18n.ts._visibility['disableFederation']"><i class="ti ti-rocket-off"></i></span>
-			<span v-if="note.channel" style="margin-left: 0.5em;" :title="note.channel.name"><i class="ti ti-device-tv"></i></span>
-		</div>
-	</div>
-	<article :class="$style.article">
-		<div v-if="appearNote.channel" :class="$style.colorBar" :style="{ background: appearNote.channel.color }"></div>
-		<EmAvatar :class="$style.avatar" :user="appearNote.user" link/>
-		<div :class="$style.main">
-			<EmNoteHeader :note="appearNote" :mini="true"/>
-			<EmInstanceTicker v-if="appearNote.user.instance != null" :instance="appearNote.user.instance"/>
-			<div style="container-type: inline-size;">
-				<p v-if="appearNote.cw != null" :class="$style.cw">
-					<EmMfm v-if="appearNote.cw != ''" style="margin-right: 8px;" :text="appearNote.cw" :author="appearNote.user" :nyaize="'respect'"/>
-					<button style="display: block; width: 100%; margin: 4px 0;" class="_buttonGray _buttonRounded" @click="showContent = !showContent">{{ showContent ? i18n.ts._cw.hide : i18n.ts._cw.show }}</button>
-				</p>
-				<div v-show="appearNote.cw == null || showContent" :class="[{ [$style.contentCollapsed]: collapsed }]">
-					<div :class="$style.text">
-						<span v-if="appearNote.isHidden" style="opacity: 0.5">({{ i18n.ts.private }})</span>
-						<EmA v-if="appearNote.replyId" :class="$style.replyIcon" :to="`/notes/${appearNote.replyId}`"><i class="ti ti-arrow-back-up"></i></EmA>
-						<EmMfm
-							v-if="appearNote.text"
-							:parsedNodes="parsed"
-							:text="appearNote.text"
-							:author="appearNote.user"
-							:nyaize="'respect'"
-							:emojiUrls="appearNote.emojis"
-							:enableEmojiMenu="!true"
-							:enableEmojiMenuReaction="true"
-						/>
-					</div>
-					<div v-if="appearNote.files && appearNote.files.length > 0">
-						<EmMediaList :mediaList="appearNote.files" :originalEntityUrl="`${url}/notes/${appearNote.id}`"/>
-					</div>
-					<EmPoll v-if="appearNote.poll" :noteId="appearNote.id" :poll="appearNote.poll" :readOnly="true" :class="$style.poll"/>
-					<div v-if="appearNote.renote" :class="$style.quote"><EmNoteSimple :note="appearNote.renote" :class="$style.quoteNote"/></div>
-					<button v-if="isLong && collapsed" :class="$style.collapsed" class="_button" @click="collapsed = false">
-						<span :class="$style.collapsedLabel">{{ i18n.ts.showMore }}</span>
-					</button>
-					<button v-else-if="isLong && !collapsed" :class="$style.showLess" class="_button" @click="collapsed = true">
-						<span :class="$style.showLessLabel">{{ i18n.ts.showLess }}</span>
-					</button>
-				</div>
-				<EmA v-if="appearNote.channel && !inChannel" :class="$style.channel" :to="`/channels/${appearNote.channel.id}`"><i class="ti ti-device-tv"></i> {{ appearNote.channel.name }}</EmA>
+				<span v-if="note.localOnly" :title="i18n.ts._visibility['disableFederation']" style="margin-left: 0.5em;"><i class="ti ti-rocket-off"></i></span>
+				<span v-if="note.channel" :title="note.channel.name" style="margin-left: 0.5em;"><i class="ti ti-device-tv"></i></span>
 			</div>
-			<EmReactionsViewer v-if="appearNote.reactionAcceptance !== 'likeOnly'" :note="appearNote" :maxNumber="16">
-				<template #more>
-					<EmA :to="`/notes/${appearNote.id}/reactions`" :class="[$style.reactionOmitted]">{{ i18n.ts.more }}</EmA>
-				</template>
-			</EmReactionsViewer>
-			<footer :class="$style.footer">
-				<a :href="`/notes/${appearNote.id}`" target="_blank" rel="noopener" :class="[$style.footerButton, $style.footerButtonLink]" class="_button">
-					<i class="ti ti-arrow-back-up"></i>
-				</a>
-				<a :href="`/notes/${appearNote.id}`" target="_blank" rel="noopener" :class="[$style.footerButton, $style.footerButtonLink]" class="_button">
-					<i class="ti ti-repeat"></i>
-				</a>
-				<a :href="`/notes/${appearNote.id}`" target="_blank" rel="noopener" :class="[$style.footerButton, $style.footerButtonLink]" class="_button">
-					<i v-if="appearNote.reactionAcceptance === 'likeOnly'" class="ti ti-heart"></i>
-					<i v-else class="ti ti-plus"></i>
-				</a>
-				<a :href="`/notes/${appearNote.id}`" target="_blank" rel="noopener" :class="[$style.footerButton, $style.footerButtonLink]" class="_button">
-					<i class="ti ti-dots"></i>
-				</a>
-			</footer>
 		</div>
-	</article>
-</div>
+		<article :class="$style.article">
+			<div v-if="appearNote.channel" :class="$style.colorBar" :style="{ background: appearNote.channel.color }"></div>
+			<EmAvatar :class="$style.avatar" :user="appearNote.user" link/>
+			<div :class="$style.main">
+				<EmNoteHeader :mini="true" :note="appearNote"/>
+				<EmInstanceTicker v-if="appearNote.user.instance != null" :instance="appearNote.user.instance"/>
+				<div style="container-type: inline-size;">
+					<p v-if="appearNote.cw != null" :class="$style.cw">
+						<EmMfm v-if="appearNote.cw != ''" :author="appearNote.user" :nyaize="'respect'" :text="appearNote.cw" style="margin-right: 8px;"/>
+						<button class="_buttonGray _buttonRounded" style="display: block; width: 100%; margin: 4px 0;" @click="showContent = !showContent">{{ showContent ? i18n.ts._cw.hide : i18n.ts._cw.show }}</button>
+					</p>
+					<div v-show="appearNote.cw == null || showContent" :class="[{ [$style.contentCollapsed]: collapsed }]">
+						<div :class="$style.text">
+							<span v-if="appearNote.isHidden" style="opacity: 0.5">({{ i18n.ts.private }})</span>
+							<EmA v-if="appearNote.replyId" :class="$style.replyIcon" :to="`/notes/${appearNote.replyId}`"><i class="ti ti-arrow-back-up"></i></EmA>
+							<EmMfm
+								v-if="appearNote.text"
+								:author="appearNote.user"
+								:emojiUrls="appearNote.emojis"
+								:enableEmojiMenu="!true"
+								:enableEmojiMenuReaction="true"
+								:nyaize="'respect'"
+								:parsedNodes="parsed"
+								:text="appearNote.text"
+							/>
+						</div>
+						<div v-if="appearNote.files && appearNote.files.length > 0">
+							<EmMediaList :mediaList="appearNote.files" :originalEntityUrl="`${url}/notes/${appearNote.id}`"/>
+						</div>
+						<EmPoll v-if="appearNote.poll" :class="$style.poll" :noteId="appearNote.id" :poll="appearNote.poll" :readOnly="true"/>
+						<div v-if="appearNote.renote" :class="$style.quote">
+							<EmNoteSimple :class="$style.quoteNote" :note="appearNote.renote"/>
+						</div>
+						<button v-if="isLong && collapsed" :class="$style.collapsed" class="_button" @click="collapsed = false">
+							<span :class="$style.collapsedLabel">{{ i18n.ts.showMore }}</span>
+						</button>
+						<button v-else-if="isLong && !collapsed" :class="$style.showLess" class="_button" @click="collapsed = true">
+							<span :class="$style.showLessLabel">{{ i18n.ts.showLess }}</span>
+						</button>
+					</div>
+					<EmA v-if="appearNote.channel && !inChannel" :class="$style.channel" :to="`/channels/${appearNote.channel.id}`"><i class="ti ti-device-tv"></i> {{ appearNote.channel.name }}</EmA>
+				</div>
+				<EmReactionsViewer v-if="appearNote.reactionAcceptance !== 'likeOnly'" :maxNumber="16" :note="appearNote">
+					<template #more>
+						<EmA :class="[$style.reactionOmitted]" :to="`/notes/${appearNote.id}/reactions`">{{ i18n.ts.more }}</EmA>
+					</template>
+				</EmReactionsViewer>
+				<footer :class="$style.footer">
+					<a :class="[$style.footerButton, $style.footerButtonLink]" :href="`/notes/${appearNote.id}`" class="_button" rel="noopener" target="_blank">
+						<i class="ti ti-arrow-back-up"></i>
+					</a>
+					<a :class="[$style.footerButton, $style.footerButtonLink]" :href="`/notes/${appearNote.id}`" class="_button" rel="noopener" target="_blank">
+						<i class="ti ti-repeat"></i>
+					</a>
+					<a :class="[$style.footerButton, $style.footerButtonLink]" :href="`/notes/${appearNote.id}`" class="_button" rel="noopener" target="_blank">
+						<i v-if="appearNote.reactionAcceptance === 'likeOnly'" class="ti ti-heart"></i>
+						<i v-else class="ti ti-plus"></i>
+					</a>
+					<a :class="[$style.footerButton, $style.footerButtonLink]" :href="`/notes/${appearNote.id}`" class="_button" rel="noopener" target="_blank">
+						<i class="ti ti-dots"></i>
+					</a>
+				</footer>
+			</div>
+		</article>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, ref, shallowRef } from 'vue';
+import {computed, inject, ref, shallowRef} from 'vue';
 import * as mfm from 'mfm-js';
 import * as Misskey from 'misskey-js';
-import { shouldCollapsed } from '@@/js/collapsed.js';
-import { url } from '@@/js/config.js';
+import {shouldCollapsed} from '@@/js/collapsed.js';
+import {url} from '@@/js/config.js';
 import I18n from '@/components/I18n.vue';
 import EmNoteSub from '@/components/EmNoteSub.vue';
 import EmNoteHeader from '@/components/EmNoteHeader.vue';
@@ -123,8 +125,8 @@ import EmA from '@/components/EmA.vue';
 import EmAvatar from '@/components/EmAvatar.vue';
 import EmUserName from '@/components/EmUserName.vue';
 import EmTime from '@/components/EmTime.vue';
-import { userPage } from '@/utils.js';
-import { i18n } from '@/i18n.js';
+import {userPage} from '@/utils.js';
+import {i18n} from '@/i18n.js';
 
 function getAppearNote(note: Misskey.entities.Note) {
 	return Misskey.note.isPureRenote(note) ? note.renote : note;
@@ -133,8 +135,7 @@ function getAppearNote(note: Misskey.entities.Note) {
 const props = withDefaults(defineProps<{
 	note: Misskey.entities.Note;
 	pinned?: boolean;
-}>(), {
-});
+}>(), {});
 
 const emit = defineEmits<{
 	(ev: 'reaction', emoji: string): void;
@@ -165,7 +166,7 @@ const isDeleted = ref(false);
 	overflow: clip;
 	contain: content;
 	content-visibility: auto;
-  contain-intrinsic-size: 0 150px;
+	contain-intrinsic-size: 0 150px;
 
 	&:focus-visible {
 		outline: none;

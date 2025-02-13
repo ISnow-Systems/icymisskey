@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { PrimaryColumn, Entity, Index, JoinColumn, Column, OneToOne } from 'typeorm';
-import { noteVisibilities } from '@/types.js';
-import { id } from './util/id.js';
-import { MiNote } from './Note.js';
-import type { MiUser } from './User.js';
-import type { MiChannel } from "@/models/Channel.js";
+import {PrimaryColumn, Entity, Index, JoinColumn, Column, OneToOne} from 'typeorm';
+import {noteVisibilities} from '@/types.js';
+import {id} from './util/id.js';
+import {MiNote} from './Note.js';
+import type {MiUser} from './User.js';
+import type {MiChannel} from "@/models/Channel.js";
 
 @Entity('poll')
 export class MiPoll {
@@ -67,6 +67,7 @@ export class MiPoll {
 		comment: '[Denormalized]',
 	})
 	public channelId: MiChannel['id'] | null;
+
 	//#endregion
 
 	constructor(data: Partial<MiPoll>) {

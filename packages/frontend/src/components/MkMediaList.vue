@@ -4,12 +4,12 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div>
-	<XBanner v-for="media in mediaList.filter(media => !previewable(media))" :key="media.id" :media="media"/>
-	<div v-if="mediaList.filter(media => previewable(media)).length > 0" :class="$style.container">
-		<div
-			ref="gallery"
-			:class="[
+	<div>
+		<XBanner v-for="media in mediaList.filter(media => !previewable(media))" :key="media.id" :media="media"/>
+		<div v-if="mediaList.filter(media => previewable(media)).length > 0" :class="$style.container">
+			<div
+				ref="gallery"
+				:class="[
 				$style.medias,
 				count === 1 ? [$style.n1, {
 					[$style.n116_9]: defaultStore.reactiveState.mediaListWithOneImageAppearance.value === '16_9',
@@ -17,18 +17,18 @@ SPDX-License-Identifier: AGPL-3.0-only
 					[$style.n12_3]: defaultStore.reactiveState.mediaListWithOneImageAppearance.value === '2_3',
 				}] : count === 2 ? $style.n2 : count === 3 ? $style.n3 : count === 4 ? $style.n4 : $style.nMany,
 			]"
-		>
-			<template v-for="media in mediaList.filter(media => previewable(media))">
-				<XVideo v-if="media.type.startsWith('video')" :key="`video:${media.id}`" :class="$style.media" :video="media"/>
-				<XImage v-else-if="media.type.startsWith('image')" :key="`image:${media.id}`" :class="$style.media" class="image" :data-id="media.id" :image="media" :raw="raw"/>
-			</template>
+			>
+				<template v-for="media in mediaList.filter(media => previewable(media))">
+					<XVideo v-if="media.type.startsWith('video')" :key="`video:${media.id}`" :class="$style.media" :video="media"/>
+					<XImage v-else-if="media.type.startsWith('image')" :key="`image:${media.id}`" :class="$style.media" :data-id="media.id" :image="media" :raw="raw" class="image"/>
+				</template>
+			</div>
 		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, onUnmounted, shallowRef } from 'vue';
+import {computed, onMounted, onUnmounted, shallowRef} from 'vue';
 import * as Misskey from 'misskey-js';
 import PhotoSwipeLightbox from 'photoswipe/lightbox';
 import PhotoSwipe from 'photoswipe';
@@ -37,9 +37,9 @@ import XBanner from '@/components/MkMediaBanner.vue';
 import XImage from '@/components/MkMediaImage.vue';
 import XVideo from '@/components/MkMediaVideo.vue';
 import * as os from '@/os.js';
-import { FILE_TYPE_BROWSERSAFE } from '@@/js/const.js';
-import { defaultStore } from '@/store.js';
-import { focusParent } from '@/scripts/focus.js';
+import {FILE_TYPE_BROWSERSAFE} from '@@/js/const.js';
+import {defaultStore} from '@/store.js';
+import {focusParent} from '@/scripts/focus.js';
 
 const props = defineProps<{
 	mediaList: Misskey.entities.DriveFile[];
@@ -140,7 +140,7 @@ onMounted(() => {
 
 	lightbox.addFilter('itemData', (itemData) => {
 		// element is children
-		const { element } = itemData;
+		const {element} = itemData;
 
 		const id = element?.dataset.id;
 		const file = props.mediaList.find(media => media.id === id);
@@ -254,7 +254,7 @@ defineExpose({
 			aspect-ratio: 16 / 9; // fallback
 		}
 
-		&.n11_1{
+		&.n11_1 {
 			min-height: initial;
 			max-height: initial;
 			aspect-ratio: 1 / 1; // fallback

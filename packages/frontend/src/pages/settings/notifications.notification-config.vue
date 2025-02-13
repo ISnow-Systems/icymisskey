@@ -4,20 +4,20 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="_gaps_m">
-	<MkSelect v-model="type">
-		<option v-for="type in props.configurableTypes ?? notificationConfigTypes" :key="type" :value="type">{{ notificationConfigTypesI18nMap[type] }}</option>
-	</MkSelect>
+	<div class="_gaps_m">
+		<MkSelect v-model="type">
+			<option v-for="type in props.configurableTypes ?? notificationConfigTypes" :key="type" :value="type">{{ notificationConfigTypesI18nMap[type] }}</option>
+		</MkSelect>
 
-	<MkSelect v-if="type === 'list'" v-model="userListId">
-		<template #label>{{ i18n.ts.userList }}</template>
-		<option v-for="list in props.userLists" :key="list.id" :value="list.id">{{ list.name }}</option>
-	</MkSelect>
+		<MkSelect v-if="type === 'list'" v-model="userListId">
+			<template #label>{{ i18n.ts.userList }}</template>
+			<option v-for="list in props.userLists" :key="list.id" :value="list.id">{{ list.name }}</option>
+		</MkSelect>
 
-	<div class="_buttons">
-		<MkButton inline primary :disabled="type === 'list' && userListId === null" @click="save"><i class="ti ti-check"></i> {{ i18n.ts.save }}</MkButton>
+		<div class="_buttons">
+			<MkButton :disabled="type === 'list' && userListId === null" inline primary @click="save"><i class="ti ti-check"></i> {{ i18n.ts.save }}</MkButton>
+		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts">
@@ -41,10 +41,10 @@ export type NotificationConfig = {
 
 <script lang="ts" setup>
 import * as Misskey from 'misskey-js';
-import { ref } from 'vue';
+import {ref} from 'vue';
 import MkSelect from '@/components/MkSelect.vue';
 import MkButton from '@/components/MkButton.vue';
-import { i18n } from '@/i18n.js';
+import {i18n} from '@/i18n.js';
 
 const props = defineProps<{
 	value: NotificationConfig;
@@ -70,6 +70,6 @@ const type = ref(props.value.type);
 const userListId = ref(props.value.type === 'list' ? props.value.userListId : null);
 
 function save() {
-	emit('update', type.value === 'list' ? { type: type.value, userListId: userListId.value! } : { type: type.value });
+	emit('update', type.value === 'list' ? {type: type.value, userListId: userListId.value!} : {type: type.value});
 }
 </script>

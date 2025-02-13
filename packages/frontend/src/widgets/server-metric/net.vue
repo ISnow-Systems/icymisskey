@@ -4,52 +4,56 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="oxxrhrto">
-	<svg :viewBox="`0 0 ${ viewBoxX } ${ viewBoxY }`">
-		<polygon
-			:points="inPolygonPoints"
-			fill="#94a029"
-			fill-opacity="0.5"
-		/>
-		<polyline
-			:points="inPolylinePoints"
-			fill="none"
-			stroke="#94a029"
-			stroke-width="1"
-		/>
-		<circle
-			:cx="inHeadX"
-			:cy="inHeadY"
-			r="1.5"
-			fill="#94a029"
-		/>
-		<text x="1" y="5">NET rx <tspan>{{ bytes(inRecent) }}</tspan></text>
-	</svg>
-	<svg :viewBox="`0 0 ${ viewBoxX } ${ viewBoxY }`">
-		<polygon
-			:points="outPolygonPoints"
-			fill="#ff9156"
-			fill-opacity="0.5"
-		/>
-		<polyline
-			:points="outPolylinePoints"
-			fill="none"
-			stroke="#ff9156"
-			stroke-width="1"
-		/>
-		<circle
-			:cx="outHeadX"
-			:cy="outHeadY"
-			r="1.5"
-			fill="#ff9156"
-		/>
-		<text x="1" y="5">NET tx <tspan>{{ bytes(outRecent) }}</tspan></text>
-	</svg>
-</div>
+	<div class="oxxrhrto">
+		<svg :viewBox="`0 0 ${ viewBoxX } ${ viewBoxY }`">
+			<polygon
+				:points="inPolygonPoints"
+				fill="#94a029"
+				fill-opacity="0.5"
+			/>
+			<polyline
+				:points="inPolylinePoints"
+				fill="none"
+				stroke="#94a029"
+				stroke-width="1"
+			/>
+			<circle
+				:cx="inHeadX"
+				:cy="inHeadY"
+				fill="#94a029"
+				r="1.5"
+			/>
+			<text x="1" y="5">NET rx
+				<tspan>{{ bytes(inRecent) }}</tspan>
+			</text>
+		</svg>
+		<svg :viewBox="`0 0 ${ viewBoxX } ${ viewBoxY }`">
+			<polygon
+				:points="outPolygonPoints"
+				fill="#ff9156"
+				fill-opacity="0.5"
+			/>
+			<polyline
+				:points="outPolylinePoints"
+				fill="none"
+				stroke="#ff9156"
+				stroke-width="1"
+			/>
+			<circle
+				:cx="outHeadX"
+				:cy="outHeadY"
+				fill="#ff9156"
+				r="1.5"
+			/>
+			<text x="1" y="5">NET tx
+				<tspan>{{ bytes(outRecent) }}</tspan>
+			</text>
+		</svg>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onBeforeUnmount, ref } from 'vue';
+import {onMounted, onBeforeUnmount, ref} from 'vue';
 import * as Misskey from 'misskey-js';
 import bytes from '@/filters/bytes.js';
 

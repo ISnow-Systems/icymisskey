@@ -4,7 +4,7 @@
  */
 
 import * as os from '@/os.js';
-import { i18n } from '@/i18n.js';
+import {i18n} from '@/i18n.js';
 
 export function showSuspendedDialog() {
 	return os.alert({

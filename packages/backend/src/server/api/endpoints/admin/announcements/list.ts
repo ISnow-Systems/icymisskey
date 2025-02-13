@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import type { AnnouncementsRepository, AnnouncementReadsRepository } from '@/models/_.js';
-import type { MiAnnouncement } from '@/models/Announcement.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { QueryService } from '@/core/QueryService.js';
-import { DI } from '@/di-symbols.js';
-import { IdService } from '@/core/IdService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {AnnouncementsRepository, AnnouncementReadsRepository} from '@/models/_.js';
+import type {MiAnnouncement} from '@/models/Announcement.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {QueryService} from '@/core/QueryService.js';
+import {DI} from '@/di-symbols.js';
+import {IdService} from '@/core/IdService.js';
 
 export const meta = {
 	tags: ['admin'],
@@ -65,11 +65,11 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
-		userId: { type: 'string', format: 'misskey:id', nullable: true },
-		status: { type: 'string', enum: ['all', 'active', 'archived'], default: 'active' },
+		limit: {type: 'integer', minimum: 1, maximum: 100, default: 10},
+		sinceId: {type: 'string', format: 'misskey:id'},
+		untilId: {type: 'string', format: 'misskey:id'},
+		userId: {type: 'string', format: 'misskey:id', nullable: true},
+		status: {type: 'string', enum: ['all', 'active', 'archived'], default: 'active'},
 	},
 	required: [],
 } as const;
@@ -79,10 +79,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.announcementsRepository)
 		private announcementsRepository: AnnouncementsRepository,
-
 		@Inject(DI.announcementReadsRepository)
 		private announcementReadsRepository: AnnouncementReadsRepository,
-
 		private queryService: QueryService,
 		private idService: IdService,
 	) {
@@ -96,7 +94,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			}
 
 			if (ps.userId) {
-				query.andWhere('announcement.userId = :userId', { userId: ps.userId });
+				query.andWhere('announcement.userId = :userId', {userId: ps.userId});
 			} else {
 				query.andWhere('announcement.userId IS NULL');
 			}

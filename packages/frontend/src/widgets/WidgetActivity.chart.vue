@@ -4,37 +4,38 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<svg :viewBox="`0 0 ${ viewBoxX } ${ viewBoxY }`" :class="$style.root" @mousedown.prevent="onMousedown">
-	<polyline
-		:points="pointsNote"
-		fill="none"
-		stroke-width="1"
-		stroke="#41ddde"
-	/>
-	<polyline
-		:points="pointsReply"
-		fill="none"
-		stroke-width="1"
-		stroke="#f7796c"
-	/>
-	<polyline
-		:points="pointsRenote"
-		fill="none"
-		stroke-width="1"
-		stroke="#a1de41"
-	/>
-	<polyline
-		:points="pointsTotal"
-		fill="none"
-		stroke-width="1"
-		stroke="#555"
-		stroke-dasharray="2 2"
-	/>
-</svg>
+	<svg :class="$style.root" :viewBox="`0 0 ${ viewBoxX } ${ viewBoxY }`" @mousedown.prevent="onMousedown">
+		<polyline
+			:points="pointsNote"
+			fill="none"
+			stroke="#41ddde"
+			stroke-width="1"
+		/>
+		<polyline
+			:points="pointsReply"
+			fill="none"
+			stroke="#f7796c"
+			stroke-width="1"
+		/>
+		<polyline
+			:points="pointsRenote"
+			fill="none"
+			stroke="#a1de41"
+			stroke-width="1"
+		/>
+		<polyline
+			:points="pointsTotal"
+			fill="none"
+			stroke="#555"
+			stroke-dasharray="2 2"
+			stroke-width="1"
+		/>
+	</svg>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import {ref} from 'vue';
+
 const props = defineProps<{
 	activity: {
 		total: number;

@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {DataSource} from 'typeorm';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {DI} from '@/di-symbols.js';
 
 export const meta = {
 	requireCredential: true,
@@ -53,11 +53,12 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	) {
 		super(meta, paramDef, async () => {
 			const sizes = await this.db.query(`
-			SELECT relname AS "table", reltuples as "count", pg_total_relation_size(C.oid) AS "size"
-			FROM pg_class C LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
-			WHERE nspname NOT IN ('pg_catalog', 'information_schema')
-				AND C.relkind <> 'i'
-				AND nspname !~ '^pg_toast';`)
+				SELECT relname AS "table", reltuples as "count", pg_total_relation_size(C.oid) AS "size"
+				FROM pg_class C
+						 LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
+				WHERE nspname NOT IN ('pg_catalog', 'information_schema')
+				  AND C.relkind <> 'i'
+				  AND nspname !~ '^pg_toast';`)
 				.then(recs => {
 					const res = {} as Record<string, { count: number; size: number; }>;
 					for (const rec of recs) {

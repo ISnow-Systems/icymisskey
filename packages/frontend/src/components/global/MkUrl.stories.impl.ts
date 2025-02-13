@@ -4,11 +4,12 @@
  */
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { expect, userEvent, waitFor, within } from '@storybook/test';
-import type { StoryObj } from '@storybook/vue3';
-import { HttpResponse, http } from 'msw';
-import { commonHandlers } from '../../../.storybook/mocks.js';
+import {expect, userEvent, waitFor, within} from '@storybook/test';
+import type {StoryObj} from '@storybook/vue3';
+import {HttpResponse, http} from 'msw';
+import {commonHandlers} from '../../../.storybook/mocks.js';
 import MkUrl from './MkUrl.vue';
+
 export const Default = {
 	render(args) {
 		return {
@@ -30,7 +31,7 @@ export const Default = {
 			template: '<MkUrl v-bind="props">Text</MkUrl>',
 		};
 	},
-	async play({ canvasElement }) {
+	async play({canvasElement}) {
 		const canvas = within(canvasElement);
 		const a = canvas.getByRole<HTMLAnchorElement>('link');
 		await expect(a).toHaveAttribute('href', 'https://misskey-hub.net/');

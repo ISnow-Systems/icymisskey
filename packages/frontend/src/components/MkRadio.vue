@@ -4,28 +4,28 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div
-	v-adaptive-border
-	:class="[$style.root, { [$style.disabled]: disabled, [$style.checked]: checked }]"
-	:aria-checked="checked"
-	:aria-disabled="disabled"
-	role="checkbox"
-	@click="toggle"
->
-	<input
-		type="radio"
-		:disabled="disabled"
-		:class="$style.input"
+	<div
+		v-adaptive-border
+		:aria-checked="checked"
+		:aria-disabled="disabled"
+		:class="[$style.root, { [$style.disabled]: disabled, [$style.checked]: checked }]"
+		role="checkbox"
+		@click="toggle"
 	>
-	<span :class="$style.button">
+		<input
+			:class="$style.input"
+			:disabled="disabled"
+			type="radio"
+		>
+		<span :class="$style.button">
 		<span></span>
 	</span>
-	<span :class="$style.label"><slot></slot></span>
-</div>
+		<span :class="$style.label"><slot></slot></span>
+	</div>
 </template>
 
-<script lang="ts" setup generic="T extends unknown">
-import { computed } from 'vue';
+<script generic="T extends unknown" lang="ts" setup>
+import {computed} from 'vue';
 
 const props = defineProps<{
 	modelValue: T;

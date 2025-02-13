@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Entity, Index, JoinColumn, Column, PrimaryColumn, ManyToOne } from 'typeorm';
-import { noteVisibilities } from '@/types.js';
-import { id } from './util/id.js';
-import { MiUser } from './User.js';
-import { MiChannel } from './Channel.js';
-import type { MiDriveFile } from './DriveFile.js';
+import {Entity, Index, JoinColumn, Column, PrimaryColumn, ManyToOne} from 'typeorm';
+import {noteVisibilities} from '@/types.js';
+import {id} from './util/id.js';
+import {MiUser} from './User.js';
+import {MiChannel} from './Channel.js';
+import type {MiDriveFile} from './DriveFile.js';
 
 @Entity('note')
 export class MiNote {
@@ -114,10 +114,10 @@ export class MiNote {
 	 * followers ... フォロワーのみ
 	 * specified ... visibleUserIds で指定したユーザーのみ
 	 */
-	@Column('enum', { enum: noteVisibilities })
+	@Column('enum', {enum: noteVisibilities})
 	public visibility: typeof noteVisibilities[number];
 
-	@Index({ unique: true })
+	@Index({unique: true})
 	@Column('varchar', {
 		length: 512, nullable: true,
 		comment: 'The URI of a note. it will be null when the note is local.',
@@ -130,7 +130,7 @@ export class MiNote {
 	})
 	public url: string | null;
 
-	@Index('IDX_NOTE_FILE_IDS', { synchronize: false })
+	@Index('IDX_NOTE_FILE_IDS', {synchronize: false})
 	@Column({
 		...id(),
 		array: true, default: '{}',
@@ -142,14 +142,14 @@ export class MiNote {
 	})
 	public attachedFileTypes: string[];
 
-	@Index('IDX_NOTE_VISIBLE_USER_IDS', { synchronize: false })
+	@Index('IDX_NOTE_VISIBLE_USER_IDS', {synchronize: false})
 	@Column({
 		...id(),
 		array: true, default: '{}',
 	})
 	public visibleUserIds: MiUser['id'][];
 
-	@Index('IDX_NOTE_MENTIONS', { synchronize: false })
+	@Index('IDX_NOTE_MENTIONS', {synchronize: false})
 	@Column({
 		...id(),
 		array: true, default: '{}',
@@ -171,7 +171,7 @@ export class MiNote {
 	})
 	public emojis: string[];
 
-	@Index('IDX_NOTE_TAGS', { synchronize: false })
+	@Index('IDX_NOTE_TAGS', {synchronize: false})
 	@Column('varchar', {
 		length: 128, array: true, default: '{}',
 	})
@@ -229,6 +229,7 @@ export class MiNote {
 		comment: '[Denormalized]',
 	})
 	public renoteUserHost: string | null;
+
 	//#endregion
 
 	constructor(data: Partial<MiNote>) {

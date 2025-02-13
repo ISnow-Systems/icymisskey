@@ -4,16 +4,16 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="[$style.root, { [$style.rootMin]: forceSpacerMin }]">
-	<div :class="$style.content">
-		<slot></slot>
+	<div :class="[$style.root, { [$style.rootMin]: forceSpacerMin }]">
+		<div :class="$style.content">
+			<slot></slot>
+		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { inject } from 'vue';
-import { deviceKind } from '@/scripts/device-kind.js';
+import {inject} from 'vue';
+import {deviceKind} from '@/scripts/device-kind.js';
 
 const props = withDefaults(defineProps<{
 	contentMax?: number | null;
@@ -33,6 +33,7 @@ const forceSpacerMin = inject('forceSpacerMin', false) || deviceKind === 'smartp
 	box-sizing: border-box;
 	width: 100%;
 }
+
 .rootMin {
 	padding: v-bind('props.marginMin + "px"') !important;
 }

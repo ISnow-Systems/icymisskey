@@ -4,44 +4,44 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="_gaps">
 	<div class="_gaps">
-		<MkInput v-model="searchQuery" :large="true" :autofocus="true" type="search" @enter.prevent="search">
-			<template #prefix><i class="ti ti-search"></i></template>
-		</MkInput>
-		<MkRadios v-if="instance.federation !== 'none'" v-model="searchOrigin" @update:modelValue="search()">
-			<option value="combined">{{ i18n.ts.all }}</option>
-			<option value="local">{{ i18n.ts.local }}</option>
-			<option value="remote">{{ i18n.ts.remote }}</option>
-		</MkRadios>
-		<MkButton large primary gradate rounded @click="search">{{ i18n.ts.search }}</MkButton>
-	</div>
+		<div class="_gaps">
+			<MkInput v-model="searchQuery" :autofocus="true" :large="true" type="search" @enter.prevent="search">
+				<template #prefix><i class="ti ti-search"></i></template>
+			</MkInput>
+			<MkRadios v-if="instance.federation !== 'none'" v-model="searchOrigin" @update:modelValue="search()">
+				<option value="combined">{{ i18n.ts.all }}</option>
+				<option value="local">{{ i18n.ts.local }}</option>
+				<option value="remote">{{ i18n.ts.remote }}</option>
+			</MkRadios>
+			<MkButton gradate large primary rounded @click="search">{{ i18n.ts.search }}</MkButton>
+		</div>
 
-	<MkFoldableSection v-if="userPagination">
-		<template #header>{{ i18n.ts.searchResult }}</template>
-		<MkUserList :key="key" :pagination="userPagination"/>
-	</MkFoldableSection>
-</div>
+		<MkFoldableSection v-if="userPagination">
+			<template #header>{{ i18n.ts.searchResult }}</template>
+			<MkUserList :key="key" :pagination="userPagination"/>
+		</MkFoldableSection>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { ref, toRef } from 'vue';
-import type { Endpoints } from 'misskey-js';
-import type { Paging } from '@/components/MkPagination.vue';
+import {ref, toRef} from 'vue';
+import type {Endpoints} from 'misskey-js';
+import type {Paging} from '@/components/MkPagination.vue';
 import MkUserList from '@/components/MkUserList.vue';
 import MkInput from '@/components/MkInput.vue';
 import MkRadios from '@/components/MkRadios.vue';
 import MkButton from '@/components/MkButton.vue';
-import { i18n } from '@/i18n.js';
-import { instance } from '@/instance.js';
+import {i18n} from '@/i18n.js';
+import {instance} from '@/instance.js';
 import * as os from '@/os.js';
 import MkFoldableSection from '@/components/MkFoldableSection.vue';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { useRouter } from '@/router/supplier.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {useRouter} from '@/router/supplier.js';
 
 const props = withDefaults(defineProps<{
-  query?: string,
-  origin?: Endpoints['users/search']['req']['origin'],
+	query?: string,
+	origin?: Endpoints['users/search']['req']['origin'],
 }>(), {
 	query: '',
 	origin: 'combined',

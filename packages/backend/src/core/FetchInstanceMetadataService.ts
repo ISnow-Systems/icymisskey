@@ -3,19 +3,19 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { URL } from 'node:url';
-import { Inject, Injectable } from '@nestjs/common';
-import { JSDOM } from 'jsdom';
+import {URL} from 'node:url';
+import {Inject, Injectable} from '@nestjs/common';
+import {JSDOM} from 'jsdom';
 import tinycolor from 'tinycolor2';
 import * as Redis from 'ioredis';
-import type { MiInstance } from '@/models/Instance.js';
+import type {MiInstance} from '@/models/Instance.js';
 import type Logger from '@/logger.js';
-import { DI } from '@/di-symbols.js';
-import { LoggerService } from '@/core/LoggerService.js';
-import { HttpRequestService } from '@/core/HttpRequestService.js';
-import { bindThis } from '@/decorators.js';
-import { FederatedInstanceService } from '@/core/FederatedInstanceService.js';
-import type { DOMWindow } from 'jsdom';
+import {DI} from '@/di-symbols.js';
+import {LoggerService} from '@/core/LoggerService.js';
+import {HttpRequestService} from '@/core/HttpRequestService.js';
+import {bindThis} from '@/decorators.js';
+import {FederatedInstanceService} from '@/core/FederatedInstanceService.js';
+import type {DOMWindow} from 'jsdom';
 
 type NodeInfo = {
 	openRegistrations?: unknown;
@@ -188,7 +188,7 @@ export class FetchInstanceMetadataService {
 
 		const html = await this.httpRequestService.getHtml(url);
 
-		const { window } = new JSDOM(html);
+		const {window} = new JSDOM(html);
 		const doc = window.document;
 
 		return doc;
@@ -222,7 +222,7 @@ export class FetchInstanceMetadataService {
 
 		const favicon = await this.httpRequestService.send(faviconUrl, {
 			method: 'HEAD',
-		}, { throwErrorWhenResponseNotOk: false });
+		}, {throwErrorWhenResponseNotOk: false});
 
 		if (favicon.ok) {
 			return faviconUrl;

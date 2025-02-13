@@ -6,8 +6,8 @@
 process.env.NODE_ENV = 'test';
 
 import * as assert from 'assert';
-import { channel, clip, cookie, galleryPost, page, play, post, signup, simpleGet, uploadFile } from '../utils.js';
-import type { SimpleGetResponse } from '../utils.js';
+import {channel, clip, cookie, galleryPost, page, play, post, signup, simpleGet, uploadFile} from '../utils.js';
+import type {SimpleGetResponse} from '../utils.js';
 import type * as misskey from 'misskey-js';
 
 // Request Accept
@@ -40,8 +40,8 @@ describe('Webリソース', () => {
 	};
 	const ok = async (param: Request & {
 		type?: string,
-	}):Promise<SimpleGetResponse> => {
-		const { path, accept, cookie, type } = param;
+	}): Promise<SimpleGetResponse> => {
+		const {path, accept, cookie, type} = param;
 		const res = await simpleGet(path, accept, cookie);
 		assert.strictEqual(res.status, 200);
 		assert.strictEqual(res.type, type ?? HTML);
@@ -52,7 +52,7 @@ describe('Webリソース', () => {
 		status?: number,
 		code?: string,
 	}): Promise<SimpleGetResponse> => {
-		const { path, accept, cookie, status, code } = param;
+		const {path, accept, cookie, status, code} = param;
 		const res = await simpleGet(path, accept, cookie);
 		assert.notStrictEqual(res.status, 200);
 		if (status != null) {
@@ -76,7 +76,7 @@ describe('Webリソース', () => {
 	};
 
 	beforeAll(async () => {
-		alice = await signup({ username: 'alice' });
+		alice = await signup({username: 'alice'});
 		aliceUploadedFile = (await uploadFile(alice)).body;
 		alicesPost = await post(alice, {
 			text: 'test',
@@ -89,32 +89,32 @@ describe('Webリソース', () => {
 		});
 		aliceChannel = await channel(alice, {});
 
-		bob = await signup({ username: 'bob' });
+		bob = await signup({username: 'bob'});
 	}, 1000 * 60 * 2);
 
 	describe.each([
-		{ path: '/', type: HTML },
-		{ path: '/docs/ja-JP/about', type: HTML }, // "指定されたURLに該当するページはありませんでした。"
+		{path: '/', type: HTML},
+		{path: '/docs/ja-JP/about', type: HTML}, // "指定されたURLに該当するページはありませんでした。"
 		// fastify-static gives charset=UTF-8 instead of utf-8 and that's okay
-		{ path: '/api-doc', type: 'text/html; charset=UTF-8' },
-		{ path: '/api.json', type: JSON_UTF8 },
-		{ path: '/api-console', type: HTML },
-		{ path: '/_info_card_', type: HTML },
-		{ path: '/bios', type: HTML },
-		{ path: '/cli', type: HTML },
-		{ path: '/flush', type: HTML },
-		{ path: '/robots.txt', type: 'text/plain; charset=UTF-8' },
-		{ path: '/favicon.ico', type: 'image/vnd.microsoft.icon' },
-		{ path: '/opensearch.xml', type: 'application/opensearchdescription+xml' },
-		{ path: '/apple-touch-icon.png', type: 'image/png' },
-		{ path: '/twemoji/2764.svg', type: 'image/svg+xml' },
-		{ path: '/twemoji/2764-fe0f-200d-1f525.svg', type: 'image/svg+xml' },
-		{ path: '/twemoji-badge/2764.png', type: 'image/png' },
-		{ path: '/twemoji-badge/2764-fe0f-200d-1f525.png', type: 'image/png' },
-		{ path: '/fluent-emoji/2764.png', type: 'image/png' },
-		{ path: '/fluent-emoji/2764-fe0f-200d-1f525.png', type: 'image/png' },
+		{path: '/api-doc', type: 'text/html; charset=UTF-8'},
+		{path: '/api.json', type: JSON_UTF8},
+		{path: '/api-console', type: HTML},
+		{path: '/_info_card_', type: HTML},
+		{path: '/bios', type: HTML},
+		{path: '/cli', type: HTML},
+		{path: '/flush', type: HTML},
+		{path: '/robots.txt', type: 'text/plain; charset=UTF-8'},
+		{path: '/favicon.ico', type: 'image/vnd.microsoft.icon'},
+		{path: '/opensearch.xml', type: 'application/opensearchdescription+xml'},
+		{path: '/apple-touch-icon.png', type: 'image/png'},
+		{path: '/twemoji/2764.svg', type: 'image/svg+xml'},
+		{path: '/twemoji/2764-fe0f-200d-1f525.svg', type: 'image/svg+xml'},
+		{path: '/twemoji-badge/2764.png', type: 'image/png'},
+		{path: '/twemoji-badge/2764-fe0f-200d-1f525.png', type: 'image/png'},
+		{path: '/fluent-emoji/2764.png', type: 'image/png'},
+		{path: '/fluent-emoji/2764-fe0f-200d-1f525.png', type: 'image/png'},
 	])('$path', (p) => {
-		test('がGETできる。', async () => await ok({ ...p }));
+		test('がGETできる。', async () => await ok({...p}));
 
 		// 注意: Webページが200で取得できても、実際のHTMLが正しく表示できるとは限らない
 		//      例えば、 /@xxx/pages/yyy に存在しないIDを渡した場合、HTTPレスポンスではエラーを区別できない
@@ -122,21 +122,21 @@ describe('Webリソース', () => {
 	});
 
 	describe.each([
-		{ path: '/twemoji/2764.png' },
-		{ path: '/twemoji/2764-fe0f-200d-1f525.png' },
-		{ path: '/twemoji-badge/2764.svg' },
-		{ path: '/twemoji-badge/2764-fe0f-200d-1f525.svg' },
-		{ path: '/fluent-emoji/2764.svg' },
-		{ path: '/fluent-emoji/2764-fe0f-200d-1f525.svg' },
-	])('$path', ({ path }) => {
-		test('はGETできない。', async () => await notFound({ path }));
+		{path: '/twemoji/2764.png'},
+		{path: '/twemoji/2764-fe0f-200d-1f525.png'},
+		{path: '/twemoji-badge/2764.svg'},
+		{path: '/twemoji-badge/2764-fe0f-200d-1f525.svg'},
+		{path: '/fluent-emoji/2764.svg'},
+		{path: '/fluent-emoji/2764-fe0f-200d-1f525.svg'},
+	])('$path', ({path}) => {
+		test('はGETできない。', async () => await notFound({path}));
 	});
 
 	describe.each([
-		{ ext: 'rss', type: 'application/rss+xml; charset=utf-8' },
-		{ ext: 'atom', type: 'application/atom+xml; charset=utf-8' },
-		{ ext: 'json', type: 'application/json; charset=utf-8' },
-	])('/@:username.$ext', ({ ext, type }) => {
+		{ext: 'rss', type: 'application/rss+xml; charset=utf-8'},
+		{ext: 'atom', type: 'application/atom+xml; charset=utf-8'},
+		{ext: 'json', type: 'application/json; charset=utf-8'},
+	])('/@:username.$ext', ({ext, type}) => {
 		const path = (username: string): string => `/@${username}.${ext}`;
 
 		test('がGETできる。', async () => await ok({
@@ -156,7 +156,7 @@ describe('Webリソース', () => {
 
 		describe(' has entry such ', () => {
 			beforeEach(() => {
-				post(alice, { text: "**a**" })
+				post(alice, {text: "**a**"})
 			});
 
 			test('MFMを含まない。', async () => {
@@ -172,7 +172,7 @@ describe('Webリソース', () => {
 		})
 	});
 
-	describe.each([{ path: '/api/foo' }])('$path', ({ path }) => {
+	describe.each([{path: '/api/foo'}])('$path', ({path}) => {
 		test('はGETできない。', async () => await notOk({
 			path,
 			status: 404,
@@ -180,7 +180,7 @@ describe('Webリソース', () => {
 		}));
 	});
 
-	describe.each([{ path: '/queue' }])('$path', ({ path }) => {
+	describe.each([{path: '/queue'}])('$path', ({path}) => {
 		test('はログインしないとGETできない。', async () => await notOk({
 			path,
 			status: 401,
@@ -198,7 +198,7 @@ describe('Webリソース', () => {
 		}));
 	});
 
-	describe.each([{ path: '/streaming' }])('$path', ({ path }) => {
+	describe.each([{path: '/streaming'}])('$path', ({path}) => {
 		test('はGETできない。', async () => await notOk({
 			path,
 			status: 503,
@@ -209,9 +209,9 @@ describe('Webリソース', () => {
 		const path = (username: string): string => `/@${username}`;
 
 		describe.each([
-			{ accept: PREFER_HTML },
-			{ accept: UNSPECIFIED },
-		])('(Acceptヘッダ: $accept)', ({ accept }) => {
+			{accept: PREFER_HTML},
+			{accept: UNSPECIFIED},
+		])('(Acceptヘッダ: $accept)', ({accept}) => {
 			test('はHTMLとしてGETできる。', async () => {
 				const res = await ok({
 					path: path(alice.username),
@@ -234,9 +234,9 @@ describe('Webリソース', () => {
 		});
 
 		describe.each([
-			{ accept: ONLY_AP },
-			{ accept: PREFER_AP },
-		])('(Acceptヘッダ: $accept)', ({ accept }) => {
+			{accept: ONLY_AP},
+			{accept: PREFER_AP},
+		])('(Acceptヘッダ: $accept)', ({accept}) => {
 			test('はActivityPubとしてGETできる。', async () => {
 				const res = await ok({
 					path: path(alice.username),
@@ -256,15 +256,15 @@ describe('Webリソース', () => {
 
 	describe.each([
 		// 実際のハンドルはフロントエンド(index.vue)で行われる
-		{ sub: 'home' },
-		{ sub: 'notes' },
-		{ sub: 'activity' },
-		{ sub: 'achievements' },
-		{ sub: 'reactions' },
-		{ sub: 'clips' },
-		{ sub: 'pages' },
-		{ sub: 'gallery' },
-	])('/@:username/$sub', ({ sub }) => {
+		{sub: 'home'},
+		{sub: 'notes'},
+		{sub: 'activity'},
+		{sub: 'achievements'},
+		{sub: 'reactions'},
+		{sub: 'clips'},
+		{sub: 'pages'},
+		{sub: 'gallery'},
+	])('/@:username/$sub', ({sub}) => {
 		const path = (username: string): string => `/@${username}/${sub}`;
 
 		test('はHTMLとしてGETできる。', async () => {
@@ -301,9 +301,9 @@ describe('Webリソース', () => {
 		const path = (id: string): string => `/users/${id}`;
 
 		describe.each([
-			{ accept: PREFER_HTML },
-			{ accept: UNSPECIFIED },
-		])('(Acceptヘッダ: $accept)', ({ accept }) => {
+			{accept: PREFER_HTML},
+			{accept: UNSPECIFIED},
+		])('(Acceptヘッダ: $accept)', ({accept}) => {
 			test('は/@:usernameにリダイレクトする', async () => {
 				const res = await simpleGet(path(alice.id), accept);
 				assert.strictEqual(res.status, 302);
@@ -316,9 +316,9 @@ describe('Webリソース', () => {
 		});
 
 		describe.each([
-			{ accept: ONLY_AP },
-			{ accept: PREFER_AP },
-		])('(Acceptヘッダ: $accept)', ({ accept }) => {
+			{accept: ONLY_AP},
+			{accept: PREFER_AP},
+		])('(Acceptヘッダ: $accept)', ({accept}) => {
 			test('はActivityPubとしてGETできる。', async () => {
 				const res = await ok({
 					path: path(alice.id),
@@ -370,9 +370,9 @@ describe('Webリソース', () => {
 		const path = (noteId: string): string => `/notes/${noteId}`;
 
 		describe.each([
-			{ accept: PREFER_HTML },
-			{ accept: UNSPECIFIED },
-		])('(Acceptヘッダ: $accept)', ({ accept }) => {
+			{accept: PREFER_HTML},
+			{accept: UNSPECIFIED},
+		])('(Acceptヘッダ: $accept)', ({accept}) => {
 			test('はHTMLとしてGETできる。', async () => {
 				const res = await ok({
 					path: path(alicesPost.id),
@@ -394,9 +394,9 @@ describe('Webリソース', () => {
 		});
 
 		describe.each([
-			{ accept: ONLY_AP },
-			{ accept: PREFER_AP },
-		])('(Acceptヘッダ: $accept)', ({ accept }) => {
+			{accept: ONLY_AP},
+			{accept: PREFER_AP},
+		])('(Acceptヘッダ: $accept)', ({accept}) => {
 			test('はActivityPubとしてGETできる。', async () => {
 				const res = await ok({
 					path: path(alicesPost.id),

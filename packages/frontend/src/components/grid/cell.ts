@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { ValidateViolation } from '@/components/grid/cell-validators.js';
-import type { Size } from '@/components/grid/grid.js';
-import type { GridColumn } from '@/components/grid/column.js';
-import type { GridRow } from '@/components/grid/row.js';
-import type { MenuItem } from '@/types/menu.js';
-import type { GridContext } from '@/components/grid/grid-event.js';
+import type {ValidateViolation} from '@/components/grid/cell-validators.js';
+import type {Size} from '@/components/grid/grid.js';
+import type {GridColumn} from '@/components/grid/column.js';
+import type {GridRow} from '@/components/grid/row.js';
+import type {MenuItem} from '@/types/menu.js';
+import type {GridContext} from '@/components/grid/grid-event.js';
 
 export type CellValue = string | boolean | number | undefined | null | Array<unknown> | NonNullable<unknown>;
 
@@ -51,13 +51,13 @@ export function createCell(
 		: value;
 
 	return {
-		address: { row: row.index, col: column.index },
+		address: {row: row.index, col: column.index},
 		value: newValue,
 		column,
 		row,
 		selected: false,
 		ranged: false,
-		contentSize: { width: 0, height: 0 },
+		contentSize: {width: 0, height: 0},
 		violation: {
 			valid: true,
 			params: {

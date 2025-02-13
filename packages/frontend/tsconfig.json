@@ -24,8 +24,12 @@
 		"verbatimModuleSyntax": true,
 		"baseUrl": ".",
 		"paths": {
-			"@/*": ["./src/*"],
-			"@@/*": ["../frontend-shared/*"]
+			"@/*": [
+				"./src/*"
+			],
+			"@@/*": [
+				"../frontend-shared/*"
+			]
 		},
 		"typeRoots": [
 			"./@types",
@@ -35,7 +39,7 @@
 		],
 		"types": [
 			"vite/client",
-			"vitest/importMeta",
+			"vitest/importMeta"
 		],
 		"lib": [
 			"esnext",

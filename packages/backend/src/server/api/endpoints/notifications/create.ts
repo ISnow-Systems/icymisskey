@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { NotificationService } from '@/core/NotificationService.js';
+import {Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {NotificationService} from '@/core/NotificationService.js';
 
 export const meta = {
 	tags: ['notifications'],
@@ -19,16 +19,15 @@ export const meta = {
 		max: 10,
 	},
 
-	errors: {
-	},
+	errors: {},
 } as const;
 
 export const paramDef = {
 	type: 'object',
 	properties: {
-		body: { type: 'string' },
-		header: { type: 'string', nullable: true },
-		icon: { type: 'string', nullable: true },
+		body: {type: 'string'},
+		header: {type: 'string', nullable: true},
+		icon: {type: 'string', nullable: true},
 	},
 	required: ['body'],
 } as const;

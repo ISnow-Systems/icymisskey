@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { nextTick } from 'vue';
-import type { Ref } from 'vue';
+import {nextTick} from 'vue';
+import type {Ref} from 'vue';
 import * as os from '@/os.js';
-import { i18n } from '@/i18n.js';
-import { MFM_TAGS } from '@@/js/const.js';
-import type { MenuItem } from '@/types/menu.js';
+import {i18n} from '@/i18n.js';
+import {MFM_TAGS} from '@@/js/const.js';
+import type {MenuItem} from '@/types/menu.js';
 
 /**
  * MFMの装飾のリストを表示する

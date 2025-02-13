@@ -25,7 +25,9 @@
 		"isolatedModules": true,
 		"baseUrl": "./",
 		"paths": {
-			"@/*": ["../src/*"]
+			"@/*": [
+				"../src/*"
+			]
 		},
 		"typeRoots": [
 			"../node_modules/@types",
@@ -34,7 +36,10 @@
 		"lib": [
 			"esnext"
 		],
-		"types": ["jest", "node"]
+		"types": [
+			"jest",
+			"node"
+		]
 	},
 	"compileOnSave": false,
 	"include": [

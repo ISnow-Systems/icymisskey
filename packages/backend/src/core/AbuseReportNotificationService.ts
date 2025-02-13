@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable, type OnApplicationShutdown } from '@nestjs/common';
-import { Brackets, In, IsNull, Not } from 'typeorm';
+import {Inject, Injectable, type OnApplicationShutdown} from '@nestjs/common';
+import {Brackets, In, IsNull, Not} from 'typeorm';
 import * as Redis from 'ioredis';
 import sanitizeHtml from 'sanitize-html';
-import { DI } from '@/di-symbols.js';
-import { bindThis } from '@/decorators.js';
-import { GlobalEvents, GlobalEventService } from '@/core/GlobalEventService.js';
+import {DI} from '@/di-symbols.js';
+import {bindThis} from '@/decorators.js';
+import {GlobalEvents, GlobalEventService} from '@/core/GlobalEventService.js';
 import type {
 	AbuseReportNotificationRecipientRepository,
 	MiAbuseReportNotificationRecipient,
@@ -17,26 +17,23 @@ import type {
 	MiMeta,
 	MiUser,
 } from '@/models/_.js';
-import { EmailService } from '@/core/EmailService.js';
-import { RoleService } from '@/core/RoleService.js';
-import { RecipientMethod } from '@/models/AbuseReportNotificationRecipient.js';
-import { ModerationLogService } from '@/core/ModerationLogService.js';
-import { SystemWebhookService } from '@/core/SystemWebhookService.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { IdService } from './IdService.js';
+import {EmailService} from '@/core/EmailService.js';
+import {RoleService} from '@/core/RoleService.js';
+import {RecipientMethod} from '@/models/AbuseReportNotificationRecipient.js';
+import {ModerationLogService} from '@/core/ModerationLogService.js';
+import {SystemWebhookService} from '@/core/SystemWebhookService.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {IdService} from './IdService.js';
 
 @Injectable()
 export class AbuseReportNotificationService implements OnApplicationShutdown {
 	constructor(
 		@Inject(DI.meta)
 		private meta: MiMeta,
-
 		@Inject(DI.abuseReportNotificationRecipientRepository)
 		private abuseReportNotificationRecipientRepository: AbuseReportNotificationRecipientRepository,
-
 		@Inject(DI.redisForSub)
 		private redisForSub: Redis.Redis,
-
 		private idService: IdService,
 		private roleService: RoleService,
 		private systemWebhookService: SystemWebhookService,
@@ -149,7 +146,7 @@ export class AbuseReportNotificationService implements OnApplicationShutdown {
 				].filter(x => x != null)),
 			],
 			null,
-			{ schema: 'UserLite' },
+			{schema: 'UserLite'},
 		).then(it => new Map(it.map(it => [it.id, it])));
 		const convertedReports = abuseReports.map(it => {
 			return {
@@ -213,16 +210,16 @@ export class AbuseReportNotificationService implements OnApplicationShutdown {
 		}
 
 		if (params?.ids) {
-			query.andWhere({ id: In(params.ids) });
+			query.andWhere({id: In(params.ids)});
 		}
 
 		if (params?.method) {
 			query.andWhere(new Brackets(qb => {
 				if (params.method?.includes('email')) {
-					qb.orWhere({ method: 'email', userId: Not(IsNull()) });
+					qb.orWhere({method: 'email', userId: Not(IsNull())});
 				}
 				if (params.method?.includes('webhook')) {
-					qb.orWhere({ method: 'webhook', userId: IsNull() });
+					qb.orWhere({method: 'webhook', userId: IsNull()});
 				}
 			}));
 		}
@@ -250,7 +247,7 @@ export class AbuseReportNotificationService implements OnApplicationShutdown {
 	public async fetchEMailRecipients(opts?: {
 		removeUnauthorized?: boolean
 	}): Promise<MiAbuseReportNotificationRecipient[]> {
-		return this.fetchRecipients({ method: ['email'] }, { joinUser: true, ...opts });
+		return this.fetchRecipients({method: ['email']}, {joinUser: true, ...opts});
 	}
 
 	/**
@@ -259,7 +256,7 @@ export class AbuseReportNotificationService implements OnApplicationShutdown {
 	 */
 	@bindThis
 	public fetchWebhookRecipients(): Promise<MiAbuseReportNotificationRecipient[]> {
-		return this.fetchRecipients({ method: ['webhook'] }, { joinSystemWebhook: true });
+		return this.fetchRecipients({method: ['webhook']}, {joinSystemWebhook: true});
 	}
 
 	/**
@@ -282,7 +279,7 @@ export class AbuseReportNotificationService implements OnApplicationShutdown {
 			id,
 		});
 
-		const created = await this.abuseReportNotificationRecipientRepository.findOneByOrFail({ id: id });
+		const created = await this.abuseReportNotificationRecipientRepository.findOneByOrFail({id: id});
 
 		this.moderationLogService
 			.log(updater, 'createAbuseReportNotificationRecipient', {
@@ -308,7 +305,7 @@ export class AbuseReportNotificationService implements OnApplicationShutdown {
 		},
 		updater: MiUser,
 	): Promise<MiAbuseReportNotificationRecipient> {
-		const beforeEntity = await this.abuseReportNotificationRecipientRepository.findOneByOrFail({ id: params.id });
+		const beforeEntity = await this.abuseReportNotificationRecipientRepository.findOneByOrFail({id: params.id});
 
 		await this.abuseReportNotificationRecipientRepository.update(params.id, {
 			isActive: params.isActive,
@@ -319,7 +316,7 @@ export class AbuseReportNotificationService implements OnApplicationShutdown {
 			systemWebhookId: params.systemWebhookId,
 		});
 
-		const afterEntity = await this.abuseReportNotificationRecipientRepository.findOneByOrFail({ id: params.id });
+		const afterEntity = await this.abuseReportNotificationRecipientRepository.findOneByOrFail({id: params.id});
 
 		this.moderationLogService
 			.log(updater, 'updateAbuseReportNotificationRecipient', {
@@ -339,7 +336,7 @@ export class AbuseReportNotificationService implements OnApplicationShutdown {
 		id: MiAbuseReportNotificationRecipient['id'],
 		updater: MiUser,
 	) {
-		const entity = await this.abuseReportNotificationRecipientRepository.findBy({ id });
+		const entity = await this.abuseReportNotificationRecipientRepository.findBy({id});
 
 		await this.abuseReportNotificationRecipientRepository.delete(id);
 
@@ -348,6 +345,16 @@ export class AbuseReportNotificationService implements OnApplicationShutdown {
 				recipientId: id,
 				recipient: entity,
 			});
+	}
+
+	@bindThis
+	public dispose(): void {
+		this.redisForSub.off('message', this.onMessage);
+	}
+
+	@bindThis
+	public onApplicationShutdown(signal?: string | undefined): void {
+		this.dispose();
 	}
 
 	/**
@@ -400,7 +407,7 @@ export class AbuseReportNotificationService implements OnApplicationShutdown {
 			return;
 		}
 
-		const { type } = obj.message as GlobalEvents['internal']['payload'];
+		const {type} = obj.message as GlobalEvents['internal']['payload'];
 		switch (type) {
 			case 'roleUpdated':
 			case 'roleDeleted':
@@ -418,15 +425,5 @@ export class AbuseReportNotificationService implements OnApplicationShutdown {
 				break;
 			}
 		}
-	}
-
-	@bindThis
-	public dispose(): void {
-		this.redisForSub.off('message', this.onMessage);
-	}
-
-	@bindThis
-	public onApplicationShutdown(signal?: string | undefined): void {
-		this.dispose();
 	}
 }

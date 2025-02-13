@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { In } from 'typeorm';
+import {Inject, Injectable} from '@nestjs/common';
+import {In} from 'typeorm';
 import type Logger from '@/logger.js';
-import { bindThis } from '@/decorators.js';
-import { MetaService } from '@/core/MetaService.js';
-import { RoleService } from '@/core/RoleService.js';
-import { EmailService } from '@/core/EmailService.js';
-import { MiUser, type UserProfilesRepository } from '@/models/_.js';
-import { DI } from '@/di-symbols.js';
-import { SystemWebhookService } from '@/core/SystemWebhookService.js';
-import { AnnouncementService } from '@/core/AnnouncementService.js';
-import { QueueLoggerService } from '../QueueLoggerService.js';
+import {bindThis} from '@/decorators.js';
+import {MetaService} from '@/core/MetaService.js';
+import {RoleService} from '@/core/RoleService.js';
+import {EmailService} from '@/core/EmailService.js';
+import {MiUser, type UserProfilesRepository} from '@/models/_.js';
+import {DI} from '@/di-symbols.js';
+import {SystemWebhookService} from '@/core/SystemWebhookService.js';
+import {AnnouncementService} from '@/core/AnnouncementService.js';
+import {QueueLoggerService} from '../QueueLoggerService.js';
 
 // モデレーターが不在と判断する日付の閾値
 const MODERATOR_INACTIVITY_LIMIT_DAYS = 7;
@@ -126,29 +126,6 @@ export class CheckModeratorsActivityProcessorService {
 		this.logger.succ('finish.');
 	}
 
-	@bindThis
-	private async processImpl() {
-		const evaluateResult = await this.evaluateModeratorsInactiveDays();
-		if (evaluateResult.isModeratorsInactive) {
-			this.logger.warn(`The moderator has been inactive for ${MODERATOR_INACTIVITY_LIMIT_DAYS} days. We will move to invitation only.`);
-
-			await this.changeToInvitationOnly();
-			await this.notifyChangeToInvitationOnly();
-		} else {
-			const remainingTime = evaluateResult.remainingTime;
-			if (remainingTime.asDays <= MODERATOR_INACTIVITY_WARNING_REMAINING_DAYS) {
-				const timeVariant = remainingTime.asDays === 0 ? `${remainingTime.asHours} hours` : `${remainingTime.asDays} days`;
-				this.logger.warn(`A moderator has been inactive for a period of time. If you are inactive for an additional ${timeVariant}, it will switch to invitation only.`);
-
-				if (remainingTime.asHours % MODERATOR_INACTIVITY_WARNING_NOTIFY_INTERVAL_HOURS === 0) {
-					// ジョブの実行頻度と同等だと通知が多すぎるため期限から6時間ごとに通知する
-					// つまり、のこり2日を切ったら6時間ごとに通知が送られる
-					await this.notifyInactiveModeratorsWarning(remainingTime);
-				}
-			}
-		}
-	}
-
 	/**
 	 * モデレーターが不在であるかどうかを確認する。trueの場合はモデレーターが不在である。
 	 * isModerator, isAdministrator, isRootのいずれかがtrueのユーザを対象に、
@@ -208,17 +185,12 @@ export class CheckModeratorsActivityProcessorService {
 	}
 
 	@bindThis
-	private async changeToInvitationOnly() {
-		await this.metaService.update({ disableRegistration: true });
-	}
-
-	@bindThis
 	public async notifyInactiveModeratorsWarning(remainingTime: ModeratorInactivityRemainingTime) {
 		// -- モデレータへのメール送信
 
 		const moderators = await this.fetchModerators();
 		const moderatorProfiles = await this.userProfilesRepository
-			.findBy({ userId: In(moderators.map(it => it.id)) })
+			.findBy({userId: In(moderators.map(it => it.id))})
 			.then(it => new Map(it.map(it => [it.userId, it])));
 
 		const mail = generateModeratorInactivityMail(remainingTime);
@@ -233,7 +205,7 @@ export class CheckModeratorsActivityProcessorService {
 
 		return this.systemWebhookService.enqueueSystemWebhook(
 			'inactiveModeratorsWarning',
-			{ remainingTime: remainingTime },
+			{remainingTime: remainingTime},
 		);
 	}
 
@@ -243,7 +215,7 @@ export class CheckModeratorsActivityProcessorService {
 
 		const moderators = await this.fetchModerators();
 		const moderatorProfiles = await this.userProfilesRepository
-			.findBy({ userId: In(moderators.map(it => it.id)) })
+			.findBy({userId: In(moderators.map(it => it.id))})
 			.then(it => new Map(it.map(it => [it.userId, it])));
 
 		const mail = generateInvitationOnlyChangedMail();
@@ -268,6 +240,34 @@ export class CheckModeratorsActivityProcessorService {
 			'inactiveModeratorsInvitationOnlyChanged',
 			{},
 		);
+	}
+
+	@bindThis
+	private async processImpl() {
+		const evaluateResult = await this.evaluateModeratorsInactiveDays();
+		if (evaluateResult.isModeratorsInactive) {
+			this.logger.warn(`The moderator has been inactive for ${MODERATOR_INACTIVITY_LIMIT_DAYS} days. We will move to invitation only.`);
+
+			await this.changeToInvitationOnly();
+			await this.notifyChangeToInvitationOnly();
+		} else {
+			const remainingTime = evaluateResult.remainingTime;
+			if (remainingTime.asDays <= MODERATOR_INACTIVITY_WARNING_REMAINING_DAYS) {
+				const timeVariant = remainingTime.asDays === 0 ? `${remainingTime.asHours} hours` : `${remainingTime.asDays} days`;
+				this.logger.warn(`A moderator has been inactive for a period of time. If you are inactive for an additional ${timeVariant}, it will switch to invitation only.`);
+
+				if (remainingTime.asHours % MODERATOR_INACTIVITY_WARNING_NOTIFY_INTERVAL_HOURS === 0) {
+					// ジョブの実行頻度と同等だと通知が多すぎるため期限から6時間ごとに通知する
+					// つまり、のこり2日を切ったら6時間ごとに通知が送られる
+					await this.notifyInactiveModeratorsWarning(remainingTime);
+				}
+			}
+		}
+	}
+
+	@bindThis
+	private async changeToInvitationOnly() {
+		await this.metaService.update({disableRegistration: true});
 	}
 
 	@bindThis

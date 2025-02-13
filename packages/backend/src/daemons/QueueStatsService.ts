@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import Xev from 'xev';
 import * as Bull from 'bullmq';
-import { QueueService } from '@/core/QueueService.js';
-import { bindThis } from '@/decorators.js';
-import { DI } from '@/di-symbols.js';
-import type { Config } from '@/config.js';
-import { QUEUE, baseQueueOptions } from '@/queue/const.js';
-import type { OnApplicationShutdown } from '@nestjs/common';
+import {QueueService} from '@/core/QueueService.js';
+import {bindThis} from '@/decorators.js';
+import {DI} from '@/di-symbols.js';
+import type {Config} from '@/config.js';
+import {QUEUE, baseQueueOptions} from '@/queue/const.js';
+import type {OnApplicationShutdown} from '@nestjs/common';
 
 const ev = new Xev();
 
@@ -24,7 +24,6 @@ export class QueueStatsService implements OnApplicationShutdown {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		private queueService: QueueService,
 	) {
 	}

@@ -4,22 +4,23 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div>
-	<XWidgets :edit="editMode" :widgets="widgets" @addWidget="addWidget" @removeWidget="removeWidget" @updateWidget="updateWidget" @updateWidgets="updateWidgets" @exit="editMode = false"/>
+	<div>
+		<XWidgets :edit="editMode" :widgets="widgets" @addWidget="addWidget" @exit="editMode = false" @removeWidget="removeWidget" @updateWidget="updateWidget" @updateWidgets="updateWidgets"/>
 
-	<button v-if="editMode" class="_textButton" style="font-size: 0.9em;" @click="editMode = false"><i class="ti ti-check"></i> {{ i18n.ts.editWidgetsExit }}</button>
-	<button v-else class="_textButton" data-cy-widget-edit :class="$style.edit" style="font-size: 0.9em;" @click="editMode = true"><i class="ti ti-pencil"></i> {{ i18n.ts.editWidgets }}</button>
-</div>
+		<button v-if="editMode" class="_textButton" style="font-size: 0.9em;" @click="editMode = false"><i class="ti ti-check"></i> {{ i18n.ts.editWidgetsExit }}</button>
+		<button v-else :class="$style.edit" class="_textButton" data-cy-widget-edit style="font-size: 0.9em;" @click="editMode = true"><i class="ti ti-pencil"></i> {{ i18n.ts.editWidgets }}</button>
+	</div>
 </template>
 
 <script lang="ts">
-import { computed, ref } from 'vue';
+import {computed, ref} from 'vue';
+
 const editMode = ref(false);
 </script>
 <script lang="ts" setup>
 import XWidgets from '@/components/MkWidgets.vue';
-import { i18n } from '@/i18n.js';
-import { defaultStore } from '@/store.js';
+import {i18n} from '@/i18n.js';
+import {defaultStore} from '@/store.js';
 
 const props = withDefaults(defineProps<{
 	// null = 全てのウィジェットを表示
@@ -47,7 +48,7 @@ function removeWidget(widget) {
 	defaultStore.set('widgets', defaultStore.state.widgets.filter(w => w.id !== widget.id));
 }
 
-function updateWidget({ id, data }) {
+function updateWidget({id, data}) {
 	defaultStore.set('widgets', defaultStore.state.widgets.map(w => w.id === id ? {
 		...w,
 		data,
@@ -62,14 +63,14 @@ function updateWidgets(thisWidgets) {
 	}
 	if (props.place === 'left') {
 		defaultStore.set('widgets', [
-			...thisWidgets.map(w => ({ ...w, place: 'left' })),
+			...thisWidgets.map(w => ({...w, place: 'left'})),
 			...defaultStore.state.widgets.filter(w => w.place !== 'left' && !thisWidgets.some(t => w.id === t.id)),
 		]);
 		return;
 	}
 	defaultStore.set('widgets', [
 		...defaultStore.state.widgets.filter(w => w.place === 'left' && !thisWidgets.some(t => w.id === t.id)),
-		...thisWidgets.map(w => ({ ...w, place: 'right' })),
+		...thisWidgets.map(w => ({...w, place: 'right'})),
 	]);
 }
 </script>

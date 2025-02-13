@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { entities } from 'misskey-js';
-import { beforeEach, describe, test } from '@jest/globals';
+import {entities} from 'misskey-js';
+import {beforeEach, describe, test} from '@jest/globals';
 import {
 	api,
 	captureWebhook,
@@ -15,7 +15,7 @@ import {
 	UserToken,
 	WEBHOOK_HOST,
 } from '../../utils.js';
-import type { INestApplicationContext } from '@nestjs/common';
+import type {INestApplicationContext} from '@nestjs/common';
 
 describe('[シナリオ] ユーザ通報', () => {
 	let queue: INestApplicationContext;
@@ -82,11 +82,11 @@ describe('[シナリオ] ユーザ通報', () => {
 
 	beforeAll(async () => {
 		queue = await startJobQueue();
-		admin = await signup({ username: 'admin' });
-		alice = await signup({ username: 'alice' });
-		bob = await signup({ username: 'bob' });
+		admin = await signup({username: 'admin'});
+		alice = await signup({username: 'alice'});
+		bob = await signup({username: 'bob'});
 
-		await role(admin, { isAdministrator: true });
+		await role(admin, {isAdministrator: true});
 	}, 1000 * 60 * 2);
 
 	afterAll(async () => {
@@ -99,7 +99,7 @@ describe('[シナリオ] ユーザ通報', () => {
 		beforeEach(async () => {
 			const webhooks = await api('admin/system-webhook/list', {}, admin);
 			for (const webhook of webhooks.body) {
-				await api('admin/system-webhook/delete', { id: webhook.id }, admin);
+				await api('admin/system-webhook/delete', {id: webhook.id}, admin);
 			}
 		});
 
@@ -108,7 +108,7 @@ describe('[シナリオ] ユーザ通報', () => {
 				on: ['abuseReport'],
 				isActive: true,
 			});
-			await createAbuseReportNotificationRecipient({ systemWebhookId: webhook.id });
+			await createAbuseReportNotificationRecipient({systemWebhookId: webhook.id});
 
 			// 通報(bob -> alice)
 			const abuse = {
@@ -133,7 +133,7 @@ describe('[シナリオ] ユーザ通報', () => {
 				on: ['abuseReport', 'abuseReportResolved'],
 				isActive: true,
 			});
-			await createAbuseReportNotificationRecipient({ systemWebhookId: webhook.id });
+			await createAbuseReportNotificationRecipient({systemWebhookId: webhook.id});
 
 			// 通報(bob -> alice)
 			const abuse = {
@@ -175,7 +175,7 @@ describe('[シナリオ] ユーザ通報', () => {
 				on: [],
 				isActive: true,
 			});
-			await createAbuseReportNotificationRecipient({ systemWebhookId: webhook.id });
+			await createAbuseReportNotificationRecipient({systemWebhookId: webhook.id});
 
 			// 通報(bob -> alice)
 			const abuse = {
@@ -194,7 +194,7 @@ describe('[シナリオ] ユーザ通報', () => {
 				on: ['abuseReportResolved'],
 				isActive: true,
 			});
-			await createAbuseReportNotificationRecipient({ systemWebhookId: webhook.id });
+			await createAbuseReportNotificationRecipient({systemWebhookId: webhook.id});
 
 			// 通報(bob -> alice)
 			const abuse = {
@@ -231,7 +231,7 @@ describe('[シナリオ] ユーザ通報', () => {
 				on: ['abuseReport'],
 				isActive: true,
 			});
-			await createAbuseReportNotificationRecipient({ systemWebhookId: webhook.id });
+			await createAbuseReportNotificationRecipient({systemWebhookId: webhook.id});
 
 			// 通報(bob -> alice)
 			const abuse = {
@@ -266,7 +266,7 @@ describe('[シナリオ] ユーザ通報', () => {
 				on: [],
 				isActive: true,
 			});
-			await createAbuseReportNotificationRecipient({ systemWebhookId: webhook.id });
+			await createAbuseReportNotificationRecipient({systemWebhookId: webhook.id});
 
 			// 通報(bob -> alice)
 			const abuse = {
@@ -296,7 +296,7 @@ describe('[シナリオ] ユーザ通報', () => {
 				on: ['abuseReport', 'abuseReportResolved'],
 				isActive: false,
 			});
-			await createAbuseReportNotificationRecipient({ systemWebhookId: webhook.id });
+			await createAbuseReportNotificationRecipient({systemWebhookId: webhook.id});
 
 			// 通報(bob -> alice)
 			const abuse = {
@@ -326,7 +326,7 @@ describe('[シナリオ] ユーザ通報', () => {
 				on: ['abuseReport', 'abuseReportResolved'],
 				isActive: true,
 			});
-			await createAbuseReportNotificationRecipient({ systemWebhookId: webhook.id, isActive: false });
+			await createAbuseReportNotificationRecipient({systemWebhookId: webhook.id, isActive: false});
 
 			// 通報(bob -> alice)
 			const abuse = {

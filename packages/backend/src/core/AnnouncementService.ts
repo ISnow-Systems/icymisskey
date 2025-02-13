@@ -3,30 +3,27 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Brackets, EntityNotFoundError } from 'typeorm';
-import { DI } from '@/di-symbols.js';
-import type { MiUser } from '@/models/User.js';
-import type { AnnouncementReadsRepository, AnnouncementsRepository, MiAnnouncement, MiAnnouncementRead, UsersRepository } from '@/models/_.js';
-import { bindThis } from '@/decorators.js';
-import { Packed } from '@/misc/json-schema.js';
-import { IdService } from '@/core/IdService.js';
-import { AnnouncementEntityService } from '@/core/entities/AnnouncementEntityService.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { ModerationLogService } from '@/core/ModerationLogService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Brackets, EntityNotFoundError} from 'typeorm';
+import {DI} from '@/di-symbols.js';
+import type {MiUser} from '@/models/User.js';
+import type {AnnouncementReadsRepository, AnnouncementsRepository, MiAnnouncement, MiAnnouncementRead, UsersRepository} from '@/models/_.js';
+import {bindThis} from '@/decorators.js';
+import {Packed} from '@/misc/json-schema.js';
+import {IdService} from '@/core/IdService.js';
+import {AnnouncementEntityService} from '@/core/entities/AnnouncementEntityService.js';
+import {GlobalEventService} from '@/core/GlobalEventService.js';
+import {ModerationLogService} from '@/core/ModerationLogService.js';
 
 @Injectable()
 export class AnnouncementService {
 	constructor(
 		@Inject(DI.announcementsRepository)
 		private announcementsRepository: AnnouncementsRepository,
-
 		@Inject(DI.announcementReadsRepository)
 		private announcementReadsRepository: AnnouncementReadsRepository,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		private idService: IdService,
 		private globalEventService: GlobalEventService,
 		private moderationLogService: ModerationLogService,
@@ -45,20 +42,20 @@ export class AnnouncementService {
 	public async getUnreadAnnouncements(user: MiUser): Promise<MiAnnouncement[]> {
 		const readsQuery = this.announcementReadsRepository.createQueryBuilder('read')
 			.select('read.announcementId')
-			.where('read.userId = :userId', { userId: user.id });
+			.where('read.userId = :userId', {userId: user.id});
 
 		const q = this.announcementsRepository.createQueryBuilder('announcement')
 			.where('announcement.isActive = true')
 			.andWhere('announcement.silence = false')
 			.andWhere(new Brackets(qb => {
-				qb.orWhere('announcement.userId = :userId', { userId: user.id });
+				qb.orWhere('announcement.userId = :userId', {userId: user.id});
 				qb.orWhere('announcement.userId IS NULL');
 			}))
 			.andWhere(new Brackets(qb => {
 				qb.orWhere('announcement.forExistingUsers = false');
-				qb.orWhere('announcement.id > :userId', { userId: user.id });
+				qb.orWhere('announcement.id > :userId', {userId: user.id});
 			}))
-			.andWhere(`announcement.id NOT IN (${ readsQuery.getQuery() })`);
+			.andWhere(`announcement.id NOT IN (${readsQuery.getQuery()})`);
 
 		q.setParameters(readsQuery.getParameters());
 
@@ -89,7 +86,7 @@ export class AnnouncementService {
 			});
 
 			if (moderator) {
-				const user = await this.usersRepository.findOneByOrFail({ id: values.userId });
+				const user = await this.usersRepository.findOneByOrFail({id: values.userId});
 				this.moderationLogService.log(moderator, 'createUserAnnouncement', {
 					announcementId: announcement.id,
 					announcement: announcement,
@@ -133,11 +130,11 @@ export class AnnouncementService {
 			isActive: values.isActive,
 		});
 
-		const after = await this.announcementsRepository.findOneByOrFail({ id: announcement.id });
+		const after = await this.announcementsRepository.findOneByOrFail({id: announcement.id});
 
 		if (moderator) {
 			if (announcement.userId) {
-				const user = await this.usersRepository.findOneByOrFail({ id: announcement.userId });
+				const user = await this.usersRepository.findOneByOrFail({id: announcement.userId});
 				this.moderationLogService.log(moderator, 'updateUserAnnouncement', {
 					announcementId: announcement.id,
 					before: announcement,
@@ -162,7 +159,7 @@ export class AnnouncementService {
 
 		if (moderator) {
 			if (announcement.userId) {
-				const user = await this.usersRepository.findOneByOrFail({ id: announcement.userId });
+				const user = await this.usersRepository.findOneByOrFail({id: announcement.userId});
 				this.moderationLogService.log(moderator, 'deleteUserAnnouncement', {
 					announcementId: announcement.id,
 					announcement: announcement,
@@ -181,17 +178,17 @@ export class AnnouncementService {
 
 	@bindThis
 	public async getAnnouncement(announcementId: MiAnnouncement['id'], me: MiUser | null): Promise<Packed<'Announcement'>> {
-		const announcement = await this.announcementsRepository.findOneByOrFail({ id: announcementId });
+		const announcement = await this.announcementsRepository.findOneByOrFail({id: announcementId});
 		if (me) {
 			if (announcement.userId && announcement.userId !== me.id) {
-				throw new EntityNotFoundError(this.announcementsRepository.metadata.target, { id: announcementId });
+				throw new EntityNotFoundError(this.announcementsRepository.metadata.target, {id: announcementId});
 			}
 
 			const read = await this.announcementReadsRepository.findOneBy({
 				announcementId: announcement.id,
 				userId: me.id,
 			});
-			return this.announcementEntityService.pack({ ...announcement, isRead: read !== null }, me);
+			return this.announcementEntityService.pack({...announcement, isRead: read !== null}, me);
 		} else {
 			return this.announcementEntityService.pack(announcement, null);
 		}
@@ -209,7 +206,7 @@ export class AnnouncementService {
 			return;
 		}
 
-		const announcement = await this.announcementsRepository.findOneBy({ id: announcementId });
+		const announcement = await this.announcementsRepository.findOneBy({id: announcementId});
 		if (announcement != null && announcement.userId === user.id) {
 			await this.announcementsRepository.update(announcementId, {
 				isActive: false,

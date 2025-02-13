@@ -3,25 +3,25 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { IsNull, In, MoreThan, Not } from 'typeorm';
+import {Inject, Injectable} from '@nestjs/common';
+import {IsNull, In, MoreThan, Not} from 'typeorm';
 
-import { bindThis } from '@/decorators.js';
-import { DI } from '@/di-symbols.js';
-import type { MiLocalUser, MiRemoteUser, MiUser } from '@/models/User.js';
-import type { BlockingsRepository, FollowingsRepository, InstancesRepository, MiMeta, MutingsRepository, UserListMembershipsRepository, UsersRepository } from '@/models/_.js';
-import type { RelationshipJobData, ThinUser } from '@/queue/types.js';
+import {bindThis} from '@/decorators.js';
+import {DI} from '@/di-symbols.js';
+import type {MiLocalUser, MiRemoteUser, MiUser} from '@/models/User.js';
+import type {BlockingsRepository, FollowingsRepository, InstancesRepository, MiMeta, MutingsRepository, UserListMembershipsRepository, UsersRepository} from '@/models/_.js';
+import type {RelationshipJobData, ThinUser} from '@/queue/types.js';
 
-import { IdService } from '@/core/IdService.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { QueueService } from '@/core/QueueService.js';
-import { RelayService } from '@/core/RelayService.js';
-import { ApPersonService } from '@/core/activitypub/models/ApPersonService.js';
-import { ApDeliverManagerService } from '@/core/activitypub/ApDeliverManagerService.js';
-import { ApRendererService } from '@/core/activitypub/ApRendererService.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { ProxyAccountService } from '@/core/ProxyAccountService.js';
-import { FederatedInstanceService } from '@/core/FederatedInstanceService.js';
+import {IdService} from '@/core/IdService.js';
+import {GlobalEventService} from '@/core/GlobalEventService.js';
+import {QueueService} from '@/core/QueueService.js';
+import {RelayService} from '@/core/RelayService.js';
+import {ApPersonService} from '@/core/activitypub/models/ApPersonService.js';
+import {ApDeliverManagerService} from '@/core/activitypub/ApDeliverManagerService.js';
+import {ApRendererService} from '@/core/activitypub/ApRendererService.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {ProxyAccountService} from '@/core/ProxyAccountService.js';
+import {FederatedInstanceService} from '@/core/FederatedInstanceService.js';
 import InstanceChart from '@/core/chart/charts/instance.js';
 import PerUserFollowingChart from '@/core/chart/charts/per-user-following.js';
 
@@ -30,25 +30,18 @@ export class AccountMoveService {
 	constructor(
 		@Inject(DI.meta)
 		private meta: MiMeta,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.followingsRepository)
 		private followingsRepository: FollowingsRepository,
-
 		@Inject(DI.blockingsRepository)
 		private blockingsRepository: BlockingsRepository,
-
 		@Inject(DI.mutingsRepository)
 		private mutingsRepository: MutingsRepository,
-
 		@Inject(DI.userListMembershipsRepository)
 		private userListMembershipsRepository: UserListMembershipsRepository,
-
 		@Inject(DI.instancesRepository)
 		private instancesRepository: InstancesRepository,
-
 		private userEntityService: UserEntityService,
 		private idService: IdService,
 		private apPersonService: ApPersonService,
@@ -95,7 +88,7 @@ export class AccountMoveService {
 		await this.apDeliverManagerService.deliverToFollowers(src, moveAct);
 
 		// Publish meUpdated event
-		const iObj = await this.userEntityService.pack(src.id, src, { schema: 'MeDetailed', includeSecrets: true });
+		const iObj = await this.userEntityService.pack(src.id, src, {schema: 'MeDetailed', includeSecrets: true});
 		this.globalEventService.publishMainStream(src.id, 'meUpdated', iObj);
 
 		// Unfollow after 24 hours
@@ -103,8 +96,8 @@ export class AccountMoveService {
 			followerId: src.id,
 		});
 		this.queueService.createDelayedUnfollowJob(followings.map(following => ({
-			from: { id: src.id },
-			to: { id: following.followeeId },
+			from: {id: src.id},
+			to: {id: following.followeeId},
 		})), process.env.NODE_ENV === 'test' ? 10000 : 1000 * 60 * 60 * 24);
 
 		await this.postMoveProcess(src, dst);
@@ -133,8 +126,8 @@ export class AccountMoveService {
 			followerId: proxy ? Not(proxy.id) : undefined,
 		});
 		const followJobs = followings.map(following => ({
-			from: { id: following.followerId },
-			to: { id: dst.id },
+			from: {id: following.followerId},
+			to: {id: dst.id},
 		})) as RelationshipJobData[];
 
 		// Decrease following count instead of unfollowing.
@@ -152,14 +145,14 @@ export class AccountMoveService {
 	public async copyBlocking(src: ThinUser, dst: ThinUser): Promise<void> {
 		// Followers shouldn't overlap with blockers, but the destination account, different from the blockee (i.e., old account), may have followed the local user before moving.
 		// So block the destination account here.
-		const srcBlockings = await this.blockingsRepository.findBy({ blockeeId: src.id });
-		const dstBlockings = await this.blockingsRepository.findBy({ blockeeId: dst.id });
+		const srcBlockings = await this.blockingsRepository.findBy({blockeeId: src.id});
+		const dstBlockings = await this.blockingsRepository.findBy({blockeeId: dst.id});
 		const blockerIds = dstBlockings.map(blocking => blocking.blockerId);
 		// reblock the destination account
 		const blockJobs: RelationshipJobData[] = [];
 		for (const blocking of srcBlockings) {
 			if (blockerIds.includes(blocking.blockerId)) continue; // skip if already blocked
-			blockJobs.push({ from: { id: blocking.blockerId }, to: { id: dst.id } });
+			blockJobs.push({from: {id: blocking.blockerId}, to: {id: dst.id}});
 		}
 		// no need to unblock the old account because it may be still functional
 		this.queueService.createBlockJob(blockJobs);
@@ -169,14 +162,14 @@ export class AccountMoveService {
 	public async copyMutings(src: ThinUser, dst: ThinUser): Promise<void> {
 		// Insert new mutings with the same values except mutee
 		const oldMutings = await this.mutingsRepository.findBy([
-			{ muteeId: src.id, expiresAt: IsNull() },
-			{ muteeId: src.id, expiresAt: MoreThan(new Date()) },
+			{muteeId: src.id, expiresAt: IsNull()},
+			{muteeId: src.id, expiresAt: MoreThan(new Date())},
 		]);
 		if (oldMutings.length === 0) return;
 
 		// Check if the destination account is already indefinitely muted by the muter
 		const existingMutingsMuterUserIds = await this.mutingsRepository.findBy(
-			{ muteeId: dst.id, expiresAt: IsNull() },
+			{muteeId: dst.id, expiresAt: IsNull()},
 		).then(mutings => mutings.map(muting => muting.muterId));
 
 		const newMutings: Map<string, { muterId: string; muteeId: string; expiresAt: Date | null; }> = new Map();
@@ -197,7 +190,7 @@ export class AccountMoveService {
 			});
 		}
 
-		const arrayToInsert = Array.from(newMutings.entries()).map(entry => ({ ...entry[1], id: entry[0] }));
+		const arrayToInsert = Array.from(newMutings.entries()).map(entry => ({...entry[1], id: entry[0]}));
 		await this.mutingsRepository.insert(arrayToInsert);
 	}
 
@@ -245,49 +238,15 @@ export class AccountMoveService {
 			});
 		}
 
-		const arrayToInsert = Array.from(newMemberships.entries()).map(entry => ({ ...entry[1], id: entry[0] }));
+		const arrayToInsert = Array.from(newMemberships.entries()).map(entry => ({...entry[1], id: entry[0]}));
 		await this.userListMembershipsRepository.insert(arrayToInsert);
 
 		// Have the proxy account follow the new account in the same way as UserListService.push
 		if (this.userEntityService.isRemoteUser(dst)) {
 			const proxy = await this.proxyAccountService.fetch();
 			if (proxy) {
-				this.queueService.createFollowJob([{ from: { id: proxy.id }, to: { id: dst.id } }]);
+				this.queueService.createFollowJob([{from: {id: proxy.id}, to: {id: dst.id}}]);
 			}
-		}
-	}
-
-	@bindThis
-	private async adjustFollowingCounts(localFollowerIds: string[], oldAccount: MiUser): Promise<void> {
-		if (localFollowerIds.length === 0) return;
-
-		// Set the old account's following and followers counts to 0.
-		await this.usersRepository.update({ id: oldAccount.id }, { followersCount: 0, followingCount: 0 });
-
-		// Decrease following counts of local followers by 1.
-		await this.usersRepository.decrement({ id: In(localFollowerIds) }, 'followingCount', 1);
-
-		// Decrease follower counts of local followees by 1.
-		const oldFollowings = await this.followingsRepository.findBy({ followerId: oldAccount.id });
-		if (oldFollowings.length > 0) {
-			await this.usersRepository.decrement({ id: In(oldFollowings.map(following => following.followeeId)) }, 'followersCount', 1);
-		}
-
-		// Update instance stats by decreasing remote followers count by the number of local followers who were following the old account.
-		if (this.meta.enableStatsForFederatedInstances) {
-			if (this.userEntityService.isRemoteUser(oldAccount)) {
-				this.federatedInstanceService.fetchOrRegister(oldAccount.host).then(async i => {
-					this.instancesRepository.decrement({ id: i.id }, 'followersCount', localFollowerIds.length);
-					if (this.meta.enableChartsForFederatedInstances) {
-						this.instanceChart.updateFollowers(i.host, false);
-					}
-				});
-			}
-		}
-
-		// FIXME: expensive?
-		for (const followerId of localFollowerIds) {
-			this.perUserFollowingChart.update({ id: followerId, host: null }, oldAccount, false);
 		}
 	}
 
@@ -343,5 +302,39 @@ export class AccountMoveService {
 		}
 
 		return resultUser;
+	}
+
+	@bindThis
+	private async adjustFollowingCounts(localFollowerIds: string[], oldAccount: MiUser): Promise<void> {
+		if (localFollowerIds.length === 0) return;
+
+		// Set the old account's following and followers counts to 0.
+		await this.usersRepository.update({id: oldAccount.id}, {followersCount: 0, followingCount: 0});
+
+		// Decrease following counts of local followers by 1.
+		await this.usersRepository.decrement({id: In(localFollowerIds)}, 'followingCount', 1);
+
+		// Decrease follower counts of local followees by 1.
+		const oldFollowings = await this.followingsRepository.findBy({followerId: oldAccount.id});
+		if (oldFollowings.length > 0) {
+			await this.usersRepository.decrement({id: In(oldFollowings.map(following => following.followeeId))}, 'followersCount', 1);
+		}
+
+		// Update instance stats by decreasing remote followers count by the number of local followers who were following the old account.
+		if (this.meta.enableStatsForFederatedInstances) {
+			if (this.userEntityService.isRemoteUser(oldAccount)) {
+				this.federatedInstanceService.fetchOrRegister(oldAccount.host).then(async i => {
+					this.instancesRepository.decrement({id: i.id}, 'followersCount', localFollowerIds.length);
+					if (this.meta.enableChartsForFederatedInstances) {
+						this.instanceChart.updateFollowers(i.host, false);
+					}
+				});
+			}
+		}
+
+		// FIXME: expensive?
+		for (const followerId of localFollowerIds) {
+			this.perUserFollowingChart.update({id: followerId, host: null}, oldAccount, false);
+		}
 	}
 }

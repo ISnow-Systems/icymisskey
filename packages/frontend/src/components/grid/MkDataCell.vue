@@ -4,21 +4,21 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div
-	v-if="cell.row.using"
-	ref="rootEl"
-	class="mk_grid_td"
-	:class="$style.cell"
-	:style="{ maxWidth: cellWidth, minWidth: cellWidth }"
-	:tabindex="-1"
-	data-grid-cell
-	:data-grid-cell-row="cell.row.index"
-	:data-grid-cell-col="cell.column.index"
-	@keydown="onCellKeyDown"
-	@dblclick.prevent="onCellDoubleClick"
->
 	<div
-		:class="[
+		v-if="cell.row.using"
+		ref="rootEl"
+		:class="$style.cell"
+		:data-grid-cell-col="cell.column.index"
+		:data-grid-cell-row="cell.row.index"
+		:style="{ maxWidth: cellWidth, minWidth: cellWidth }"
+		:tabindex="-1"
+		class="mk_grid_td"
+		data-grid-cell
+		@keydown="onCellKeyDown"
+		@dblclick.prevent="onCellDoubleClick"
+	>
+		<div
+			:class="[
 			$style.root,
 			[(cell.violation.valid || cell.selected) ? {} : $style.error],
 			[cell.selected ? $style.selected : {}],
@@ -26,76 +26,76 @@ SPDX-License-Identifier: AGPL-3.0-only
 			[(cell.ranged && !cell.row.ranged) ? $style.ranged : {}],
 			[needsContentCentering ? $style.center : {}],
 		]"
-	>
-		<div v-if="!editing" :class="[$style.contentArea]" :style="cellType === 'boolean' ? 'justify-content: center' : ''">
-			<div ref="contentAreaEl" :class="$style.content">
-				<div v-if="cellType === 'text'">
-					{{ cell.value }}
-				</div>
-				<div v-if="cellType === 'number'">
-					{{ cell.value }}
-				</div>
-				<div v-if="cellType === 'date'">
-					{{ cell.value }}
-				</div>
-				<div v-else-if="cellType === 'boolean'">
-					<div :class="[$style.bool, {
+		>
+			<div v-if="!editing" :class="[$style.contentArea]" :style="cellType === 'boolean' ? 'justify-content: center' : ''">
+				<div ref="contentAreaEl" :class="$style.content">
+					<div v-if="cellType === 'text'">
+						{{ cell.value }}
+					</div>
+					<div v-if="cellType === 'number'">
+						{{ cell.value }}
+					</div>
+					<div v-if="cellType === 'date'">
+						{{ cell.value }}
+					</div>
+					<div v-else-if="cellType === 'boolean'">
+						<div :class="[$style.bool, {
 						[$style.boolTrue]: cell.value === true,
 						'ti ti-check': cell.value === true,
 					}]"></div>
-				</div>
-				<div v-else-if="cellType === 'image'">
-					<img
-						:src="cell.value"
-						:alt="cell.value"
-						:class="$style.viewImage"
-						@load="emitContentSizeChanged"
-					/>
+					</div>
+					<div v-else-if="cellType === 'image'">
+						<img
+							:alt="cell.value"
+							:class="$style.viewImage"
+							:src="cell.value"
+							@load="emitContentSizeChanged"
+						/>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div v-else ref="inputAreaEl" :class="$style.inputArea">
-			<input
-				v-if="cellType === 'text'"
-				type="text"
-				:class="$style.editingInput"
-				:value="editingValue"
-				@input="onInputText"
-				@mousedown.stop
-				@contextmenu.stop
-			/>
-			<input
-				v-if="cellType === 'number'"
-				type="number"
-				:class="$style.editingInput"
-				:value="editingValue"
-				@input="onInputText"
-				@mousedown.stop
-				@contextmenu.stop
-			/>
-			<input
-				v-if="cellType === 'date'"
-				type="date"
-				:class="$style.editingInput"
-				:value="editingValue"
-				@input="onInputText"
-				@mousedown.stop
-				@contextmenu.stop
-			/>
+			<div v-else ref="inputAreaEl" :class="$style.inputArea">
+				<input
+					v-if="cellType === 'text'"
+					:class="$style.editingInput"
+					:value="editingValue"
+					type="text"
+					@input="onInputText"
+					@mousedown.stop
+					@contextmenu.stop
+				/>
+				<input
+					v-if="cellType === 'number'"
+					:class="$style.editingInput"
+					:value="editingValue"
+					type="number"
+					@input="onInputText"
+					@mousedown.stop
+					@contextmenu.stop
+				/>
+				<input
+					v-if="cellType === 'date'"
+					:class="$style.editingInput"
+					:value="editingValue"
+					type="date"
+					@input="onInputText"
+					@mousedown.stop
+					@contextmenu.stop
+				/>
+			</div>
 		</div>
 	</div>
-</div>
 </template>
 
-<script setup lang="ts">
-import { computed, defineAsyncComponent, nextTick, onMounted, onUnmounted, ref, shallowRef, toRefs, watch } from 'vue';
-import { GridEventEmitter } from '@/components/grid/grid.js';
-import { useTooltip } from '@/scripts/use-tooltip.js';
+<script lang="ts" setup>
+import {computed, defineAsyncComponent, nextTick, onMounted, onUnmounted, ref, shallowRef, toRefs, watch} from 'vue';
+import {GridEventEmitter} from '@/components/grid/grid.js';
+import {useTooltip} from '@/scripts/use-tooltip.js';
 import * as os from '@/os.js';
-import { equalCellAddress, getCellAddress } from '@/components/grid/grid-utils.js';
-import type { Size } from '@/components/grid/grid.js';
-import type { CellValue, GridCell } from '@/components/grid/cell.js';
-import type { GridRowSetting } from '@/components/grid/row.js';
+import {equalCellAddress, getCellAddress} from '@/components/grid/grid-utils.js';
+import type {Size} from '@/components/grid/grid.js';
+import type {CellValue, GridCell} from '@/components/grid/cell.js';
+import type {GridRowSetting} from '@/components/grid/row.js';
 
 const emit = defineEmits<{
 	(ev: 'operation:beginEdit', sender: GridCell): void;
@@ -109,7 +109,7 @@ const props = defineProps<{
 	bus: GridEventEmitter,
 }>();
 
-const { cell, bus } = toRefs(props);
+const {cell, bus} = toRefs(props);
 
 const rootEl = shallowRef<InstanceType<typeof HTMLTableCellElement>>();
 const contentAreaEl = shallowRef<InstanceType<typeof HTMLDivElement>>();
@@ -134,7 +134,7 @@ const needsContentCentering = computed(() => {
 watch(() => [cell.value.value], () => {
 	// 中身がセットされた直後はサイズが分からないので、次のタイミングで更新する
 	nextTick(emitContentSizeChanged);
-}, { immediate: true });
+}, {immediate: true});
 
 watch(() => cell.value.selected, () => {
 	if (cell.value.selected) {
@@ -316,7 +316,7 @@ onUnmounted(() => {
 
 </script>
 
-<style module lang="scss">
+<style lang="scss" module>
 $cellHeight: 28px;
 
 .cell {

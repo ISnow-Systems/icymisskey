@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { ChannelsRepository, MiMeta, NotesRepository } from '@/models/_.js';
-import { QueryService } from '@/core/QueryService.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {ChannelsRepository, MiMeta, NotesRepository} from '@/models/_.js';
+import {QueryService} from '@/core/QueryService.js';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
 import ActiveUsersChart from '@/core/chart/charts/active-users.js';
-import { DI } from '@/di-symbols.js';
-import { IdService } from '@/core/IdService.js';
-import { FanoutTimelineEndpointService } from '@/core/FanoutTimelineEndpointService.js';
-import { MiLocalUser } from '@/models/User.js';
-import { ApiError } from '../../error.js';
+import {DI} from '@/di-symbols.js';
+import {IdService} from '@/core/IdService.js';
+import {FanoutTimelineEndpointService} from '@/core/FanoutTimelineEndpointService.js';
+import {MiLocalUser} from '@/models/User.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['notes', 'channels'],
@@ -42,13 +42,13 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		channelId: { type: 'string', format: 'misskey:id' },
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
-		sinceDate: { type: 'integer' },
-		untilDate: { type: 'integer' },
-		allowPartial: { type: 'boolean', default: false }, // true is recommended but for compatibility false by default
+		channelId: {type: 'string', format: 'misskey:id'},
+		limit: {type: 'integer', minimum: 1, maximum: 100, default: 10},
+		sinceId: {type: 'string', format: 'misskey:id'},
+		untilId: {type: 'string', format: 'misskey:id'},
+		sinceDate: {type: 'integer'},
+		untilDate: {type: 'integer'},
+		allowPartial: {type: 'boolean', default: false}, // true is recommended but for compatibility false by default
 	},
 	required: ['channelId'],
 } as const;
@@ -58,13 +58,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.meta)
 		private serverSettings: MiMeta,
-
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		@Inject(DI.channelsRepository)
 		private channelsRepository: ChannelsRepository,
-
 		private idService: IdService,
 		private noteEntityService: NoteEntityService,
 		private queryService: QueryService,
@@ -86,7 +83,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			if (me) this.activeUsersChart.read(me);
 
 			if (!this.serverSettings.enableFanoutTimeline) {
-				return await this.noteEntityService.packMany(await this.getFromDb({ untilId, sinceId, limit: ps.limit, channelId: channel.id }, me), me);
+				return await this.noteEntityService.packMany(await this.getFromDb({untilId, sinceId, limit: ps.limit, channelId: channel.id}, me), me);
 			}
 
 			return await this.fanoutTimelineEndpointService.timeline({
@@ -99,7 +96,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				redisTimelines: [`channelTimeline:${channel.id}`],
 				excludePureRenotes: false,
 				dbFallback: async (untilId, sinceId, limit) => {
-					return await this.getFromDb({ untilId, sinceId, limit, channelId: channel.id }, me);
+					return await this.getFromDb({untilId, sinceId, limit, channelId: channel.id}, me);
 				},
 			});
 		});
@@ -113,7 +110,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	}, me: MiLocalUser | null) {
 		//#region fallback to database
 		const query = this.queryService.makePaginationQuery(this.notesRepository.createQueryBuilder('note'), ps.sinceId, ps.untilId)
-			.andWhere('note.channelId = :channelId', { channelId: ps.channelId })
+			.andWhere('note.channelId = :channelId', {channelId: ps.channelId})
 			.innerJoinAndSelect('note.user', 'user')
 			.leftJoinAndSelect('note.reply', 'reply')
 			.leftJoinAndSelect('note.renote', 'renote')

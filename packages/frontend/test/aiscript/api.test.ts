@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { miLocalStorage } from '@/local-storage.js';
-import { aiScriptReadline, createAiScriptEnv } from '@/scripts/aiscript/api.js';
-import { errors, Interpreter, Parser, values } from '@syuilo/aiscript';
+import {miLocalStorage} from '@/local-storage.js';
+import {aiScriptReadline, createAiScriptEnv} from '@/scripts/aiscript/api.js';
+import {errors, Interpreter, Parser, values} from '@syuilo/aiscript';
 import {
 	afterAll,
 	afterEach,
@@ -20,7 +20,7 @@ import {
 async function exe(script: string): Promise<values.Value[]> {
 	const outputs: values.Value[] = [];
 	const interpreter = new Interpreter(
-		createAiScriptEnv({ storageKey: 'widget' }),
+		createAiScriptEnv({storageKey: 'widget'}),
 		{
 			in: aiScriptReadline,
 			out: (value) => {
@@ -33,7 +33,7 @@ async function exe(script: string): Promise<values.Value[]> {
 	return outputs;
 }
 
-let $iMock = vi.hoisted<Partial<typeof import('@/account.js').$i> | null >(
+let $iMock = vi.hoisted<Partial<typeof import('@/account.js').$i> | null>(
 	() => null
 );
 
@@ -60,7 +60,7 @@ vi.mock('@/os.js', () => {
 const misskeyApiMock = vi.hoisted(() => vi.fn());
 
 vi.mock('@/scripts/misskey-api.js', () => {
-	return { misskeyApi: misskeyApiMock };
+	return {misskeyApi: misskeyApiMock};
 });
 
 describe('AiScript common API', () => {
@@ -74,7 +74,7 @@ describe('AiScript common API', () => {
 		});
 
 		test.sequential('ok', async () => {
-			osMock.inputText.mockImplementationOnce(async ({ title }) => {
+			osMock.inputText.mockImplementationOnce(async ({title}) => {
 				expect(title).toBe('question');
 				return {
 					canceled: false,
@@ -89,7 +89,7 @@ describe('AiScript common API', () => {
 		});
 
 		test.sequential('cancelled', async () => {
-			osMock.inputText.mockImplementationOnce(async ({ title }) => {
+			osMock.inputText.mockImplementationOnce(async ({title}) => {
 				expect(title).toBe('question');
 				return {
 					canceled: true,
@@ -170,11 +170,11 @@ describe('AiScript common API', () => {
 		});
 
 		test.sequential('ok', async () => {
-			osMock.alert.mockImplementationOnce(async ({ type, title, text }) => {
-					expect(type).toBe('success');
-					expect(title).toBe('Hello');
-					expect(text).toBe('world');
-				});
+			osMock.alert.mockImplementationOnce(async ({type, title, text}) => {
+				expect(type).toBe('success');
+				expect(title).toBe('Hello');
+				expect(text).toBe('world');
+			});
 			const [res] = await exe(`
 				<: Mk:dialog('Hello', 'world', 'success')
 			`);
@@ -183,11 +183,11 @@ describe('AiScript common API', () => {
 		});
 
 		test.sequential('omit type', async () => {
-			osMock.alert.mockImplementationOnce(async ({ type, title, text }) => {
-					expect(type).toBe('info');
-					expect(title).toBe('Hello');
-					expect(text).toBe('world');
-				});
+			osMock.alert.mockImplementationOnce(async ({type, title, text}) => {
+				expect(type).toBe('info');
+				expect(title).toBe('Hello');
+				expect(text).toBe('world');
+			});
 			const [res] = await exe(`
 				<: Mk:dialog('Hello', 'world')
 			`);
@@ -209,12 +209,12 @@ describe('AiScript common API', () => {
 		});
 
 		test.sequential('ok', async () => {
-			osMock.confirm.mockImplementationOnce(async ({ type, title, text }) => {
-					expect(type).toBe('success');
-					expect(title).toBe('Hello');
-					expect(text).toBe('world');
-					return { canceled: false };
-				});
+			osMock.confirm.mockImplementationOnce(async ({type, title, text}) => {
+				expect(type).toBe('success');
+				expect(title).toBe('Hello');
+				expect(text).toBe('world');
+				return {canceled: false};
+			});
 			const [res] = await exe(`
 				<: Mk:confirm('Hello', 'world', 'success')
 			`);
@@ -224,11 +224,11 @@ describe('AiScript common API', () => {
 
 		test.sequential('omit type', async () => {
 			osMock.confirm
-				.mockImplementationOnce(async ({ type, title, text }) => {
+				.mockImplementationOnce(async ({type, title, text}) => {
 					expect(type).toBe('question');
 					expect(title).toBe('Hello');
 					expect(text).toBe('world');
-					return { canceled: false };
+					return {canceled: false};
 				});
 			const [res] = await exe(`
 				<: Mk:confirm('Hello', 'world')
@@ -238,12 +238,12 @@ describe('AiScript common API', () => {
 		});
 
 		test.sequential('canceled', async () => {
-			osMock.confirm.mockImplementationOnce(async ({ type, title, text }) => {
-					expect(type).toBe('question');
-					expect(title).toBe('Hello');
-					expect(text).toBe('world');
-					return { canceled: true };
-				});
+			osMock.confirm.mockImplementationOnce(async ({type, title, text}) => {
+				expect(type).toBe('question');
+				expect(title).toBe('Hello');
+				expect(text).toBe('world');
+				return {canceled: true};
+			});
 			const [res] = await exe(`
 				<: Mk:confirm('Hello', 'world')
 			`);
@@ -271,7 +271,7 @@ describe('AiScript common API', () => {
 					expect(endpoint).toBe('ping');
 					expect(data).toStrictEqual({});
 					expect(token).toBeNull();
-					return { pong: 1735657200000 };
+					return {pong: 1735657200000};
 				}
 			);
 			const [res] = await exe(`
@@ -289,14 +289,14 @@ describe('AiScript common API', () => {
 					expect(endpoint).toBe('ping');
 					expect(data).toStrictEqual({});
 					expect(token).toStrictEqual('xxxxxxxx');
-					return { pong: 1735657200000 };
+					return {pong: 1735657200000};
 				}
 			);
 			const [res] = await exe(`
 				<: Mk:api('ping', {}, 'xxxxxxxx')
 			`);
 			expect(res).toStrictEqual(values.OBJ(new Map([
-				['pong', values.NUM(1735657200000 )],
+				['pong', values.NUM(1735657200000)],
 			])));
 			expect(misskeyApiMock).toHaveBeenCalledOnce();
 		});
@@ -385,7 +385,7 @@ describe('AiScript common API', () => {
 	});
 
 	test.concurrent('url', async () => {
-		vi.stubGlobal('location', { href: 'https://example.com/' });
+		vi.stubGlobal('location', {href: 'https://example.com/'});
 		const [res] = await exe(`
 			<: Mk:url()
 		`);

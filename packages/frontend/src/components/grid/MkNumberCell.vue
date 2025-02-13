@@ -4,22 +4,22 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div
-	class="mk_grid_th"
-	:class="[$style.cell]"
-	:tabindex="-1"
-	data-grid-cell
-	:data-grid-cell-row="row?.index ?? -1"
-	:data-grid-cell-col="-1"
->
-	<div :class="[$style.root]">
-		{{ content }}
+	<div
+		:class="[$style.cell]"
+		:data-grid-cell-col="-1"
+		:data-grid-cell-row="row?.index ?? -1"
+		:tabindex="-1"
+		class="mk_grid_th"
+		data-grid-cell
+	>
+		<div :class="[$style.root]">
+			{{ content }}
+		</div>
 	</div>
-</div>
 </template>
 
-<script setup lang="ts">
-import type { GridRow } from '@/components/grid/row.js';
+<script lang="ts" setup>
+import type {GridRow} from '@/components/grid/row.js';
 
 defineProps<{
 	content: string,
@@ -28,7 +28,7 @@ defineProps<{
 
 </script>
 
-<style module lang="scss">
+<style lang="scss" module>
 $cellHeight: 28px;
 $cellWidth: 34px;
 

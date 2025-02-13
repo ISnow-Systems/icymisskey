@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { DI } from '@/di-symbols.js';
-import type { FollowingsRepository } from '@/models/_.js';
-import { awaitAll } from '@/misc/prelude/await-all.js';
-import type { Packed } from '@/misc/json-schema.js';
-import type { } from '@/models/Blocking.js';
-import type { MiUser } from '@/models/User.js';
-import type { MiFollowing } from '@/models/Following.js';
-import { bindThis } from '@/decorators.js';
-import { IdService } from '@/core/IdService.js';
-import { UserEntityService } from './UserEntityService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {DI} from '@/di-symbols.js';
+import type {FollowingsRepository} from '@/models/_.js';
+import {awaitAll} from '@/misc/prelude/await-all.js';
+import type {Packed} from '@/misc/json-schema.js';
+import type {} from '@/models/Blocking.js';
+import type {MiUser} from '@/models/User.js';
+import type {MiFollowing} from '@/models/Following.js';
+import {bindThis} from '@/decorators.js';
+import {IdService} from '@/core/IdService.js';
+import {UserEntityService} from './UserEntityService.js';
 
 type LocalFollowerFollowing = MiFollowing & {
 	followerHost: null;
@@ -44,7 +44,6 @@ export class FollowingEntityService {
 	constructor(
 		@Inject(DI.followingsRepository)
 		private followingsRepository: FollowingsRepository,
-
 		private userEntityService: UserEntityService,
 		private idService: IdService,
 	) {
@@ -83,7 +82,7 @@ export class FollowingEntityService {
 			packedFollower?: Packed<'UserDetailedNotMe'>,
 		},
 	): Promise<Packed<'Following'>> {
-		const following = typeof src === 'object' ? src : await this.followingsRepository.findOneByOrFail({ id: src });
+		const following = typeof src === 'object' ? src : await this.followingsRepository.findOneByOrFail({id: src});
 
 		if (opts == null) opts = {};
 
@@ -110,15 +109,15 @@ export class FollowingEntityService {
 			populateFollower?: boolean;
 		},
 	) {
-		const _followees = opts?.populateFollowee ? followings.map(({ followee, followeeId }) => followee ?? followeeId) : [];
-		const _followers = opts?.populateFollower ? followings.map(({ follower, followerId }) => follower ?? followerId) : [];
-		const _userMap = await this.userEntityService.packMany([..._followees, ..._followers], me, { schema: 'UserDetailedNotMe' })
+		const _followees = opts?.populateFollowee ? followings.map(({followee, followeeId}) => followee ?? followeeId) : [];
+		const _followers = opts?.populateFollower ? followings.map(({follower, followerId}) => follower ?? followerId) : [];
+		const _userMap = await this.userEntityService.packMany([..._followees, ..._followers], me, {schema: 'UserDetailedNotMe'})
 			.then(users => new Map(users.map(u => [u.id, u])));
 		return Promise.all(
 			followings.map(following => {
 				const packedFollowee = opts?.populateFollowee ? _userMap.get(following.followeeId) : undefined;
 				const packedFollower = opts?.populateFollower ? _userMap.get(following.followerId) : undefined;
-				return this.pack(following, me, opts, { packedFollowee, packedFollower });
+				return this.pack(following, me, opts, {packedFollowee, packedFollower});
 			}),
 		);
 	}

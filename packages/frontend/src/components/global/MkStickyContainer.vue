@@ -4,28 +4,28 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div ref="rootEl">
-	<div ref="headerEl" :class="$style.header">
-		<slot name="header"></slot>
+	<div ref="rootEl">
+		<div ref="headerEl" :class="$style.header">
+			<slot name="header"></slot>
+		</div>
+		<div
+			:class="$style.body"
+			:data-sticky-container-footer-height="footerHeight"
+			:data-sticky-container-header-height="headerHeight"
+		>
+			<slot></slot>
+		</div>
+		<div ref="footerEl" :class="$style.footer">
+			<slot name="footer"></slot>
+		</div>
 	</div>
-	<div
-		:class="$style.body"
-		:data-sticky-container-header-height="headerHeight"
-		:data-sticky-container-footer-height="footerHeight"
-	>
-		<slot></slot>
-	</div>
-	<div ref="footerEl" :class="$style.footer">
-		<slot name="footer"></slot>
-	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, provide, inject, ref, watch, useTemplateRef } from 'vue';
-import type { Ref } from 'vue';
+import {onMounted, onUnmounted, provide, inject, ref, watch, useTemplateRef} from 'vue';
+import type {Ref} from 'vue';
 
-import { CURRENT_STICKY_BOTTOM, CURRENT_STICKY_TOP } from '@@/js/const.js';
+import {CURRENT_STICKY_BOTTOM, CURRENT_STICKY_TOP} from '@@/js/const.js';
 
 const rootEl = useTemplateRef('rootEl');
 const headerEl = useTemplateRef('headerEl');

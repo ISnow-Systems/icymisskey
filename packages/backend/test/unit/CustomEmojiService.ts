@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { afterEach, beforeAll, describe, test } from '@jest/globals';
-import { Test, TestingModule } from '@nestjs/testing';
-import { CustomEmojiService } from '@/core/CustomEmojiService.js';
-import { EmojiEntityService } from '@/core/entities/EmojiEntityService.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { IdService } from '@/core/IdService.js';
-import { ModerationLogService } from '@/core/ModerationLogService.js';
-import { UtilityService } from '@/core/UtilityService.js';
-import { DI } from '@/di-symbols.js';
-import { GlobalModule } from '@/GlobalModule.js';
-import { EmojisRepository } from '@/models/_.js';
-import { MiEmoji } from '@/models/Emoji.js';
+import {afterEach, beforeAll, describe, test} from '@jest/globals';
+import {Test, TestingModule} from '@nestjs/testing';
+import {CustomEmojiService} from '@/core/CustomEmojiService.js';
+import {EmojiEntityService} from '@/core/entities/EmojiEntityService.js';
+import {GlobalEventService} from '@/core/GlobalEventService.js';
+import {IdService} from '@/core/IdService.js';
+import {ModerationLogService} from '@/core/ModerationLogService.js';
+import {UtilityService} from '@/core/UtilityService.js';
+import {DI} from '@/di-symbols.js';
+import {GlobalModule} from '@/GlobalModule.js';
+import {EmojisRepository} from '@/models/_.js';
+import {MiEmoji} from '@/models/Emoji.js';
 
 describe('CustomEmojiService', () => {
 	let app: TestingModule;
@@ -92,9 +92,9 @@ describe('CustomEmojiService', () => {
 		describe('単独', () => {
 			test('updatedAtFrom', async () => {
 				await insert([
-					defaultData('001', { updatedAt: new Date('2021-01-01T00:00:00.000Z') }),
-					defaultData('002', { updatedAt: new Date('2021-01-02T00:00:00.000Z') }),
-					defaultData('003', { updatedAt: new Date('2021-01-03T00:00:00.000Z') }),
+					defaultData('001', {updatedAt: new Date('2021-01-01T00:00:00.000Z')}),
+					defaultData('002', {updatedAt: new Date('2021-01-02T00:00:00.000Z')}),
+					defaultData('003', {updatedAt: new Date('2021-01-03T00:00:00.000Z')}),
 				]);
 
 				const actual = await call({
@@ -110,9 +110,9 @@ describe('CustomEmojiService', () => {
 
 			test('updatedAtTo', async () => {
 				await insert([
-					defaultData('001', { updatedAt: new Date('2021-01-01T00:00:00.000Z') }),
-					defaultData('002', { updatedAt: new Date('2021-01-02T00:00:00.000Z') }),
-					defaultData('003', { updatedAt: new Date('2021-01-03T00:00:00.000Z') }),
+					defaultData('001', {updatedAt: new Date('2021-01-01T00:00:00.000Z')}),
+					defaultData('002', {updatedAt: new Date('2021-01-02T00:00:00.000Z')}),
+					defaultData('003', {updatedAt: new Date('2021-01-03T00:00:00.000Z')}),
 				]);
 
 				const actual = await call({
@@ -164,7 +164,7 @@ describe('CustomEmojiService', () => {
 					await insert([
 						defaultData('001'),
 						defaultData('002'),
-						defaultData('003', { name: 'em003' }),
+						defaultData('003', {name: 'em003'}),
 					]);
 
 					const actual = await call({
@@ -196,10 +196,10 @@ describe('CustomEmojiService', () => {
 			describe('host', () => {
 				test('single', async () => {
 					await insert([
-						defaultData('001', { host: 'example.com' }),
-						defaultData('002', { host: 'example.com' }),
-						defaultData('003', { host: '1.example.com' }),
-						defaultData('004', { host: '2.example.com' }),
+						defaultData('001', {host: 'example.com'}),
+						defaultData('002', {host: 'example.com'}),
+						defaultData('003', {host: '1.example.com'}),
+						defaultData('004', {host: '2.example.com'}),
 					]);
 
 					const actual = await call({
@@ -214,10 +214,10 @@ describe('CustomEmojiService', () => {
 
 				test('multi', async () => {
 					await insert([
-						defaultData('001', { host: 'example.com' }),
-						defaultData('002', { host: 'example.com' }),
-						defaultData('003', { host: '1.example.com' }),
-						defaultData('004', { host: '2.example.com' }),
+						defaultData('001', {host: 'example.com'}),
+						defaultData('002', {host: 'example.com'}),
+						defaultData('003', {host: '1.example.com'}),
+						defaultData('004', {host: '2.example.com'}),
 					]);
 
 					const actual = await call({
@@ -234,10 +234,10 @@ describe('CustomEmojiService', () => {
 
 				test('keyword', async () => {
 					await insert([
-						defaultData('001', { host: 'example.com' }),
-						defaultData('002', { host: 'example.com' }),
-						defaultData('003', { host: '1.example.com' }),
-						defaultData('004', { host: '2.example.com' }),
+						defaultData('001', {host: 'example.com'}),
+						defaultData('002', {host: 'example.com'}),
+						defaultData('003', {host: '1.example.com'}),
+						defaultData('004', {host: '2.example.com'}),
 					]);
 
 					const actual = await call({
@@ -252,7 +252,7 @@ describe('CustomEmojiService', () => {
 
 				test('escape', async () => {
 					await insert([
-						defaultData('001', { host: 'example.com' }),
+						defaultData('001', {host: 'example.com'}),
 					]);
 
 					const actual = await call({
@@ -269,9 +269,9 @@ describe('CustomEmojiService', () => {
 			describe('uri', () => {
 				test('single', async () => {
 					await insert([
-						defaultData('001', { uri: 'uri001' }),
-						defaultData('002', { uri: 'uri002' }),
-						defaultData('003', { uri: 'uri003' }),
+						defaultData('001', {uri: 'uri001'}),
+						defaultData('002', {uri: 'uri002'}),
+						defaultData('003', {uri: 'uri003'}),
 					]);
 
 					const actual = await call({
@@ -286,9 +286,9 @@ describe('CustomEmojiService', () => {
 
 				test('multi', async () => {
 					await insert([
-						defaultData('001', { uri: 'uri001' }),
-						defaultData('002', { uri: 'uri002' }),
-						defaultData('003', { uri: 'uri003' }),
+						defaultData('001', {uri: 'uri001'}),
+						defaultData('002', {uri: 'uri002'}),
+						defaultData('003', {uri: 'uri003'}),
 					]);
 
 					const actual = await call({
@@ -304,9 +304,9 @@ describe('CustomEmojiService', () => {
 
 				test('keyword', async () => {
 					await insert([
-						defaultData('001', { uri: 'uri001' }),
-						defaultData('002', { uri: 'uri002' }),
-						defaultData('003', { uri: 'uri003' }),
+						defaultData('001', {uri: 'uri001'}),
+						defaultData('002', {uri: 'uri002'}),
+						defaultData('003', {uri: 'uri003'}),
 					]);
 
 					const actual = await call({
@@ -320,7 +320,7 @@ describe('CustomEmojiService', () => {
 
 				test('escape', async () => {
 					await insert([
-						defaultData('001', { uri: 'uri001' }),
+						defaultData('001', {uri: 'uri001'}),
 					]);
 
 					const actual = await call({
@@ -336,9 +336,9 @@ describe('CustomEmojiService', () => {
 			describe('publicUrl', () => {
 				test('single', async () => {
 					await insert([
-						defaultData('001', { publicUrl: 'publicUrl001' }),
-						defaultData('002', { publicUrl: 'publicUrl002' }),
-						defaultData('003', { publicUrl: 'publicUrl003' }),
+						defaultData('001', {publicUrl: 'publicUrl001'}),
+						defaultData('002', {publicUrl: 'publicUrl002'}),
+						defaultData('003', {publicUrl: 'publicUrl003'}),
 					]);
 
 					const actual = await call({
@@ -353,9 +353,9 @@ describe('CustomEmojiService', () => {
 
 				test('multi', async () => {
 					await insert([
-						defaultData('001', { publicUrl: 'publicUrl001' }),
-						defaultData('002', { publicUrl: 'publicUrl002' }),
-						defaultData('003', { publicUrl: 'publicUrl003' }),
+						defaultData('001', {publicUrl: 'publicUrl001'}),
+						defaultData('002', {publicUrl: 'publicUrl002'}),
+						defaultData('003', {publicUrl: 'publicUrl003'}),
 					]);
 
 					const actual = await call({
@@ -371,9 +371,9 @@ describe('CustomEmojiService', () => {
 
 				test('keyword', async () => {
 					await insert([
-						defaultData('001', { publicUrl: 'publicUrl001' }),
-						defaultData('002', { publicUrl: 'publicUrl002' }),
-						defaultData('003', { publicUrl: 'publicUrl003' }),
+						defaultData('001', {publicUrl: 'publicUrl001'}),
+						defaultData('002', {publicUrl: 'publicUrl002'}),
+						defaultData('003', {publicUrl: 'publicUrl003'}),
 					]);
 
 					const actual = await call({
@@ -387,7 +387,7 @@ describe('CustomEmojiService', () => {
 
 				test('escape', async () => {
 					await insert([
-						defaultData('001', { publicUrl: 'publicUrl001' }),
+						defaultData('001', {publicUrl: 'publicUrl001'}),
 					]);
 
 					const actual = await call({
@@ -403,9 +403,9 @@ describe('CustomEmojiService', () => {
 			describe('type', () => {
 				test('single', async () => {
 					await insert([
-						defaultData('001', { type: 'type001' }),
-						defaultData('002', { type: 'type002' }),
-						defaultData('003', { type: 'type003' }),
+						defaultData('001', {type: 'type001'}),
+						defaultData('002', {type: 'type002'}),
+						defaultData('003', {type: 'type003'}),
 					]);
 
 					const actual = await call({
@@ -420,9 +420,9 @@ describe('CustomEmojiService', () => {
 
 				test('multi', async () => {
 					await insert([
-						defaultData('001', { type: 'type001' }),
-						defaultData('002', { type: 'type002' }),
-						defaultData('003', { type: 'type003' }),
+						defaultData('001', {type: 'type001'}),
+						defaultData('002', {type: 'type002'}),
+						defaultData('003', {type: 'type003'}),
 					]);
 
 					const actual = await call({
@@ -438,9 +438,9 @@ describe('CustomEmojiService', () => {
 
 				test('keyword', async () => {
 					await insert([
-						defaultData('001', { type: 'type001' }),
-						defaultData('002', { type: 'type002' }),
-						defaultData('003', { type: 'type003' }),
+						defaultData('001', {type: 'type001'}),
+						defaultData('002', {type: 'type002'}),
+						defaultData('003', {type: 'type003'}),
 					]);
 
 					const actual = await call({
@@ -454,7 +454,7 @@ describe('CustomEmojiService', () => {
 
 				test('escape', async () => {
 					await insert([
-						defaultData('001', { type: 'type001' }),
+						defaultData('001', {type: 'type001'}),
 					]);
 
 					const actual = await call({
@@ -470,9 +470,9 @@ describe('CustomEmojiService', () => {
 			describe('aliases', () => {
 				test('single', async () => {
 					await insert([
-						defaultData('001', { aliases: ['alias001', 'alias002'] }),
-						defaultData('002', { aliases: ['alias002'] }),
-						defaultData('003', { aliases: ['alias003'] }),
+						defaultData('001', {aliases: ['alias001', 'alias002']}),
+						defaultData('002', {aliases: ['alias002']}),
+						defaultData('003', {aliases: ['alias003']}),
 					]);
 
 					const actual = await call({
@@ -488,10 +488,10 @@ describe('CustomEmojiService', () => {
 
 				test('multi', async () => {
 					await insert([
-						defaultData('001', { aliases: ['alias001', 'alias002'] }),
-						defaultData('002', { aliases: ['alias002', 'alias004'] }),
-						defaultData('003', { aliases: ['alias003'] }),
-						defaultData('004', { aliases: ['alias004'] }),
+						defaultData('001', {aliases: ['alias001', 'alias002']}),
+						defaultData('002', {aliases: ['alias002', 'alias004']}),
+						defaultData('003', {aliases: ['alias003']}),
+						defaultData('004', {aliases: ['alias004']}),
 					]);
 
 					const actual = await call({
@@ -508,10 +508,10 @@ describe('CustomEmojiService', () => {
 
 				test('keyword', async () => {
 					await insert([
-						defaultData('001', { aliases: ['alias001', 'alias002'] }),
-						defaultData('002', { aliases: ['alias002', 'alias004'] }),
-						defaultData('003', { aliases: ['alias003'] }),
-						defaultData('004', { aliases: ['alias004'] }),
+						defaultData('001', {aliases: ['alias001', 'alias002']}),
+						defaultData('002', {aliases: ['alias002', 'alias004']}),
+						defaultData('003', {aliases: ['alias003']}),
+						defaultData('004', {aliases: ['alias004']}),
 					]);
 
 					const actual = await call({
@@ -525,7 +525,7 @@ describe('CustomEmojiService', () => {
 
 				test('escape', async () => {
 					await insert([
-						defaultData('001', { aliases: ['alias001', 'alias002'] }),
+						defaultData('001', {aliases: ['alias001', 'alias002']}),
 					]);
 
 					const actual = await call({
@@ -541,9 +541,9 @@ describe('CustomEmojiService', () => {
 			describe('category', () => {
 				test('single', async () => {
 					await insert([
-						defaultData('001', { category: 'category001' }),
-						defaultData('002', { category: 'category002' }),
-						defaultData('003', { category: 'category003' }),
+						defaultData('001', {category: 'category001'}),
+						defaultData('002', {category: 'category002'}),
+						defaultData('003', {category: 'category003'}),
 					]);
 
 					const actual = await call({
@@ -558,9 +558,9 @@ describe('CustomEmojiService', () => {
 
 				test('multi', async () => {
 					await insert([
-						defaultData('001', { category: 'category001' }),
-						defaultData('002', { category: 'category002' }),
-						defaultData('003', { category: 'category003' }),
+						defaultData('001', {category: 'category001'}),
+						defaultData('002', {category: 'category002'}),
+						defaultData('003', {category: 'category003'}),
 					]);
 
 					const actual = await call({
@@ -576,9 +576,9 @@ describe('CustomEmojiService', () => {
 
 				test('keyword', async () => {
 					await insert([
-						defaultData('001', { category: 'category001' }),
-						defaultData('002', { category: 'category002' }),
-						defaultData('003', { category: 'category003' }),
+						defaultData('001', {category: 'category001'}),
+						defaultData('002', {category: 'category002'}),
+						defaultData('003', {category: 'category003'}),
 					]);
 
 					const actual = await call({
@@ -592,7 +592,7 @@ describe('CustomEmojiService', () => {
 
 				test('escape', async () => {
 					await insert([
-						defaultData('001', { category: 'category001' }),
+						defaultData('001', {category: 'category001'}),
 					]);
 
 					const actual = await call({
@@ -608,9 +608,9 @@ describe('CustomEmojiService', () => {
 			describe('license', () => {
 				test('single', async () => {
 					await insert([
-						defaultData('001', { license: 'license001' }),
-						defaultData('002', { license: 'license002' }),
-						defaultData('003', { license: 'license003' }),
+						defaultData('001', {license: 'license001'}),
+						defaultData('002', {license: 'license002'}),
+						defaultData('003', {license: 'license003'}),
 					]);
 
 					const actual = await call({
@@ -625,9 +625,9 @@ describe('CustomEmojiService', () => {
 
 				test('multi', async () => {
 					await insert([
-						defaultData('001', { license: 'license001' }),
-						defaultData('002', { license: 'license002' }),
-						defaultData('003', { license: 'license003' }),
+						defaultData('001', {license: 'license001'}),
+						defaultData('002', {license: 'license002'}),
+						defaultData('003', {license: 'license003'}),
 					]);
 
 					const actual = await call({
@@ -643,9 +643,9 @@ describe('CustomEmojiService', () => {
 
 				test('keyword', async () => {
 					await insert([
-						defaultData('001', { license: 'license001' }),
-						defaultData('002', { license: 'license002' }),
-						defaultData('003', { license: 'license003' }),
+						defaultData('001', {license: 'license001'}),
+						defaultData('002', {license: 'license002'}),
+						defaultData('003', {license: 'license003'}),
 					]);
 
 					const actual = await call({
@@ -659,7 +659,7 @@ describe('CustomEmojiService', () => {
 
 				test('escape', async () => {
 					await insert([
-						defaultData('001', { license: 'license001' }),
+						defaultData('001', {license: 'license001'}),
 					]);
 
 					const actual = await call({
@@ -675,9 +675,9 @@ describe('CustomEmojiService', () => {
 			describe('isSensitive', () => {
 				test('true', async () => {
 					await insert([
-						defaultData('001', { isSensitive: true }),
-						defaultData('002', { isSensitive: false }),
-						defaultData('003', { isSensitive: true }),
+						defaultData('001', {isSensitive: true}),
+						defaultData('002', {isSensitive: false}),
+						defaultData('003', {isSensitive: true}),
 					]);
 
 					const actual = await call({
@@ -693,9 +693,9 @@ describe('CustomEmojiService', () => {
 
 				test('false', async () => {
 					await insert([
-						defaultData('001', { isSensitive: true }),
-						defaultData('002', { isSensitive: false }),
-						defaultData('003', { isSensitive: true }),
+						defaultData('001', {isSensitive: true}),
+						defaultData('002', {isSensitive: false}),
+						defaultData('003', {isSensitive: true}),
 					]);
 
 					const actual = await call({
@@ -710,9 +710,9 @@ describe('CustomEmojiService', () => {
 
 				test('null', async () => {
 					await insert([
-						defaultData('001', { isSensitive: true }),
-						defaultData('002', { isSensitive: false }),
-						defaultData('003', { isSensitive: true }),
+						defaultData('001', {isSensitive: true}),
+						defaultData('002', {isSensitive: false}),
+						defaultData('003', {isSensitive: true}),
 					]);
 
 					const actual = await call({
@@ -726,9 +726,9 @@ describe('CustomEmojiService', () => {
 			describe('localOnly', () => {
 				test('true', async () => {
 					await insert([
-						defaultData('001', { localOnly: true }),
-						defaultData('002', { localOnly: false }),
-						defaultData('003', { localOnly: true }),
+						defaultData('001', {localOnly: true}),
+						defaultData('002', {localOnly: false}),
+						defaultData('003', {localOnly: true}),
 					]);
 
 					const actual = await call({
@@ -744,9 +744,9 @@ describe('CustomEmojiService', () => {
 
 				test('false', async () => {
 					await insert([
-						defaultData('001', { localOnly: true }),
-						defaultData('002', { localOnly: false }),
-						defaultData('003', { localOnly: true }),
+						defaultData('001', {localOnly: true}),
+						defaultData('002', {localOnly: false}),
+						defaultData('003', {localOnly: true}),
 					]);
 
 					const actual = await call({
@@ -761,9 +761,9 @@ describe('CustomEmojiService', () => {
 
 				test('null', async () => {
 					await insert([
-						defaultData('001', { localOnly: true }),
-						defaultData('002', { localOnly: false }),
-						defaultData('003', { localOnly: true }),
+						defaultData('001', {localOnly: true}),
+						defaultData('002', {localOnly: false}),
+						defaultData('003', {localOnly: true}),
 					]);
 
 					const actual = await call({
@@ -777,9 +777,9 @@ describe('CustomEmojiService', () => {
 			describe('roleId', () => {
 				test('single', async () => {
 					await insert([
-						defaultData('001', { roleIdsThatCanBeUsedThisEmojiAsReaction: ['role001'] }),
-						defaultData('002', { roleIdsThatCanBeUsedThisEmojiAsReaction: ['role002'] }),
-						defaultData('003', { roleIdsThatCanBeUsedThisEmojiAsReaction: ['role003'] }),
+						defaultData('001', {roleIdsThatCanBeUsedThisEmojiAsReaction: ['role001']}),
+						defaultData('002', {roleIdsThatCanBeUsedThisEmojiAsReaction: ['role002']}),
+						defaultData('003', {roleIdsThatCanBeUsedThisEmojiAsReaction: ['role003']}),
 					]);
 
 					const actual = await call({
@@ -794,10 +794,10 @@ describe('CustomEmojiService', () => {
 
 				test('multi', async () => {
 					await insert([
-						defaultData('001', { roleIdsThatCanBeUsedThisEmojiAsReaction: ['role001'] }),
-						defaultData('002', { roleIdsThatCanBeUsedThisEmojiAsReaction: ['role002', 'role003'] }),
-						defaultData('003', { roleIdsThatCanBeUsedThisEmojiAsReaction: ['role003'] }),
-						defaultData('004', { roleIdsThatCanBeUsedThisEmojiAsReaction: ['role004'] }),
+						defaultData('001', {roleIdsThatCanBeUsedThisEmojiAsReaction: ['role001']}),
+						defaultData('002', {roleIdsThatCanBeUsedThisEmojiAsReaction: ['role002', 'role003']}),
+						defaultData('003', {roleIdsThatCanBeUsedThisEmojiAsReaction: ['role003']}),
+						defaultData('004', {roleIdsThatCanBeUsedThisEmojiAsReaction: ['role004']}),
 					]);
 
 					const actual = await call({

@@ -4,10 +4,10 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="[hide ? $style.hidden : $style.visible, (image.isSensitive && defaultStore.state.highlightSensitiveMedia) && $style.sensitive]" @click="onclick">
-	<component
-		:is="disableImageLink ? 'div' : 'a'"
-		v-bind="disableImageLink ? {
+	<div :class="[hide ? $style.hidden : $style.visible, (image.isSensitive && defaultStore.state.highlightSensitiveMedia) && $style.sensitive]" @click="onclick">
+		<component
+			:is="disableImageLink ? 'div' : 'a'"
+			v-bind="disableImageLink ? {
 			title: image.name,
 			class: $style.imageContainer,
 		} : {
@@ -16,51 +16,51 @@ SPDX-License-Identifier: AGPL-3.0-only
 			href: image.url,
 			style: 'cursor: zoom-in;'
 		}"
-	>
-		<ImgWithBlurhash
-			:hash="image.blurhash"
-			:src="(defaultStore.state.dataSaver.media && hide) ? null : url"
-			:forceBlurhash="hide"
-			:cover="hide || cover"
-			:alt="image.comment || image.name"
-			:title="image.comment || image.name"
-			:width="image.properties.width"
-			:height="image.properties.height"
-			:style="hide ? 'filter: brightness(0.7);' : null"
-		/>
-	</component>
-	<template v-if="hide">
-		<div :class="$style.hiddenText">
-			<div :class="$style.hiddenTextWrapper">
-				<b v-if="image.isSensitive" style="display: block;"><i class="ti ti-eye-exclamation"></i> {{ i18n.ts.sensitive }}{{ defaultStore.state.dataSaver.media ? ` (${i18n.ts.image}${image.size ? ' ' + bytes(image.size) : ''})` : '' }}</b>
-				<b v-else style="display: block;"><i class="ti ti-photo"></i> {{ defaultStore.state.dataSaver.media && image.size ? bytes(image.size) : i18n.ts.image }}</b>
-				<span v-if="controls" style="display: block;">{{ i18n.ts.clickToShow }}</span>
+		>
+			<ImgWithBlurhash
+				:alt="image.comment || image.name"
+				:cover="hide || cover"
+				:forceBlurhash="hide"
+				:hash="image.blurhash"
+				:height="image.properties.height"
+				:src="(defaultStore.state.dataSaver.media && hide) ? null : url"
+				:style="hide ? 'filter: brightness(0.7);' : null"
+				:title="image.comment || image.name"
+				:width="image.properties.width"
+			/>
+		</component>
+		<template v-if="hide">
+			<div :class="$style.hiddenText">
+				<div :class="$style.hiddenTextWrapper">
+					<b v-if="image.isSensitive" style="display: block;"><i class="ti ti-eye-exclamation"></i> {{ i18n.ts.sensitive }}{{ defaultStore.state.dataSaver.media ? ` (${i18n.ts.image}${image.size ? ' ' + bytes(image.size) : ''})` : '' }}</b>
+					<b v-else style="display: block;"><i class="ti ti-photo"></i> {{ defaultStore.state.dataSaver.media && image.size ? bytes(image.size) : i18n.ts.image }}</b>
+					<span v-if="controls" style="display: block;">{{ i18n.ts.clickToShow }}</span>
+				</div>
 			</div>
-		</div>
-	</template>
-	<template v-else-if="controls">
-		<div :class="$style.indicators">
-			<div v-if="['image/gif', 'image/apng'].includes(image.type)" :class="$style.indicator">GIF</div>
-			<div v-if="image.comment" :class="$style.indicator">ALT</div>
-			<div v-if="image.isSensitive" :class="$style.indicator" style="color: var(--MI_THEME-warn);" :title="i18n.ts.sensitive"><i class="ti ti-eye-exclamation"></i></div>
-		</div>
-		<button :class="$style.menu" class="_button" @click.stop="showMenu"><i class="ti ti-dots" style="vertical-align: middle;"></i></button>
-		<i class="ti ti-eye-off" :class="$style.hide" @click.stop="hide = true"></i>
-	</template>
-</div>
+		</template>
+		<template v-else-if="controls">
+			<div :class="$style.indicators">
+				<div v-if="['image/gif', 'image/apng'].includes(image.type)" :class="$style.indicator">GIF</div>
+				<div v-if="image.comment" :class="$style.indicator">ALT</div>
+				<div v-if="image.isSensitive" :class="$style.indicator" :title="i18n.ts.sensitive" style="color: var(--MI_THEME-warn);"><i class="ti ti-eye-exclamation"></i></div>
+			</div>
+			<button :class="$style.menu" class="_button" @click.stop="showMenu"><i class="ti ti-dots" style="vertical-align: middle;"></i></button>
+			<i :class="$style.hide" class="ti ti-eye-off" @click.stop="hide = true"></i>
+		</template>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { watch, ref, computed } from 'vue';
+import {watch, ref, computed} from 'vue';
 import * as Misskey from 'misskey-js';
-import type { MenuItem } from '@/types/menu.js';
-import { getStaticImageUrl } from '@/scripts/media-proxy.js';
+import type {MenuItem} from '@/types/menu.js';
+import {getStaticImageUrl} from '@/scripts/media-proxy.js';
 import bytes from '@/filters/bytes.js';
 import ImgWithBlurhash from '@/components/MkImgWithBlurhash.vue';
-import { defaultStore } from '@/store.js';
-import { i18n } from '@/i18n.js';
+import {defaultStore} from '@/store.js';
+import {i18n} from '@/i18n.js';
 import * as os from '@/os.js';
-import { $i, iAmModerator } from '@/account.js';
+import {$i, iAmModerator} from '@/account.js';
 
 const props = withDefaults(defineProps<{
 	image: Misskey.entities.DriveFile;
@@ -91,7 +91,7 @@ async function onclick(ev: MouseEvent) {
 	if (hide.value) {
 		ev.stopPropagation();
 		if (props.image.isSensitive && defaultStore.state.confirmWhenRevealingSensitiveMedia) {
-			const { canceled } = await os.confirm({
+			const {canceled} = await os.confirm({
 				type: 'question',
 				text: i18n.ts.sensitiveMediaRevealConfirm,
 			});
@@ -127,7 +127,7 @@ function showMenu(ev: MouseEvent) {
 			icon: 'ti ti-eye-exclamation',
 			danger: true,
 			action: () => {
-				os.apiWithDialog('drive/files/update', { fileId: props.image.id, isSensitive: true });
+				os.apiWithDialog('drive/files/update', {fileId: props.image.id, isSensitive: true});
 			},
 		});
 	}

@@ -4,35 +4,37 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkContainer :showHeader="widgetProps.showHeader" data-cy-mkw-rss class="mkw-rss">
-	<template #icon><i class="ti ti-rss"></i></template>
-	<template #header>RSS</template>
-	<template #func="{ buttonStyleClass }"><button class="_button" :class="buttonStyleClass" @click="configure"><i class="ti ti-settings"></i></button></template>
+	<MkContainer :showHeader="widgetProps.showHeader" class="mkw-rss" data-cy-mkw-rss>
+		<template #icon><i class="ti ti-rss"></i></template>
+		<template #header>RSS</template>
+		<template #func="{ buttonStyleClass }">
+			<button :class="buttonStyleClass" class="_button" @click="configure"><i class="ti ti-settings"></i></button>
+		</template>
 
-	<div class="ekmkgxbj">
-		<MkLoading v-if="fetching"/>
-		<div v-else-if="(!items || items.length === 0) && widgetProps.showHeader" class="_fullinfo">
-			<img :src="infoImageUrl" class="_ghost"/>
-			<div>{{ i18n.ts.nothing }}</div>
+		<div class="ekmkgxbj">
+			<MkLoading v-if="fetching"/>
+			<div v-else-if="(!items || items.length === 0) && widgetProps.showHeader" class="_fullinfo">
+				<img :src="infoImageUrl" class="_ghost"/>
+				<div>{{ i18n.ts.nothing }}</div>
+			</div>
+			<div v-else :class="$style.feed">
+				<a v-for="item in items" :key="item.link" :class="$style.item" :href="item.link" :title="item.title" rel="nofollow noopener" target="_blank">{{ item.title }}</a>
+			</div>
 		</div>
-		<div v-else :class="$style.feed">
-			<a v-for="item in items" :key="item.link" :class="$style.item" :href="item.link" rel="nofollow noopener" target="_blank" :title="item.title">{{ item.title }}</a>
-		</div>
-	</div>
-</MkContainer>
+	</MkContainer>
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, computed } from 'vue';
+import {ref, watch, computed} from 'vue';
 import * as Misskey from 'misskey-js';
-import { useWidgetPropsManager } from './widget.js';
-import type { WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget.js';
-import type { GetFormResultType } from '@/scripts/form.js';
+import {useWidgetPropsManager} from './widget.js';
+import type {WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps} from './widget.js';
+import type {GetFormResultType} from '@/scripts/form.js';
 import MkContainer from '@/components/MkContainer.vue';
-import { url as base } from '@@/js/config.js';
-import { i18n } from '@/i18n.js';
-import { useInterval } from '@@/js/use-interval.js';
-import { infoImageUrl } from '@/instance.js';
+import {url as base} from '@@/js/config.js';
+import {i18n} from '@/i18n.js';
+import {useInterval} from '@@/js/use-interval.js';
+import {infoImageUrl} from '@/instance.js';
 
 const name = 'rss';
 
@@ -60,7 +62,7 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 const props = defineProps<WidgetComponentProps<WidgetProps>>();
 const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 
-const { widgetProps, configure } = useWidgetPropsManager(name,
+const {widgetProps, configure} = useWidgetPropsManager(name,
 	widgetPropsDef,
 	props,
 	emit,
@@ -96,7 +98,7 @@ watch(() => widgetProps.refreshIntervalSec, () => {
 		immediate: true,
 		afterMounted: true,
 	});
-}, { immediate: true });
+}, {immediate: true});
 
 defineExpose<WidgetComponentExpose>({
 	name,

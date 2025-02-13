@@ -4,17 +4,17 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div>
-	<MkPagination v-slot="{items}" ref="list" :pagination="type === 'following' ? followingPagination : followersPagination">
-		<div :class="$style.users">
-			<MkUserInfo v-for="user in items.map(x => type === 'following' ? x.followee : x.follower)" :key="user.id" :user="user"/>
-		</div>
-	</MkPagination>
-</div>
+	<div>
+		<MkPagination ref="list" v-slot="{items}" :pagination="type === 'following' ? followingPagination : followersPagination">
+			<div :class="$style.users">
+				<MkUserInfo v-for="user in items.map(x => type === 'following' ? x.followee : x.follower)" :key="user.id" :user="user"/>
+			</div>
+		</MkPagination>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+import {computed} from 'vue';
 import * as Misskey from 'misskey-js';
 import MkUserInfo from '@/components/MkUserInfo.vue';
 import MkPagination from '@/components/MkPagination.vue';

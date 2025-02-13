@@ -3,32 +3,30 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { IsNull } from 'typeorm';
+import {Inject, Injectable} from '@nestjs/common';
+import {IsNull} from 'typeorm';
 import vary from 'vary';
 import fastifyAccepts from '@fastify/accepts';
-import { DI } from '@/di-symbols.js';
-import type { UsersRepository } from '@/models/_.js';
-import type { Config } from '@/config.js';
-import { escapeAttribute, escapeValue } from '@/misc/prelude/xml.js';
-import type { MiUser } from '@/models/User.js';
+import {DI} from '@/di-symbols.js';
+import type {UsersRepository} from '@/models/_.js';
+import type {Config} from '@/config.js';
+import {escapeAttribute, escapeValue} from '@/misc/prelude/xml.js';
+import type {MiUser} from '@/models/User.js';
 import * as Acct from '@/misc/acct.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { bindThis } from '@/decorators.js';
-import { NodeinfoServerService } from './NodeinfoServerService.js';
-import { OAuth2ProviderService } from './oauth/OAuth2ProviderService.js';
-import type { FindOptionsWhere } from 'typeorm';
-import type { FastifyInstance, FastifyPluginOptions } from 'fastify';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {bindThis} from '@/decorators.js';
+import {NodeinfoServerService} from './NodeinfoServerService.js';
+import {OAuth2ProviderService} from './oauth/OAuth2ProviderService.js';
+import type {FindOptionsWhere} from 'typeorm';
+import type {FastifyInstance, FastifyPluginOptions} from 'fastify';
 
 @Injectable()
 export class WellKnownServerService {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		private nodeinfoServerService: NodeinfoServerService,
 		private userEntityService: UserEntityService,
 		private oauth2ProviderService: OAuth2ProviderService,
@@ -39,7 +37,7 @@ export class WellKnownServerService {
 	@bindThis
 	public createServer(fastify: FastifyInstance, options: FastifyPluginOptions, done: (err?: Error) => void) {
 		const XRD = (...x: { element: string, value?: string, attributes?: Record<string, string> }[]) =>
-			`<?xml version="1.0" encoding="UTF-8"?><XRD xmlns="http://docs.oasis-open.org/ns/xri/xrd-1.0">${x.map(({ element, value, attributes }) =>
+			`<?xml version="1.0" encoding="UTF-8"?><XRD xmlns="http://docs.oasis-open.org/ns/xri/xrd-1.0">${x.map(({element, value, attributes}) =>
 				`<${
 					Object.entries(typeof attributes === 'object' && attributes || {}).reduce((a, [k, v]) => `${a} ${k}="${escapeAttribute(v)}"`, element)
 				}${
@@ -67,11 +65,13 @@ export class WellKnownServerService {
 
 		fastify.get('/.well-known/host-meta', async (request, reply) => {
 			reply.header('Content-Type', xrd);
-			return XRD({ element: 'Link', attributes: {
-				rel: 'lrdd',
-				type: xrd,
-				template: `${this.config.url}${webFingerPath}?resource={uri}`,
-			} });
+			return XRD({
+				element: 'Link', attributes: {
+					rel: 'lrdd',
+					type: xrd,
+					template: `${this.config.url}${webFingerPath}?resource={uri}`,
+				}
+			});
 		});
 
 		fastify.get('/.well-known/host-meta.json', async (request, reply) => {
@@ -86,7 +86,7 @@ export class WellKnownServerService {
 		});
 
 		fastify.get('/.well-known/nodeinfo', async (request, reply) => {
-			return { links: this.nodeinfoServerService.getLinks() };
+			return {links: this.nodeinfoServerService.getLinks()};
 		});
 
 		fastify.get('/.well-known/oauth-authorization-server', async () => {
@@ -110,8 +110,8 @@ fastify.get('/.well-known/change-password', async (request, reply) => {
 					fromId(resource.split('/').pop()!) :
 					fromAcct(Acct.parse(
 						resource.startsWith(`${this.config.url.toLowerCase()}/@`) ? resource.split('/').pop()! :
-						resource.startsWith('acct:') ? resource.slice('acct:'.length) :
-						resource));
+							resource.startsWith('acct:') ? resource.slice('acct:'.length) :
+								resource));
 
 			const fromAcct = (acct: Acct.Acct): FindOptionsWhere<MiUser> | number =>
 				!acct.host || acct.host === this.config.host.toLowerCase() ? {
@@ -161,10 +161,10 @@ fastify.get('/.well-known/change-password', async (request, reply) => {
 			if (request.accepts().type([jrd, xrd]) === xrd) {
 				reply.type(xrd);
 				return XRD(
-					{ element: 'Subject', value: subject },
-					{ element: 'Link', attributes: self },
-					{ element: 'Link', attributes: profilePage },
-					{ element: 'Link', attributes: subscribe });
+					{element: 'Subject', value: subject},
+					{element: 'Link', attributes: self},
+					{element: 'Link', attributes: profilePage},
+					{element: 'Link', attributes: subscribe});
 			} else {
 				reply.type(jrd);
 				return {

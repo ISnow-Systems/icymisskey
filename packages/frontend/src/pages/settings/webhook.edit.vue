@@ -4,82 +4,82 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="_gaps_m">
-	<MkInput v-model="name">
-		<template #label>{{ i18n.ts._webhookSettings.name }}</template>
-	</MkInput>
+	<div class="_gaps_m">
+		<MkInput v-model="name">
+			<template #label>{{ i18n.ts._webhookSettings.name }}</template>
+		</MkInput>
 
-	<MkInput v-model="url" type="url">
-		<template #label>URL</template>
-	</MkInput>
+		<MkInput v-model="url" type="url">
+			<template #label>URL</template>
+		</MkInput>
 
-	<MkInput v-model="secret">
-		<template #prefix><i class="ti ti-lock"></i></template>
-		<template #label>{{ i18n.ts._webhookSettings.secret }}</template>
-	</MkInput>
+		<MkInput v-model="secret">
+			<template #prefix><i class="ti ti-lock"></i></template>
+			<template #label>{{ i18n.ts._webhookSettings.secret }}</template>
+		</MkInput>
 
-	<FormSection>
-		<template #label>{{ i18n.ts._webhookSettings.trigger }}</template>
+		<FormSection>
+			<template #label>{{ i18n.ts._webhookSettings.trigger }}</template>
 
-		<div class="_gaps">
-			<div class="_gaps_s">
-				<div :class="$style.switchBox">
-					<MkSwitch v-model="event_follow">{{ i18n.ts._webhookSettings._events.follow }}</MkSwitch>
-					<MkButton transparent :class="$style.testButton" :disabled="!(active && event_follow)" @click="test('follow')"><i class="ti ti-send"></i></MkButton>
+			<div class="_gaps">
+				<div class="_gaps_s">
+					<div :class="$style.switchBox">
+						<MkSwitch v-model="event_follow">{{ i18n.ts._webhookSettings._events.follow }}</MkSwitch>
+						<MkButton :class="$style.testButton" :disabled="!(active && event_follow)" transparent @click="test('follow')"><i class="ti ti-send"></i></MkButton>
+					</div>
+					<div :class="$style.switchBox">
+						<MkSwitch v-model="event_followed">{{ i18n.ts._webhookSettings._events.followed }}</MkSwitch>
+						<MkButton :class="$style.testButton" :disabled="!(active && event_followed)" transparent @click="test('followed')"><i class="ti ti-send"></i></MkButton>
+					</div>
+					<div :class="$style.switchBox">
+						<MkSwitch v-model="event_note">{{ i18n.ts._webhookSettings._events.note }}</MkSwitch>
+						<MkButton :class="$style.testButton" :disabled="!(active && event_note)" transparent @click="test('note')"><i class="ti ti-send"></i></MkButton>
+					</div>
+					<div :class="$style.switchBox">
+						<MkSwitch v-model="event_reply">{{ i18n.ts._webhookSettings._events.reply }}</MkSwitch>
+						<MkButton :class="$style.testButton" :disabled="!(active && event_reply)" transparent @click="test('reply')"><i class="ti ti-send"></i></MkButton>
+					</div>
+					<div :class="$style.switchBox">
+						<MkSwitch v-model="event_renote">{{ i18n.ts._webhookSettings._events.renote }}</MkSwitch>
+						<MkButton :class="$style.testButton" :disabled="!(active && event_renote)" transparent @click="test('renote')"><i class="ti ti-send"></i></MkButton>
+					</div>
+					<div :class="$style.switchBox">
+						<MkSwitch v-model="event_reaction" :disabled="true">{{ i18n.ts._webhookSettings._events.reaction }}</MkSwitch>
+						<MkButton :class="$style.testButton" :disabled="!(active && event_reaction)" transparent @click="test('reaction')"><i class="ti ti-send"></i></MkButton>
+					</div>
+					<div :class="$style.switchBox">
+						<MkSwitch v-model="event_mention">{{ i18n.ts._webhookSettings._events.mention }}</MkSwitch>
+						<MkButton :class="$style.testButton" :disabled="!(active && event_mention)" transparent @click="test('mention')"><i class="ti ti-send"></i></MkButton>
+					</div>
 				</div>
-				<div :class="$style.switchBox">
-					<MkSwitch v-model="event_followed">{{ i18n.ts._webhookSettings._events.followed }}</MkSwitch>
-					<MkButton transparent :class="$style.testButton" :disabled="!(active && event_followed)" @click="test('followed')"><i class="ti ti-send"></i></MkButton>
-				</div>
-				<div :class="$style.switchBox">
-					<MkSwitch v-model="event_note">{{ i18n.ts._webhookSettings._events.note }}</MkSwitch>
-					<MkButton transparent :class="$style.testButton" :disabled="!(active && event_note)" @click="test('note')"><i class="ti ti-send"></i></MkButton>
-				</div>
-				<div :class="$style.switchBox">
-					<MkSwitch v-model="event_reply">{{ i18n.ts._webhookSettings._events.reply }}</MkSwitch>
-					<MkButton transparent :class="$style.testButton" :disabled="!(active && event_reply)" @click="test('reply')"><i class="ti ti-send"></i></MkButton>
-				</div>
-				<div :class="$style.switchBox">
-					<MkSwitch v-model="event_renote">{{ i18n.ts._webhookSettings._events.renote }}</MkSwitch>
-					<MkButton transparent :class="$style.testButton" :disabled="!(active && event_renote)" @click="test('renote')"><i class="ti ti-send"></i></MkButton>
-				</div>
-				<div :class="$style.switchBox">
-					<MkSwitch v-model="event_reaction" :disabled="true">{{ i18n.ts._webhookSettings._events.reaction }}</MkSwitch>
-					<MkButton transparent :class="$style.testButton" :disabled="!(active && event_reaction)" @click="test('reaction')"><i class="ti ti-send"></i></MkButton>
-				</div>
-				<div :class="$style.switchBox">
-					<MkSwitch v-model="event_mention">{{ i18n.ts._webhookSettings._events.mention }}</MkSwitch>
-					<MkButton transparent :class="$style.testButton" :disabled="!(active && event_mention)" @click="test('mention')"><i class="ti ti-send"></i></MkButton>
+
+				<div :class="$style.description">
+					{{ i18n.ts._webhookSettings.testRemarks }}
 				</div>
 			</div>
+		</FormSection>
 
-			<div :class="$style.description">
-				{{ i18n.ts._webhookSettings.testRemarks }}
-			</div>
+		<MkSwitch v-model="active">{{ i18n.ts._webhookSettings.active }}</MkSwitch>
+
+		<div class="_buttons">
+			<MkButton inline primary @click="save"><i class="ti ti-check"></i> {{ i18n.ts.save }}</MkButton>
+			<MkButton danger inline @click="del"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
 		</div>
-	</FormSection>
-
-	<MkSwitch v-model="active">{{ i18n.ts._webhookSettings.active }}</MkSwitch>
-
-	<div class="_buttons">
-		<MkButton primary inline @click="save"><i class="ti ti-check"></i> {{ i18n.ts.save }}</MkButton>
-		<MkButton danger inline @click="del"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
+import {ref, computed} from 'vue';
 import * as Misskey from 'misskey-js';
 import MkInput from '@/components/MkInput.vue';
 import FormSection from '@/components/form/section.vue';
 import MkSwitch from '@/components/MkSwitch.vue';
 import MkButton from '@/components/MkButton.vue';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { i18n } from '@/i18n.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
-import { useRouter } from '@/router/supplier.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {i18n} from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
+import {useRouter} from '@/router/supplier.js';
 
 const router = useRouter();
 
@@ -125,9 +125,9 @@ function save() {
 }
 
 async function del(): Promise<void> {
-	const { canceled } = await os.confirm({
+	const {canceled} = await os.confirm({
 		type: 'warning',
-		text: i18n.tsx.deleteAreYouSure({ x: webhook.name }),
+		text: i18n.tsx.deleteAreYouSure({x: webhook.name}),
 	});
 	if (canceled) return;
 
@@ -161,7 +161,7 @@ definePageMetadata(() => ({
 }));
 </script>
 
-<style module lang="scss">
+<style lang="scss" module>
 .switchBox {
 	display: flex;
 	align-items: center;

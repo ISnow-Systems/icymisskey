@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import {Inject, Injectable, OnModuleInit} from '@nestjs/common';
 import Redis from 'ioredis';
-import { DI } from '@/di-symbols.js';
-import type { ChannelFollowingsRepository } from '@/models/_.js';
-import { MiChannel } from '@/models/_.js';
-import { IdService } from '@/core/IdService.js';
-import { GlobalEvents, GlobalEventService } from '@/core/GlobalEventService.js';
-import { bindThis } from '@/decorators.js';
-import type { MiLocalUser } from '@/models/User.js';
-import { RedisKVCache } from '@/misc/cache.js';
+import {DI} from '@/di-symbols.js';
+import type {ChannelFollowingsRepository} from '@/models/_.js';
+import {MiChannel} from '@/models/_.js';
+import {IdService} from '@/core/IdService.js';
+import {GlobalEvents, GlobalEventService} from '@/core/GlobalEventService.js';
+import {bindThis} from '@/decorators.js';
+import type {MiLocalUser} from '@/models/User.js';
+import {RedisKVCache} from '@/misc/cache.js';
 
 @Injectable()
 export class ChannelFollowingService implements OnModuleInit {
@@ -32,7 +32,7 @@ export class ChannelFollowingService implements OnModuleInit {
 			lifetime: 1000 * 60 * 30, // 30m
 			memoryCacheLifetime: 1000 * 60, // 1m
 			fetcher: (key) => this.channelFollowingsRepository.find({
-				where: { followerId: key },
+				where: {followerId: key},
 				select: ['followeeId'],
 			}).then(xs => new Set(xs.map(x => x.followeeId))),
 			toRedisConverter: (value) => JSON.stringify(Array.from(value)),
@@ -79,11 +79,21 @@ export class ChannelFollowingService implements OnModuleInit {
 	}
 
 	@bindThis
+	public dispose(): void {
+		this.userFollowingChannelsCache.dispose();
+	}
+
+	@bindThis
+	public onApplicationShutdown(signal?: string | undefined): void {
+		this.dispose();
+	}
+
+	@bindThis
 	private async onMessage(_: string, data: string): Promise<void> {
 		const obj = JSON.parse(data);
 
 		if (obj.channel === 'internal') {
-			const { type, body } = obj.message as GlobalEvents['internal']['payload'];
+			const {type, body} = obj.message as GlobalEvents['internal']['payload'];
 			switch (type) {
 				case 'followChannel': {
 					this.userFollowingChannelsCache.refresh(body.userId);
@@ -95,15 +105,5 @@ export class ChannelFollowingService implements OnModuleInit {
 				}
 			}
 		}
-	}
-
-	@bindThis
-	public dispose(): void {
-		this.userFollowingChannelsCache.dispose();
-	}
-
-	@bindThis
-	public onApplicationShutdown(signal?: string | undefined): void {
-		this.dispose();
 	}
 }

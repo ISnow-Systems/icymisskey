@@ -6,20 +6,21 @@
 /*
  * Notification manager for SW
  */
-import type { BadgeNames, PushNotificationDataMap } from '@/types.js';
-import { char2fileName } from '@/scripts/twemoji-base.js';
-import { cli } from '@/scripts/operations.js';
-import { getAccountFromId } from '@/scripts/get-account-from-id.js';
-import { swLang } from '@/scripts/lang.js';
-import { getUserName } from '@/scripts/get-user-name.js';
+import type {BadgeNames, PushNotificationDataMap} from '@/types.js';
+import {char2fileName} from '@/scripts/twemoji-base.js';
+import {cli} from '@/scripts/operations.js';
+import {getAccountFromId} from '@/scripts/get-account-from-id.js';
+import {swLang} from '@/scripts/lang.js';
+import {getUserName} from '@/scripts/get-user-name.js';
 
 const closeNotificationsByTags = async (tags: string[]): Promise<void> => {
-	for (const n of (await Promise.all(tags.map(tag => globalThis.registration.getNotifications({ tag })))).flat()) {
+	for (const n of (await Promise.all(tags.map(tag => globalThis.registration.getNotifications({tag})))).flat()) {
 		n.close();
 	}
 };
 
 const iconUrl = (name: BadgeNames): string => `/static-assets/tabler-badges/${name}.png`;
+
 /* How to add a new badge:
  * 1. Find the icon and download png from https://tabler-icons.io/
  * 2. vips resize ~/Downloads/icon-name.png vipswork.png 0.4; vips scRGB2BW vipswork.png ~/icon-name.png"[compression=9,strip]"; rm vipswork.png;
@@ -56,7 +57,7 @@ async function composeNotification(data: PushNotificationDataMap[keyof PushNotif
 					// users/showの型定義をswos.apiへ当てはめるのが困難なのでapiFetch.requestを直接使用
 					const account = await getAccountFromId(data.userId);
 					if (!account) return null;
-					const userDetail = await cli.request('users/show', { userId: data.body.userId }, account.token);
+					const userDetail = await cli.request('users/show', {userId: data.body.userId}, account.token);
 					return [i18n.ts._notification.youWereFollowed, {
 						body: getUserName(data.body.user),
 						icon: data.body.user.avatarUrl ?? undefined,
@@ -72,7 +73,7 @@ async function composeNotification(data: PushNotificationDataMap[keyof PushNotif
 				}
 
 				case 'mention':
-					return [i18n.tsx._notification.youGotMention({ name: getUserName(data.body.user) }), {
+					return [i18n.tsx._notification.youGotMention({name: getUserName(data.body.user)}), {
 						body: data.body.note.text ?? '',
 						icon: data.body.user.avatarUrl ?? undefined,
 						badge: iconUrl('at'),
@@ -86,7 +87,7 @@ async function composeNotification(data: PushNotificationDataMap[keyof PushNotif
 					}];
 
 				case 'reply':
-					return [i18n.tsx._notification.youGotReply({ name: getUserName(data.body.user) }), {
+					return [i18n.tsx._notification.youGotReply({name: getUserName(data.body.user)}), {
 						body: data.body.note.text ?? '',
 						icon: data.body.user.avatarUrl ?? undefined,
 						badge: iconUrl('arrow-back-up'),
@@ -100,7 +101,7 @@ async function composeNotification(data: PushNotificationDataMap[keyof PushNotif
 					}];
 
 				case 'renote':
-					return [i18n.tsx._notification.youRenoted({ name: getUserName(data.body.user) }), {
+					return [i18n.tsx._notification.youRenoted({name: getUserName(data.body.user)}), {
 						body: data.body.note.text ?? '',
 						icon: data.body.user.avatarUrl ?? undefined,
 						badge: iconUrl('repeat'),
@@ -114,7 +115,7 @@ async function composeNotification(data: PushNotificationDataMap[keyof PushNotif
 					}];
 
 				case 'quote':
-					return [i18n.tsx._notification.youGotQuote({ name: getUserName(data.body.user) }), {
+					return [i18n.tsx._notification.youGotQuote({name: getUserName(data.body.user)}), {
 						body: data.body.note.text ?? '',
 						icon: data.body.user.avatarUrl ?? undefined,
 						badge: iconUrl('quote'),
@@ -229,7 +230,7 @@ async function composeNotification(data: PushNotificationDataMap[keyof PushNotif
 						userList: i18n.ts.lists,
 					} as const satisfies Record<typeof data.body.exportedEntity, string>;
 
-					return [i18n.tsx._notification.exportOfXCompleted({ x: entityName[data.body.exportedEntity] }), {
+					return [i18n.tsx._notification.exportOfXCompleted({x: entityName[data.body.exportedEntity]}), {
 						badge: iconUrl('circle-check'),
 						data,
 					}];
@@ -260,7 +261,7 @@ async function composeNotification(data: PushNotificationDataMap[keyof PushNotif
 					return null;
 			}
 		case 'unreadAntennaNote':
-			return [i18n.tsx._notification.unreadAntennaNote({ name: data.body.antenna.name }), {
+			return [i18n.tsx._notification.unreadAntennaNote({name: data.body.antenna.name}), {
 				body: `${getUserName(data.body.note.user)}: ${data.body.note.text ?? ''}`,
 				icon: data.body.note.user.avatarUrl ?? undefined,
 				badge: iconUrl('antenna'),

@@ -4,29 +4,29 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<Transition
-	:enterActiveClass="defaultStore.state.animation ? $style.transition_tooltip_enterActive : ''"
-	:leaveActiveClass="defaultStore.state.animation ? $style.transition_tooltip_leaveActive : ''"
-	:enterFromClass="defaultStore.state.animation ? $style.transition_tooltip_enterFrom : ''"
-	:leaveToClass="defaultStore.state.animation ? $style.transition_tooltip_leaveTo : ''"
-	appear @afterLeave="emit('closed')"
->
-	<div v-show="showing" ref="el" :class="$style.root" class="_acrylic _shadow" :style="{ zIndex, maxWidth: maxWidth + 'px' }">
-		<slot>
-			<template v-if="text">
-				<Mfm v-if="asMfm" :text="text"/>
-				<span v-else>{{ text }}</span>
-			</template>
-		</slot>
-	</div>
-</Transition>
+	<Transition
+		:enterActiveClass="defaultStore.state.animation ? $style.transition_tooltip_enterActive : ''"
+		:enterFromClass="defaultStore.state.animation ? $style.transition_tooltip_enterFrom : ''"
+		:leaveActiveClass="defaultStore.state.animation ? $style.transition_tooltip_leaveActive : ''"
+		:leaveToClass="defaultStore.state.animation ? $style.transition_tooltip_leaveTo : ''"
+		appear @afterLeave="emit('closed')"
+	>
+		<div v-show="showing" ref="el" :class="$style.root" :style="{ zIndex, maxWidth: maxWidth + 'px' }" class="_acrylic _shadow">
+			<slot>
+				<template v-if="text">
+					<Mfm v-if="asMfm" :text="text"/>
+					<span v-else>{{ text }}</span>
+				</template>
+			</slot>
+		</div>
+	</Transition>
 </template>
 
 <script lang="ts" setup>
-import { nextTick, onMounted, onUnmounted, shallowRef } from 'vue';
+import {nextTick, onMounted, onUnmounted, shallowRef} from 'vue';
 import * as os from '@/os.js';
-import { calcPopupPosition } from '@/scripts/popup-position.js';
-import { defaultStore } from '@/store.js';
+import {calcPopupPosition} from '@/scripts/popup-position.js';
+import {defaultStore} from '@/store.js';
 
 const props = withDefaults(defineProps<{
 	showing: boolean;
@@ -97,6 +97,7 @@ onUnmounted(() => {
 	transform: scale(1);
 	transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1), opacity 200ms cubic-bezier(0.23, 1, 0.32, 1);
 }
+
 .transition_tooltip_enterFrom,
 .transition_tooltip_leaveTo {
 	opacity: 0;

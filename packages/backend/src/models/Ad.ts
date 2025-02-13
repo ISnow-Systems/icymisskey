@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Entity, Index, Column, PrimaryColumn } from 'typeorm';
-import { id } from './util/id.js';
+import {Entity, Index, Column, PrimaryColumn} from 'typeorm';
+import {id} from './util/id.js';
 
 @Entity('ad')
 export class MiAd {
@@ -58,6 +58,7 @@ export class MiAd {
 		default: 0, nullable: false,
 	})
 	public dayOfWeek: number;
+
 	constructor(data: Partial<MiAd>) {
 		if (data == null) return;
 

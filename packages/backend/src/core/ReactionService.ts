@@ -3,33 +3,33 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { DI } from '@/di-symbols.js';
-import type { EmojisRepository, NoteReactionsRepository, UsersRepository, NotesRepository, MiMeta } from '@/models/_.js';
-import { IdentifiableError } from '@/misc/identifiable-error.js';
-import type { MiRemoteUser, MiUser } from '@/models/User.js';
-import type { MiNote } from '@/models/Note.js';
-import { IdService } from '@/core/IdService.js';
-import type { MiNoteReaction } from '@/models/NoteReaction.js';
-import { isDuplicateKeyValueError } from '@/misc/is-duplicate-key-value-error.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { NotificationService } from '@/core/NotificationService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {DI} from '@/di-symbols.js';
+import type {EmojisRepository, NoteReactionsRepository, UsersRepository, NotesRepository, MiMeta} from '@/models/_.js';
+import {IdentifiableError} from '@/misc/identifiable-error.js';
+import type {MiRemoteUser, MiUser} from '@/models/User.js';
+import type {MiNote} from '@/models/Note.js';
+import {IdService} from '@/core/IdService.js';
+import type {MiNoteReaction} from '@/models/NoteReaction.js';
+import {isDuplicateKeyValueError} from '@/misc/is-duplicate-key-value-error.js';
+import {GlobalEventService} from '@/core/GlobalEventService.js';
+import {NotificationService} from '@/core/NotificationService.js';
 import PerUserReactionsChart from '@/core/chart/charts/per-user-reactions.js';
-import { emojiRegex } from '@/misc/emoji-regex.js';
-import { ApDeliverManagerService } from '@/core/activitypub/ApDeliverManagerService.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { ApRendererService } from '@/core/activitypub/ApRendererService.js';
-import { bindThis } from '@/decorators.js';
-import { UtilityService } from '@/core/UtilityService.js';
-import { UserBlockingService } from '@/core/UserBlockingService.js';
-import { CustomEmojiService } from '@/core/CustomEmojiService.js';
-import { RoleService } from '@/core/RoleService.js';
-import { FeaturedService } from '@/core/FeaturedService.js';
-import { trackPromise } from '@/misc/promise-tracker.js';
-import { isQuote, isRenote } from '@/misc/is-renote.js';
-import { ReactionsBufferingService } from '@/core/ReactionsBufferingService.js';
-import { PER_NOTE_REACTION_USER_PAIR_CACHE_MAX } from '@/const.js';
+import {emojiRegex} from '@/misc/emoji-regex.js';
+import {ApDeliverManagerService} from '@/core/activitypub/ApDeliverManagerService.js';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {ApRendererService} from '@/core/activitypub/ApRendererService.js';
+import {bindThis} from '@/decorators.js';
+import {UtilityService} from '@/core/UtilityService.js';
+import {UserBlockingService} from '@/core/UserBlockingService.js';
+import {CustomEmojiService} from '@/core/CustomEmojiService.js';
+import {RoleService} from '@/core/RoleService.js';
+import {FeaturedService} from '@/core/FeaturedService.js';
+import {trackPromise} from '@/misc/promise-tracker.js';
+import {isQuote, isRenote} from '@/misc/is-renote.js';
+import {ReactionsBufferingService} from '@/core/ReactionsBufferingService.js';
+import {PER_NOTE_REACTION_USER_PAIR_CACHE_MAX} from '@/const.js';
 
 const FALLBACK = '\u2764';
 
@@ -72,19 +72,14 @@ export class ReactionService {
 	constructor(
 		@Inject(DI.meta)
 		private meta: MiMeta,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		@Inject(DI.noteReactionsRepository)
 		private noteReactionsRepository: NoteReactionsRepository,
-
 		@Inject(DI.emojisRepository)
 		private emojisRepository: EmojisRepository,
-
 		private utilityService: UtilityService,
 		private customEmojiService: CustomEmojiService,
 		private roleService: RoleService,
@@ -205,7 +200,7 @@ export class ReactionService {
 						reactionAndUserPairCache: () => `array_append("reactionAndUserPairCache", '${user.id}/${reaction}')`,
 					} : {}),
 				})
-				.where('id = :id', { id: note.id })
+				.where('id = :id', {id: note.id})
 				.execute();
 		}
 
@@ -267,14 +262,14 @@ export class ReactionService {
 			const content = this.apRendererService.addContext(await this.apRendererService.renderLike(record, note));
 			const dm = this.apDeliverManagerService.createDeliverManager(user, content);
 			if (note.userHost !== null) {
-				const reactee = await this.usersRepository.findOneBy({ id: note.userId });
+				const reactee = await this.usersRepository.findOneBy({id: note.userId});
 				dm.addDirectRecipe(reactee as MiRemoteUser);
 			}
 
 			if (['public', 'home', 'followers'].includes(note.visibility)) {
 				dm.addFollowersRecipe();
 			} else if (note.visibility === 'specified') {
-				const visibleUsers = await Promise.all(note.visibleUserIds.map(id => this.usersRepository.findOneBy({ id })));
+				const visibleUsers = await Promise.all(note.visibleUserIds.map(id => this.usersRepository.findOneBy({id})));
 				for (const u of visibleUsers.filter(u => u && this.userEntityService.isRemoteUser(u))) {
 					dm.addDirectRecipe(u as MiRemoteUser);
 				}
@@ -314,7 +309,7 @@ export class ReactionService {
 					reactions: () => sql,
 					reactionAndUserPairCache: () => `array_remove("reactionAndUserPairCache", '${user.id}/${exist.reaction}')`,
 				})
-				.where('id = :id', { id: note.id })
+				.where('id = :id', {id: note.id})
 				.execute();
 		}
 
@@ -328,7 +323,7 @@ export class ReactionService {
 			const content = this.apRendererService.addContext(this.apRendererService.renderUndo(await this.apRendererService.renderLike(exist, note), user));
 			const dm = this.apDeliverManagerService.createDeliverManager(user, content);
 			if (note.userHost !== null) {
-				const reactee = await this.usersRepository.findOneBy({ id: note.userId });
+				const reactee = await this.usersRepository.findOneBy({id: note.userId});
 				dm.addDirectRecipe(reactee as MiRemoteUser);
 			}
 			dm.addFollowersRecipe();

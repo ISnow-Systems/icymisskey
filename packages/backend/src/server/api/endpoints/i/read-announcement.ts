@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { AnnouncementService } from '@/core/AnnouncementService.js';
+import {Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {AnnouncementService} from '@/core/AnnouncementService.js';
 
 export const meta = {
 	tags: ['account'],
@@ -14,14 +14,13 @@ export const meta = {
 
 	kind: 'write:account',
 
-	errors: {
-	},
+	errors: {},
 } as const;
 
 export const paramDef = {
 	type: 'object',
 	properties: {
-		announcementId: { type: 'string', format: 'misskey:id' },
+		announcementId: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['announcementId'],
 } as const;

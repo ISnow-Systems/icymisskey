@@ -4,33 +4,33 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="$style.codeBlockRoot">
-	<button v-if="copyButton" :class="$style.codeBlockCopyButton" class="_button" @click="copy">
-		<i class="ti ti-copy"></i>
-	</button>
-	<Suspense>
-		<template #fallback>
-			<MkLoading />
-		</template>
-		<XCode v-if="show && lang" :code="code" :lang="lang"/>
-		<pre v-else-if="show" :class="$style.codeBlockFallbackRoot"><code :class="$style.codeBlockFallbackCode">{{ code }}</code></pre>
-		<button v-else :class="$style.codePlaceholderRoot" @click="show = true">
-			<div :class="$style.codePlaceholderContainer">
-				<div><i class="ti ti-code"></i> {{ i18n.ts.code }}</div>
-				<div>{{ i18n.ts.clickToShow }}</div>
-			</div>
+	<div :class="$style.codeBlockRoot">
+		<button v-if="copyButton" :class="$style.codeBlockCopyButton" class="_button" @click="copy">
+			<i class="ti ti-copy"></i>
 		</button>
-	</Suspense>
-</div>
+		<Suspense>
+			<template #fallback>
+				<MkLoading/>
+			</template>
+			<XCode v-if="show && lang" :code="code" :lang="lang"/>
+			<pre v-else-if="show" :class="$style.codeBlockFallbackRoot"><code :class="$style.codeBlockFallbackCode">{{ code }}</code></pre>
+			<button v-else :class="$style.codePlaceholderRoot" @click="show = true">
+				<div :class="$style.codePlaceholderContainer">
+					<div><i class="ti ti-code"></i> {{ i18n.ts.code }}</div>
+					<div>{{ i18n.ts.clickToShow }}</div>
+				</div>
+			</button>
+		</Suspense>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, ref } from 'vue';
+import {defineAsyncComponent, ref} from 'vue';
 import * as os from '@/os.js';
 import MkLoading from '@/components/global/MkLoading.vue';
-import { defaultStore } from '@/store.js';
-import { i18n } from '@/i18n.js';
-import { copyToClipboard } from '@/scripts/copy-to-clipboard.js';
+import {defaultStore} from '@/store.js';
+import {i18n} from '@/i18n.js';
+import {copyToClipboard} from '@/scripts/copy-to-clipboard.js';
 
 const props = withDefaults(defineProps<{
 	code: string;
@@ -52,7 +52,7 @@ function copy() {
 }
 </script>
 
-<style module lang="scss">
+<style lang="scss" module>
 .codeBlockRoot {
 	position: relative;
 }
@@ -87,7 +87,7 @@ function copy() {
 	width: 100%;
 	border: none;
 	outline: none;
-  font: inherit;
+	font: inherit;
 	cursor: pointer;
 
 	box-sizing: border-box;

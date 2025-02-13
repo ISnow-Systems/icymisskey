@@ -3,34 +3,34 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { URL } from 'node:url';
-import { Inject, Injectable, OnApplicationShutdown } from '@nestjs/common';
+import {URL} from 'node:url';
+import {Inject, Injectable, OnApplicationShutdown} from '@nestjs/common';
 import httpSignature from '@peertube/http-signature';
 import * as Bull from 'bullmq';
 import type Logger from '@/logger.js';
-import { FederatedInstanceService } from '@/core/FederatedInstanceService.js';
-import { FetchInstanceMetadataService } from '@/core/FetchInstanceMetadataService.js';
+import {FederatedInstanceService} from '@/core/FederatedInstanceService.js';
+import {FetchInstanceMetadataService} from '@/core/FetchInstanceMetadataService.js';
 import InstanceChart from '@/core/chart/charts/instance.js';
 import ApRequestChart from '@/core/chart/charts/ap-request.js';
 import FederationChart from '@/core/chart/charts/federation.js';
-import { getApId } from '@/core/activitypub/type.js';
-import type { IActivity } from '@/core/activitypub/type.js';
-import type { MiRemoteUser } from '@/models/User.js';
-import type { MiUserPublickey } from '@/models/UserPublickey.js';
-import { ApDbResolverService } from '@/core/activitypub/ApDbResolverService.js';
-import { StatusError } from '@/misc/status-error.js';
-import { UtilityService } from '@/core/UtilityService.js';
-import { ApPersonService } from '@/core/activitypub/models/ApPersonService.js';
-import { JsonLdService } from '@/core/activitypub/JsonLdService.js';
-import { ApInboxService } from '@/core/activitypub/ApInboxService.js';
-import { bindThis } from '@/decorators.js';
-import { IdentifiableError } from '@/misc/identifiable-error.js';
-import { CollapsedQueue } from '@/misc/collapsed-queue.js';
-import { MiNote } from '@/models/Note.js';
-import { MiMeta } from '@/models/Meta.js';
-import { DI } from '@/di-symbols.js';
-import { QueueLoggerService } from '../QueueLoggerService.js';
-import type { InboxJobData } from '../types.js';
+import {getApId} from '@/core/activitypub/type.js';
+import type {IActivity} from '@/core/activitypub/type.js';
+import type {MiRemoteUser} from '@/models/User.js';
+import type {MiUserPublickey} from '@/models/UserPublickey.js';
+import {ApDbResolverService} from '@/core/activitypub/ApDbResolverService.js';
+import {StatusError} from '@/misc/status-error.js';
+import {UtilityService} from '@/core/UtilityService.js';
+import {ApPersonService} from '@/core/activitypub/models/ApPersonService.js';
+import {JsonLdService} from '@/core/activitypub/JsonLdService.js';
+import {ApInboxService} from '@/core/activitypub/ApInboxService.js';
+import {bindThis} from '@/decorators.js';
+import {IdentifiableError} from '@/misc/identifiable-error.js';
+import {CollapsedQueue} from '@/misc/collapsed-queue.js';
+import {MiNote} from '@/models/Note.js';
+import {MiMeta} from '@/models/Meta.js';
+import {DI} from '@/di-symbols.js';
+import {QueueLoggerService} from '../QueueLoggerService.js';
+import type {InboxJobData} from '../types.js';
 
 type UpdateInstanceJob = {
 	latestRequestReceivedAt: Date,
@@ -45,7 +45,6 @@ export class InboxProcessorService implements OnApplicationShutdown {
 	constructor(
 		@Inject(DI.meta)
 		private meta: MiMeta,
-
 		private utilityService: UtilityService,
 		private apInboxService: ApInboxService,
 		private federatedInstanceService: FederatedInstanceService,

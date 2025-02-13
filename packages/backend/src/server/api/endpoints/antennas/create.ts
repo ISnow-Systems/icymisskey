@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { IdService } from '@/core/IdService.js';
-import type { UserListsRepository, AntennasRepository } from '@/models/_.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { AntennaEntityService } from '@/core/entities/AntennaEntityService.js';
-import { DI } from '@/di-symbols.js';
-import { RoleService } from '@/core/RoleService.js';
-import { ApiError } from '../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {IdService} from '@/core/IdService.js';
+import type {UserListsRepository, AntennasRepository} from '@/models/_.js';
+import {GlobalEventService} from '@/core/GlobalEventService.js';
+import {AntennaEntityService} from '@/core/entities/AntennaEntityService.js';
+import {DI} from '@/di-symbols.js';
+import {RoleService} from '@/core/RoleService.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['antennas'],
@@ -52,27 +52,33 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		name: { type: 'string', minLength: 1, maxLength: 100 },
-		src: { type: 'string', enum: ['home', 'all', 'users', 'list', 'users_blacklist'] },
-		userListId: { type: 'string', format: 'misskey:id', nullable: true },
-		keywords: { type: 'array', items: {
+		name: {type: 'string', minLength: 1, maxLength: 100},
+		src: {type: 'string', enum: ['home', 'all', 'users', 'list', 'users_blacklist']},
+		userListId: {type: 'string', format: 'misskey:id', nullable: true},
+		keywords: {
+			type: 'array', items: {
+				type: 'array', items: {
+					type: 'string',
+				},
+			}
+		},
+		excludeKeywords: {
+			type: 'array', items: {
+				type: 'array', items: {
+					type: 'string',
+				},
+			}
+		},
+		users: {
 			type: 'array', items: {
 				type: 'string',
-			},
-		} },
-		excludeKeywords: { type: 'array', items: {
-			type: 'array', items: {
-				type: 'string',
-			},
-		} },
-		users: { type: 'array', items: {
-			type: 'string',
-		} },
-		caseSensitive: { type: 'boolean' },
-		localOnly: { type: 'boolean' },
-		excludeBots: { type: 'boolean' },
-		withReplies: { type: 'boolean' },
-		withFile: { type: 'boolean' },
+			}
+		},
+		caseSensitive: {type: 'boolean'},
+		localOnly: {type: 'boolean'},
+		excludeBots: {type: 'boolean'},
+		withReplies: {type: 'boolean'},
+		withFile: {type: 'boolean'},
 	},
 	required: ['name', 'src', 'keywords', 'excludeKeywords', 'users', 'caseSensitive', 'withReplies', 'withFile'],
 } as const;
@@ -82,10 +88,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.antennasRepository)
 		private antennasRepository: AntennasRepository,
-
 		@Inject(DI.userListsRepository)
 		private userListsRepository: UserListsRepository,
-
 		private antennaEntityService: AntennaEntityService,
 		private roleService: RoleService,
 		private idService: IdService,

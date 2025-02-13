@@ -4,27 +4,27 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkTooltip ref="tooltip" :showing="showing" :targetElement="targetElement" :maxWidth="340" @closed="emit('closed')">
-	<div :class="$style.root">
-		<div :class="$style.reaction">
-			<MkReactionIcon :reaction="reaction" :class="$style.reactionIcon" :noStyle="true"/>
-			<div :class="$style.reactionName">{{ getReactionName(reaction) }}</div>
-		</div>
-		<div :class="$style.users">
-			<div v-for="u in users" :key="u.id" :class="$style.user">
-				<MkAvatar :class="$style.avatar" :user="u"/>
-				<MkUserName :user="u" :nowrap="true"/>
+	<MkTooltip ref="tooltip" :maxWidth="340" :showing="showing" :targetElement="targetElement" @closed="emit('closed')">
+		<div :class="$style.root">
+			<div :class="$style.reaction">
+				<MkReactionIcon :class="$style.reactionIcon" :noStyle="true" :reaction="reaction"/>
+				<div :class="$style.reactionName">{{ getReactionName(reaction) }}</div>
 			</div>
-			<div v-if="count > 10" :class="$style.more">+{{ count - 10 }}</div>
+			<div :class="$style.users">
+				<div v-for="u in users" :key="u.id" :class="$style.user">
+					<MkAvatar :class="$style.avatar" :user="u"/>
+					<MkUserName :nowrap="true" :user="u"/>
+				</div>
+				<div v-if="count > 10" :class="$style.more">+{{ count - 10 }}</div>
+			</div>
 		</div>
-	</div>
-</MkTooltip>
+	</MkTooltip>
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import {} from 'vue';
 import * as Misskey from 'misskey-js';
-import { getEmojiName } from '@@/js/emojilist.js';
+import {getEmojiName} from '@@/js/emojilist.js';
 import MkTooltip from './MkTooltip.vue';
 import MkReactionIcon from '@/components/MkReactionIcon.vue';
 

@@ -3,26 +3,25 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { randomUUID } from 'node:crypto';
-import { Inject, Injectable } from '@nestjs/common';
+import {randomUUID} from 'node:crypto';
+import {Inject, Injectable} from '@nestjs/common';
 import bcrypt from 'bcryptjs';
-import { IsNull, DataSource } from 'typeorm';
-import { genRsaKeyPair } from '@/misc/gen-key-pair.js';
-import { MiUser } from '@/models/User.js';
-import { MiUserProfile } from '@/models/UserProfile.js';
-import { IdService } from '@/core/IdService.js';
-import { MiUserKeypair } from '@/models/UserKeypair.js';
-import { MiUsedUsername } from '@/models/UsedUsername.js';
-import { DI } from '@/di-symbols.js';
+import {IsNull, DataSource} from 'typeorm';
+import {genRsaKeyPair} from '@/misc/gen-key-pair.js';
+import {MiUser} from '@/models/User.js';
+import {MiUserProfile} from '@/models/UserProfile.js';
+import {IdService} from '@/core/IdService.js';
+import {MiUserKeypair} from '@/models/UserKeypair.js';
+import {MiUsedUsername} from '@/models/UsedUsername.js';
+import {DI} from '@/di-symbols.js';
 import generateNativeUserToken from '@/misc/generate-native-user-token.js';
-import { bindThis } from '@/decorators.js';
+import {bindThis} from '@/decorators.js';
 
 @Injectable()
 export class CreateSystemUserService {
 	constructor(
 		@Inject(DI.db)
 		private db: DataSource,
-
 		private idService: IdService,
 	) {
 	}

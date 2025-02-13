@@ -4,31 +4,31 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkWindow :initialWidth="640" :initialHeight="402" :canResize="true" :closeButton="true">
-	<template #header>
-		<i class="icon ti ti-brand-youtube" style="margin-right: 0.5em;"></i>
-		<span>{{ title ?? 'YouTube' }}</span>
-	</template>
+	<MkWindow :canResize="true" :closeButton="true" :initialHeight="402" :initialWidth="640">
+		<template #header>
+			<i class="icon ti ti-brand-youtube" style="margin-right: 0.5em;"></i>
+			<span>{{ title ?? 'YouTube' }}</span>
+		</template>
 
-	<div class="poamfof">
-		<Transition :name="defaultStore.state.animation ? 'fade' : ''" mode="out-in">
-			<div v-if="player.url && (player.url.startsWith('http://') || player.url.startsWith('https://'))" class="player">
-				<iframe v-if="!fetching" :src="transformPlayerUrl(player.url)" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-			</div>
-			<span v-else>invalid url</span>
-		</Transition>
-		<MkLoading v-if="fetching"/>
-		<MkError v-else-if="!player.url" @retry="ytFetch()"/>
-	</div>
-</MkWindow>
+		<div class="poamfof">
+			<Transition :name="defaultStore.state.animation ? 'fade' : ''" mode="out-in">
+				<div v-if="player.url && (player.url.startsWith('http://') || player.url.startsWith('https://'))" class="player">
+					<iframe v-if="!fetching" :src="transformPlayerUrl(player.url)" allow="autoplay; encrypted-media" allowfullscreen frameborder="0"></iframe>
+				</div>
+				<span v-else>invalid url</span>
+			</Transition>
+			<MkLoading v-if="fetching"/>
+			<MkError v-else-if="!player.url" @retry="ytFetch()"/>
+		</div>
+	</MkWindow>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import {ref} from 'vue';
 import MkWindow from '@/components/MkWindow.vue';
-import { versatileLang } from '@@/js/intl-const.js';
-import { transformPlayerUrl } from '@/scripts/player-url-transform.js';
-import { defaultStore } from '@/store.js';
+import {versatileLang} from '@@/js/intl-const.js';
+import {transformPlayerUrl} from '@/scripts/player-url-transform.js';
+import {defaultStore} from '@/store.js';
 
 const props = defineProps<{
 	url: string;

@@ -3,25 +3,24 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import type { Packed } from '@/misc/json-schema.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { bindThis } from '@/decorators.js';
-import { isRenotePacked, isQuotePacked } from '@/misc/is-renote.js';
-import type { JsonObject } from '@/misc/json-value.js';
-import Channel, { type MiChannelService } from '../channel.js';
+import {Injectable} from '@nestjs/common';
+import type {Packed} from '@/misc/json-schema.js';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
+import {bindThis} from '@/decorators.js';
+import {isRenotePacked, isQuotePacked} from '@/misc/is-renote.js';
+import type {JsonObject} from '@/misc/json-value.js';
+import Channel, {type MiChannelService} from '../channel.js';
 
 class HomeTimelineChannel extends Channel {
-	public readonly chName = 'homeTimeline';
 	public static shouldShare = false;
 	public static requireCredential = true as const;
 	public static kind = 'read:account';
+	public readonly chName = 'homeTimeline';
 	private withRenotes: boolean;
 	private withFiles: boolean;
 
 	constructor(
 		private noteEntityService: NoteEntityService,
-
 		id: string,
 		connection: Channel['connection'],
 	) {
@@ -35,6 +34,12 @@ class HomeTimelineChannel extends Channel {
 		this.withFiles = !!(params.withFiles ?? false);
 
 		this.subscriber.on('notesStream', this.onNote);
+	}
+
+	@bindThis
+	public dispose() {
+		// Unsubscribe events
+		this.subscriber.off('notesStream', this.onNote);
 	}
 
 	@bindThis
@@ -89,12 +94,6 @@ class HomeTimelineChannel extends Channel {
 		this.connection.cacheNote(note);
 
 		this.send('note', note);
-	}
-
-	@bindThis
-	public dispose() {
-		// Unsubscribe events
-		this.subscriber.off('notesStream', this.onNote);
 	}
 }
 

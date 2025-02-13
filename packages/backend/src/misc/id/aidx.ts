@@ -8,7 +8,7 @@
 // (c) mei23
 // https://misskey.m544.net/notes/71899acdcc9859ec5708ac24
 
-import { customAlphabet } from 'nanoid';
+import {customAlphabet} from 'nanoid';
 
 export const aidxRegExp = /^[0-9a-z]{16}$/;
 
@@ -39,7 +39,7 @@ export function genAidx(t: number): string {
 
 export function parseAidx(id: string): { date: Date; } {
 	const time = parseInt(id.slice(0, TIME_LENGTH), 36) + TIME2000;
-	return { date: new Date(time) };
+	return {date: new Date(time)};
 }
 
 export function isSafeAidxT(t: number): boolean {

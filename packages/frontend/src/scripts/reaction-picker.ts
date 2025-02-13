@@ -4,10 +4,10 @@
  */
 
 import * as Misskey from 'misskey-js';
-import { defineAsyncComponent, ref } from 'vue';
-import type { Ref } from 'vue';
-import { popup } from '@/os.js';
-import { defaultStore } from '@/store.js';
+import {defineAsyncComponent, ref} from 'vue';
+import type {Ref} from 'vue';
+import {popup} from '@/os.js';
+import {defaultStore} from '@/store.js';
 
 class ReactionPicker {
 	private src: Ref<HTMLElement | null> = ref(null);

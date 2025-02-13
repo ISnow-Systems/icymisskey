@@ -89,15 +89,15 @@ export type Form = Record<string, FormItem>;
 
 type GetItemType<Item extends FormItem> =
 	Item['type'] extends 'string' ? string :
-	Item['type'] extends 'number' ? number :
-	Item['type'] extends 'boolean' ? boolean :
-	Item['type'] extends 'radio' ? unknown :
-	Item['type'] extends 'range' ? number :
-	Item['type'] extends 'enum' ? string :
-	Item['type'] extends 'array' ? unknown[] :
-	Item['type'] extends 'object' ? Record<string, unknown> :
-	Item['type'] extends 'drive-file' ? Misskey.entities.DriveFile | undefined :
-	never;
+		Item['type'] extends 'number' ? number :
+			Item['type'] extends 'boolean' ? boolean :
+				Item['type'] extends 'radio' ? unknown :
+					Item['type'] extends 'range' ? number :
+						Item['type'] extends 'enum' ? string :
+							Item['type'] extends 'array' ? unknown[] :
+								Item['type'] extends 'object' ? Record<string, unknown> :
+									Item['type'] extends 'drive-file' ? Misskey.entities.DriveFile | undefined :
+										never;
 
 export type GetFormResultType<F extends Form> = {
 	[P in keyof F]: GetItemType<F[P]>;

@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Column, Entity, Index, PrimaryColumn } from 'typeorm';
-import { Serialized } from '@/types.js';
-import { id } from './util/id.js';
+import {Column, Entity, Index, PrimaryColumn} from 'typeorm';
+import {Serialized} from '@/types.js';
+import {id} from './util/id.js';
 
 export const systemWebhookEventTypes = [
 	// ユーザからの通報を受けたとき
@@ -29,7 +29,7 @@ export class MiSystemWebhook {
 	/**
 	 * 有効かどうか.
 	 */
-	@Index('IDX_system_webhook_isActive', { synchronize: false })
+	@Index('IDX_system_webhook_isActive', {synchronize: false})
 	@Column('boolean', {
 		default: true,
 	})
@@ -70,7 +70,7 @@ export class MiSystemWebhook {
 	/**
 	 * イベント種別.
 	 */
-	@Index('IDX_system_webhook_on', { synchronize: false })
+	@Index('IDX_system_webhook_on', {synchronize: false})
 	@Column('varchar', {
 		length: 128,
 		array: true,

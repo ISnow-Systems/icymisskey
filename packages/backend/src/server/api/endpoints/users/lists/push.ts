@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import ms from 'ms';
-import type { UserListsRepository, UserListMembershipsRepository, BlockingsRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { GetterService } from '@/server/api/GetterService.js';
-import { UserListService } from '@/core/UserListService.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../../error.js';
+import type {UserListsRepository, UserListMembershipsRepository, BlockingsRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {GetterService} from '@/server/api/GetterService.js';
+import {UserListService} from '@/core/UserListService.js';
+import {DI} from '@/di-symbols.js';
+import {ApiError} from '../../../error.js';
 
 export const meta = {
 	tags: ['lists', 'users'],
@@ -64,8 +64,8 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		listId: { type: 'string', format: 'misskey:id' },
-		userId: { type: 'string', format: 'misskey:id' },
+		listId: {type: 'string', format: 'misskey:id'},
+		userId: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['listId', 'userId'],
 } as const;
@@ -75,13 +75,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.userListsRepository)
 		private userListsRepository: UserListsRepository,
-
 		@Inject(DI.userListMembershipsRepository)
 		private userListMembershipsRepository: UserListMembershipsRepository,
-
 		@Inject(DI.blockingsRepository)
 		private blockingsRepository: BlockingsRepository,
-
 		private getterService: GetterService,
 		private userListService: UserListService,
 	) {

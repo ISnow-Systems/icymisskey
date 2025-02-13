@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { MiClip } from '@/models/_.js';
-import { ClipEntityService } from '@/core/entities/ClipEntityService.js';
-import { ApiError } from '@/server/api/error.js';
-import { ClipService } from '@/core/ClipService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {MiClip} from '@/models/_.js';
+import {ClipEntityService} from '@/core/entities/ClipEntityService.js';
+import {ApiError} from '@/server/api/error.js';
+import {ClipService} from '@/core/ClipService.js';
 
 export const meta = {
 	tags: ['clips'],
@@ -37,9 +37,9 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		name: { type: 'string', minLength: 1, maxLength: 100 },
-		isPublic: { type: 'boolean', default: false },
-		description: { type: 'string', nullable: true, minLength: 1, maxLength: 2048 },
+		name: {type: 'string', minLength: 1, maxLength: 100},
+		isPublic: {type: 'boolean', default: false},
+		description: {type: 'string', nullable: true, minLength: 1, maxLength: 2048},
 	},
 	required: ['name'],
 } as const;

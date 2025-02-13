@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { HashtagsRepository } from '@/models/_.js';
-import { normalizeForSearch } from '@/misc/normalize-for-search.js';
-import { HashtagEntityService } from '@/core/entities/HashtagEntityService.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {HashtagsRepository} from '@/models/_.js';
+import {normalizeForSearch} from '@/misc/normalize-for-search.js';
+import {HashtagEntityService} from '@/core/entities/HashtagEntityService.js';
+import {DI} from '@/di-symbols.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['hashtags'],
@@ -34,7 +34,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		tag: { type: 'string' },
+		tag: {type: 'string'},
 	},
 	required: ['tag'],
 } as const;
@@ -44,11 +44,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.hashtagsRepository)
 		private hashtagsRepository: HashtagsRepository,
-
 		private hashtagEntityService: HashtagEntityService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const hashtag = await this.hashtagsRepository.findOneBy({ name: normalizeForSearch(ps.tag) });
+			const hashtag = await this.hashtagsRepository.findOneBy({name: normalizeForSearch(ps.tag)});
 			if (hashtag == null) {
 				throw new ApiError(meta.errors.noSuchHashtag);
 			}

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { execa, execaNode } from 'execa';
+import {execa, execaNode} from 'execa';
 
 /** @type {import('execa').ExecaChildProcess | undefined} */
 let backendProcess;
@@ -30,7 +30,8 @@ function execStart() {
 
 async function killProc() {
 	if (backendProcess) {
-		backendProcess.catch(() => {}); // backendProcess.kill()によって発生する例外を無視するためにcatch()を呼び出す
+		backendProcess.catch(() => {
+		}); // backendProcess.kill()によって発生する例外を無視するためにcatch()を呼び出す
 		backendProcess.kill();
 		await new Promise(resolve => backendProcess.on('exit', resolve));
 		backendProcess = undefined;

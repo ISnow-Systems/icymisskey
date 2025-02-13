@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { IdService } from '@/core/IdService.js';
-import type { MiMeta, SwSubscriptionsRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
-import { PushNotificationService } from '@/core/PushNotificationService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {IdService} from '@/core/IdService.js';
+import type {MiMeta, SwSubscriptionsRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {DI} from '@/di-symbols.js';
+import {PushNotificationService} from '@/core/PushNotificationService.js';
 
 export const meta = {
 	tags: ['account'],
@@ -50,10 +50,10 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		endpoint: { type: 'string' },
-		auth: { type: 'string' },
-		publickey: { type: 'string' },
-		sendReadMessage: { type: 'boolean', default: false },
+		endpoint: {type: 'string'},
+		auth: {type: 'string'},
+		publickey: {type: 'string'},
+		sendReadMessage: {type: 'boolean', default: false},
 	},
 	required: ['endpoint', 'auth', 'publickey'],
 } as const;
@@ -63,10 +63,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.meta)
 		private serverSettings: MiMeta,
-
 		@Inject(DI.swSubscriptionsRepository)
 		private swSubscriptionsRepository: SwSubscriptionsRepository,
-
 		private idService: IdService,
 		private pushNotificationService: PushNotificationService,
 	) {

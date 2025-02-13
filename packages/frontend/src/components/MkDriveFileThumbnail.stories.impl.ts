@@ -3,9 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { StoryObj } from '@storybook/vue3';
+import type {StoryObj} from '@storybook/vue3';
 import MkDriveFileThumbnail from './MkDriveFileThumbnail.vue';
-import { file } from '../../.storybook/fakes.js';
+import {file} from '../../.storybook/fakes.js';
+
 export const Default = {
 	render(args) {
 		return {

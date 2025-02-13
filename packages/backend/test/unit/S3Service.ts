@@ -5,7 +5,7 @@
 
 process.env.NODE_ENV = 'test';
 
-import { Test } from '@nestjs/testing';
+import {Test} from '@nestjs/testing';
 import {
 	CompleteMultipartUploadCommand,
 	CreateMultipartUploadCommand,
@@ -13,12 +13,12 @@ import {
 	S3Client,
 	UploadPartCommand,
 } from '@aws-sdk/client-s3';
-import { mockClient } from 'aws-sdk-client-mock';
-import { GlobalModule } from '@/GlobalModule.js';
-import { CoreModule } from '@/core/CoreModule.js';
-import { S3Service } from '@/core/S3Service.js';
-import { MiMeta } from '@/models/_.js';
-import type { TestingModule } from '@nestjs/testing';
+import {mockClient} from 'aws-sdk-client-mock';
+import {GlobalModule} from '@/GlobalModule.js';
+import {CoreModule} from '@/core/CoreModule.js';
+import {S3Service} from '@/core/S3Service.js';
+import {MiMeta} from '@/models/_.js';
+import type {TestingModule} from '@nestjs/testing';
 
 describe('S3Service', () => {
 	let app: TestingModule;
@@ -46,7 +46,7 @@ describe('S3Service', () => {
 		test('upload a file', async () => {
 			s3Mock.on(PutObjectCommand).resolves({});
 
-			await s3Service.upload({ objectStorageRegion: 'us-east-1' } as MiMeta, {
+			await s3Service.upload({objectStorageRegion: 'us-east-1'} as MiMeta, {
 				Bucket: 'fake',
 				Key: 'fake',
 				Body: 'x',
@@ -54,9 +54,9 @@ describe('S3Service', () => {
 		});
 
 		test('upload a large file', async () => {
-			s3Mock.on(CreateMultipartUploadCommand).resolves({ UploadId: '1' });
-			s3Mock.on(UploadPartCommand).resolves({ ETag: '1' });
-			s3Mock.on(CompleteMultipartUploadCommand).resolves({ Bucket: 'fake', Key: 'fake' });
+			s3Mock.on(CreateMultipartUploadCommand).resolves({UploadId: '1'});
+			s3Mock.on(UploadPartCommand).resolves({ETag: '1'});
+			s3Mock.on(CompleteMultipartUploadCommand).resolves({Bucket: 'fake', Key: 'fake'});
 
 			await s3Service.upload({} as MiMeta, {
 				Bucket: 'fake',
@@ -66,9 +66,9 @@ describe('S3Service', () => {
 		});
 
 		test('upload a file error', async () => {
-			s3Mock.on(PutObjectCommand).rejects({ name: 'Fake Error' });
+			s3Mock.on(PutObjectCommand).rejects({name: 'Fake Error'});
 
-			await expect(s3Service.upload({ objectStorageRegion: 'us-east-1' } as MiMeta, {
+			await expect(s3Service.upload({objectStorageRegion: 'us-east-1'} as MiMeta, {
 				Bucket: 'fake',
 				Key: 'fake',
 				Body: 'x',

@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne } from 'typeorm';
-import { id } from './util/id.js';
-import { MiUser } from './User.js';
+import {PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne} from 'typeorm';
+import {id} from './util/id.js';
+import {MiUser} from './User.js';
 
 @Entity('renote_muting')
-@Index(['muterId', 'muteeId'], { unique: true })
+@Index(['muterId', 'muteeId'], {unique: true})
 export class MiRenoteMuting {
 	@PrimaryColumn(id())
 	public id: string;

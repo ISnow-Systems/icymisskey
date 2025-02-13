@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import type { NotesRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { QueryService } from '@/core/QueryService.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { DI } from '@/di-symbols.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {NotesRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {QueryService} from '@/core/QueryService.js';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
+import {DI} from '@/di-symbols.js';
 
 export const meta = {
 	tags: ['notes'],
@@ -27,14 +27,14 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		local: { type: 'boolean', default: false },
-		reply: { type: 'boolean' },
-		renote: { type: 'boolean' },
-		withFiles: { type: 'boolean' },
-		poll: { type: 'boolean' },
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
+		local: {type: 'boolean', default: false},
+		reply: {type: 'boolean'},
+		renote: {type: 'boolean'},
+		withFiles: {type: 'boolean'},
+		poll: {type: 'boolean'},
+		limit: {type: 'integer', minimum: 1, maximum: 100, default: 10},
+		sinceId: {type: 'string', format: 'misskey:id'},
+		untilId: {type: 'string', format: 'misskey:id'},
 	},
 	required: [],
 } as const;
@@ -44,7 +44,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		private noteEntityService: NoteEntityService,
 		private queryService: QueryService,
 	) {

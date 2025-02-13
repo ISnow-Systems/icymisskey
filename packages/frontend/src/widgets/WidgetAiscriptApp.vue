@@ -4,28 +4,28 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkContainer :showHeader="widgetProps.showHeader" class="mkw-aiscriptApp">
-	<template #header>App</template>
-	<div :class="$style.root">
-		<MkAsUi v-if="root" :component="root" :components="components" size="small"/>
-	</div>
-</MkContainer>
+	<MkContainer :showHeader="widgetProps.showHeader" class="mkw-aiscriptApp">
+		<template #header>App</template>
+		<div :class="$style.root">
+			<MkAsUi v-if="root" :component="root" :components="components" size="small"/>
+		</div>
+	</MkContainer>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, watch } from 'vue';
-import type { Ref } from 'vue';
-import { Interpreter, Parser } from '@syuilo/aiscript';
-import { useWidgetPropsManager } from './widget.js';
-import type { WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget.js';
-import type { GetFormResultType } from '@/scripts/form.js';
+import {onMounted, ref, watch} from 'vue';
+import type {Ref} from 'vue';
+import {Interpreter, Parser} from '@syuilo/aiscript';
+import {useWidgetPropsManager} from './widget.js';
+import type {WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps} from './widget.js';
+import type {GetFormResultType} from '@/scripts/form.js';
 import * as os from '@/os.js';
-import { aiScriptReadline, createAiScriptEnv } from '@/scripts/aiscript/api.js';
-import { $i } from '@/account.js';
+import {aiScriptReadline, createAiScriptEnv} from '@/scripts/aiscript/api.js';
+import {$i} from '@/account.js';
 import MkAsUi from '@/components/MkAsUi.vue';
 import MkContainer from '@/components/MkContainer.vue';
-import { registerAsUiLib } from '@/scripts/aiscript/ui.js';
-import type { AsUiComponent, AsUiRoot } from '@/scripts/aiscript/ui.js';
+import {registerAsUiLib} from '@/scripts/aiscript/ui.js';
+import type {AsUiComponent, AsUiRoot} from '@/scripts/aiscript/ui.js';
 
 const name = 'aiscriptApp';
 
@@ -46,7 +46,7 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 const props = defineProps<WidgetComponentProps<WidgetProps>>();
 const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 
-const { widgetProps, configure } = useWidgetPropsManager(name,
+const {widgetProps, configure} = useWidgetPropsManager(name,
 	widgetPropsDef,
 	props,
 	emit,

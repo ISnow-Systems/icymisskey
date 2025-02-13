@@ -4,20 +4,20 @@
  */
 
 import * as Misskey from 'misskey-js';
-import { defineAsyncComponent } from 'vue';
-import { i18n } from '@/i18n.js';
-import { copyToClipboard } from '@/scripts/copy-to-clipboard.js';
+import {defineAsyncComponent} from 'vue';
+import {i18n} from '@/i18n.js';
+import {copyToClipboard} from '@/scripts/copy-to-clipboard.js';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import type { MenuItem } from '@/types/menu.js';
-import { defaultStore } from '@/store.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import type {MenuItem} from '@/types/menu.js';
+import {defaultStore} from '@/store.js';
 
 function rename(file: Misskey.entities.DriveFile) {
 	os.inputText({
 		title: i18n.ts.renameFile,
 		placeholder: i18n.ts.inputNewFileName,
 		default: file.name,
-	}).then(({ canceled, result: name }) => {
+	}).then(({canceled, result: name}) => {
 		if (canceled) return;
 		misskeyApi('drive/files/update', {
 			fileId: file.id,
@@ -27,7 +27,7 @@ function rename(file: Misskey.entities.DriveFile) {
 }
 
 function describe(file: Misskey.entities.DriveFile) {
-	const { dispose } = os.popup(defineAsyncComponent(() => import('@/components/MkFileCaptionEditWindow.vue')), {
+	const {dispose} = os.popup(defineAsyncComponent(() => import('@/components/MkFileCaptionEditWindow.vue')), {
 		default: file.comment ?? '',
 		file: file,
 	}, {
@@ -74,9 +74,9 @@ function addApp() {
 }
 */
 async function deleteFile(file: Misskey.entities.DriveFile) {
-	const { canceled } = await os.confirm({
+	const {canceled} = await os.confirm({
 		type: 'warning',
-		text: i18n.tsx.driveFileDeleteConfirm({ name: file.name }),
+		text: i18n.tsx.driveFileDeleteConfirm({name: file.name}),
 	});
 
 	if (canceled) return;
@@ -95,7 +95,7 @@ export function getDriveFileMenu(file: Misskey.entities.DriveFile, folder?: Miss
 		to: `/my/drive/file/${file.id}`,
 		text: i18n.ts._fileViewer.title,
 		icon: 'ti ti-info-circle',
-	}, { type: 'divider' }, {
+	}, {type: 'divider'}, {
 		text: i18n.ts.rename,
 		icon: 'ti ti-forms',
 		action: () => rename(file),
@@ -124,7 +124,7 @@ export function getDriveFileMenu(file: Misskey.entities.DriveFile, folder?: Miss
 		});
 	}
 
-	menuItems.push({ type: 'divider' }, {
+	menuItems.push({type: 'divider'}, {
 		text: i18n.ts.createNoteFromTheFile,
 		icon: 'ti ti-pencil',
 		action: () => os.post({
@@ -141,7 +141,7 @@ export function getDriveFileMenu(file: Misskey.entities.DriveFile, folder?: Miss
 		text: i18n.ts.download,
 		icon: 'ti ti-download',
 		download: file.name,
-	}, { type: 'divider' }, {
+	}, {type: 'divider'}, {
 		text: i18n.ts.delete,
 		icon: 'ti ti-trash',
 		danger: true,
@@ -149,7 +149,7 @@ export function getDriveFileMenu(file: Misskey.entities.DriveFile, folder?: Miss
 	});
 
 	if (defaultStore.state.devMode) {
-		menuItems.push({ type: 'divider' }, {
+		menuItems.push({type: 'divider'}, {
 			icon: 'ti ti-id',
 			text: i18n.ts.copyFileId,
 			action: () => {

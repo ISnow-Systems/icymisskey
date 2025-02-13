@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
+import {Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
 
 export const meta = {
 	tags: ['users'],
@@ -115,10 +115,10 @@ export const paramDef = {
 	properties: {
 		userId: {
 			anyOf: [
-				{ type: 'string', format: 'misskey:id' },
+				{type: 'string', format: 'misskey:id'},
 				{
 					type: 'array',
-					items: { type: 'string', format: 'misskey:id' },
+					items: {type: 'string', format: 'misskey:id'},
 				},
 			],
 		},

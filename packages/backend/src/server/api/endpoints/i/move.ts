@@ -3,20 +3,20 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import ms from 'ms';
 
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { ApiError } from '@/server/api/error.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {ApiError} from '@/server/api/error.js';
 
-import { MiLocalUser, MiRemoteUser } from '@/models/User.js';
+import {MiLocalUser, MiRemoteUser} from '@/models/User.js';
 
-import { AccountMoveService } from '@/core/AccountMoveService.js';
-import { RemoteUserResolveService } from '@/core/RemoteUserResolveService.js';
-import { ApiLoggerService } from '@/server/api/ApiLoggerService.js';
-import { GetterService } from '@/server/api/GetterService.js';
-import { ApPersonService } from '@/core/activitypub/models/ApPersonService.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
+import {AccountMoveService} from '@/core/AccountMoveService.js';
+import {RemoteUserResolveService} from '@/core/RemoteUserResolveService.js';
+import {ApiLoggerService} from '@/server/api/ApiLoggerService.js';
+import {GetterService} from '@/server/api/GetterService.js';
+import {ApPersonService} from '@/core/activitypub/models/ApPersonService.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
 
 import * as Acct from '@/misc/acct.js';
 
@@ -73,7 +73,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		moveToAccount: { type: 'string' },
+		moveToAccount: {type: 'string'},
 	},
 	required: ['moveToAccount'],
 } as const;
@@ -97,7 +97,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			if (me.movedToUri) throw new ApiError(meta.errors.alreadyMoved);
 
 			// parse user's input into the destination account
-			const { username, host } = Acct.parse(ps.moveToAccount);
+			const {username, host} = Acct.parse(ps.moveToAccount);
 			// retrieve the destination account
 			let moveTo = await this.remoteUserResolveService.resolveUser(username, host).catch((e) => {
 				this.apiLoggerService.logger.warn(`failed to resolve remote user: ${e}`);

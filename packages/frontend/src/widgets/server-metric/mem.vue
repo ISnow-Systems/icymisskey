@@ -4,19 +4,19 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="zlxnikvl">
-	<XPie class="pie" :value="usage"/>
-	<div>
-		<p><i class="ti ti-section"></i>RAM</p>
-		<p>Total: {{ bytes(total, 1) }}</p>
-		<p>Used: {{ bytes(used, 1) }}</p>
-		<p>Free: {{ bytes(free, 1) }}</p>
+	<div class="zlxnikvl">
+		<XPie :value="usage" class="pie"/>
+		<div>
+			<p><i class="ti ti-section"></i>RAM</p>
+			<p>Total: {{ bytes(total, 1) }}</p>
+			<p>Used: {{ bytes(used, 1) }}</p>
+			<p>Free: {{ bytes(free, 1) }}</p>
+		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onBeforeUnmount, ref } from 'vue';
+import {onMounted, onBeforeUnmount, ref} from 'vue';
 import * as Misskey from 'misskey-js';
 import XPie from './pie.vue';
 import bytes from '@/filters/bytes.js';

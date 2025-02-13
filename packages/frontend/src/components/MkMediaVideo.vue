@@ -4,124 +4,124 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div
-	ref="playerEl"
-	v-hotkey="keymap"
-	tabindex="0"
-	:class="[
+	<div
+		ref="playerEl"
+		v-hotkey="keymap"
+		:class="[
 		$style.videoContainer,
 		controlsShowing && $style.active,
 		(video.isSensitive && defaultStore.state.highlightSensitiveMedia) && $style.sensitive,
 	]"
-	@mouseover="onMouseOver"
-	@mouseleave="onMouseLeave"
-	@contextmenu.stop
-	@keydown.stop
->
-	<button v-if="hide" :class="$style.hidden" @click="show">
-		<div :class="$style.hiddenTextWrapper">
-			<b v-if="video.isSensitive" style="display: block;"><i class="ti ti-eye-exclamation"></i> {{ i18n.ts.sensitive }}{{ defaultStore.state.dataSaver.media ? ` (${i18n.ts.video}${video.size ? ' ' + bytes(video.size) : ''})` : '' }}</b>
-			<b v-else style="display: block;"><i class="ti ti-movie"></i> {{ defaultStore.state.dataSaver.media && video.size ? bytes(video.size) : i18n.ts.video }}</b>
-			<span style="display: block;">{{ i18n.ts.clickToShow }}</span>
-		</div>
-	</button>
-
-	<div v-else-if="defaultStore.reactiveState.useNativeUIForVideoAudioPlayer.value" :class="$style.videoRoot">
-		<video
-			ref="videoEl"
-			:class="$style.video"
-			:poster="video.thumbnailUrl ?? undefined"
-			:title="video.comment ?? undefined"
-			:alt="video.comment"
-			preload="metadata"
-			controls
-			@keydown.prevent
-		>
-			<source :src="video.url">
-		</video>
-		<i class="ti ti-eye-off" :class="$style.hide" @click="hide = true"></i>
-		<div :class="$style.indicators">
-			<div v-if="video.comment" :class="$style.indicator">ALT</div>
-			<div v-if="video.isSensitive" :class="$style.indicator" style="color: var(--MI_THEME-warn);" :title="i18n.ts.sensitive"><i class="ti ti-eye-exclamation"></i></div>
-		</div>
-	</div>
-
-	<div v-else :class="$style.videoRoot">
-		<video
-			ref="videoEl"
-			:class="$style.video"
-			:poster="video.thumbnailUrl ?? undefined"
-			:title="video.comment ?? undefined"
-			:alt="video.comment"
-			preload="metadata"
-			playsinline
-			@keydown.prevent
-			@click.self="togglePlayPause"
-		>
-			<source :src="video.url">
-		</video>
-		<button v-if="isReady && !isPlaying" class="_button" :class="$style.videoOverlayPlayButton" @click="togglePlayPause"><i class="ti ti-player-play-filled"></i></button>
-		<div v-else-if="!isActuallyPlaying" :class="$style.videoLoading">
-			<MkLoading/>
-		</div>
-		<i class="ti ti-eye-off" :class="$style.hide" @click="hide = true"></i>
-		<div :class="$style.indicators">
-			<div v-if="video.comment" :class="$style.indicator">ALT</div>
-			<div v-if="video.isSensitive" :class="$style.indicator" style="color: var(--MI_THEME-warn);" :title="i18n.ts.sensitive"><i class="ti ti-eye-exclamation"></i></div>
-		</div>
-		<div :class="$style.videoControls" @click.self="togglePlayPause">
-			<div :class="[$style.controlsChild, $style.controlsLeft]">
-				<button class="_button" :class="$style.controlButton" @click="togglePlayPause">
-					<i v-if="isPlaying" class="ti ti-player-pause-filled"></i>
-					<i v-else class="ti ti-player-play-filled"></i>
-				</button>
+		tabindex="0"
+		@mouseleave="onMouseLeave"
+		@mouseover="onMouseOver"
+		@contextmenu.stop
+		@keydown.stop
+	>
+		<button v-if="hide" :class="$style.hidden" @click="show">
+			<div :class="$style.hiddenTextWrapper">
+				<b v-if="video.isSensitive" style="display: block;"><i class="ti ti-eye-exclamation"></i> {{ i18n.ts.sensitive }}{{ defaultStore.state.dataSaver.media ? ` (${i18n.ts.video}${video.size ? ' ' + bytes(video.size) : ''})` : '' }}</b>
+				<b v-else style="display: block;"><i class="ti ti-movie"></i> {{ defaultStore.state.dataSaver.media && video.size ? bytes(video.size) : i18n.ts.video }}</b>
+				<span style="display: block;">{{ i18n.ts.clickToShow }}</span>
 			</div>
-			<div :class="[$style.controlsChild, $style.controlsRight]">
-				<button class="_button" :class="$style.controlButton" @click="showMenu">
-					<i class="ti ti-settings"></i>
-				</button>
-				<button class="_button" :class="$style.controlButton" @click="toggleFullscreen">
-					<i v-if="isFullscreen" class="ti ti-arrows-minimize"></i>
-					<i v-else class="ti ti-arrows-maximize"></i>
-				</button>
+		</button>
+
+		<div v-else-if="defaultStore.reactiveState.useNativeUIForVideoAudioPlayer.value" :class="$style.videoRoot">
+			<video
+				ref="videoEl"
+				:alt="video.comment"
+				:class="$style.video"
+				:poster="video.thumbnailUrl ?? undefined"
+				:title="video.comment ?? undefined"
+				controls
+				preload="metadata"
+				@keydown.prevent
+			>
+				<source :src="video.url">
+			</video>
+			<i :class="$style.hide" class="ti ti-eye-off" @click="hide = true"></i>
+			<div :class="$style.indicators">
+				<div v-if="video.comment" :class="$style.indicator">ALT</div>
+				<div v-if="video.isSensitive" :class="$style.indicator" :title="i18n.ts.sensitive" style="color: var(--MI_THEME-warn);"><i class="ti ti-eye-exclamation"></i></div>
 			</div>
-			<div :class="[$style.controlsChild, $style.controlsTime]">{{ hms(elapsedTimeMs) }}</div>
-			<div :class="[$style.controlsChild, $style.controlsVolume]">
-				<button class="_button" :class="$style.controlButton" @click="toggleMute">
-					<i v-if="volume === 0" class="ti ti-volume-3"></i>
-					<i v-else class="ti ti-volume"></i>
-				</button>
+		</div>
+
+		<div v-else :class="$style.videoRoot">
+			<video
+				ref="videoEl"
+				:alt="video.comment"
+				:class="$style.video"
+				:poster="video.thumbnailUrl ?? undefined"
+				:title="video.comment ?? undefined"
+				playsinline
+				preload="metadata"
+				@keydown.prevent
+				@click.self="togglePlayPause"
+			>
+				<source :src="video.url">
+			</video>
+			<button v-if="isReady && !isPlaying" :class="$style.videoOverlayPlayButton" class="_button" @click="togglePlayPause"><i class="ti ti-player-play-filled"></i></button>
+			<div v-else-if="!isActuallyPlaying" :class="$style.videoLoading">
+				<MkLoading/>
+			</div>
+			<i :class="$style.hide" class="ti ti-eye-off" @click="hide = true"></i>
+			<div :class="$style.indicators">
+				<div v-if="video.comment" :class="$style.indicator">ALT</div>
+				<div v-if="video.isSensitive" :class="$style.indicator" :title="i18n.ts.sensitive" style="color: var(--MI_THEME-warn);"><i class="ti ti-eye-exclamation"></i></div>
+			</div>
+			<div :class="$style.videoControls" @click.self="togglePlayPause">
+				<div :class="[$style.controlsChild, $style.controlsLeft]">
+					<button :class="$style.controlButton" class="_button" @click="togglePlayPause">
+						<i v-if="isPlaying" class="ti ti-player-pause-filled"></i>
+						<i v-else class="ti ti-player-play-filled"></i>
+					</button>
+				</div>
+				<div :class="[$style.controlsChild, $style.controlsRight]">
+					<button :class="$style.controlButton" class="_button" @click="showMenu">
+						<i class="ti ti-settings"></i>
+					</button>
+					<button :class="$style.controlButton" class="_button" @click="toggleFullscreen">
+						<i v-if="isFullscreen" class="ti ti-arrows-minimize"></i>
+						<i v-else class="ti ti-arrows-maximize"></i>
+					</button>
+				</div>
+				<div :class="[$style.controlsChild, $style.controlsTime]">{{ hms(elapsedTimeMs) }}</div>
+				<div :class="[$style.controlsChild, $style.controlsVolume]">
+					<button :class="$style.controlButton" class="_button" @click="toggleMute">
+						<i v-if="volume === 0" class="ti ti-volume-3"></i>
+						<i v-else class="ti ti-volume"></i>
+					</button>
+					<MkMediaRange
+						v-model="volume"
+						:class="$style.volumeSeekbar"
+						:sliderBgWhite="true"
+					/>
+				</div>
 				<MkMediaRange
-					v-model="volume"
+					v-model="rangePercent"
+					:buffer="bufferedDataRatio"
+					:class="$style.seekbarRoot"
 					:sliderBgWhite="true"
-					:class="$style.volumeSeekbar"
 				/>
 			</div>
-			<MkMediaRange
-				v-model="rangePercent"
-				:sliderBgWhite="true"
-				:class="$style.seekbarRoot"
-				:buffer="bufferedDataRatio"
-			/>
 		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { ref, shallowRef, computed, watch, onDeactivated, onActivated, onMounted } from 'vue';
+import {ref, shallowRef, computed, watch, onDeactivated, onActivated, onMounted} from 'vue';
 import * as Misskey from 'misskey-js';
-import type { MenuItem } from '@/types/menu.js';
-import type { Keymap } from '@/scripts/hotkey.js';
+import type {MenuItem} from '@/types/menu.js';
+import type {Keymap} from '@/scripts/hotkey.js';
 import bytes from '@/filters/bytes.js';
-import { hms } from '@/filters/hms.js';
-import { defaultStore } from '@/store.js';
-import { i18n } from '@/i18n.js';
+import {hms} from '@/filters/hms.js';
+import {defaultStore} from '@/store.js';
+import {i18n} from '@/i18n.js';
 import * as os from '@/os.js';
-import { exitFullscreen, requestFullscreen } from '@/scripts/fullscreen.js';
+import {exitFullscreen, requestFullscreen} from '@/scripts/fullscreen.js';
 import hasAudio from '@/scripts/media-has-audio.js';
 import MkMediaRange from '@/components/MkMediaRange.vue';
-import { $i, iAmModerator } from '@/account.js';
+import {$i, iAmModerator} from '@/account.js';
 
 const props = defineProps<{
 	video: Misskey.entities.DriveFile;
@@ -178,7 +178,7 @@ const hide = ref((defaultStore.state.nsfw === 'force' || defaultStore.state.data
 
 async function show() {
 	if (props.video.isSensitive && defaultStore.state.confirmWhenRevealingSensitiveMedia) {
-		const { canceled } = await os.confirm({
+		const {canceled} = await os.confirm({
 			type: 'question',
 			text: i18n.ts.sensitiveMediaRevealConfirm,
 		});
@@ -584,7 +584,7 @@ onDeactivated(() => {
 	position: absolute;
 	top: 50%;
 	left: 50%;
-	transform: translate(-50%,-50%);
+	transform: translate(-50%, -50%);
 
 	opacity: 0;
 	transition: opacity .4s ease-in-out;
@@ -622,7 +622,7 @@ onDeactivated(() => {
 	gap: 4px 8px;
 
 	padding: 35px 10px 10px 10px;
-	background: linear-gradient(rgba(0, 0, 0, 0),rgba(0, 0, 0, .75));
+	background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, .75));
 
 	position: absolute;
 	left: 0;

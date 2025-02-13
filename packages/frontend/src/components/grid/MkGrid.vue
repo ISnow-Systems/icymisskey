@@ -4,57 +4,57 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div
-	ref="rootEl"
-	class="mk_grid_border"
-	:class="[$style.grid, {
+	<div
+		ref="rootEl"
+		:class="[$style.grid, {
 		[$style.noOverflowHandling]: rootSetting.noOverflowStyle,
 		'mk_grid_root_rounded': rootSetting.rounded,
 		'mk_grid_root_border': rootSetting.outerBorder,
 	}]"
-	@mousedown.prevent="onMouseDown"
-	@keydown="onKeyDown"
-	@contextmenu.prevent.stop="onContextMenu"
->
-	<div class="mk_grid_thead">
-		<MkHeaderRow
-			:columns="columns"
-			:gridSetting="rowSetting"
-			:bus="bus"
-			@operation:beginWidthChange="onHeaderCellWidthBeginChange"
-			@operation:endWidthChange="onHeaderCellWidthEndChange"
-			@operation:widthLargest="onHeaderCellWidthLargest"
-			@change:width="onHeaderCellChangeWidth"
-			@change:contentSize="onHeaderCellChangeContentSize"
-		/>
+		class="mk_grid_border"
+		@keydown="onKeyDown"
+		@mousedown.prevent="onMouseDown"
+		@contextmenu.prevent.stop="onContextMenu"
+	>
+		<div class="mk_grid_thead">
+			<MkHeaderRow
+				:bus="bus"
+				:columns="columns"
+				:gridSetting="rowSetting"
+				@operation:beginWidthChange="onHeaderCellWidthBeginChange"
+				@operation:endWidthChange="onHeaderCellWidthEndChange"
+				@operation:widthLargest="onHeaderCellWidthLargest"
+				@change:width="onHeaderCellChangeWidth"
+				@change:contentSize="onHeaderCellChangeContentSize"
+			/>
+		</div>
+		<div class="mk_grid_tbody">
+			<MkDataRow
+				v-for="row in rows"
+				v-show="row.using"
+				:key="row.index"
+				:bus="bus"
+				:cells="cells[row.index].cells"
+				:class="[lastLine === row.index ? 'last_row' : '']"
+				:row="row"
+				:setting="rowSetting"
+				:using="row.using"
+				@operation:beginEdit="onCellEditBegin"
+				@operation:endEdit="onCellEditEnd"
+				@change:value="onChangeCellValue"
+				@change:contentSize="onChangeCellContentSize"
+			/>
+		</div>
 	</div>
-	<div class="mk_grid_tbody">
-		<MkDataRow
-			v-for="row in rows"
-			v-show="row.using"
-			:key="row.index"
-			:row="row"
-			:cells="cells[row.index].cells"
-			:setting="rowSetting"
-			:bus="bus"
-			:using="row.using"
-			:class="[lastLine === row.index ? 'last_row' : '']"
-			@operation:beginEdit="onCellEditBegin"
-			@operation:endEdit="onCellEditEnd"
-			@change:value="onChangeCellValue"
-			@change:contentSize="onChangeCellContentSize"
-		/>
-	</div>
-</div>
 </template>
 
-<script setup lang="ts">
-import { computed, onMounted, ref, toRefs, watch } from 'vue';
-import { GridEventEmitter } from '@/components/grid/grid.js';
+<script lang="ts" setup>
+import {computed, onMounted, ref, toRefs, watch} from 'vue';
+import {GridEventEmitter} from '@/components/grid/grid.js';
 import MkDataRow from '@/components/grid/MkDataRow.vue';
 import MkHeaderRow from '@/components/grid/MkHeaderRow.vue';
-import { cellValidation } from '@/components/grid/cell-validators.js';
-import { CELL_ADDRESS_NONE, createCell, resetCell } from '@/components/grid/cell.js';
+import {cellValidation} from '@/components/grid/cell-validators.js';
+import {CELL_ADDRESS_NONE, createCell, resetCell} from '@/components/grid/cell.js';
 import {
 	copyGridDataToClipboard,
 	equalCellAddress,
@@ -64,16 +64,16 @@ import {
 	removeDataFromGrid,
 } from '@/components/grid/grid-utils.js';
 import * as os from '@/os.js';
-import { createColumn } from '@/components/grid/column.js';
-import { createRow, defaultGridRowSetting, resetRow } from '@/components/grid/row.js';
-import { handleKeyEvent } from '@/scripts/key-event.js';
+import {createColumn} from '@/components/grid/column.js';
+import {createRow, defaultGridRowSetting, resetRow} from '@/components/grid/row.js';
+import {handleKeyEvent} from '@/scripts/key-event.js';
 
-import type { DataSource, GridSetting, GridState, Size } from '@/components/grid/grid.js';
-import type { CellAddress, CellValue, GridCell } from '@/components/grid/cell.js';
-import type { GridContext, GridEvent } from '@/components/grid/grid-event.js';
-import type { GridColumn } from '@/components/grid/column.js';
-import type { GridRow, GridRowSetting } from '@/components/grid/row.js';
-import type { MenuItem } from '@/types/menu.js';
+import type {DataSource, GridSetting, GridState, Size} from '@/components/grid/grid.js';
+import type {CellAddress, CellValue, GridCell} from '@/components/grid/cell.js';
+import type {GridContext, GridEvent} from '@/components/grid/grid-event.js';
+import type {GridColumn} from '@/components/grid/column.js';
+import type {GridRow, GridRowSetting} from '@/components/grid/row.js';
+import type {MenuItem} from '@/types/menu.js';
 
 type RowHolder = {
 	row: GridRow,
@@ -111,7 +111,7 @@ const columnSettings = props.settings.cols;
 // non-reactive
 const cellSettings = props.settings.cells ?? {};
 
-const { data } = toRefs(props);
+const {data} = toRefs(props);
 
 // #region Event Definitions
 // region Event Definitions
@@ -215,7 +215,7 @@ const availableBounds = computed(() => {
 		col: Math.max(...columns.value.map(it => it.index)),
 		row: Math.max(...rows.value.filter(it => it.using).map(it => it.index)),
 	};
-	return { leftTop, rightBottom };
+	return {leftTop, rightBottom};
 });
 /**
  * 範囲選択状態の行を取得するための計算プロパティ。範囲選択状態とは{@link GridRow.ranged}がtrueの行のこと。
@@ -227,7 +227,7 @@ const lastLine = computed(() => rows.value.filter(it => it.using).length - 1);
 // endregion
 // #endregion
 
-watch(data, patchData, { deep: true });
+watch(data, patchData, {deep: true});
 
 if (_DEV_) {
 	watch(state, (value, oldValue) => {
@@ -272,7 +272,7 @@ function onResize(entries: ResizeObserverEntry[]) {
 }
 
 function onKeyDown(ev: KeyboardEvent) {
-	const { ctrlKey, shiftKey, code } = ev;
+	const {ctrlKey, shiftKey, code} = ev;
 	if (_DEV_) {
 		console.log(`[grid][key] ctrl: ${ctrlKey}, shift: ${shiftKey}, code: ${code}`);
 	}
@@ -324,32 +324,32 @@ function onKeyDown(ev: KeyboardEvent) {
 				{
 					code: 'ArrowRight', modifiers: ['Control', 'Shift'], handler: () => {
 						updateSelectionRange({
-							leftTop: { col: selectedCellAddress.col, row: bounds.leftTop.row },
-							rightBottom: { col: max.rightBottom.col, row: bounds.rightBottom.row },
+							leftTop: {col: selectedCellAddress.col, row: bounds.leftTop.row},
+							rightBottom: {col: max.rightBottom.col, row: bounds.rightBottom.row},
 						});
 					},
 				},
 				{
 					code: 'ArrowLeft', modifiers: ['Control', 'Shift'], handler: () => {
 						updateSelectionRange({
-							leftTop: { col: max.leftTop.col, row: bounds.leftTop.row },
-							rightBottom: { col: selectedCellAddress.col, row: bounds.rightBottom.row },
+							leftTop: {col: max.leftTop.col, row: bounds.leftTop.row},
+							rightBottom: {col: selectedCellAddress.col, row: bounds.rightBottom.row},
 						});
 					},
 				},
 				{
 					code: 'ArrowUp', modifiers: ['Control', 'Shift'], handler: () => {
 						updateSelectionRange({
-							leftTop: { col: bounds.leftTop.col, row: max.leftTop.row },
-							rightBottom: { col: bounds.rightBottom.col, row: selectedCellAddress.row },
+							leftTop: {col: bounds.leftTop.col, row: max.leftTop.row},
+							rightBottom: {col: bounds.rightBottom.col, row: selectedCellAddress.row},
 						});
 					},
 				},
 				{
 					code: 'ArrowDown', modifiers: ['Control', 'Shift'], handler: () => {
 						updateSelectionRange({
-							leftTop: { col: bounds.leftTop.col, row: selectedCellAddress.row },
-							rightBottom: { col: bounds.rightBottom.col, row: max.rightBottom.row },
+							leftTop: {col: bounds.leftTop.col, row: selectedCellAddress.row},
+							rightBottom: {col: bounds.rightBottom.col, row: max.rightBottom.row},
 						});
 					},
 				},
@@ -427,22 +427,22 @@ function onKeyDown(ev: KeyboardEvent) {
 				},
 				{
 					code: 'ArrowDown', handler: () => {
-						selectionCell({ col: selectedCellAddress.col, row: selectedCellAddress.row + 1 });
+						selectionCell({col: selectedCellAddress.col, row: selectedCellAddress.row + 1});
 					},
 				},
 				{
 					code: 'ArrowUp', handler: () => {
-						selectionCell({ col: selectedCellAddress.col, row: selectedCellAddress.row - 1 });
+						selectionCell({col: selectedCellAddress.col, row: selectedCellAddress.row - 1});
 					},
 				},
 				{
 					code: 'ArrowRight', handler: () => {
-						selectionCell({ col: selectedCellAddress.col + 1, row: selectedCellAddress.row });
+						selectionCell({col: selectedCellAddress.col + 1, row: selectedCellAddress.row});
 					},
 				},
 				{
 					code: 'ArrowLeft', handler: () => {
-						selectionCell({ col: selectedCellAddress.col - 1, row: selectedCellAddress.row });
+						selectionCell({col: selectedCellAddress.col - 1, row: selectedCellAddress.row});
 					},
 				},
 			]);
@@ -986,7 +986,7 @@ function unSelectionRangeAll() {
  * {@link leftTop}から{@link rightBottom}の範囲外にあるセルを範囲選択状態から外す。
  */
 function unSelectionOutOfRange(leftTop: CellAddress, rightBottom: CellAddress) {
-	const safeBounds = getSafeAddressBounds({ leftTop, rightBottom });
+	const safeBounds = getSafeAddressBounds({leftTop, rightBottom});
 
 	const _cells = rangedCells.value;
 	for (const cell of _cells) {
@@ -1007,7 +1007,7 @@ function unSelectionOutOfRange(leftTop: CellAddress, rightBottom: CellAddress) {
  * {@link leftTop}から{@link rightBottom}の範囲内にあるセルを範囲選択状態にする。
  */
 function expandCellRange(leftTop: CellAddress, rightBottom: CellAddress) {
-	const safeBounds = getSafeAddressBounds({ leftTop, rightBottom });
+	const safeBounds = getSafeAddressBounds({leftTop, rightBottom});
 	const targetRows = cells.value.slice(safeBounds.leftTop.row, safeBounds.rightBottom.row + 1);
 	for (const row of targetRows) {
 		for (const cell of row.cells.slice(safeBounds.leftTop.col, safeBounds.rightBottom.col + 1)) {
@@ -1039,7 +1039,7 @@ function applyRowRules(targetCells: GridCell[]) {
 	const rowGroups = Array.of<{ row: GridRow, cells: GridCell[] }>();
 	for (const rowIdx of targetRowIdxes) {
 		const rowGroup = targetCells.filter(it => it.address.row === rowIdx);
-		rowGroups.push({ row: _rows[rowIdx], cells: rowGroup });
+		rowGroups.push({row: _rows[rowIdx], cells: rowGroup});
 	}
 
 	const _cells = cells.value;
@@ -1049,7 +1049,7 @@ function applyRowRules(targetCells: GridCell[]) {
 		const rowCells = _cells[group.row.index].cells;
 
 		const newStyles = rowSetting.styleRules
-			.filter(it => it.condition({ row, targetCols, cells: rowCells }))
+			.filter(it => it.condition({row, targetCols, cells: rowCells}))
 			.map(it => it.applyStyle);
 
 		if (JSON.stringify(newStyles) !== JSON.stringify(row.additionalStyles)) {
@@ -1088,7 +1088,7 @@ function getSafeAddressBounds(
 		row: Math.min(bounds.rightBottom.row, available.rightBottom.row),
 	};
 
-	return { leftTop: safeLeftTop, rightBottom: safeRightBottom };
+	return {leftTop: safeLeftTop, rightBottom: safeRightBottom};
 }
 
 function registerMouseMove() {
@@ -1133,7 +1133,7 @@ function refreshData() {
 	const _data: DataSource[] = data.value;
 	const _rows: GridRow[] = (_data.length > rowSetting.minimumDefinitionCount)
 		? _data.map((_, index) => createRow(index, true, rowSetting))
-		: Array.from({ length: rowSetting.minimumDefinitionCount }, (_, index) => createRow(index, index < _data.length, rowSetting));
+		: Array.from({length: rowSetting.minimumDefinitionCount}, (_, index) => createRow(index, index < _data.length, rowSetting));
 	const _cols: GridColumn[] = columns.value;
 
 	// 行・列の定義から、元データの配列より値を取得してセルを作成する。
@@ -1143,7 +1143,7 @@ function refreshData() {
 			? _cols.map(col => createCell(col, row, _data[row.index][col.setting.bindTo], cellSettings))
 			: _cols.map(col => createCell(col, row, undefined, cellSettings));
 
-		return { row, cells: newCells, origin: _data[row.index] };
+		return {row, cells: newCells, origin: _data[row.index]};
 	});
 
 	rows.value = _rows;
@@ -1287,7 +1287,7 @@ onMounted(() => {
 });
 </script>
 
-<style module lang="scss">
+<style lang="scss" module>
 .grid {
 	font-size: 90%;
 	overflow-x: scroll;

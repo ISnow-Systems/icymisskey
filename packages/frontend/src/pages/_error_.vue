@@ -4,44 +4,45 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkLoading v-if="!loaded"/>
-<Transition :name="defaultStore.state.animation ? '_transition_zoom' : ''" appear>
-	<div v-show="loaded" :class="$style.root">
-		<img :src="serverErrorImageUrl" class="_ghost" :class="$style.img"/>
-		<div class="_gaps">
-			<div><b><i class="ti ti-alert-triangle"></i> {{ i18n.ts.pageLoadError }}</b></div>
-			<div v-if="meta && (version === meta.version)">{{ i18n.ts.pageLoadErrorDescription }}</div>
-			<div v-else-if="serverIsDead">{{ i18n.ts.serverIsDead }}</div>
-			<template v-else>
-				<div>{{ i18n.ts.newVersionOfClientAvailable }}</div>
-				<div>{{ i18n.ts.youShouldUpgradeClient }}</div>
-				<MkButton style="margin: 8px auto;" @click="reload">{{ i18n.ts.reload }}</MkButton>
-			</template>
-			<div><MkLink url="https://misskey-hub.net/docs/for-users/resources/troubleshooting/" target="_blank">{{ i18n.ts.troubleshooting }}</MkLink></div>
-			<div v-if="error" style="opacity: 0.7;">ERROR: {{ error }}</div>
+	<MkLoading v-if="!loaded"/>
+	<Transition :name="defaultStore.state.animation ? '_transition_zoom' : ''" appear>
+		<div v-show="loaded" :class="$style.root">
+			<img :class="$style.img" :src="serverErrorImageUrl" class="_ghost"/>
+			<div class="_gaps">
+				<div><b><i class="ti ti-alert-triangle"></i> {{ i18n.ts.pageLoadError }}</b></div>
+				<div v-if="meta && (version === meta.version)">{{ i18n.ts.pageLoadErrorDescription }}</div>
+				<div v-else-if="serverIsDead">{{ i18n.ts.serverIsDead }}</div>
+				<template v-else>
+					<div>{{ i18n.ts.newVersionOfClientAvailable }}</div>
+					<div>{{ i18n.ts.youShouldUpgradeClient }}</div>
+					<MkButton style="margin: 8px auto;" @click="reload">{{ i18n.ts.reload }}</MkButton>
+				</template>
+				<div>
+					<MkLink target="_blank" url="https://misskey-hub.net/docs/for-users/resources/troubleshooting/">{{ i18n.ts.troubleshooting }}</MkLink>
+				</div>
+				<div v-if="error" style="opacity: 0.7;">ERROR: {{ error }}</div>
+			</div>
 		</div>
-	</div>
-</Transition>
+	</Transition>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
+import {ref, computed} from 'vue';
 import * as Misskey from 'misskey-js';
 import MkButton from '@/components/MkButton.vue';
 import MkLink from '@/components/MkLink.vue';
-import { version } from '@@/js/config.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { unisonReload } from '@/scripts/unison-reload.js';
-import { i18n } from '@/i18n.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
-import { miLocalStorage } from '@/local-storage.js';
-import { defaultStore } from '@/store.js';
-import { serverErrorImageUrl } from '@/instance.js';
+import {version} from '@@/js/config.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {unisonReload} from '@/scripts/unison-reload.js';
+import {i18n} from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
+import {miLocalStorage} from '@/local-storage.js';
+import {defaultStore} from '@/store.js';
+import {serverErrorImageUrl} from '@/instance.js';
 
 const props = withDefaults(defineProps<{
 	error?: Error;
-}>(), {
-});
+}>(), {});
 
 const loaded = ref(false);
 const serverIsDead = ref(false);

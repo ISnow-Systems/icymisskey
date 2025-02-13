@@ -4,9 +4,10 @@
  */
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { waitFor } from '@storybook/test';
-import type { StoryObj } from '@storybook/vue3';
+import {waitFor} from '@storybook/test';
+import type {StoryObj} from '@storybook/vue3';
 import MkPageHeader from './MkPageHeader.vue';
+
 export const Empty = {
 	render(args) {
 		return {

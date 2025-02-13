@@ -4,11 +4,12 @@
  */
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { action } from '@storybook/addon-actions';
-import type { StoryObj } from '@storybook/vue3';
-import { HttpResponse, http } from 'msw';
-import { commonHandlers } from '../../.storybook/mocks.js';
+import {action} from '@storybook/addon-actions';
+import type {StoryObj} from '@storybook/vue3';
+import {HttpResponse, http} from 'msw';
+import {commonHandlers} from '../../.storybook/mocks.js';
 import MkAnnouncementDialog from './MkAnnouncementDialog.vue';
+
 export const Default = {
 	render(args) {
 		return {
@@ -55,7 +56,7 @@ export const Default = {
 		msw: {
 			handlers: [
 				...commonHandlers,
-				http.post('/api/i/read-announcement', async ({ request }) => {
+				http.post('/api/i/read-announcement', async ({request}) => {
 					action('POST /api/i/read-announcement')(await request.json());
 					return HttpResponse.json();
 				}),

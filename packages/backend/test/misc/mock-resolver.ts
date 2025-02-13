@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { Config } from '@/config.js';
-import type { ApDbResolverService } from '@/core/activitypub/ApDbResolverService.js';
-import type { ApRendererService } from '@/core/activitypub/ApRendererService.js';
-import type { ApRequestService } from '@/core/activitypub/ApRequestService.js';
-import { Resolver } from '@/core/activitypub/ApResolverService.js';
-import type { IObject } from '@/core/activitypub/type.js';
-import type { HttpRequestService } from '@/core/HttpRequestService.js';
-import type { InstanceActorService } from '@/core/InstanceActorService.js';
-import type { LoggerService } from '@/core/LoggerService.js';
-import type { MetaService } from '@/core/MetaService.js';
-import type { UtilityService } from '@/core/UtilityService.js';
-import { bindThis } from '@/decorators.js';
+import type {Config} from '@/config.js';
+import type {ApDbResolverService} from '@/core/activitypub/ApDbResolverService.js';
+import type {ApRendererService} from '@/core/activitypub/ApRendererService.js';
+import type {ApRequestService} from '@/core/activitypub/ApRequestService.js';
+import {Resolver} from '@/core/activitypub/ApResolverService.js';
+import type {IObject} from '@/core/activitypub/type.js';
+import type {HttpRequestService} from '@/core/HttpRequestService.js';
+import type {InstanceActorService} from '@/core/InstanceActorService.js';
+import type {LoggerService} from '@/core/LoggerService.js';
+import type {MetaService} from '@/core/MetaService.js';
+import type {UtilityService} from '@/core/UtilityService.js';
+import {bindThis} from '@/decorators.js';
 import type {
 	FollowRequestsRepository,
 	MiMeta,

@@ -61,9 +61,11 @@ export function onScrollTop(el: HTMLElement, cb: (topVisible: boolean) => unknow
 		}
 	};
 
-	function removeListener() { container.removeEventListener('scroll', onScroll); }
+	function removeListener() {
+		container.removeEventListener('scroll', onScroll);
+	}
 
-	container.addEventListener('scroll', onScroll, { passive: true });
+	container.addEventListener('scroll', onScroll, {passive: true});
 	return removeListener;
 }
 
@@ -89,7 +91,7 @@ export function onScrollBottom(el: HTMLElement, cb: () => unknown, tolerance = 1
 		containerOrWindow.removeEventListener('scroll', onScroll);
 	}
 
-	containerOrWindow.addEventListener('scroll', onScroll, { passive: true });
+	containerOrWindow.addEventListener('scroll', onScroll, {passive: true});
 	return removeListener;
 }
 
@@ -108,7 +110,7 @@ export function scroll(el: HTMLElement, options: ScrollToOptions | undefined) {
  * @param options Scroll options
  */
 export function scrollToTop(el: HTMLElement, options: { behavior?: ScrollBehavior; } = {}) {
-	scroll(el, { top: 0, ...options });
+	scroll(el, {top: 0, ...options});
 }
 
 /**
@@ -123,7 +125,7 @@ export function scrollToBottom(
 	container = getScrollContainer(el),
 ) {
 	if (container) {
-		container.scroll({ top: el.scrollHeight - container.clientHeight + getStickyTop(el, container) || 0, ...options });
+		container.scroll({top: el.scrollHeight - container.clientHeight + getStickyTop(el, container) || 0, ...options});
 	} else {
 		window.scroll({
 			top: (el.scrollHeight - window.innerHeight + getStickyTop(el, container) + (window.innerWidth <= 500 ? 96 : 0)) || 0,

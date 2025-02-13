@@ -4,44 +4,44 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkModalWindow
-	ref="dialogEl"
-	:width="800"
-	:height="500"
-	:scroll="false"
-	:withOkButton="true"
-	@close="cancel()"
-	@ok="ok()"
-	@closed="emit('closed')"
->
-	<template #header>{{ i18n.ts.cropImage }}</template>
-	<template #default="{ width, height }">
-		<div class="mk-cropper-dialog" :style="`--vw: ${width}px; --vh: ${height}px;`">
-			<Transition name="fade">
-				<div v-if="loading" class="loading">
-					<MkLoading/>
+	<MkModalWindow
+		ref="dialogEl"
+		:height="500"
+		:scroll="false"
+		:width="800"
+		:withOkButton="true"
+		@close="cancel()"
+		@closed="emit('closed')"
+		@ok="ok()"
+	>
+		<template #header>{{ i18n.ts.cropImage }}</template>
+		<template #default="{ width, height }">
+			<div :style="`--vw: ${width}px; --vh: ${height}px;`" class="mk-cropper-dialog">
+				<Transition name="fade">
+					<div v-if="loading" class="loading">
+						<MkLoading/>
+					</div>
+				</Transition>
+				<div class="container">
+					<img ref="imgEl" :src="imgUrl" style="display: none;" @load="onImageLoad">
 				</div>
-			</Transition>
-			<div class="container">
-				<img ref="imgEl" :src="imgUrl" style="display: none;" @load="onImageLoad">
 			</div>
-		</div>
-	</template>
-</MkModalWindow>
+		</template>
+	</MkModalWindow>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, shallowRef, ref } from 'vue';
+import {onMounted, shallowRef, ref} from 'vue';
 import * as Misskey from 'misskey-js';
 import Cropper from 'cropperjs';
 import tinycolor from 'tinycolor2';
 import MkModalWindow from '@/components/MkModalWindow.vue';
 import * as os from '@/os.js';
-import { $i } from '@/account.js';
-import { defaultStore } from '@/store.js';
-import { apiUrl } from '@@/js/config.js';
-import { i18n } from '@/i18n.js';
-import { getProxiedImageUrl } from '@/scripts/media-proxy.js';
+import {$i} from '@/account.js';
+import {defaultStore} from '@/store.js';
+import {apiUrl} from '@@/js/config.js';
+import {i18n} from '@/i18n.js';
+import {getProxiedImageUrl} from '@/scripts/media-proxy.js';
 
 const emit = defineEmits<{
 	(ev: 'ok', cropped: Misskey.entities.DriveFile): void;
@@ -70,14 +70,16 @@ const ok = async () => {
 		const zoomedRate = croppedImage.getBoundingClientRect().width / croppedImage.clientWidth;
 		const widthToRender = croppedSection.getBoundingClientRect().width / zoomedRate;
 
-		const croppedCanvas = await croppedSection?.$toCanvas({ width: widthToRender });
+		const croppedCanvas = await croppedSection?.$toCanvas({width: widthToRender});
 		croppedCanvas?.toBlob(blob => {
 			if (!blob) return;
 			const formData = new FormData();
 			formData.append('file', blob);
 			formData.append('name', `cropped_${props.file.name}`);
 			formData.append('isSensitive', props.file.isSensitive ? 'true' : 'false');
-			if (props.file.comment) { formData.append('comment', props.file.comment);}
+			if (props.file.comment) {
+				formData.append('comment', props.file.comment);
+			}
 			formData.append('i', $i!.token);
 			if (props.uploadFolder) {
 				formData.append('folderId', props.uploadFolder);
@@ -119,8 +121,7 @@ const onImageLoad = () => {
 };
 
 onMounted(() => {
-	cropper = new Cropper(imgEl.value!, {
-	});
+	cropper = new Cropper(imgEl.value!, {});
 
 	const computedStyle = getComputedStyle(document.documentElement);
 
@@ -148,6 +149,7 @@ onMounted(() => {
 .fade-leave-active {
 	transition: opacity 0.5s ease 0.5s;
 }
+
 .fade-enter-from,
 .fade-leave-to {
 	opacity: 0;

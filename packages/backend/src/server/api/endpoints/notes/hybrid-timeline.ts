@@ -3,22 +3,22 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Brackets } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
-import type { NotesRepository, ChannelFollowingsRepository, MiMeta } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
+import {Brackets} from 'typeorm';
+import {Inject, Injectable} from '@nestjs/common';
+import type {NotesRepository, ChannelFollowingsRepository, MiMeta} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
 import ActiveUsersChart from '@/core/chart/charts/active-users.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { DI } from '@/di-symbols.js';
-import { RoleService } from '@/core/RoleService.js';
-import { IdService } from '@/core/IdService.js';
-import { CacheService } from '@/core/CacheService.js';
-import { FanoutTimelineName } from '@/core/FanoutTimelineService.js';
-import { QueryService } from '@/core/QueryService.js';
-import { UserFollowingService } from '@/core/UserFollowingService.js';
-import { MiLocalUser } from '@/models/User.js';
-import { FanoutTimelineEndpointService } from '@/core/FanoutTimelineEndpointService.js';
-import { ApiError } from '../../error.js';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
+import {DI} from '@/di-symbols.js';
+import {RoleService} from '@/core/RoleService.js';
+import {IdService} from '@/core/IdService.js';
+import {CacheService} from '@/core/CacheService.js';
+import {FanoutTimelineName} from '@/core/FanoutTimelineService.js';
+import {QueryService} from '@/core/QueryService.js';
+import {UserFollowingService} from '@/core/UserFollowingService.js';
+import {MiLocalUser} from '@/models/User.js';
+import {FanoutTimelineEndpointService} from '@/core/FanoutTimelineEndpointService.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['notes'],
@@ -54,18 +54,18 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
-		sinceDate: { type: 'integer' },
-		untilDate: { type: 'integer' },
-		allowPartial: { type: 'boolean', default: false }, // true is recommended but for compatibility false by default
-		includeMyRenotes: { type: 'boolean', default: true },
-		includeRenotedMyNotes: { type: 'boolean', default: true },
-		includeLocalRenotes: { type: 'boolean', default: true },
-		withFiles: { type: 'boolean', default: false },
-		withRenotes: { type: 'boolean', default: true },
-		withReplies: { type: 'boolean', default: false },
+		limit: {type: 'integer', minimum: 1, maximum: 100, default: 10},
+		sinceId: {type: 'string', format: 'misskey:id'},
+		untilId: {type: 'string', format: 'misskey:id'},
+		sinceDate: {type: 'integer'},
+		untilDate: {type: 'integer'},
+		allowPartial: {type: 'boolean', default: false}, // true is recommended but for compatibility false by default
+		includeMyRenotes: {type: 'boolean', default: true},
+		includeRenotedMyNotes: {type: 'boolean', default: true},
+		includeLocalRenotes: {type: 'boolean', default: true},
+		withFiles: {type: 'boolean', default: false},
+		withRenotes: {type: 'boolean', default: true},
+		withReplies: {type: 'boolean', default: false},
 	},
 	required: [],
 } as const;
@@ -75,13 +75,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.meta)
 		private serverSettings: MiMeta,
-
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		@Inject(DI.channelFollowingsRepository)
 		private channelFollowingsRepository: ChannelFollowingsRepository,
-
 		private noteEntityService: NoteEntityService,
 		private roleService: RoleService,
 		private activeUsersChart: ActiveUsersChart,
@@ -206,10 +203,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			.andWhere(new Brackets(qb => {
 				if (followees.length > 0) {
 					const meOrFolloweeIds = [me.id, ...followees.map(f => f.followeeId)];
-					qb.where('note.userId IN (:...meOrFolloweeIds)', { meOrFolloweeIds: meOrFolloweeIds });
+					qb.where('note.userId IN (:...meOrFolloweeIds)', {meOrFolloweeIds: meOrFolloweeIds});
 					qb.orWhere('(note.visibility = \'public\') AND (note.userHost IS NULL)');
 				} else {
-					qb.where('note.userId = :meId', { meId: me.id });
+					qb.where('note.userId = :meId', {meId: me.id});
 					qb.orWhere('(note.visibility = \'public\') AND (note.userHost IS NULL)');
 				}
 			}))
@@ -223,7 +220,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			const followingChannelIds = followingChannels.map(x => x.followeeId);
 
 			query.andWhere(new Brackets(qb => {
-				qb.where('note.channelId IN (:...followingChannelIds)', { followingChannelIds });
+				qb.where('note.channelId IN (:...followingChannelIds)', {followingChannelIds});
 				qb.orWhere('note.channelId IS NULL');
 			}));
 		} else {
@@ -249,7 +246,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 		if (ps.includeMyRenotes === false) {
 			query.andWhere(new Brackets(qb => {
-				qb.orWhere('note.userId != :meId', { meId: me.id });
+				qb.orWhere('note.userId != :meId', {meId: me.id});
 				qb.orWhere('note.renoteId IS NULL');
 				qb.orWhere('note.text IS NOT NULL');
 				qb.orWhere('note.fileIds != \'{}\'');
@@ -259,7 +256,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 		if (ps.includeRenotedMyNotes === false) {
 			query.andWhere(new Brackets(qb => {
-				qb.orWhere('note.renoteUserId != :meId', { meId: me.id });
+				qb.orWhere('note.renoteUserId != :meId', {meId: me.id});
 				qb.orWhere('note.renoteId IS NULL');
 				qb.orWhere('note.text IS NOT NULL');
 				qb.orWhere('note.fileIds != \'{}\'');

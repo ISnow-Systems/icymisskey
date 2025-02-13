@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { URLSearchParams } from 'node:url';
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { HttpRequestService } from '@/core/HttpRequestService.js';
-import { GetterService } from '@/server/api/GetterService.js';
-import { RoleService } from '@/core/RoleService.js';
-import { ApiError } from '../../error.js';
-import { MiMeta } from '@/models/_.js';
-import { DI } from '@/di-symbols.js';
+import {URLSearchParams} from 'node:url';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
+import {HttpRequestService} from '@/core/HttpRequestService.js';
+import {GetterService} from '@/server/api/GetterService.js';
+import {RoleService} from '@/core/RoleService.js';
+import {ApiError} from '../../error.js';
+import {MiMeta} from '@/models/_.js';
+import {DI} from '@/di-symbols.js';
 
 export const meta = {
 	tags: ['notes'],
@@ -24,8 +24,8 @@ export const meta = {
 		type: 'object',
 		optional: true, nullable: false,
 		properties: {
-			sourceLang: { type: 'string' },
-			text: { type: 'string' },
+			sourceLang: {type: 'string'},
+			text: {type: 'string'},
 		},
 	},
 
@@ -51,8 +51,8 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		noteId: { type: 'string', format: 'misskey:id' },
-		targetLang: { type: 'string' },
+		noteId: {type: 'string', format: 'misskey:id'},
+		targetLang: {type: 'string'},
 	},
 	required: ['noteId', 'targetLang'],
 } as const;
@@ -62,7 +62,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.meta)
 		private serverSettings: MiMeta,
-
 		private noteEntityService: NoteEntityService,
 		private getterService: GetterService,
 		private httpRequestService: HttpRequestService,

@@ -4,8 +4,9 @@
  */
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import type { StoryObj } from '@storybook/vue3';
+import type {StoryObj} from '@storybook/vue3';
 import MkEmoji from './MkEmoji.vue';
+
 export const Default = {
 	render(args) {
 		return {

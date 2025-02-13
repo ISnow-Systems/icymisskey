@@ -4,13 +4,17 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="[$style.root, { [$style.rootFirst]: first }]">
-	<div :class="[$style.label, { [$style.labelFirst]: first }]"><slot name="label"></slot></div>
-	<div :class="[$style.description]"><slot name="description"></slot></div>
-	<div :class="$style.main">
-		<slot></slot>
+	<div :class="[$style.root, { [$style.rootFirst]: first }]">
+		<div :class="[$style.label, { [$style.labelFirst]: first }]">
+			<slot name="label"></slot>
+		</div>
+		<div :class="[$style.description]">
+			<slot name="description"></slot>
+		</div>
+		<div :class="$style.main">
+			<slot></slot>
+		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>

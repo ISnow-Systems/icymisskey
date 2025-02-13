@@ -4,32 +4,32 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="$style.sortOrderArea">
-	<div :class="$style.sortOrderAreaTags">
-		<MkTagItem
-			v-for="order in currentOrders"
-			:key="order.key"
-			:iconClass="order.direction === '+' ? 'ti ti-arrow-up' : 'ti ti-arrow-down'"
-			:exButtonIconClass="'ti ti-x'"
-			:content="order.key"
-			:class="$style.sortOrderTag"
-			@click="onToggleSortOrderButtonClicked(order)"
-			@exButtonClick="onRemoveSortOrderButtonClicked(order)"
-		/>
+	<div :class="$style.sortOrderArea">
+		<div :class="$style.sortOrderAreaTags">
+			<MkTagItem
+				v-for="order in currentOrders"
+				:key="order.key"
+				:class="$style.sortOrderTag"
+				:content="order.key"
+				:exButtonIconClass="'ti ti-x'"
+				:iconClass="order.direction === '+' ? 'ti ti-arrow-up' : 'ti ti-arrow-down'"
+				@click="onToggleSortOrderButtonClicked(order)"
+				@exButtonClick="onRemoveSortOrderButtonClicked(order)"
+			/>
+		</div>
+		<MkButton :class="$style.sortOrderAddButton" @click="onAddSortOrderButtonClicked">
+			<span class="ti ti-plus"></span>
+		</MkButton>
 	</div>
-	<MkButton :class="$style.sortOrderAddButton" @click="onAddSortOrderButtonClicked">
-		<span class="ti ti-plus"></span>
-	</MkButton>
-</div>
 </template>
 
-<script setup lang="ts" generic="T extends string">
-import { toRefs } from 'vue';
+<script generic="T extends string" lang="ts" setup>
+import {toRefs} from 'vue';
 import MkTagItem from '@/components/MkTagItem.vue';
 import MkButton from '@/components/MkButton.vue';
-import type { MenuItem } from '@/types/menu.js';
+import type {MenuItem} from '@/types/menu.js';
 import * as os from '@/os.js';
-import type { SortOrder } from '@/components/MkSortOrderEditor.define.js';
+import type {SortOrder} from '@/components/MkSortOrderEditor.define.js';
 
 const emit = defineEmits<{
 	(ev: 'update', sortOrders: SortOrder<T>[]): void;
@@ -40,7 +40,7 @@ const props = defineProps<{
 	currentOrders: SortOrder<T>[];
 }>();
 
-const { currentOrders } = toRefs(props);
+const {currentOrders} = toRefs(props);
 
 function onToggleSortOrderButtonClicked(order: SortOrder<T>) {
 	switch (order.direction) {
@@ -62,7 +62,7 @@ function onAddSortOrderButtonClicked(ev: MouseEvent) {
 			return {
 				text: it,
 				action: () => {
-					emitOrder([...currentOrders.value, { key: it, direction: '+' }]);
+					emitOrder([...currentOrders.value, {key: it, direction: '+'}]);
 				},
 			};
 		});
@@ -79,7 +79,7 @@ function emitOrder(sortOrders: SortOrder<T>[]) {
 
 </script>
 
-<style module lang="scss">
+<style lang="scss" module>
 .sortOrderArea {
 	display: flex;
 	flex-direction: row;

@@ -3,23 +3,22 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { bindThis } from '@/decorators.js';
-import type { GlobalEvents } from '@/core/GlobalEventService.js';
-import type { JsonObject } from '@/misc/json-value.js';
-import Channel, { type MiChannelService } from '../channel.js';
+import {Injectable} from '@nestjs/common';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
+import {bindThis} from '@/decorators.js';
+import type {GlobalEvents} from '@/core/GlobalEventService.js';
+import type {JsonObject} from '@/misc/json-value.js';
+import Channel, {type MiChannelService} from '../channel.js';
 
 class AntennaChannel extends Channel {
-	public readonly chName = 'antenna';
 	public static shouldShare = false;
 	public static requireCredential = true as const;
 	public static kind = 'read:account';
+	public readonly chName = 'antenna';
 	private antennaId: string;
 
 	constructor(
 		private noteEntityService: NoteEntityService,
-
 		id: string,
 		connection: Channel['connection'],
 	) {
@@ -37,9 +36,15 @@ class AntennaChannel extends Channel {
 	}
 
 	@bindThis
+	public dispose() {
+		// Unsubscribe events
+		this.subscriber.off(`antennaStream:${this.antennaId}`, this.onEvent);
+	}
+
+	@bindThis
 	private async onEvent(data: GlobalEvents['antenna']['payload']) {
 		if (data.type === 'note') {
-			const note = await this.noteEntityService.pack(data.body.id, this.user, { detail: true });
+			const note = await this.noteEntityService.pack(data.body.id, this.user, {detail: true});
 
 			if (this.isNoteMutedOrBlocked(note)) return;
 
@@ -49,12 +54,6 @@ class AntennaChannel extends Channel {
 		} else {
 			this.send(data.type, data.body);
 		}
-	}
-
-	@bindThis
-	public dispose() {
-		// Unsubscribe events
-		this.subscriber.off(`antennaStream:${this.antennaId}`, this.onEvent);
 	}
 }
 

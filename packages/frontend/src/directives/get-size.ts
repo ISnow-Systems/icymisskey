@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { Directive } from 'vue';
+import type {Directive} from 'vue';
 
 const mountings = new Map<Element, {
 	resize: ResizeObserver;
@@ -44,7 +44,7 @@ export default {
 		});
 		resize.observe(src);
 
-		mountings.set(src, { resize, fn: binding.value });
+		mountings.set(src, {resize, fn: binding.value});
 		calc(src);
 	},
 

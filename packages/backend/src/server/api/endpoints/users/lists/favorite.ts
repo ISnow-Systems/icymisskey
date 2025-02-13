@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { UserListFavoritesRepository, UserListsRepository } from '@/models/_.js';
-import { IdService } from '@/core/IdService.js';
-import { ApiError } from '@/server/api/error.js';
-import { DI } from '@/di-symbols.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {UserListFavoritesRepository, UserListsRepository} from '@/models/_.js';
+import {IdService} from '@/core/IdService.js';
+import {ApiError} from '@/server/api/error.js';
+import {DI} from '@/di-symbols.js';
 
 export const meta = {
 	requireCredential: true,
@@ -31,17 +31,16 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		listId: { type: 'string', format: 'misskey:id' },
+		listId: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['listId'],
 } as const;
 
 @Injectable() // eslint-disable-next-line import/no-default-export
 export default class extends Endpoint<typeof meta, typeof paramDef> {
-	constructor (
+	constructor(
 		@Inject(DI.userListsRepository)
 		private userListsRepository: UserListsRepository,
-
 		@Inject(DI.userListFavoritesRepository)
 		private userListFavoritesRepository: UserListFavoritesRepository,
 		private idService: IdService,

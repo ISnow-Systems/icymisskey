@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { Directive } from 'vue';
-import { defaultStore } from '@/store.js';
+import type {Directive} from 'vue';
+import {defaultStore} from '@/store.js';
 
 export default {
 	mounted(el: HTMLElement, binding, vn) {

@@ -4,163 +4,471 @@
  */
 
 export class chartV71644058404077 {
-    name = 'chartV71644058404077'
+	name = 'chartV71644058404077'
 
 	async up(queryRunner) {
-		await queryRunner.query(`UPDATE "__chart__federation" SET "___instance_total"=2147483647 WHERE "___instance_total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__federation" SET "___instance_inc"=32767 WHERE "___instance_inc" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__federation" SET "___instance_dec"=32767 WHERE "___instance_dec" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__federation" SET "___instance_total"=2147483647 WHERE "___instance_total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__federation" SET "___instance_inc"=32767 WHERE "___instance_inc" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__federation" SET "___instance_dec"=32767 WHERE "___instance_dec" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__notes" SET "___local_total"=2147483647 WHERE "___local_total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__notes" SET "___local_inc"=2147483647 WHERE "___local_inc" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__notes" SET "___local_dec"=2147483647 WHERE "___local_dec" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__notes" SET "___local_diffs_normal"=2147483647 WHERE "___local_diffs_normal" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__notes" SET "___local_diffs_reply"=2147483647 WHERE "___local_diffs_reply" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__notes" SET "___local_diffs_renote"=2147483647 WHERE "___local_diffs_renote" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__notes" SET "___remote_total"=2147483647 WHERE "___remote_total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__notes" SET "___remote_inc"=2147483647 WHERE "___remote_inc" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__notes" SET "___remote_dec"=2147483647 WHERE "___remote_dec" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__notes" SET "___remote_diffs_normal"=2147483647 WHERE "___remote_diffs_normal" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__notes" SET "___remote_diffs_reply"=2147483647 WHERE "___remote_diffs_reply" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__notes" SET "___remote_diffs_renote"=2147483647 WHERE "___remote_diffs_renote" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__notes" SET "___local_total"=2147483647 WHERE "___local_total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__notes" SET "___local_inc"=2147483647 WHERE "___local_inc" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__notes" SET "___local_dec"=2147483647 WHERE "___local_dec" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__notes" SET "___local_diffs_normal"=2147483647 WHERE "___local_diffs_normal" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__notes" SET "___local_diffs_reply"=2147483647 WHERE "___local_diffs_reply" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__notes" SET "___local_diffs_renote"=2147483647 WHERE "___local_diffs_renote" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__notes" SET "___remote_total"=2147483647 WHERE "___remote_total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__notes" SET "___remote_inc"=2147483647 WHERE "___remote_inc" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__notes" SET "___remote_dec"=2147483647 WHERE "___remote_dec" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__notes" SET "___remote_diffs_normal"=2147483647 WHERE "___remote_diffs_normal" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__notes" SET "___remote_diffs_reply"=2147483647 WHERE "___remote_diffs_reply" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__notes" SET "___remote_diffs_renote"=2147483647 WHERE "___remote_diffs_renote" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__users" SET "___local_total"=2147483647 WHERE "___local_total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__users" SET "___local_inc"=32767 WHERE "___local_inc" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__users" SET "___local_dec"=32767 WHERE "___local_dec" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__users" SET "___remote_total"=2147483647 WHERE "___remote_total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__users" SET "___remote_inc"=32767 WHERE "___remote_inc" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__users" SET "___remote_dec"=32767 WHERE "___remote_dec" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__users" SET "___local_total"=2147483647 WHERE "___local_total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__users" SET "___local_inc"=32767 WHERE "___local_inc" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__users" SET "___local_dec"=32767 WHERE "___local_dec" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__users" SET "___remote_total"=2147483647 WHERE "___remote_total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__users" SET "___remote_inc"=32767 WHERE "___remote_inc" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__users" SET "___remote_dec"=32767 WHERE "___remote_dec" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__network" SET "___incomingRequests"=2147483647 WHERE "___incomingRequests" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__network" SET "___outgoingRequests"=2147483647 WHERE "___outgoingRequests" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__network" SET "___totalTime"=2147483647 WHERE "___totalTime" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__network" SET "___incomingBytes"=2147483647 WHERE "___incomingBytes" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__network" SET "___outgoingBytes"=2147483647 WHERE "___outgoingBytes" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__network" SET "___incomingRequests"=2147483647 WHERE "___incomingRequests" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__network" SET "___outgoingRequests"=2147483647 WHERE "___outgoingRequests" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__network" SET "___totalTime"=2147483647 WHERE "___totalTime" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__network" SET "___incomingBytes"=2147483647 WHERE "___incomingBytes" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__network" SET "___outgoingBytes"=2147483647 WHERE "___outgoingBytes" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__instance" SET "___requests_failed"=32767 WHERE "___requests_failed" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__instance" SET "___requests_succeeded"=32767 WHERE "___requests_succeeded" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__instance" SET "___requests_received"=32767 WHERE "___requests_received" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__instance" SET "___notes_total"=2147483647 WHERE "___notes_total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__instance" SET "___notes_inc"=2147483647 WHERE "___notes_inc" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__instance" SET "___notes_dec"=2147483647 WHERE "___notes_dec" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__instance" SET "___notes_diffs_normal"=2147483647 WHERE "___notes_diffs_normal" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__instance" SET "___notes_diffs_reply"=2147483647 WHERE "___notes_diffs_reply" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__instance" SET "___notes_diffs_renote"=2147483647 WHERE "___notes_diffs_renote" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__instance" SET "___users_total"=2147483647 WHERE "___users_total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__instance" SET "___users_inc"=32767 WHERE "___users_inc" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__instance" SET "___users_dec"=32767 WHERE "___users_dec" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__instance" SET "___following_total"=2147483647 WHERE "___following_total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__instance" SET "___following_inc"=32767 WHERE "___following_inc" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__instance" SET "___following_dec"=32767 WHERE "___following_dec" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__instance" SET "___followers_total"=2147483647 WHERE "___followers_total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__instance" SET "___followers_inc"=32767 WHERE "___followers_inc" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__instance" SET "___followers_dec"=32767 WHERE "___followers_dec" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__instance" SET "___drive_totalFiles"=2147483647 WHERE "___drive_totalFiles" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__instance" SET "___drive_incFiles"=2147483647 WHERE "___drive_incFiles" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__instance" SET "___drive_decFiles"=2147483647 WHERE "___drive_decFiles" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__instance" SET "___drive_incUsage"=2147483647 WHERE "___drive_incUsage" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__instance" SET "___drive_decUsage"=2147483647 WHERE "___drive_decUsage" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__instance" SET "___requests_failed"=32767 WHERE "___requests_failed" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__instance" SET "___requests_succeeded"=32767 WHERE "___requests_succeeded" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__instance" SET "___requests_received"=32767 WHERE "___requests_received" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__instance" SET "___notes_total"=2147483647 WHERE "___notes_total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__instance" SET "___notes_inc"=2147483647 WHERE "___notes_inc" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__instance" SET "___notes_dec"=2147483647 WHERE "___notes_dec" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__instance" SET "___notes_diffs_normal"=2147483647 WHERE "___notes_diffs_normal" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__instance" SET "___notes_diffs_reply"=2147483647 WHERE "___notes_diffs_reply" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__instance" SET "___notes_diffs_renote"=2147483647 WHERE "___notes_diffs_renote" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__instance" SET "___users_total"=2147483647 WHERE "___users_total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__instance" SET "___users_inc"=32767 WHERE "___users_inc" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__instance" SET "___users_dec"=32767 WHERE "___users_dec" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__instance" SET "___following_total"=2147483647 WHERE "___following_total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__instance" SET "___following_inc"=32767 WHERE "___following_inc" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__instance" SET "___following_dec"=32767 WHERE "___following_dec" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__instance" SET "___followers_total"=2147483647 WHERE "___followers_total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__instance" SET "___followers_inc"=32767 WHERE "___followers_inc" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__instance" SET "___followers_dec"=32767 WHERE "___followers_dec" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__instance" SET "___drive_totalFiles"=2147483647 WHERE "___drive_totalFiles" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__instance" SET "___drive_incFiles"=2147483647 WHERE "___drive_incFiles" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__instance" SET "___drive_decFiles"=2147483647 WHERE "___drive_decFiles" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__instance" SET "___drive_incUsage"=2147483647 WHERE "___drive_incUsage" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__instance" SET "___drive_decUsage"=2147483647 WHERE "___drive_decUsage" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__per_user_notes" SET "___total"=2147483647 WHERE "___total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__per_user_notes" SET "___inc"=32767 WHERE "___inc" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__per_user_notes" SET "___dec"=32767 WHERE "___dec" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__per_user_notes" SET "___diffs_normal"=32767 WHERE "___diffs_normal" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__per_user_notes" SET "___diffs_reply"=32767 WHERE "___diffs_reply" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__per_user_notes" SET "___diffs_renote"=32767 WHERE "___diffs_renote" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__per_user_notes" SET "___total"=2147483647 WHERE "___total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__per_user_notes" SET "___inc"=32767 WHERE "___inc" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__per_user_notes" SET "___dec"=32767 WHERE "___dec" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__per_user_notes" SET "___diffs_normal"=32767 WHERE "___diffs_normal" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__per_user_notes" SET "___diffs_reply"=32767 WHERE "___diffs_reply" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__per_user_notes" SET "___diffs_renote"=32767 WHERE "___diffs_renote" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__drive" SET "___local_incCount"=2147483647 WHERE "___local_incCount" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__drive" SET "___local_incSize"=2147483647 WHERE "___local_incSize" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__drive" SET "___local_decCount"=2147483647 WHERE "___local_decCount" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__drive" SET "___local_decSize"=2147483647 WHERE "___local_decSize" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__drive" SET "___remote_incCount"=2147483647 WHERE "___remote_incCount" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__drive" SET "___remote_incSize"=2147483647 WHERE "___remote_incSize" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__drive" SET "___remote_decCount"=2147483647 WHERE "___remote_decCount" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__drive" SET "___remote_decSize"=2147483647 WHERE "___remote_decSize" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__drive" SET "___local_incCount"=2147483647 WHERE "___local_incCount" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__drive" SET "___local_incSize"=2147483647 WHERE "___local_incSize" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__drive" SET "___local_decCount"=2147483647 WHERE "___local_decCount" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__drive" SET "___local_decSize"=2147483647 WHERE "___local_decSize" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__drive" SET "___remote_incCount"=2147483647 WHERE "___remote_incCount" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__drive" SET "___remote_incSize"=2147483647 WHERE "___remote_incSize" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__drive" SET "___remote_decCount"=2147483647 WHERE "___remote_decCount" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__drive" SET "___remote_decSize"=2147483647 WHERE "___remote_decSize" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__per_user_reaction" SET "___local_count"=32767 WHERE "___local_count" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__per_user_reaction" SET "___remote_count"=32767 WHERE "___remote_count" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__per_user_reaction" SET "___local_count"=32767 WHERE "___local_count" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__per_user_reaction" SET "___remote_count"=32767 WHERE "___remote_count" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__per_user_following" SET "___local_followings_total"=2147483647 WHERE "___local_followings_total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__per_user_following" SET "___local_followings_inc"=32767 WHERE "___local_followings_inc" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__per_user_following" SET "___local_followings_dec"=32767 WHERE "___local_followings_dec" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__per_user_following" SET "___local_followers_total"=2147483647 WHERE "___local_followers_total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__per_user_following" SET "___local_followers_inc"=32767 WHERE "___local_followers_inc" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__per_user_following" SET "___local_followers_dec"=32767 WHERE "___local_followers_dec" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__per_user_following" SET "___remote_followings_total"=2147483647 WHERE "___remote_followings_total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__per_user_following" SET "___remote_followings_inc"=32767 WHERE "___remote_followings_inc" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__per_user_following" SET "___remote_followings_dec"=32767 WHERE "___remote_followings_dec" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__per_user_following" SET "___remote_followers_total"=2147483647 WHERE "___remote_followers_total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart__per_user_following" SET "___remote_followers_inc"=32767 WHERE "___remote_followers_inc" > 32767`);
-		await queryRunner.query(`UPDATE "__chart__per_user_following" SET "___remote_followers_dec"=32767 WHERE "___remote_followers_dec" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__per_user_following" SET "___local_followings_total"=2147483647 WHERE "___local_followings_total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__per_user_following" SET "___local_followings_inc"=32767 WHERE "___local_followings_inc" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__per_user_following" SET "___local_followings_dec"=32767 WHERE "___local_followings_dec" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__per_user_following" SET "___local_followers_total"=2147483647 WHERE "___local_followers_total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__per_user_following" SET "___local_followers_inc"=32767 WHERE "___local_followers_inc" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__per_user_following" SET "___local_followers_dec"=32767 WHERE "___local_followers_dec" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__per_user_following" SET "___remote_followings_total"=2147483647 WHERE "___remote_followings_total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__per_user_following" SET "___remote_followings_inc"=32767 WHERE "___remote_followings_inc" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__per_user_following" SET "___remote_followings_dec"=32767 WHERE "___remote_followings_dec" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__per_user_following" SET "___remote_followers_total"=2147483647 WHERE "___remote_followers_total" > 2147483647`);
-		await queryRunner.query(`UPDATE "__chart_day__per_user_following" SET "___remote_followers_inc"=32767 WHERE "___remote_followers_inc" > 32767`);
-		await queryRunner.query(`UPDATE "__chart_day__per_user_following" SET "___remote_followers_dec"=32767 WHERE "___remote_followers_dec" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__federation"
+								 SET "___instance_total"=2147483647
+								 WHERE "___instance_total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__federation"
+								 SET "___instance_inc"=32767
+								 WHERE "___instance_inc" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__federation"
+								 SET "___instance_dec"=32767
+								 WHERE "___instance_dec" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__federation"
+								 SET "___instance_total"=2147483647
+								 WHERE "___instance_total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__federation"
+								 SET "___instance_inc"=32767
+								 WHERE "___instance_inc" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__federation"
+								 SET "___instance_dec"=32767
+								 WHERE "___instance_dec" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__notes"
+								 SET "___local_total"=2147483647
+								 WHERE "___local_total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__notes"
+								 SET "___local_inc"=2147483647
+								 WHERE "___local_inc" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__notes"
+								 SET "___local_dec"=2147483647
+								 WHERE "___local_dec" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__notes"
+								 SET "___local_diffs_normal"=2147483647
+								 WHERE "___local_diffs_normal" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__notes"
+								 SET "___local_diffs_reply"=2147483647
+								 WHERE "___local_diffs_reply" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__notes"
+								 SET "___local_diffs_renote"=2147483647
+								 WHERE "___local_diffs_renote" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__notes"
+								 SET "___remote_total"=2147483647
+								 WHERE "___remote_total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__notes"
+								 SET "___remote_inc"=2147483647
+								 WHERE "___remote_inc" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__notes"
+								 SET "___remote_dec"=2147483647
+								 WHERE "___remote_dec" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__notes"
+								 SET "___remote_diffs_normal"=2147483647
+								 WHERE "___remote_diffs_normal" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__notes"
+								 SET "___remote_diffs_reply"=2147483647
+								 WHERE "___remote_diffs_reply" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__notes"
+								 SET "___remote_diffs_renote"=2147483647
+								 WHERE "___remote_diffs_renote" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__notes"
+								 SET "___local_total"=2147483647
+								 WHERE "___local_total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__notes"
+								 SET "___local_inc"=2147483647
+								 WHERE "___local_inc" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__notes"
+								 SET "___local_dec"=2147483647
+								 WHERE "___local_dec" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__notes"
+								 SET "___local_diffs_normal"=2147483647
+								 WHERE "___local_diffs_normal" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__notes"
+								 SET "___local_diffs_reply"=2147483647
+								 WHERE "___local_diffs_reply" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__notes"
+								 SET "___local_diffs_renote"=2147483647
+								 WHERE "___local_diffs_renote" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__notes"
+								 SET "___remote_total"=2147483647
+								 WHERE "___remote_total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__notes"
+								 SET "___remote_inc"=2147483647
+								 WHERE "___remote_inc" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__notes"
+								 SET "___remote_dec"=2147483647
+								 WHERE "___remote_dec" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__notes"
+								 SET "___remote_diffs_normal"=2147483647
+								 WHERE "___remote_diffs_normal" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__notes"
+								 SET "___remote_diffs_reply"=2147483647
+								 WHERE "___remote_diffs_reply" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__notes"
+								 SET "___remote_diffs_renote"=2147483647
+								 WHERE "___remote_diffs_renote" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__users"
+								 SET "___local_total"=2147483647
+								 WHERE "___local_total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__users"
+								 SET "___local_inc"=32767
+								 WHERE "___local_inc" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__users"
+								 SET "___local_dec"=32767
+								 WHERE "___local_dec" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__users"
+								 SET "___remote_total"=2147483647
+								 WHERE "___remote_total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__users"
+								 SET "___remote_inc"=32767
+								 WHERE "___remote_inc" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__users"
+								 SET "___remote_dec"=32767
+								 WHERE "___remote_dec" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__users"
+								 SET "___local_total"=2147483647
+								 WHERE "___local_total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__users"
+								 SET "___local_inc"=32767
+								 WHERE "___local_inc" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__users"
+								 SET "___local_dec"=32767
+								 WHERE "___local_dec" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__users"
+								 SET "___remote_total"=2147483647
+								 WHERE "___remote_total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__users"
+								 SET "___remote_inc"=32767
+								 WHERE "___remote_inc" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__users"
+								 SET "___remote_dec"=32767
+								 WHERE "___remote_dec" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__network"
+								 SET "___incomingRequests"=2147483647
+								 WHERE "___incomingRequests" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__network"
+								 SET "___outgoingRequests"=2147483647
+								 WHERE "___outgoingRequests" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__network"
+								 SET "___totalTime"=2147483647
+								 WHERE "___totalTime" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__network"
+								 SET "___incomingBytes"=2147483647
+								 WHERE "___incomingBytes" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__network"
+								 SET "___outgoingBytes"=2147483647
+								 WHERE "___outgoingBytes" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__network"
+								 SET "___incomingRequests"=2147483647
+								 WHERE "___incomingRequests" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__network"
+								 SET "___outgoingRequests"=2147483647
+								 WHERE "___outgoingRequests" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__network"
+								 SET "___totalTime"=2147483647
+								 WHERE "___totalTime" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__network"
+								 SET "___incomingBytes"=2147483647
+								 WHERE "___incomingBytes" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__network"
+								 SET "___outgoingBytes"=2147483647
+								 WHERE "___outgoingBytes" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__instance"
+								 SET "___requests_failed"=32767
+								 WHERE "___requests_failed" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__instance"
+								 SET "___requests_succeeded"=32767
+								 WHERE "___requests_succeeded" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__instance"
+								 SET "___requests_received"=32767
+								 WHERE "___requests_received" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__instance"
+								 SET "___notes_total"=2147483647
+								 WHERE "___notes_total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__instance"
+								 SET "___notes_inc"=2147483647
+								 WHERE "___notes_inc" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__instance"
+								 SET "___notes_dec"=2147483647
+								 WHERE "___notes_dec" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__instance"
+								 SET "___notes_diffs_normal"=2147483647
+								 WHERE "___notes_diffs_normal" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__instance"
+								 SET "___notes_diffs_reply"=2147483647
+								 WHERE "___notes_diffs_reply" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__instance"
+								 SET "___notes_diffs_renote"=2147483647
+								 WHERE "___notes_diffs_renote" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__instance"
+								 SET "___users_total"=2147483647
+								 WHERE "___users_total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__instance"
+								 SET "___users_inc"=32767
+								 WHERE "___users_inc" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__instance"
+								 SET "___users_dec"=32767
+								 WHERE "___users_dec" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__instance"
+								 SET "___following_total"=2147483647
+								 WHERE "___following_total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__instance"
+								 SET "___following_inc"=32767
+								 WHERE "___following_inc" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__instance"
+								 SET "___following_dec"=32767
+								 WHERE "___following_dec" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__instance"
+								 SET "___followers_total"=2147483647
+								 WHERE "___followers_total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__instance"
+								 SET "___followers_inc"=32767
+								 WHERE "___followers_inc" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__instance"
+								 SET "___followers_dec"=32767
+								 WHERE "___followers_dec" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__instance"
+								 SET "___drive_totalFiles"=2147483647
+								 WHERE "___drive_totalFiles" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__instance"
+								 SET "___drive_incFiles"=2147483647
+								 WHERE "___drive_incFiles" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__instance"
+								 SET "___drive_decFiles"=2147483647
+								 WHERE "___drive_decFiles" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__instance"
+								 SET "___drive_incUsage"=2147483647
+								 WHERE "___drive_incUsage" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__instance"
+								 SET "___drive_decUsage"=2147483647
+								 WHERE "___drive_decUsage" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__instance"
+								 SET "___requests_failed"=32767
+								 WHERE "___requests_failed" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__instance"
+								 SET "___requests_succeeded"=32767
+								 WHERE "___requests_succeeded" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__instance"
+								 SET "___requests_received"=32767
+								 WHERE "___requests_received" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__instance"
+								 SET "___notes_total"=2147483647
+								 WHERE "___notes_total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__instance"
+								 SET "___notes_inc"=2147483647
+								 WHERE "___notes_inc" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__instance"
+								 SET "___notes_dec"=2147483647
+								 WHERE "___notes_dec" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__instance"
+								 SET "___notes_diffs_normal"=2147483647
+								 WHERE "___notes_diffs_normal" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__instance"
+								 SET "___notes_diffs_reply"=2147483647
+								 WHERE "___notes_diffs_reply" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__instance"
+								 SET "___notes_diffs_renote"=2147483647
+								 WHERE "___notes_diffs_renote" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__instance"
+								 SET "___users_total"=2147483647
+								 WHERE "___users_total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__instance"
+								 SET "___users_inc"=32767
+								 WHERE "___users_inc" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__instance"
+								 SET "___users_dec"=32767
+								 WHERE "___users_dec" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__instance"
+								 SET "___following_total"=2147483647
+								 WHERE "___following_total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__instance"
+								 SET "___following_inc"=32767
+								 WHERE "___following_inc" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__instance"
+								 SET "___following_dec"=32767
+								 WHERE "___following_dec" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__instance"
+								 SET "___followers_total"=2147483647
+								 WHERE "___followers_total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__instance"
+								 SET "___followers_inc"=32767
+								 WHERE "___followers_inc" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__instance"
+								 SET "___followers_dec"=32767
+								 WHERE "___followers_dec" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__instance"
+								 SET "___drive_totalFiles"=2147483647
+								 WHERE "___drive_totalFiles" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__instance"
+								 SET "___drive_incFiles"=2147483647
+								 WHERE "___drive_incFiles" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__instance"
+								 SET "___drive_decFiles"=2147483647
+								 WHERE "___drive_decFiles" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__instance"
+								 SET "___drive_incUsage"=2147483647
+								 WHERE "___drive_incUsage" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__instance"
+								 SET "___drive_decUsage"=2147483647
+								 WHERE "___drive_decUsage" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__per_user_notes"
+								 SET "___total"=2147483647
+								 WHERE "___total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__per_user_notes"
+								 SET "___inc"=32767
+								 WHERE "___inc" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__per_user_notes"
+								 SET "___dec"=32767
+								 WHERE "___dec" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__per_user_notes"
+								 SET "___diffs_normal"=32767
+								 WHERE "___diffs_normal" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__per_user_notes"
+								 SET "___diffs_reply"=32767
+								 WHERE "___diffs_reply" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__per_user_notes"
+								 SET "___diffs_renote"=32767
+								 WHERE "___diffs_renote" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__per_user_notes"
+								 SET "___total"=2147483647
+								 WHERE "___total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__per_user_notes"
+								 SET "___inc"=32767
+								 WHERE "___inc" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__per_user_notes"
+								 SET "___dec"=32767
+								 WHERE "___dec" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__per_user_notes"
+								 SET "___diffs_normal"=32767
+								 WHERE "___diffs_normal" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__per_user_notes"
+								 SET "___diffs_reply"=32767
+								 WHERE "___diffs_reply" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__per_user_notes"
+								 SET "___diffs_renote"=32767
+								 WHERE "___diffs_renote" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__drive"
+								 SET "___local_incCount"=2147483647
+								 WHERE "___local_incCount" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__drive"
+								 SET "___local_incSize"=2147483647
+								 WHERE "___local_incSize" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__drive"
+								 SET "___local_decCount"=2147483647
+								 WHERE "___local_decCount" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__drive"
+								 SET "___local_decSize"=2147483647
+								 WHERE "___local_decSize" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__drive"
+								 SET "___remote_incCount"=2147483647
+								 WHERE "___remote_incCount" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__drive"
+								 SET "___remote_incSize"=2147483647
+								 WHERE "___remote_incSize" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__drive"
+								 SET "___remote_decCount"=2147483647
+								 WHERE "___remote_decCount" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__drive"
+								 SET "___remote_decSize"=2147483647
+								 WHERE "___remote_decSize" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__drive"
+								 SET "___local_incCount"=2147483647
+								 WHERE "___local_incCount" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__drive"
+								 SET "___local_incSize"=2147483647
+								 WHERE "___local_incSize" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__drive"
+								 SET "___local_decCount"=2147483647
+								 WHERE "___local_decCount" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__drive"
+								 SET "___local_decSize"=2147483647
+								 WHERE "___local_decSize" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__drive"
+								 SET "___remote_incCount"=2147483647
+								 WHERE "___remote_incCount" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__drive"
+								 SET "___remote_incSize"=2147483647
+								 WHERE "___remote_incSize" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__drive"
+								 SET "___remote_decCount"=2147483647
+								 WHERE "___remote_decCount" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__drive"
+								 SET "___remote_decSize"=2147483647
+								 WHERE "___remote_decSize" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__per_user_reaction"
+								 SET "___local_count"=32767
+								 WHERE "___local_count" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__per_user_reaction"
+								 SET "___remote_count"=32767
+								 WHERE "___remote_count" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__per_user_reaction"
+								 SET "___local_count"=32767
+								 WHERE "___local_count" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__per_user_reaction"
+								 SET "___remote_count"=32767
+								 WHERE "___remote_count" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__per_user_following"
+								 SET "___local_followings_total"=2147483647
+								 WHERE "___local_followings_total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__per_user_following"
+								 SET "___local_followings_inc"=32767
+								 WHERE "___local_followings_inc" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__per_user_following"
+								 SET "___local_followings_dec"=32767
+								 WHERE "___local_followings_dec" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__per_user_following"
+								 SET "___local_followers_total"=2147483647
+								 WHERE "___local_followers_total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__per_user_following"
+								 SET "___local_followers_inc"=32767
+								 WHERE "___local_followers_inc" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__per_user_following"
+								 SET "___local_followers_dec"=32767
+								 WHERE "___local_followers_dec" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__per_user_following"
+								 SET "___remote_followings_total"=2147483647
+								 WHERE "___remote_followings_total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__per_user_following"
+								 SET "___remote_followings_inc"=32767
+								 WHERE "___remote_followings_inc" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__per_user_following"
+								 SET "___remote_followings_dec"=32767
+								 WHERE "___remote_followings_dec" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__per_user_following"
+								 SET "___remote_followers_total"=2147483647
+								 WHERE "___remote_followers_total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart__per_user_following"
+								 SET "___remote_followers_inc"=32767
+								 WHERE "___remote_followers_inc" > 32767`);
+		await queryRunner.query(`UPDATE "__chart__per_user_following"
+								 SET "___remote_followers_dec"=32767
+								 WHERE "___remote_followers_dec" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__per_user_following"
+								 SET "___local_followings_total"=2147483647
+								 WHERE "___local_followings_total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__per_user_following"
+								 SET "___local_followings_inc"=32767
+								 WHERE "___local_followings_inc" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__per_user_following"
+								 SET "___local_followings_dec"=32767
+								 WHERE "___local_followings_dec" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__per_user_following"
+								 SET "___local_followers_total"=2147483647
+								 WHERE "___local_followers_total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__per_user_following"
+								 SET "___local_followers_inc"=32767
+								 WHERE "___local_followers_inc" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__per_user_following"
+								 SET "___local_followers_dec"=32767
+								 WHERE "___local_followers_dec" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__per_user_following"
+								 SET "___remote_followings_total"=2147483647
+								 WHERE "___remote_followings_total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__per_user_following"
+								 SET "___remote_followings_inc"=32767
+								 WHERE "___remote_followings_inc" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__per_user_following"
+								 SET "___remote_followings_dec"=32767
+								 WHERE "___remote_followings_dec" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__per_user_following"
+								 SET "___remote_followers_total"=2147483647
+								 WHERE "___remote_followers_total" > 2147483647`);
+		await queryRunner.query(`UPDATE "__chart_day__per_user_following"
+								 SET "___remote_followers_inc"=32767
+								 WHERE "___remote_followers_inc" > 32767`);
+		await queryRunner.query(`UPDATE "__chart_day__per_user_following"
+								 SET "___remote_followers_dec"=32767
+								 WHERE "___remote_followers_dec" > 32767`);
 		await queryRunner.query(`TRUNCATE TABLE "__chart__per_user_drive"`);
 		await queryRunner.query(`TRUNCATE TABLE "__chart_day__per_user_drive"`);
 

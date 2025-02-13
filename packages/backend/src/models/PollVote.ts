@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne } from 'typeorm';
-import { id } from './util/id.js';
-import { MiUser } from './User.js';
-import { MiNote } from './Note.js';
+import {PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne} from 'typeorm';
+import {id} from './util/id.js';
+import {MiUser} from './User.js';
+import {MiNote} from './Note.js';
 
 @Entity('poll_vote')
-@Index(['userId', 'noteId', 'choice'], { unique: true })
+@Index(['userId', 'noteId', 'choice'], {unique: true})
 export class MiPollVote {
 	@PrimaryColumn(id())
 	public id: string;

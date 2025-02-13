@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { onActivated, onDeactivated, onMounted, onUnmounted } from 'vue';
+import {onActivated, onDeactivated, onMounted, onUnmounted} from 'vue';
 
 export function useInterval(fn: () => void, interval: number, options: {
 	immediate: boolean;

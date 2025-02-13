@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { EmojisRepository } from '@/models/_.js';
-import type { MiDriveFile } from '@/models/DriveFile.js';
-import { DI } from '@/di-symbols.js';
-import { DriveService } from '@/core/DriveService.js';
-import { CustomEmojiService } from '@/core/CustomEmojiService.js';
-import { EmojiEntityService } from '@/core/entities/EmojiEntityService.js';
-import { ApiError } from '../../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {EmojisRepository} from '@/models/_.js';
+import type {MiDriveFile} from '@/models/DriveFile.js';
+import {DI} from '@/di-symbols.js';
+import {DriveService} from '@/core/DriveService.js';
+import {CustomEmojiService} from '@/core/CustomEmojiService.js';
+import {EmojiEntityService} from '@/core/entities/EmojiEntityService.js';
+import {ApiError} from '../../../error.js';
 
 export const meta = {
 	tags: ['admin'],
@@ -49,7 +49,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		emojiId: { type: 'string', format: 'misskey:id' },
+		emojiId: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['emojiId'],
 } as const;
@@ -66,7 +66,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		private driveService: DriveService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const emoji = await this.emojisRepository.findOneBy({ id: ps.emojiId });
+			const emoji = await this.emojisRepository.findOneBy({id: ps.emojiId});
 			if (emoji == null) {
 				throw new ApiError(meta.errors.noSuchEmoji);
 			}
@@ -75,7 +75,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			try {
 				// Create file
-				driveFile = await this.driveService.uploadFromUrl({ url: emoji.originalUrl, user: null, force: true });
+				driveFile = await this.driveService.uploadFromUrl({url: emoji.originalUrl, user: null, force: true});
 			} catch (e) {
 				// TODO: need to return Drive Error
 				throw new ApiError();

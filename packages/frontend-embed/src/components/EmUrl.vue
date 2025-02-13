@@ -4,30 +4,30 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<component
-	:is="self ? EmA : 'a'" ref="el" :class="$style.root" class="_link" :[attr]="self ? props.url.substring(local.length) : props.url" :rel="rel ?? 'nofollow noopener'" :target="target"
-	@contextmenu.stop="() => {}"
->
-	<template v-if="!self">
-		<span :class="$style.schema">{{ schema }}//</span>
-		<span :class="$style.hostname">{{ hostname }}</span>
-		<span v-if="port != ''">:{{ port }}</span>
-	</template>
-	<template v-if="pathname === '/' && self">
-		<span :class="$style.self">{{ hostname }}</span>
-	</template>
-	<span v-if="pathname != ''" :class="$style.pathname">{{ self ? pathname.substring(1) : pathname }}</span>
-	<span :class="$style.query">{{ query }}</span>
-	<span :class="$style.hash">{{ hash }}</span>
-	<i v-if="target === '_blank'" :class="$style.icon" class="ti ti-external-link"></i>
-</component>
+	<component
+		:is="self ? EmA : 'a'" ref="el" :[attr]="self ? props.url.substring(local.length) : props.url" :class="$style.root" :rel="rel ?? 'nofollow noopener'" :target="target" class="_link"
+		@contextmenu.stop="() => {}"
+	>
+		<template v-if="!self">
+			<span :class="$style.schema">{{ schema }}//</span>
+			<span :class="$style.hostname">{{ hostname }}</span>
+			<span v-if="port != ''">:{{ port }}</span>
+		</template>
+		<template v-if="pathname === '/' && self">
+			<span :class="$style.self">{{ hostname }}</span>
+		</template>
+		<span v-if="pathname != ''" :class="$style.pathname">{{ self ? pathname.substring(1) : pathname }}</span>
+		<span :class="$style.query">{{ query }}</span>
+		<span :class="$style.hash">{{ hash }}</span>
+		<i v-if="target === '_blank'" :class="$style.icon" class="ti ti-external-link"></i>
+	</component>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { toUnicode as decodePunycode } from 'punycode.js';
+import {ref} from 'vue';
+import {toUnicode as decodePunycode} from 'punycode.js';
 import EmA from './EmA.vue';
-import { url as local } from '@@/js/config.js';
+import {url as local} from '@@/js/config.js';
 
 function safeURIDecode(str: string): string {
 	try {

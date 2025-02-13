@@ -4,30 +4,30 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkPullToRefresh ref="prComponent" :refresher="() => reloadTimeline()">
-	<MkNotes
-		v-if="paginationQuery"
-		ref="tlComponent"
-		:pagination="paginationQuery"
-		:noGap="!defaultStore.state.showGapBetweenNotesInTimeline"
-		@queue="emit('queue', $event)"
-		@status="prComponent?.setDisabled($event)"
-	/>
-</MkPullToRefresh>
+	<MkPullToRefresh ref="prComponent" :refresher="() => reloadTimeline()">
+		<MkNotes
+			v-if="paginationQuery"
+			ref="tlComponent"
+			:noGap="!defaultStore.state.showGapBetweenNotesInTimeline"
+			:pagination="paginationQuery"
+			@queue="emit('queue', $event)"
+			@status="prComponent?.setDisabled($event)"
+		/>
+	</MkPullToRefresh>
 </template>
 
 <script lang="ts" setup>
-import { computed, watch, onUnmounted, provide, ref, shallowRef } from 'vue';
+import {computed, watch, onUnmounted, provide, ref, shallowRef} from 'vue';
 import * as Misskey from 'misskey-js';
-import type { BasicTimelineType } from '@/timelines.js';
+import type {BasicTimelineType} from '@/timelines.js';
 import MkNotes from '@/components/MkNotes.vue';
 import MkPullToRefresh from '@/components/MkPullToRefresh.vue';
-import { useStream } from '@/stream.js';
+import {useStream} from '@/stream.js';
 import * as sound from '@/scripts/sound.js';
-import { $i } from '@/account.js';
-import { instance } from '@/instance.js';
-import { defaultStore } from '@/store.js';
-import type { Paging } from '@/components/MkPagination.vue';
+import {$i} from '@/account.js';
+import {instance} from '@/instance.js';
+import {defaultStore} from '@/store.js';
+import type {Paging} from '@/components/MkPagination.vue';
 
 const props = withDefaults(defineProps<{
 	src: BasicTimelineType | 'mentions' | 'directs' | 'list' | 'antenna' | 'channel' | 'role';
@@ -57,14 +57,14 @@ provide('tl_withSensitive', computed(() => props.withSensitive));
 provide('inChannel', computed(() => props.src === 'channel'));
 
 type TimelineQueryType = {
-  antennaId?: string,
-  withRenotes?: boolean,
-  withReplies?: boolean,
-  withFiles?: boolean,
-  visibility?: string,
-  listId?: string,
-  channelId?: string,
-  roleId?: string
+	antennaId?: string,
+	withRenotes?: boolean,
+	withReplies?: boolean,
+	withFiles?: boolean,
+	visibility?: string,
+	listId?: string,
+	channelId?: string,
+	roleId?: string
 }
 
 const prComponent = shallowRef<InstanceType<typeof MkPullToRefresh>>();

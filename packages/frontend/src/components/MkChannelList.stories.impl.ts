@@ -5,12 +5,13 @@
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable import/no-default-export */
-import type { StoryObj } from '@storybook/vue3';
-import { HttpResponse, http } from 'msw';
-import { action } from '@storybook/addon-actions';
-import { channel } from '../../.storybook/fakes.js';
-import { commonHandlers } from '../../.storybook/mocks.js';
+import type {StoryObj} from '@storybook/vue3';
+import {HttpResponse, http} from 'msw';
+import {action} from '@storybook/addon-actions';
+import {channel} from '../../.storybook/fakes.js';
+import {commonHandlers} from '../../.storybook/mocks.js';
 import MkChannelList from './MkChannelList.vue';
+
 export const Default = {
 	render(args) {
 		return {
@@ -47,7 +48,7 @@ export const Default = {
 		msw: {
 			handlers: [
 				...commonHandlers,
-				http.post('/api/channels/search', async ({ request, params }) => {
+				http.post('/api/channels/search', async ({request, params}) => {
 					action('POST /api/channels/search')(await request.json());
 					return HttpResponse.json(params.untilId === 'lastchannel' ? [] : [
 						channel(),

@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { In } from 'typeorm';
-import { DI } from '@/di-symbols.js';
-import type { AbuseReportNotificationRecipientRepository, MiAbuseReportNotificationRecipient } from '@/models/_.js';
-import { bindThis } from '@/decorators.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { Packed } from '@/misc/json-schema.js';
-import { SystemWebhookEntityService } from '@/core/entities/SystemWebhookEntityService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {In} from 'typeorm';
+import {DI} from '@/di-symbols.js';
+import type {AbuseReportNotificationRecipientRepository, MiAbuseReportNotificationRecipient} from '@/models/_.js';
+import {bindThis} from '@/decorators.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {Packed} from '@/misc/json-schema.js';
+import {SystemWebhookEntityService} from '@/core/entities/SystemWebhookEntityService.js';
 
 @Injectable()
 export class AbuseReportNotificationRecipientEntityService {
@@ -32,7 +32,7 @@ export class AbuseReportNotificationRecipientEntityService {
 	): Promise<Packed<'AbuseReportNotificationRecipient'>> {
 		const recipient = typeof src === 'object'
 			? src
-			: await this.abuseReportNotificationRecipientRepository.findOneByOrFail({ id: src });
+			: await this.abuseReportNotificationRecipientRepository.findOneByOrFail({id: src});
 		const user = recipient.userId
 			? (opts?.users.get(recipient.userId) ?? await this.userEntityService.pack<'UserLite'>(recipient.userId))
 			: undefined;
@@ -61,7 +61,7 @@ export class AbuseReportNotificationRecipientEntityService {
 		const ids = src.filter((it): it is MiAbuseReportNotificationRecipient['id'] => typeof it === 'string');
 		if (ids.length > 0) {
 			objs.push(
-				...await this.abuseReportNotificationRecipientRepository.findBy({ id: In(ids) }),
+				...await this.abuseReportNotificationRecipientRepository.findBy({id: In(ids)}),
 			);
 		}
 
@@ -79,7 +79,7 @@ export class AbuseReportNotificationRecipientEntityService {
 
 		return Promise
 			.all(
-				objs.map(it => this.pack(it, { users: users, webhooks: systemWebhooks })),
+				objs.map(it => this.pack(it, {users: users, webhooks: systemWebhooks})),
 			)
 			.then(it => it.sort((a, b) => a.id.localeCompare(b.id)));
 	}

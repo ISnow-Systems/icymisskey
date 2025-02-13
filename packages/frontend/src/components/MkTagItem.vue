@@ -4,16 +4,16 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="$style.root" @click="(ev) => emit('click', ev)">
-	<span v-if="iconClass" :class="[$style.icon, iconClass]"></span>
-	<span :class="$style.content">{{ content }}</span>
-	<MkButton v-if="exButtonIconClass" :class="$style.exButton" @click="(ev) => emit('exButtonClick', ev)">
-		<span :class="[$style.exButtonIcon, exButtonIconClass]"></span>
-	</MkButton>
-</div>
+	<div :class="$style.root" @click="(ev) => emit('click', ev)">
+		<span v-if="iconClass" :class="[$style.icon, iconClass]"></span>
+		<span :class="$style.content">{{ content }}</span>
+		<MkButton v-if="exButtonIconClass" :class="$style.exButton" @click="(ev) => emit('exButtonClick', ev)">
+			<span :class="[$style.exButtonIcon, exButtonIconClass]"></span>
+		</MkButton>
+	</div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import MkButton from '@/components/MkButton.vue';
 
 const emit = defineEmits<{
@@ -28,8 +28,8 @@ defineProps<{
 }>();
 </script>
 
-<style module lang="scss">
-$buttonSize : 1.8em;
+<style lang="scss" module>
+$buttonSize: 1.8em;
 
 .root {
 	display: inline-flex;

@@ -4,50 +4,50 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkButton
-	v-if="supported && !pushRegistrationInServer"
-	type="button"
-	primary
-	:gradate="gradate"
-	:rounded="rounded"
-	:inline="inline"
-	:autofocus="autofocus"
-	:wait="wait"
-	:full="full"
-	@click="subscribe"
->
-	{{ i18n.ts.subscribePushNotification }}
-</MkButton>
-<MkButton
-	v-else-if="!showOnlyToRegister && ($i ? pushRegistrationInServer : pushSubscription)"
-	type="button"
-	:primary="false"
-	:gradate="gradate"
-	:rounded="rounded"
-	:inline="inline"
-	:autofocus="autofocus"
-	:wait="wait"
-	:full="full"
-	@click="unsubscribe"
->
-	{{ i18n.ts.unsubscribePushNotification }}
-</MkButton>
-<MkButton v-else-if="$i && pushRegistrationInServer" disabled :rounded="rounded" :inline="inline" :wait="wait" :full="full">
-	{{ i18n.ts.pushNotificationAlreadySubscribed }}
-</MkButton>
-<MkButton v-else-if="!supported" disabled :rounded="rounded" :inline="inline" :wait="wait" :full="full">
-	{{ i18n.ts.pushNotificationNotSupported }}
-</MkButton>
+	<MkButton
+		v-if="supported && !pushRegistrationInServer"
+		:autofocus="autofocus"
+		:full="full"
+		:gradate="gradate"
+		:inline="inline"
+		:rounded="rounded"
+		:wait="wait"
+		primary
+		type="button"
+		@click="subscribe"
+	>
+		{{ i18n.ts.subscribePushNotification }}
+	</MkButton>
+	<MkButton
+		v-else-if="!showOnlyToRegister && ($i ? pushRegistrationInServer : pushSubscription)"
+		:autofocus="autofocus"
+		:full="full"
+		:gradate="gradate"
+		:inline="inline"
+		:primary="false"
+		:rounded="rounded"
+		:wait="wait"
+		type="button"
+		@click="unsubscribe"
+	>
+		{{ i18n.ts.unsubscribePushNotification }}
+	</MkButton>
+	<MkButton v-else-if="$i && pushRegistrationInServer" :full="full" :inline="inline" :rounded="rounded" :wait="wait" disabled>
+		{{ i18n.ts.pushNotificationAlreadySubscribed }}
+	</MkButton>
+	<MkButton v-else-if="!supported" :full="full" :inline="inline" :rounded="rounded" :wait="wait" disabled>
+		{{ i18n.ts.pushNotificationNotSupported }}
+	</MkButton>
 </template>
 
-<script setup lang="ts">
-import { ref } from 'vue';
-import { $i, getAccounts } from '@/account.js';
+<script lang="ts" setup>
+import {ref} from 'vue';
+import {$i, getAccounts} from '@/account.js';
 import MkButton from '@/components/MkButton.vue';
-import { instance } from '@/instance.js';
-import { apiWithDialog, promiseDialog } from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { i18n } from '@/i18n.js';
+import {instance} from '@/instance.js';
+import {apiWithDialog, promiseDialog} from '@/os.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {i18n} from '@/i18n.js';
 
 defineProps<{
 	primary?: boolean;
@@ -89,7 +89,7 @@ function subscribe() {
 				publickey: encode(subscription.getKey('p256dh')),
 			});
 		}, async err => { // When subscribe failed
-		// 通知が許可されていなかったとき
+			// 通知が許可されていなかったとき
 			if (err?.name === 'NotAllowedError') {
 				console.info('User denied the notification permission request.');
 				return;

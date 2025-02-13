@@ -4,61 +4,61 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div v-if="instance.enableEmail" class="_gaps_m">
-	<FormSection first>
-		<template #label>{{ i18n.ts.emailAddress }}</template>
-		<MkInput v-model="emailAddress" type="email" manualSave>
-			<template #prefix><i class="ti ti-mail"></i></template>
-			<template v-if="$i.email && !$i.emailVerified" #caption>{{ i18n.ts.verificationEmailSent }}</template>
-			<template v-else-if="emailAddress === $i.email && $i.emailVerified" #caption><i class="ti ti-check" style="color: var(--MI_THEME-success);"></i> {{ i18n.ts.emailVerified }}</template>
-		</MkInput>
-	</FormSection>
+	<div v-if="instance.enableEmail" class="_gaps_m">
+		<FormSection first>
+			<template #label>{{ i18n.ts.emailAddress }}</template>
+			<MkInput v-model="emailAddress" manualSave type="email">
+				<template #prefix><i class="ti ti-mail"></i></template>
+				<template v-if="$i.email && !$i.emailVerified" #caption>{{ i18n.ts.verificationEmailSent }}</template>
+				<template v-else-if="emailAddress === $i.email && $i.emailVerified" #caption><i class="ti ti-check" style="color: var(--MI_THEME-success);"></i> {{ i18n.ts.emailVerified }}</template>
+			</MkInput>
+		</FormSection>
 
-	<FormSection>
-		<MkSwitch :modelValue="$i.receiveAnnouncementEmail" @update:modelValue="onChangeReceiveAnnouncementEmail">
-			{{ i18n.ts.receiveAnnouncementFromInstance }}
-		</MkSwitch>
-	</FormSection>
+		<FormSection>
+			<MkSwitch :modelValue="$i.receiveAnnouncementEmail" @update:modelValue="onChangeReceiveAnnouncementEmail">
+				{{ i18n.ts.receiveAnnouncementFromInstance }}
+			</MkSwitch>
+		</FormSection>
 
-	<FormSection>
-		<template #label>{{ i18n.ts.emailNotification }}</template>
+		<FormSection>
+			<template #label>{{ i18n.ts.emailNotification }}</template>
 
-		<div class="_gaps_s">
-			<MkSwitch v-model="emailNotification_mention">
-				{{ i18n.ts._notification._types.mention }}
-			</MkSwitch>
-			<MkSwitch v-model="emailNotification_reply">
-				{{ i18n.ts._notification._types.reply }}
-			</MkSwitch>
-			<MkSwitch v-model="emailNotification_quote">
-				{{ i18n.ts._notification._types.quote }}
-			</MkSwitch>
-			<MkSwitch v-model="emailNotification_follow">
-				{{ i18n.ts._notification._types.follow }}
-			</MkSwitch>
-			<MkSwitch v-model="emailNotification_receiveFollowRequest">
-				{{ i18n.ts._notification._types.receiveFollowRequest }}
-			</MkSwitch>
-		</div>
-	</FormSection>
-</div>
-<div v-if="!instance.enableEmail" class="_gaps_m">
-	<MkInfo>{{ i18n.ts.emailNotSupported }}</MkInfo>
-</div>
+			<div class="_gaps_s">
+				<MkSwitch v-model="emailNotification_mention">
+					{{ i18n.ts._notification._types.mention }}
+				</MkSwitch>
+				<MkSwitch v-model="emailNotification_reply">
+					{{ i18n.ts._notification._types.reply }}
+				</MkSwitch>
+				<MkSwitch v-model="emailNotification_quote">
+					{{ i18n.ts._notification._types.quote }}
+				</MkSwitch>
+				<MkSwitch v-model="emailNotification_follow">
+					{{ i18n.ts._notification._types.follow }}
+				</MkSwitch>
+				<MkSwitch v-model="emailNotification_receiveFollowRequest">
+					{{ i18n.ts._notification._types.receiveFollowRequest }}
+				</MkSwitch>
+			</div>
+		</FormSection>
+	</div>
+	<div v-if="!instance.enableEmail" class="_gaps_m">
+		<MkInfo>{{ i18n.ts.emailNotSupported }}</MkInfo>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, watch, computed } from 'vue';
+import {onMounted, ref, watch, computed} from 'vue';
 import FormSection from '@/components/form/section.vue';
 import MkInfo from '@/components/MkInfo.vue';
 import MkInput from '@/components/MkInput.vue';
 import MkSwitch from '@/components/MkSwitch.vue';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { signinRequired } from '@/account.js';
-import { i18n } from '@/i18n.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
-import { instance } from '@/instance.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {signinRequired} from '@/account.js';
+import {i18n} from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
+import {instance} from '@/instance.js';
 
 const $i = signinRequired();
 

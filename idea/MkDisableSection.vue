@@ -4,12 +4,12 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="[$style.root]">
-	<div :inert="disabled" :class="[{ [$style.disabled]: disabled }]">
-		<slot></slot>
+	<div :class="[$style.root]">
+		<div :class="[{ [$style.disabled]: disabled }]" :inert="disabled">
+			<slot></slot>
+		</div>
+		<div v-if="disabled" :class="[$style.cover]"></div>
 	</div>
-	<div v-if="disabled" :class="[$style.cover]"></div>
-</div>
 </template>
 
 <script lang="ts" setup>

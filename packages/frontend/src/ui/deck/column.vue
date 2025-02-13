@@ -4,50 +4,50 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div
-	:class="[$style.root, { [$style.paged]: isMainColumn, [$style.naked]: naked, [$style.active]: active, [$style.draghover]: draghover, [$style.dragging]: dragging, [$style.dropready]: dropready }]"
-	@dragover.prevent.stop="onDragover"
-	@dragleave="onDragleave"
-	@drop.prevent.stop="onDrop"
->
-	<header
-		:class="[$style.header]"
-		draggable="true"
-		@click="goTop"
-		@dragstart="onDragstart"
-		@dragend="onDragend"
-		@contextmenu.prevent.stop="onContextmenu"
-		@wheel="emit('headerWheel', $event)"
+	<div
+		:class="[$style.root, { [$style.paged]: isMainColumn, [$style.naked]: naked, [$style.active]: active, [$style.draghover]: draghover, [$style.dragging]: dragging, [$style.dropready]: dropready }]"
+		@dragleave="onDragleave"
+		@dragover.prevent.stop="onDragover"
+		@drop.prevent.stop="onDrop"
 	>
-		<svg viewBox="0 0 256 128" :class="$style.tabShape">
-			<g transform="matrix(6.2431,0,0,6.2431,-677.417,-29.3839)">
-				<path d="M149.512,4.707L108.507,4.707C116.252,4.719 118.758,14.958 118.758,14.958C118.758,14.958 121.381,25.283 129.009,25.209L149.512,25.209L149.512,4.707Z" style="fill:var(--MI_THEME-deckBg);"/>
-			</g>
-		</svg>
-		<div :class="$style.color"></div>
-		<button v-if="isStacked && !isMainColumn" :class="$style.toggleActive" class="_button" @click="toggleActive">
-			<template v-if="active"><i class="ti ti-chevron-up"></i></template>
-			<template v-else><i class="ti ti-chevron-down"></i></template>
-		</button>
-		<span :class="$style.title"><slot name="header"></slot></span>
-		<svg viewBox="0 0 16 16" version="1.1" :class="$style.grabber">
-			<path fill="currentColor" d="M10 13a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm0-4a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm-4 4a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm5-9a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM6 5a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path>
-		</svg>
-		<button v-tooltip="i18n.ts.settings" :class="$style.menu" class="_button" @click.stop="showSettingsMenu"><i class="ti ti-dots"></i></button>
-	</header>
-	<div v-if="active" ref="body" :class="$style.body">
-		<slot></slot>
+		<header
+			:class="[$style.header]"
+			draggable="true"
+			@click="goTop"
+			@dragend="onDragend"
+			@dragstart="onDragstart"
+			@wheel="emit('headerWheel', $event)"
+			@contextmenu.prevent.stop="onContextmenu"
+		>
+			<svg :class="$style.tabShape" viewBox="0 0 256 128">
+				<g transform="matrix(6.2431,0,0,6.2431,-677.417,-29.3839)">
+					<path d="M149.512,4.707L108.507,4.707C116.252,4.719 118.758,14.958 118.758,14.958C118.758,14.958 121.381,25.283 129.009,25.209L149.512,25.209L149.512,4.707Z" style="fill:var(--MI_THEME-deckBg);"/>
+				</g>
+			</svg>
+			<div :class="$style.color"></div>
+			<button v-if="isStacked && !isMainColumn" :class="$style.toggleActive" class="_button" @click="toggleActive">
+				<template v-if="active"><i class="ti ti-chevron-up"></i></template>
+				<template v-else><i class="ti ti-chevron-down"></i></template>
+			</button>
+			<span :class="$style.title"><slot name="header"></slot></span>
+			<svg :class="$style.grabber" version="1.1" viewBox="0 0 16 16">
+				<path d="M10 13a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm0-4a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm-4 4a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm5-9a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM6 5a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" fill="currentColor"></path>
+			</svg>
+			<button v-tooltip="i18n.ts.settings" :class="$style.menu" class="_button" @click.stop="showSettingsMenu"><i class="ti ti-dots"></i></button>
+		</header>
+		<div v-if="active" ref="body" :class="$style.body">
+			<slot></slot>
+		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { onBeforeUnmount, onMounted, provide, watch, shallowRef, ref, computed } from 'vue';
-import { updateColumn, swapLeftColumn, swapRightColumn, swapUpColumn, swapDownColumn, stackLeftColumn, popRightColumn, removeColumn, swapColumn } from './deck-store.js';
+import {onBeforeUnmount, onMounted, provide, watch, shallowRef, ref, computed} from 'vue';
+import {updateColumn, swapLeftColumn, swapRightColumn, swapUpColumn, swapDownColumn, stackLeftColumn, popRightColumn, removeColumn, swapColumn} from './deck-store.js';
 import * as os from '@/os.js';
-import { i18n } from '@/i18n.js';
-import type { Column } from './deck-store.js';
-import type { MenuItem } from '@/types/menu.js';
+import {i18n} from '@/i18n.js';
+import type {Column} from './deck-store.js';
+import type {MenuItem} from '@/types/menu.js';
 
 provide('shouldHeaderThin', true);
 provide('shouldOmitHeaderTitle', true);
@@ -130,7 +130,7 @@ function getMenu() {
 		text: i18n.ts._deck.configureColumn,
 		action: async () => {
 			const name = props.column.name ?? i18n.ts._deck._columns[props.column.type];
-			const { canceled, result } = await os.form(name, {
+			const {canceled, result} = await os.form(name, {
 				name: {
 					type: 'string',
 					label: i18n.ts.name,
@@ -208,7 +208,7 @@ function getMenu() {
 		});
 	}
 
-	menuItems.push({ type: 'divider' }, {
+	menuItems.push({type: 'divider'}, {
 		icon: 'ti ti-trash',
 		text: i18n.ts.remove,
 		danger: true,

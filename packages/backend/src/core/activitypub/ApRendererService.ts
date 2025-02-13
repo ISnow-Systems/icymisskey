@@ -3,56 +3,50 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { createPublicKey, randomUUID } from 'node:crypto';
-import { Inject, Injectable } from '@nestjs/common';
-import { In } from 'typeorm';
+import {createPublicKey, randomUUID} from 'node:crypto';
+import {Inject, Injectable} from '@nestjs/common';
+import {In} from 'typeorm';
 import * as mfm from 'mfm-js';
-import { DI } from '@/di-symbols.js';
-import type { Config } from '@/config.js';
-import type { MiPartialLocalUser, MiLocalUser, MiPartialRemoteUser, MiRemoteUser, MiUser } from '@/models/User.js';
-import type { IMentionedRemoteUsers, MiNote } from '@/models/Note.js';
-import type { MiBlocking } from '@/models/Blocking.js';
-import type { MiRelay } from '@/models/Relay.js';
-import type { MiDriveFile } from '@/models/DriveFile.js';
-import type { MiNoteReaction } from '@/models/NoteReaction.js';
-import type { MiEmoji } from '@/models/Emoji.js';
-import type { MiPoll } from '@/models/Poll.js';
-import type { MiPollVote } from '@/models/PollVote.js';
-import { UserKeypairService } from '@/core/UserKeypairService.js';
-import { MfmService } from '@/core/MfmService.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { DriveFileEntityService } from '@/core/entities/DriveFileEntityService.js';
-import type { MiUserKeypair } from '@/models/UserKeypair.js';
-import type { UsersRepository, UserProfilesRepository, NotesRepository, DriveFilesRepository, PollsRepository } from '@/models/_.js';
-import { bindThis } from '@/decorators.js';
-import { CustomEmojiService } from '@/core/CustomEmojiService.js';
-import { IdService } from '@/core/IdService.js';
-import { JsonLdService } from './JsonLdService.js';
-import { ApMfmService } from './ApMfmService.js';
-import { CONTEXT } from './misc/contexts.js';
-import type { IAccept, IActivity, IAdd, IAnnounce, IApDocument, IApEmoji, IApHashtag, IApImage, IApMention, IBlock, ICreate, IDelete, IFlag, IFollow, IKey, ILike, IMove, IObject, IPost, IQuestion, IReject, IRemove, ITombstone, IUndo, IUpdate } from './type.js';
+import {DI} from '@/di-symbols.js';
+import type {Config} from '@/config.js';
+import type {MiPartialLocalUser, MiLocalUser, MiPartialRemoteUser, MiRemoteUser, MiUser} from '@/models/User.js';
+import type {IMentionedRemoteUsers, MiNote} from '@/models/Note.js';
+import type {MiBlocking} from '@/models/Blocking.js';
+import type {MiRelay} from '@/models/Relay.js';
+import type {MiDriveFile} from '@/models/DriveFile.js';
+import type {MiNoteReaction} from '@/models/NoteReaction.js';
+import type {MiEmoji} from '@/models/Emoji.js';
+import type {MiPoll} from '@/models/Poll.js';
+import type {MiPollVote} from '@/models/PollVote.js';
+import {UserKeypairService} from '@/core/UserKeypairService.js';
+import {MfmService} from '@/core/MfmService.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {DriveFileEntityService} from '@/core/entities/DriveFileEntityService.js';
+import type {MiUserKeypair} from '@/models/UserKeypair.js';
+import type {UsersRepository, UserProfilesRepository, NotesRepository, DriveFilesRepository, PollsRepository} from '@/models/_.js';
+import {bindThis} from '@/decorators.js';
+import {CustomEmojiService} from '@/core/CustomEmojiService.js';
+import {IdService} from '@/core/IdService.js';
+import {JsonLdService} from './JsonLdService.js';
+import {ApMfmService} from './ApMfmService.js';
+import {CONTEXT} from './misc/contexts.js';
+import type {IAccept, IActivity, IAdd, IAnnounce, IApDocument, IApEmoji, IApHashtag, IApImage, IApMention, IBlock, ICreate, IDelete, IFlag, IFollow, IKey, ILike, IMove, IObject, IPost, IQuestion, IReject, IRemove, ITombstone, IUndo, IUpdate} from './type.js';
 
 @Injectable()
 export class ApRendererService {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
-
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		@Inject(DI.driveFilesRepository)
 		private driveFilesRepository: DriveFilesRepository,
-
 		@Inject(DI.pollsRepository)
 		private pollsRepository: PollsRepository,
-
 		private customEmojiService: CustomEmojiService,
 		private userEntityService: UserEntityService,
 		private driveFileEntityService: DriveFileEntityService,
@@ -216,7 +210,7 @@ export class ApRendererService {
 	 */
 	@bindThis
 	public async renderFollowUser(id: MiUser['id']): Promise<string> {
-		const user = await this.usersRepository.findOneByOrFail({ id: id }) as MiPartialLocalUser | MiPartialRemoteUser;
+		const user = await this.usersRepository.findOneByOrFail({id: id}) as MiPartialLocalUser | MiPartialRemoteUser;
 		return this.userEntityService.getUserUri(user);
 	}
 
@@ -318,7 +312,7 @@ export class ApRendererService {
 	public async renderNote(note: MiNote, dive = true): Promise<IPost> {
 		const getPromisedFiles = async (ids: string[]): Promise<MiDriveFile[]> => {
 			if (ids.length === 0) return [];
-			const items = await this.driveFilesRepository.findBy({ id: In(ids) });
+			const items = await this.driveFilesRepository.findBy({id: In(ids)});
 			return ids.map(id => items.find(item => item.id === id)).filter(x => x != null);
 		};
 
@@ -326,10 +320,10 @@ export class ApRendererService {
 		let inReplyToNote: MiNote | null;
 
 		if (note.replyId) {
-			inReplyToNote = await this.notesRepository.findOneBy({ id: note.replyId });
+			inReplyToNote = await this.notesRepository.findOneBy({id: note.replyId});
 
 			if (inReplyToNote != null) {
-				const inReplyToUserExist = await this.usersRepository.exists({ where: { id: inReplyToNote.userId } });
+				const inReplyToUserExist = await this.usersRepository.exists({where: {id: inReplyToNote.userId}});
 
 				if (inReplyToUserExist) {
 					if (inReplyToNote.uri) {
@@ -350,7 +344,7 @@ export class ApRendererService {
 		let quote;
 
 		if (note.renoteId) {
-			const renote = await this.notesRepository.findOneBy({ id: note.renoteId });
+			const renote = await this.notesRepository.findOneBy({id: note.renoteId});
 
 			if (renote) {
 				quote = renote.uri ? renote.uri : `${this.config.url}/notes/${renote.id}`;
@@ -390,7 +384,7 @@ export class ApRendererService {
 		let poll: MiPoll | null = null;
 
 		if (note.hasPoll) {
-			poll = await this.pollsRepository.findOneBy({ noteId: note.id });
+			poll = await this.pollsRepository.findOneBy({noteId: note.id});
 		}
 
 		let apAppend = '';
@@ -401,7 +395,7 @@ export class ApRendererService {
 
 		const summary = note.cw === '' ? String.fromCharCode(0x200B) : note.cw;
 
-		const { content, noMisskeyContent } = this.apMfmService.getNoteHtml(note, apAppend);
+		const {content, noMisskeyContent} = this.apMfmService.getNoteHtml(note, apAppend);
 
 		const emojis = await this.getEmojis(note.emojis);
 		const apemojis = emojis.filter(emoji => !emoji.localOnly).map(emoji => this.renderEmoji(emoji));
@@ -457,9 +451,9 @@ export class ApRendererService {
 		const isSystem = user.username.includes('.');
 
 		const [avatar, banner, profile] = await Promise.all([
-			user.avatarId ? this.driveFilesRepository.findOneBy({ id: user.avatarId }) : undefined,
-			user.bannerId ? this.driveFilesRepository.findOneBy({ id: user.bannerId }) : undefined,
-			this.userProfilesRepository.findOneByOrFail({ userId: user.id }),
+			user.avatarId ? this.driveFilesRepository.findOneBy({id: user.avatarId}) : undefined,
+			user.bannerId ? this.driveFilesRepository.findOneBy({id: user.bannerId}) : undefined,
+			this.userProfilesRepository.findOneByOrFail({userId: user.id}),
 		]);
 
 		const attachment = profile.fields.map(field => ({
@@ -491,7 +485,7 @@ export class ApRendererService {
 			following: `${id}/following`,
 			featured: `${id}/collections/featured`,
 			sharedInbox: `${this.config.url}/inbox`,
-			endpoints: { sharedInbox: `${this.config.url}/inbox` },
+			endpoints: {sharedInbox: `${this.config.url}/inbox`},
 			url: `${this.config.url}/@${user.username}`,
 			preferredUsername: user.username,
 			name: user.name,
@@ -581,7 +575,7 @@ export class ApRendererService {
 
 		return {
 			type: 'Undo',
-			...(id ? { id } : {}),
+			...(id ? {id} : {}),
 			actor: this.userEntityService.genLocalUserUri(user.id),
 			object,
 			published: new Date().toISOString(),
@@ -625,7 +619,7 @@ export class ApRendererService {
 			x.id = `${this.config.url}/${randomUUID()}`;
 		}
 
-		return Object.assign({ '@context': CONTEXT }, x as T & { id: string });
+		return Object.assign({'@context': CONTEXT}, x as T & { id: string });
 	}
 
 	@bindThis

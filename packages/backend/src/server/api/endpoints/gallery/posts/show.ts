@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { GalleryPostsRepository } from '@/models/_.js';
-import { GalleryPostEntityService } from '@/core/entities/GalleryPostEntityService.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {GalleryPostsRepository} from '@/models/_.js';
+import {GalleryPostEntityService} from '@/core/entities/GalleryPostEntityService.js';
+import {DI} from '@/di-symbols.js';
+import {ApiError} from '../../../error.js';
 
 export const meta = {
 	tags: ['gallery'],
@@ -33,7 +33,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		postId: { type: 'string', format: 'misskey:id' },
+		postId: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['postId'],
 } as const;
@@ -43,7 +43,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.galleryPostsRepository)
 		private galleryPostsRepository: GalleryPostsRepository,
-
 		private galleryPostEntityService: GalleryPostEntityService,
 	) {
 		super(meta, paramDef, async (ps, me) => {

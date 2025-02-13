@@ -4,24 +4,26 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkModal ref="modal" :zPriority="'middle'" @click="modal?.close()" @closed="$emit('closed')">
-	<div :class="$style.root">
-		<div :class="$style.title"><MkSparkle>{{ i18n.ts.misskeyUpdated }}</MkSparkle></div>
-		<div :class="$style.version">✨{{ version }}🚀</div>
-		<MkButton full @click="whatIsNew">{{ i18n.ts.whatIsNew }}</MkButton>
-		<MkButton :class="$style.gotIt" primary full @click="modal?.close()">{{ i18n.ts.gotIt }}</MkButton>
-	</div>
-</MkModal>
+	<MkModal ref="modal" :zPriority="'middle'" @click="modal?.close()" @closed="$emit('closed')">
+		<div :class="$style.root">
+			<div :class="$style.title">
+				<MkSparkle>{{ i18n.ts.misskeyUpdated }}</MkSparkle>
+			</div>
+			<div :class="$style.version">✨{{ version }}🚀</div>
+			<MkButton full @click="whatIsNew">{{ i18n.ts.whatIsNew }}</MkButton>
+			<MkButton :class="$style.gotIt" full primary @click="modal?.close()">{{ i18n.ts.gotIt }}</MkButton>
+		</div>
+	</MkModal>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, shallowRef } from 'vue';
+import {onMounted, shallowRef} from 'vue';
 import MkModal from '@/components/MkModal.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkSparkle from '@/components/MkSparkle.vue';
-import { version } from '@@/js/config.js';
-import { i18n } from '@/i18n.js';
-import { confetti } from '@/scripts/confetti.js';
+import {version} from '@@/js/config.js';
+import {i18n} from '@/i18n.js';
+import {confetti} from '@/scripts/confetti.js';
 
 const modal = shallowRef<InstanceType<typeof MkModal>>();
 

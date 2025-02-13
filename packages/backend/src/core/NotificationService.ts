@@ -3,24 +3,24 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { setTimeout } from 'node:timers/promises';
+import {setTimeout} from 'node:timers/promises';
 import * as Redis from 'ioredis';
-import { Inject, Injectable, OnApplicationShutdown } from '@nestjs/common';
-import { In } from 'typeorm';
-import { DI } from '@/di-symbols.js';
-import type { UsersRepository } from '@/models/_.js';
-import type { MiUser } from '@/models/User.js';
-import type { MiNotification } from '@/models/Notification.js';
-import { bindThis } from '@/decorators.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { PushNotificationService } from '@/core/PushNotificationService.js';
-import { NotificationEntityService } from '@/core/entities/NotificationEntityService.js';
-import { IdService } from '@/core/IdService.js';
-import { CacheService } from '@/core/CacheService.js';
-import type { Config } from '@/config.js';
-import { UserListService } from '@/core/UserListService.js';
-import type { FilterUnionByProperty } from '@/types.js';
-import { trackPromise } from '@/misc/promise-tracker.js';
+import {Inject, Injectable, OnApplicationShutdown} from '@nestjs/common';
+import {In} from 'typeorm';
+import {DI} from '@/di-symbols.js';
+import type {UsersRepository} from '@/models/_.js';
+import type {MiUser} from '@/models/User.js';
+import type {MiNotification} from '@/models/Notification.js';
+import {bindThis} from '@/decorators.js';
+import {GlobalEventService} from '@/core/GlobalEventService.js';
+import {PushNotificationService} from '@/core/PushNotificationService.js';
+import {NotificationEntityService} from '@/core/entities/NotificationEntityService.js';
+import {IdService} from '@/core/IdService.js';
+import {CacheService} from '@/core/CacheService.js';
+import type {Config} from '@/config.js';
+import {UserListService} from '@/core/UserListService.js';
+import type {FilterUnionByProperty} from '@/types.js';
+import {trackPromise} from '@/misc/promise-tracker.js';
 
 @Injectable()
 export class NotificationService implements OnApplicationShutdown {
@@ -29,13 +29,10 @@ export class NotificationService implements OnApplicationShutdown {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.redis)
 		private redisClient: Redis.Redis,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		private notificationEntityService: NotificationEntityService,
 		private idService: IdService,
 		private globalEventService: GlobalEventService,
@@ -69,12 +66,6 @@ export class NotificationService implements OnApplicationShutdown {
 	}
 
 	@bindThis
-	private postReadAllNotifications(userId: MiUser['id']) {
-		this.globalEventService.publishMainStream(userId, 'readAllNotifications');
-		this.pushNotificationService.pushNotification(userId, 'readAllNotifications', undefined);
-	}
-
-	@bindThis
 	public createNotification<T extends MiNotification['type']>(
 		notifieeId: MiUser['id'],
 		type: T,
@@ -84,6 +75,36 @@ export class NotificationService implements OnApplicationShutdown {
 		trackPromise(
 			this.#createNotificationInternal(notifieeId, type, data, notifierId),
 		);
+	}
+
+	@bindThis
+	public async flushAllNotifications(userId: MiUser['id']) {
+		await Promise.all([
+			this.redisClient.del(`notificationTimeline:${userId}`),
+			this.redisClient.del(`latestReadNotification:${userId}`),
+		]);
+		this.globalEventService.publishMainStream(userId, 'notificationFlushed');
+	}
+
+	@bindThis
+	public dispose(): void {
+		this.#shutdownController.abort();
+	}
+
+	// TODO
+	//const locales = await import('../../../../locales/index.js');
+
+	// TODO: locale ファイルをクライアント用とサーバー用で分けたい
+
+	@bindThis
+	public onApplicationShutdown(signal?: string | undefined): void {
+		this.dispose();
+	}
+
+	@bindThis
+	private postReadAllNotifications(userId: MiUser['id']) {
+		this.globalEventService.publishMainStream(userId, 'readAllNotifications');
+		this.pushNotificationService.pushNotification(userId, 'readAllNotifications', undefined);
 	}
 
 	async #createNotificationInternal<T extends MiNotification['type']>(
@@ -171,24 +192,20 @@ export class NotificationService implements OnApplicationShutdown {
 		// 2秒経っても(今回作成した)通知が既読にならなかったら「未読の通知がありますよ」イベントを発行する
 		// テスト通知の場合は即時発行
 		const interval = notification.type === 'test' ? 0 : 2000;
-		setTimeout(interval, 'unread notification', { signal: this.#shutdownController.signal }).then(async () => {
+		setTimeout(interval, 'unread notification', {signal: this.#shutdownController.signal}).then(async () => {
 			const latestReadNotificationId = await this.redisClient.get(`latestReadNotification:${notifieeId}`);
 			if (latestReadNotificationId && (latestReadNotificationId >= (await redisIdPromise)!)) return;
 
 			this.globalEventService.publishMainStream(notifieeId, 'unreadNotification', packed);
 			this.pushNotificationService.pushNotification(notifieeId, 'notification', packed);
 
-			if (type === 'follow') this.emailNotificationFollow(notifieeId, await this.usersRepository.findOneByOrFail({ id: notifierId! }));
-			if (type === 'receiveFollowRequest') this.emailNotificationReceiveFollowRequest(notifieeId, await this.usersRepository.findOneByOrFail({ id: notifierId! }));
-		}, () => { /* aborted, ignore it */ });
+			if (type === 'follow') this.emailNotificationFollow(notifieeId, await this.usersRepository.findOneByOrFail({id: notifierId!}));
+			if (type === 'receiveFollowRequest') this.emailNotificationReceiveFollowRequest(notifieeId, await this.usersRepository.findOneByOrFail({id: notifierId!}));
+		}, () => { /* aborted, ignore it */
+		});
 
 		return notification;
 	}
-
-	// TODO
-	//const locales = await import('../../../../locales/index.js');
-
-	// TODO: locale ファイルをクライアント用とサーバー用で分けたい
 
 	@bindThis
 	private async emailNotificationFollow(userId: MiUser['id'], follower: MiUser) {
@@ -212,24 +229,5 @@ export class NotificationService implements OnApplicationShutdown {
 		// TODO: render user information html
 		sendEmail(userProfile.email, i18n.t('_email._receiveFollowRequest.title'), `${follower.name} (@${Acct.toString(follower)})`, `${follower.name} (@${Acct.toString(follower)})`);
 		*/
-	}
-
-	@bindThis
-	public async flushAllNotifications(userId: MiUser['id']) {
-		await Promise.all([
-			this.redisClient.del(`notificationTimeline:${userId}`),
-			this.redisClient.del(`latestReadNotification:${userId}`),
-		]);
-		this.globalEventService.publishMainStream(userId, 'notificationFlushed');
-	}
-
-	@bindThis
-	public dispose(): void {
-		this.#shutdownController.abort();
-	}
-
-	@bindThis
-	public onApplicationShutdown(signal?: string | undefined): void {
-		this.dispose();
 	}
 }

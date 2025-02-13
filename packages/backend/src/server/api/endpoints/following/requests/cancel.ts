@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { IdentifiableError } from '@/misc/identifiable-error.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { GetterService } from '@/server/api/GetterService.js';
-import { UserFollowingService } from '@/core/UserFollowingService.js';
-import { ApiError } from '../../../error.js';
+import {Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {IdentifiableError} from '@/misc/identifiable-error.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {GetterService} from '@/server/api/GetterService.js';
+import {UserFollowingService} from '@/core/UserFollowingService.js';
+import {ApiError} from '../../../error.js';
 
 export const meta = {
 	tags: ['following', 'account'],
@@ -42,7 +42,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		userId: { type: 'string', format: 'misskey:id' },
+		userId: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['userId'],
 } as const;

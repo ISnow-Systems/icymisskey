@@ -4,51 +4,51 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<component :is="link ? MkA : 'span'" v-user-preview="preview ? user.id : undefined" v-bind="bound" class="_noSelect" :class="[$style.root, { [$style.animation]: animation, [$style.cat]: user.isCat, [$style.square]: squareAvatars }]" :style="{ color }" :title="acct(user)" @click="onClick">
-	<MkImgWithBlurhash :class="$style.inner" :src="url" :hash="user.avatarBlurhash" :cover="true" :onlyAvgColor="true"/>
-	<MkUserOnlineIndicator v-if="indicator" :class="$style.indicator" :user="user"/>
-	<div v-if="user.isCat" :class="[$style.ears]">
-		<div :class="$style.earLeft">
-			<div v-if="false" :class="$style.layer">
-				<div :class="$style.plot" :style="{ backgroundImage: `url(${JSON.stringify(url)})` }"/>
-				<div :class="$style.plot" :style="{ backgroundImage: `url(${JSON.stringify(url)})` }"/>
-				<div :class="$style.plot" :style="{ backgroundImage: `url(${JSON.stringify(url)})` }"/>
+	<component :is="link ? MkA : 'span'" v-user-preview="preview ? user.id : undefined" :class="[$style.root, { [$style.animation]: animation, [$style.cat]: user.isCat, [$style.square]: squareAvatars }]" :style="{ color }" :title="acct(user)" class="_noSelect" v-bind="bound" @click="onClick">
+		<MkImgWithBlurhash :class="$style.inner" :cover="true" :hash="user.avatarBlurhash" :onlyAvgColor="true" :src="url"/>
+		<MkUserOnlineIndicator v-if="indicator" :class="$style.indicator" :user="user"/>
+		<div v-if="user.isCat" :class="[$style.ears]">
+			<div :class="$style.earLeft">
+				<div v-if="false" :class="$style.layer">
+					<div :class="$style.plot" :style="{ backgroundImage: `url(${JSON.stringify(url)})` }"/>
+					<div :class="$style.plot" :style="{ backgroundImage: `url(${JSON.stringify(url)})` }"/>
+					<div :class="$style.plot" :style="{ backgroundImage: `url(${JSON.stringify(url)})` }"/>
+				</div>
+			</div>
+			<div :class="$style.earRight">
+				<div v-if="false" :class="$style.layer">
+					<div :class="$style.plot" :style="{ backgroundImage: `url(${JSON.stringify(url)})` }"/>
+					<div :class="$style.plot" :style="{ backgroundImage: `url(${JSON.stringify(url)})` }"/>
+					<div :class="$style.plot" :style="{ backgroundImage: `url(${JSON.stringify(url)})` }"/>
+				</div>
 			</div>
 		</div>
-		<div :class="$style.earRight">
-			<div v-if="false" :class="$style.layer">
-				<div :class="$style.plot" :style="{ backgroundImage: `url(${JSON.stringify(url)})` }"/>
-				<div :class="$style.plot" :style="{ backgroundImage: `url(${JSON.stringify(url)})` }"/>
-				<div :class="$style.plot" :style="{ backgroundImage: `url(${JSON.stringify(url)})` }"/>
-			</div>
-		</div>
-	</div>
-	<template v-if="showDecoration">
-		<img
-			v-for="decoration in decorations ?? user.avatarDecorations"
-			:class="[$style.decoration, { [$style.decorationBlink]: decoration.blink }]"
-			:src="getDecorationUrl(decoration)"
-			:style="{
+		<template v-if="showDecoration">
+			<img
+				v-for="decoration in decorations ?? user.avatarDecorations"
+				:class="[$style.decoration, { [$style.decorationBlink]: decoration.blink }]"
+				:src="getDecorationUrl(decoration)"
+				:style="{
 				rotate: getDecorationAngle(decoration),
 				scale: getDecorationScale(decoration),
 				translate: getDecorationOffset(decoration),
 			}"
-			alt=""
-		>
-	</template>
-</component>
+				alt=""
+			>
+		</template>
+	</component>
 </template>
 
 <script lang="ts" setup>
-import { watch, ref, computed } from 'vue';
+import {watch, ref, computed} from 'vue';
 import * as Misskey from 'misskey-js';
-import { extractAvgColorFromBlurhash } from '@@/js/extract-avg-color-from-blurhash.js';
+import {extractAvgColorFromBlurhash} from '@@/js/extract-avg-color-from-blurhash.js';
 import MkImgWithBlurhash from '../MkImgWithBlurhash.vue';
 import MkA from './MkA.vue';
-import { getStaticImageUrl } from '@/scripts/media-proxy.js';
-import { acct, userPage } from '@/filters/user.js';
+import {getStaticImageUrl} from '@/scripts/media-proxy.js';
+import {acct, userPage} from '@/filters/user.js';
 import MkUserOnlineIndicator from '@/components/MkUserOnlineIndicator.vue';
-import { defaultStore } from '@/store.js';
+import {defaultStore} from '@/store.js';
 
 const animation = ref(defaultStore.state.animation);
 const squareAvatars = ref(defaultStore.state.squareAvatars);
@@ -78,7 +78,7 @@ const emit = defineEmits<{
 const showDecoration = props.forceShowDecoration || defaultStore.state.showAvatarDecorations;
 
 const bound = computed(() => props.link
-	? { to: userPage(props.user), target: props.target }
+	? {to: userPage(props.user), target: props.target}
 	: {});
 
 const url = computed(() => {
@@ -125,31 +125,63 @@ watch(() => props.user.avatarBlurhash, () => {
 
 <style lang="scss" module>
 @keyframes earwiggleleft {
-	from { transform: rotate(37.6deg) skew(30deg); }
-	25% { transform: rotate(10deg) skew(30deg); }
-	50% { transform: rotate(20deg) skew(30deg); }
-	75% { transform: rotate(0deg) skew(30deg); }
-	to { transform: rotate(37.6deg) skew(30deg); }
+	from {
+		transform: rotate(37.6deg) skew(30deg);
+	}
+	25% {
+		transform: rotate(10deg) skew(30deg);
+	}
+	50% {
+		transform: rotate(20deg) skew(30deg);
+	}
+	75% {
+		transform: rotate(0deg) skew(30deg);
+	}
+	to {
+		transform: rotate(37.6deg) skew(30deg);
+	}
 }
 
 @keyframes earwiggleright {
-	from { transform: rotate(-37.6deg) skew(-30deg); }
-	30% { transform: rotate(-10deg) skew(-30deg); }
-	55% { transform: rotate(-20deg) skew(-30deg); }
-	75% { transform: rotate(0deg) skew(-30deg); }
-	to { transform: rotate(-37.6deg) skew(-30deg); }
+	from {
+		transform: rotate(-37.6deg) skew(-30deg);
+	}
+	30% {
+		transform: rotate(-10deg) skew(-30deg);
+	}
+	55% {
+		transform: rotate(-20deg) skew(-30deg);
+	}
+	75% {
+		transform: rotate(0deg) skew(-30deg);
+	}
+	to {
+		transform: rotate(-37.6deg) skew(-30deg);
+	}
 }
 
 @keyframes eartightleft {
-	from { transform: rotate(37.6deg) skew(30deg); }
-	50% { transform: rotate(37.4deg) skew(30deg); }
-	to { transform: rotate(37.6deg) skew(30deg); }
+	from {
+		transform: rotate(37.6deg) skew(30deg);
+	}
+	50% {
+		transform: rotate(37.4deg) skew(30deg);
+	}
+	to {
+		transform: rotate(37.6deg) skew(30deg);
+	}
 }
 
 @keyframes eartightright {
-	from { transform: rotate(-37.6deg) skew(-30deg); }
-	50% { transform: rotate(-37.4deg) skew(-30deg); }
-	to { transform: rotate(-37.6deg) skew(-30deg); }
+	from {
+		transform: rotate(-37.6deg) skew(-30deg);
+	}
+	50% {
+		transform: rotate(-37.4deg) skew(-30deg);
+	}
+	to {
+		transform: rotate(-37.6deg) skew(-30deg);
+	}
 }
 
 .root {
@@ -258,11 +290,8 @@ watch(() => props.user.avatarBlurhash, () => {
 
 			> .layer {
 				left: 0;
-				transform:
-					skew(-30deg)
-					rotate(-37.5deg)
-					translate(-2.82842712475%, /* -2 * sqrt(2) */
-										-38.5857864376%); /* 40 - 2 * sqrt(2) */
+				transform: skew(-30deg) rotate(-37.5deg) translate(-2.82842712475%, /* -2 * sqrt(2) */
+					-38.5857864376%); /* 40 - 2 * sqrt(2) */
 
 				> .plot {
 					background-position: 20% 10%; /* ~= 37.5deg */
@@ -287,11 +316,8 @@ watch(() => props.user.avatarBlurhash, () => {
 
 			> .layer {
 				right: 0;
-				transform:
-					skew(30deg)
-					rotate(37.5deg)
-					translate(2.82842712475%, /* 2 * sqrt(2) */
-										-38.5857864376%); /* 40 - 2 * sqrt(2) */
+				transform: skew(30deg) rotate(37.5deg) translate(2.82842712475%, /* 2 * sqrt(2) */
+					-38.5857864376%); /* 40 - 2 * sqrt(2) */
 
 				> .plot {
 					position: absolute;

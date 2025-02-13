@@ -4,28 +4,30 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="800">
-		<div v-if="state === 'done'" class="_buttonsCenter">
-			<MkButton @click="close">{{ i18n.ts.close }}</MkButton>
-			<MkButton @click="goToMisskey">{{ i18n.ts.goToMisskey }}</MkButton>
-		</div>
-		<div v-else class="_fullInfo">
-			<MkLoading/>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs"/>
+		</template>
+		<MkSpacer :contentMax="800">
+			<div v-if="state === 'done'" class="_buttonsCenter">
+				<MkButton @click="close">{{ i18n.ts.close }}</MkButton>
+				<MkButton @click="goToMisskey">{{ i18n.ts.goToMisskey }}</MkButton>
+			</div>
+			<div v-else class="_fullInfo">
+				<MkLoading/>
+			</div>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
+import {computed, ref} from 'vue';
 import * as Misskey from 'misskey-js';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { i18n } from '@/i18n.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
-import { mainRouter } from '@/router/main.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {i18n} from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
+import {mainRouter} from '@/router/main.js';
 import MkButton from '@/components/MkButton.vue';
 
 const state = ref<'fetching' | 'done'>('fetching');

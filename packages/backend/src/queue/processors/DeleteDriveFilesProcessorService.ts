@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { MoreThan } from 'typeorm';
-import { DI } from '@/di-symbols.js';
-import type { UsersRepository, DriveFilesRepository, MiDriveFile } from '@/models/_.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {MoreThan} from 'typeorm';
+import {DI} from '@/di-symbols.js';
+import type {UsersRepository, DriveFilesRepository, MiDriveFile} from '@/models/_.js';
 import type Logger from '@/logger.js';
-import { DriveService } from '@/core/DriveService.js';
-import { bindThis } from '@/decorators.js';
-import { QueueLoggerService } from '../QueueLoggerService.js';
+import {DriveService} from '@/core/DriveService.js';
+import {bindThis} from '@/decorators.js';
+import {QueueLoggerService} from '../QueueLoggerService.js';
 import type * as Bull from 'bullmq';
-import type { DbJobDataWithUser } from '../types.js';
+import type {DbJobDataWithUser} from '../types.js';
 
 @Injectable()
 export class DeleteDriveFilesProcessorService {
@@ -21,10 +21,8 @@ export class DeleteDriveFilesProcessorService {
 	constructor(
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.driveFilesRepository)
 		private driveFilesRepository: DriveFilesRepository,
-
 		private driveService: DriveService,
 		private queueLoggerService: QueueLoggerService,
 	) {
@@ -35,7 +33,7 @@ export class DeleteDriveFilesProcessorService {
 	public async process(job: Bull.Job<DbJobDataWithUser>): Promise<void> {
 		this.logger.info(`Deleting drive files of ${job.data.user.id} ...`);
 
-		const user = await this.usersRepository.findOneBy({ id: job.data.user.id });
+		const user = await this.usersRepository.findOneBy({id: job.data.user.id});
 		if (user == null) {
 			return;
 		}
@@ -47,7 +45,7 @@ export class DeleteDriveFilesProcessorService {
 			const files = await this.driveFilesRepository.find({
 				where: {
 					userId: user.id,
-					...(cursor ? { id: MoreThan(cursor) } : {}),
+					...(cursor ? {id: MoreThan(cursor)} : {}),
 				},
 				take: 100,
 				order: {

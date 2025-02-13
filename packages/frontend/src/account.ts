@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { defineAsyncComponent, reactive, ref } from 'vue';
+import {defineAsyncComponent, reactive, ref} from 'vue';
 import * as Misskey from 'misskey-js';
-import { apiUrl } from '@@/js/config.js';
-import type { MenuItem, MenuButton } from '@/types/menu.js';
-import { showSuspendedDialog } from '@/scripts/show-suspended-dialog.js';
-import { i18n } from '@/i18n.js';
-import { miLocalStorage } from '@/local-storage.js';
-import { del, get, set } from '@/scripts/idb-proxy.js';
-import { waiting, popup, popupMenu, success, alert } from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { unisonReload, reloadChannel } from '@/scripts/unison-reload.js';
+import {apiUrl} from '@@/js/config.js';
+import type {MenuItem, MenuButton} from '@/types/menu.js';
+import {showSuspendedDialog} from '@/scripts/show-suspended-dialog.js';
+import {i18n} from '@/i18n.js';
+import {miLocalStorage} from '@/local-storage.js';
+import {del, get, set} from '@/scripts/idb-proxy.js';
+import {waiting, popup, popupMenu, success, alert} from '@/os.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {unisonReload, reloadChannel} from '@/scripts/unison-reload.js';
 
 // TODO: 他のタブと永続化されたstateを同期
 
@@ -33,6 +33,7 @@ export function signinRequired() {
 }
 
 export let notesCount = $i == null ? 0 : $i.notesCount;
+
 export function incNotesCount() {
 	notesCount++;
 }
@@ -76,7 +77,8 @@ export async function signout() {
 					return Promise.all(registrations.map(registration => registration.unregister()));
 				});
 		}
-	} catch (err) {}
+	} catch (err) {
+	}
 	//#endregion
 
 	if (accounts.length > 0) login(accounts[0].token);
@@ -90,7 +92,7 @@ export async function getAccounts(): Promise<{ id: Account['id'], token: Account
 export async function addAccount(id: Account['id'], token: Account['token']) {
 	const accounts = await getAccounts();
 	if (!accounts.some(x => x.id === id)) {
-		await set('accounts', accounts.concat([{ id, token }]));
+		await set('accounts', accounts.concat([{id, token}]));
 	}
 }
 
@@ -204,7 +206,7 @@ export async function refreshAccount() {
 
 export async function login(token: Account['token'], redirect?: string) {
 	const showing = ref(true);
-	const { dispose } = popup(defineAsyncComponent(() => import('@/components/MkWaitingDialog.vue')), {
+	const {dispose} = popup(defineAsyncComponent(() => import('@/components/MkWaitingDialog.vue')), {
 		success: false,
 		showing: showing,
 	}, {
@@ -255,7 +257,7 @@ export async function openAccountMenu(opts: {
 	}
 
 	const storedAccounts = await getAccounts().then(accounts => accounts.filter(x => x.id !== $i.id));
-	const accountsPromise = misskeyApi('users/show', { userIds: storedAccounts.map(x => x.id) });
+	const accountsPromise = misskeyApi('users/show', {userIds: storedAccounts.map(x => x.id)});
 
 	function createItem(account: Misskey.entities.UserDetailed) {
 		return {
@@ -349,10 +351,10 @@ export async function openAccountMenu(opts: {
 
 export function getAccountWithSigninDialog(): Promise<{ id: string, token: string } | null> {
 	return new Promise((resolve) => {
-		const { dispose } = popup(defineAsyncComponent(() => import('@/components/MkSigninDialog.vue')), {}, {
+		const {dispose} = popup(defineAsyncComponent(() => import('@/components/MkSigninDialog.vue')), {}, {
 			done: async (res: Misskey.entities.SigninFlowResponse & { finished: true }) => {
 				await addAccount(res.id, res.i);
-				resolve({ id: res.id, token: res.i });
+				resolve({id: res.id, token: res.i});
 			},
 			cancelled: () => {
 				resolve(null);
@@ -366,10 +368,10 @@ export function getAccountWithSigninDialog(): Promise<{ id: string, token: strin
 
 export function getAccountWithSignupDialog(): Promise<{ id: string, token: string } | null> {
 	return new Promise((resolve) => {
-		const { dispose } = popup(defineAsyncComponent(() => import('@/components/MkSignupDialog.vue')), {}, {
+		const {dispose} = popup(defineAsyncComponent(() => import('@/components/MkSignupDialog.vue')), {}, {
 			done: async (res: Misskey.entities.SignupResponse) => {
 				await addAccount(res.id, res.token);
-				resolve({ id: res.id, token: res.token });
+				resolve({id: res.id, token: res.token});
 			},
 			cancelled: () => {
 				resolve(null);

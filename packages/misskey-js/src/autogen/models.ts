@@ -1,4 +1,5 @@
-import { components } from './types.js';
+import {components} from './types.js';
+
 export type Error = components['schemas']['Error'];
 export type UserLite = components['schemas']['UserLite'];
 export type UserDetailedNotMeOnly = components['schemas']['UserDetailedNotMeOnly'];

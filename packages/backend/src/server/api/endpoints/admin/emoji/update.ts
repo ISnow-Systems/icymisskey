@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { CustomEmojiService } from '@/core/CustomEmojiService.js';
-import type { DriveFilesRepository, MiEmoji } from '@/models/_.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {CustomEmojiService} from '@/core/CustomEmojiService.js';
+import type {DriveFilesRepository, MiEmoji} from '@/models/_.js';
+import {DI} from '@/di-symbols.js';
+import {ApiError} from '../../../error.js';
 
 export const meta = {
 	tags: ['admin'],
@@ -39,27 +39,31 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		id: { type: 'string', format: 'misskey:id' },
-		name: { type: 'string', pattern: '^[a-zA-Z0-9_]+$' },
-		fileId: { type: 'string', format: 'misskey:id' },
+		id: {type: 'string', format: 'misskey:id'},
+		name: {type: 'string', pattern: '^[a-zA-Z0-9_]+$'},
+		fileId: {type: 'string', format: 'misskey:id'},
 		category: {
 			type: 'string',
 			nullable: true,
 			description: 'Use `null` to reset the category.',
 		},
-		aliases: { type: 'array', items: {
-			type: 'string',
-		} },
-		license: { type: 'string', nullable: true },
-		isSensitive: { type: 'boolean' },
-		localOnly: { type: 'boolean' },
-		roleIdsThatCanBeUsedThisEmojiAsReaction: { type: 'array', items: {
-			type: 'string',
-		} },
+		aliases: {
+			type: 'array', items: {
+				type: 'string',
+			}
+		},
+		license: {type: 'string', nullable: true},
+		isSensitive: {type: 'boolean'},
+		localOnly: {type: 'boolean'},
+		roleIdsThatCanBeUsedThisEmojiAsReaction: {
+			type: 'array', items: {
+				type: 'string',
+			}
+		},
 	},
 	anyOf: [
-		{ required: ['id'] },
-		{ required: ['name'] },
+		{required: ['id']},
+		{required: ['name']},
 	],
 } as const;
 
@@ -68,18 +72,17 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.driveFilesRepository)
 		private driveFilesRepository: DriveFilesRepository,
-
 		private customEmojiService: CustomEmojiService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			let driveFile;
 			if (ps.fileId) {
-				driveFile = await this.driveFilesRepository.findOneBy({ id: ps.fileId });
+				driveFile = await this.driveFilesRepository.findOneBy({id: ps.fileId});
 				if (driveFile == null) throw new ApiError(meta.errors.noSuchFile);
 			}
 
 			// JSON schemeのanyOfの型変換がうまくいっていないらしい
-			const required = { id: ps.id, name: ps.name } as
+			const required = {id: ps.id, name: ps.name} as
 				| { id: MiEmoji['id']; name?: string }
 				| { id?: MiEmoji['id']; name: string };
 
@@ -97,9 +100,12 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			}, me);
 
 			switch (error) {
-				case null: return;
-				case 'NO_SUCH_EMOJI': throw new ApiError(meta.errors.noSuchEmoji);
-				case 'SAME_NAME_EMOJI_EXISTS': throw new ApiError(meta.errors.sameNameEmojiExists);
+				case null:
+					return;
+				case 'NO_SUCH_EMOJI':
+					throw new ApiError(meta.errors.noSuchEmoji);
+				case 'SAME_NAME_EMOJI_EXISTS':
+					throw new ApiError(meta.errors.sameNameEmojiExists);
 			}
 			// 網羅性チェック
 			const mustBeNever: never = error;

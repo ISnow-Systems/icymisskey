@@ -4,9 +4,7 @@
 	"scripts": {
 		"watch": "nodemon -w ../../package.json -e json --exec \"node build.js watch\"",
 		"build": "node build.js",
-		"typecheck": "tsc --noEmit",
-		"eslint": "eslint --quiet src/**/*.ts",
-		"lint": "pnpm typecheck && pnpm eslint"
+		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
 		"esbuild": "^0.25.0",
@@ -14,9 +12,7 @@
 		"misskey-js": "workspace:*"
 	},
 	"devDependencies": {
-		"@typescript-eslint/parser": "^8.24.0",
 		"@types/serviceworker": "^0.0.120",
-		"eslint-plugin-import": "^2.31.0",
 		"nodemon": "3.1.9",
 		"typescript": "^5.7.3"
 	},

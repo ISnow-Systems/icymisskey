@@ -4,27 +4,27 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div>
-	<MkAnimBg style="position: fixed; top: 0;"/>
-	<div :class="$style.formContainer">
-		<div :class="$style.form">
-			<MkAuthConfirm
-				ref="authRoot"
-				:name="name"
-				:permissions="permissions"
-				:waitOnDeny="true"
-				@accept="onAccept"
-				@deny="onDeny"
-			/>
+	<div>
+		<MkAnimBg style="position: fixed; top: 0;"/>
+		<div :class="$style.formContainer">
+			<div :class="$style.form">
+				<MkAuthConfirm
+					ref="authRoot"
+					:name="name"
+					:permissions="permissions"
+					:waitOnDeny="true"
+					@accept="onAccept"
+					@deny="onDeny"
+				/>
+			</div>
 		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
 import * as Misskey from 'misskey-js';
 import MkAnimBg from '@/components/MkAnimBg.vue';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
 import MkAuthConfirm from '@/components/MkAuthConfirm.vue';
 
 const transactionIdMeta = document.querySelector<HTMLMetaElement>('meta[name="misskey:oauth:transaction-id"]');

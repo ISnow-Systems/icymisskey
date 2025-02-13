@@ -4,53 +4,57 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="600" :marginMin="16">
-		<div class="_gaps_m">
-			<FormInfo warn>{{ i18n.ts.editTheseSettingsMayBreakAccount }}</FormInfo>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs"/>
+		</template>
+		<MkSpacer :contentMax="600" :marginMin="16">
+			<div class="_gaps_m">
+				<FormInfo warn>{{ i18n.ts.editTheseSettingsMayBreakAccount }}</FormInfo>
 
-			<template v-if="value">
-				<FormSplit>
+				<template v-if="value">
+					<FormSplit>
+						<MkKeyValue>
+							<template #key>{{ i18n.ts._registry.domain }}</template>
+							<template #value>{{ props.domain === '@' ? i18n.ts.system : props.domain.toUpperCase() }}</template>
+						</MkKeyValue>
+						<MkKeyValue>
+							<template #key>{{ i18n.ts._registry.scope }}</template>
+							<template #value>{{ scope.join('/') }}</template>
+						</MkKeyValue>
+						<MkKeyValue>
+							<template #key>{{ i18n.ts._registry.key }}</template>
+							<template #value>{{ key }}</template>
+						</MkKeyValue>
+					</FormSplit>
+
+					<MkCodeEditor v-model="valueForEditor" lang="json5">
+						<template #label>{{ i18n.ts.value }} (JSON)</template>
+					</MkCodeEditor>
+
+					<MkButton primary @click="save"><i class="ti ti-device-floppy"></i> {{ i18n.ts.save }}</MkButton>
+
 					<MkKeyValue>
-						<template #key>{{ i18n.ts._registry.domain }}</template>
-						<template #value>{{ props.domain === '@' ? i18n.ts.system : props.domain.toUpperCase() }}</template>
+						<template #key>{{ i18n.ts.updatedAt }}</template>
+						<template #value>
+							<MkTime :time="value.updatedAt" mode="detail"/>
+						</template>
 					</MkKeyValue>
-					<MkKeyValue>
-						<template #key>{{ i18n.ts._registry.scope }}</template>
-						<template #value>{{ scope.join('/') }}</template>
-					</MkKeyValue>
-					<MkKeyValue>
-						<template #key>{{ i18n.ts._registry.key }}</template>
-						<template #value>{{ key }}</template>
-					</MkKeyValue>
-				</FormSplit>
 
-				<MkCodeEditor v-model="valueForEditor" lang="json5">
-					<template #label>{{ i18n.ts.value }} (JSON)</template>
-				</MkCodeEditor>
-
-				<MkButton primary @click="save"><i class="ti ti-device-floppy"></i> {{ i18n.ts.save }}</MkButton>
-
-				<MkKeyValue>
-					<template #key>{{ i18n.ts.updatedAt }}</template>
-					<template #value><MkTime :time="value.updatedAt" mode="detail"/></template>
-				</MkKeyValue>
-
-				<MkButton danger @click="del"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
-			</template>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+					<MkButton danger @click="del"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
+				</template>
+			</div>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { watch, computed, ref } from 'vue';
+import {watch, computed, ref} from 'vue';
 import JSON5 from 'json5';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { i18n } from '@/i18n.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {i18n} from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
 import MkButton from '@/components/MkButton.vue';
 import MkKeyValue from '@/components/MkKeyValue.vue';
 import MkCodeEditor from '@/components/MkCodeEditor.vue';
@@ -92,7 +96,7 @@ async function save() {
 	os.confirm({
 		type: 'warning',
 		text: i18n.ts.saveConfirm,
-	}).then(({ canceled }) => {
+	}).then(({canceled}) => {
 		if (canceled) return;
 		os.apiWithDialog('i/registry/set', {
 			scope: scope.value,
@@ -107,7 +111,7 @@ function del() {
 	os.confirm({
 		type: 'warning',
 		text: i18n.ts.deleteConfirm,
-	}).then(({ canceled }) => {
+	}).then(({canceled}) => {
 		if (canceled) return;
 		os.apiWithDialog('i/registry/remove', {
 			scope: scope.value,
@@ -117,7 +121,7 @@ function del() {
 	});
 }
 
-watch(() => props.path, fetchValue, { immediate: true });
+watch(() => props.path, fetchValue, {immediate: true});
 
 const headerActions = computed(() => []);
 

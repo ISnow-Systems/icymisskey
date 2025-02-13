@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { $i } from '@/account.js';
-import { instance } from '@/instance.js';
+import {$i} from '@/account.js';
+import {instance} from '@/instance.js';
 
 export const basicTimelineTypes = [
 	'home',

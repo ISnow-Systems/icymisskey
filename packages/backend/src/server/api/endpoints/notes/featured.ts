@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import type { NotesRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { DI } from '@/di-symbols.js';
-import { FeaturedService } from '@/core/FeaturedService.js';
-import { isUserRelated } from '@/misc/is-user-related.js';
-import { CacheService } from '@/core/CacheService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {NotesRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
+import {DI} from '@/di-symbols.js';
+import {FeaturedService} from '@/core/FeaturedService.js';
+import {isUserRelated} from '@/misc/is-user-related.js';
+import {CacheService} from '@/core/CacheService.js';
 
 export const meta = {
 	tags: ['notes'],
@@ -33,9 +33,9 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
-		untilId: { type: 'string', format: 'misskey:id' },
-		channelId: { type: 'string', nullable: true, format: 'misskey:id' },
+		limit: {type: 'integer', minimum: 1, maximum: 100, default: 10},
+		untilId: {type: 'string', format: 'misskey:id'},
+		channelId: {type: 'string', nullable: true, format: 'misskey:id'},
 	},
 	required: [],
 } as const;
@@ -48,7 +48,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		private cacheService: CacheService,
 		private noteEntityService: NoteEntityService,
 		private featuredService: FeaturedService,
@@ -86,7 +85,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			]) : [new Set<string>(), new Set<string>()];
 
 			const query = this.notesRepository.createQueryBuilder('note')
-				.where('note.id IN (:...noteIds)', { noteIds: noteIds })
+				.where('note.id IN (:...noteIds)', {noteIds: noteIds})
 				.innerJoinAndSelect('note.user', 'user')
 				.leftJoinAndSelect('note.reply', 'reply')
 				.leftJoinAndSelect('note.renote', 'renote')

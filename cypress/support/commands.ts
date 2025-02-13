@@ -26,7 +26,7 @@
 
 Cypress.Commands.add('visitHome', () => {
 	cy.visit('/');
-	cy.get('button', { timeout: 30000 }).should('be.visible');
+	cy.get('button', {timeout: 30000}).should('be.visible');
 })
 
 Cypress.Commands.add('resetState', () => {
@@ -48,7 +48,7 @@ Cypress.Commands.add('registerUser', (username, password, isAdmin = false) => {
 	cy.request('POST', route, {
 		username: username,
 		password: password,
-		...(isAdmin ? { setupPassword: 'example_password_please_change_this_or_you_will_get_hacked' } : {}),
+		...(isAdmin ? {setupPassword: 'example_password_please_change_this_or_you_will_get_hacked'} : {}),
 	}).its('body').as(username);
 });
 
@@ -58,9 +58,9 @@ Cypress.Commands.add('login', (username, password) => {
 	cy.intercept('POST', '/api/signin-flow').as('signin');
 
 	cy.get('[data-cy-signin]').click();
-	cy.get('[data-cy-signin-page-input]').should('be.visible', { timeout: 1000 });
+	cy.get('[data-cy-signin-page-input]').should('be.visible', {timeout: 1000});
 	cy.get('[data-cy-signin-username] input').type(`${username}{enter}`);
-	cy.get('[data-cy-signin-page-password]').should('be.visible', { timeout: 10000 });
+	cy.get('[data-cy-signin-page-password]').should('be.visible', {timeout: 10000});
 	cy.get('[data-cy-signin-password] input').type(`${password}{enter}`);
 
 	cy.wait('@signin').as('signedIn');

@@ -4,22 +4,22 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div ref="rootEl">
-	<MkLoading v-if="fetching"/>
-	<div v-else>
-		<canvas ref="chartEl"></canvas>
+	<div ref="rootEl">
+		<MkLoading v-if="fetching"/>
+		<div v-else>
+			<canvas ref="chartEl"></canvas>
+		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, nextTick, shallowRef, ref } from 'vue';
-import { Chart } from 'chart.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { defaultStore } from '@/store.js';
-import { useChartTooltip } from '@/scripts/use-chart-tooltip.js';
-import { alpha } from '@/scripts/color.js';
-import { initChart } from '@/scripts/init-chart.js';
+import {onMounted, nextTick, shallowRef, ref} from 'vue';
+import {Chart} from 'chart.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {defaultStore} from '@/store.js';
+import {useChartTooltip} from '@/scripts/use-chart-tooltip.js';
+import {alpha} from '@/scripts/color.js';
+import {initChart} from '@/scripts/init-chart.js';
 
 initChart();
 
@@ -28,7 +28,7 @@ const chartEl = shallowRef<HTMLCanvasElement | null>(null);
 let chartInstance: Chart | null = null;
 const fetching = ref(true);
 
-const { handler: externalTooltipHandler } = useChartTooltip({
+const {handler: externalTooltipHandler} = useChartTooltip({
 	position: 'middle',
 });
 
@@ -43,7 +43,7 @@ async function renderChart() {
 
 	const maxDays = wide ? 10 : narrow ? 5 : 7;
 
-	let raw = await misskeyApi('retention', { });
+	let raw = await misskeyApi('retention', {});
 
 	raw = raw.slice(0, maxDays + 1);
 

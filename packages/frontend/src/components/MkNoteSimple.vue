@@ -4,25 +4,25 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="$style.root">
-	<MkAvatar :class="$style.avatar" :user="note.user" link preview/>
-	<div :class="$style.main">
-		<MkNoteHeader :class="$style.header" :note="note" :mini="true"/>
-		<div>
-			<p v-if="note.cw != null" :class="$style.cw">
-				<Mfm v-if="note.cw != ''" style="margin-right: 8px;" :text="note.cw" :author="note.user" :nyaize="'respect'" :emojiUrls="note.emojis"/>
-				<MkCwButton v-model="showContent" :text="note.text" :files="note.files" :poll="note.poll"/>
-			</p>
-			<div v-show="note.cw == null || showContent">
-				<MkSubNoteContent :class="$style.text" :note="note"/>
+	<div :class="$style.root">
+		<MkAvatar :class="$style.avatar" :user="note.user" link preview/>
+		<div :class="$style.main">
+			<MkNoteHeader :class="$style.header" :mini="true" :note="note"/>
+			<div>
+				<p v-if="note.cw != null" :class="$style.cw">
+					<Mfm v-if="note.cw != ''" :author="note.user" :emojiUrls="note.emojis" :nyaize="'respect'" :text="note.cw" style="margin-right: 8px;"/>
+					<MkCwButton v-model="showContent" :files="note.files" :poll="note.poll" :text="note.text"/>
+				</p>
+				<div v-show="note.cw == null || showContent">
+					<MkSubNoteContent :class="$style.text" :note="note"/>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import {ref} from 'vue';
 import * as Misskey from 'misskey-js';
 import MkNoteHeader from '@/components/MkNoteHeader.vue';
 import MkSubNoteContent from '@/components/MkSubNoteContent.vue';

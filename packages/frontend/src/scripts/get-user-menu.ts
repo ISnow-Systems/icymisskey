@@ -3,22 +3,22 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { toUnicode } from 'punycode.js';
-import { defineAsyncComponent, ref, watch } from 'vue';
+import {toUnicode} from 'punycode.js';
+import {defineAsyncComponent, ref, watch} from 'vue';
 import * as Misskey from 'misskey-js';
-import { i18n } from '@/i18n.js';
-import { copyToClipboard } from '@/scripts/copy-to-clipboard.js';
-import { host, url } from '@@/js/config.js';
+import {i18n} from '@/i18n.js';
+import {copyToClipboard} from '@/scripts/copy-to-clipboard.js';
+import {host, url} from '@@/js/config.js';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { defaultStore, userActions } from '@/store.js';
-import { $i, iAmModerator } from '@/account.js';
-import { notesSearchAvailable, canSearchNonLocalNotes } from '@/scripts/check-permissions.js';
-import type { IRouter } from '@/nirax.js';
-import { antennasCache, rolesCache, userListsCache } from '@/cache.js';
-import { mainRouter } from '@/router/main.js';
-import { genEmbedCode } from '@/scripts/get-embed-code.js';
-import type { MenuItem } from '@/types/menu.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {defaultStore, userActions} from '@/store.js';
+import {$i, iAmModerator} from '@/account.js';
+import {notesSearchAvailable, canSearchNonLocalNotes} from '@/scripts/check-permissions.js';
+import type {IRouter} from '@/nirax.js';
+import {antennasCache, rolesCache, userListsCache} from '@/cache.js';
+import {mainRouter} from '@/router/main.js';
+import {genEmbedCode} from '@/scripts/get-embed-code.js';
+import type {MenuItem} from '@/types/menu.js';
 
 export function getUserMenu(user: Misskey.entities.UserDetailed, router: IRouter = mainRouter) {
 	const meId = $i ? $i.id : null;
@@ -33,7 +33,7 @@ export function getUserMenu(user: Misskey.entities.UserDetailed, router: IRouter
 				user.isMuted = false;
 			});
 		} else {
-			const { canceled, result: period } = await os.select({
+			const {canceled, result: period} = await os.select({
 				title: i18n.ts.mutePeriod,
 				items: [{
 					value: 'indefinitely', text: i18n.ts.indefinitely,
@@ -52,10 +52,10 @@ export function getUserMenu(user: Misskey.entities.UserDetailed, router: IRouter
 
 			const expiresAt = period === 'indefinitely' ? null
 				: period === 'tenMinutes' ? Date.now() + (1000 * 60 * 10)
-				: period === 'oneHour' ? Date.now() + (1000 * 60 * 60)
-				: period === 'oneDay' ? Date.now() + (1000 * 60 * 60 * 24)
-				: period === 'oneWeek' ? Date.now() + (1000 * 60 * 60 * 24 * 7)
-				: null;
+					: period === 'oneHour' ? Date.now() + (1000 * 60 * 60)
+						: period === 'oneDay' ? Date.now() + (1000 * 60 * 60 * 24)
+							: period === 'oneWeek' ? Date.now() + (1000 * 60 * 60 * 24 * 7)
+								: null;
 
 			os.apiWithDialog('mute/create', {
 				userId: user.id,
@@ -94,7 +94,7 @@ export function getUserMenu(user: Misskey.entities.UserDetailed, router: IRouter
 	}
 
 	function reportAbuse() {
-		const { dispose } = os.popup(defineAsyncComponent(() => import('@/components/MkAbuseReportWindow.vue')), {
+		const {dispose} = os.popup(defineAsyncComponent(() => import('@/components/MkAbuseReportWindow.vue')), {
 			user: user,
 		}, {
 			closed: () => dispose(),
@@ -131,7 +131,7 @@ export function getUserMenu(user: Misskey.entities.UserDetailed, router: IRouter
 		const userDetailed = await misskeyApi('users/show', {
 			userId: user.id,
 		});
-		const { canceled, result } = await os.form(i18n.ts.editMemo, {
+		const {canceled, result} = await os.form(i18n.ts.editMemo, {
 			memo: {
 				type: 'string',
 				required: true,
@@ -224,9 +224,9 @@ export function getUserMenu(user: Misskey.entities.UserDetailed, router: IRouter
 			text: i18n.ts.sendMessage,
 			action: () => {
 				const canonical = user.host === null ? `@${user.username}` : `@${user.username}@${user.host}`;
-				os.post({ specified: user, initialText: `${canonical} ` });
+				os.post({specified: user, initialText: `${canonical} `});
 			},
-		}, { type: 'divider' }, {
+		}, {type: 'divider'}, {
 			icon: 'ti ti-pencil',
 			text: i18n.ts.editMemo,
 			action: editMemo,
@@ -305,7 +305,7 @@ export function getUserMenu(user: Misskey.entities.UserDetailed, router: IRouter
 					return roles.filter(r => r.target === 'manual').map(r => ({
 						text: r.name,
 						action: async () => {
-							const { canceled, result: period } = await os.select({
+							const {canceled, result: period} = await os.select({
 								title: i18n.ts.period + ': ' + r.name,
 								items: [{
 									value: 'indefinitely', text: i18n.ts.indefinitely,
@@ -324,12 +324,12 @@ export function getUserMenu(user: Misskey.entities.UserDetailed, router: IRouter
 
 							const expiresAt = period === 'indefinitely' ? null
 								: period === 'oneHour' ? Date.now() + (1000 * 60 * 60)
-								: period === 'oneDay' ? Date.now() + (1000 * 60 * 60 * 24)
-								: period === 'oneWeek' ? Date.now() + (1000 * 60 * 60 * 24 * 7)
-								: period === 'oneMonth' ? Date.now() + (1000 * 60 * 60 * 24 * 30)
-								: null;
+									: period === 'oneDay' ? Date.now() + (1000 * 60 * 60 * 24)
+										: period === 'oneWeek' ? Date.now() + (1000 * 60 * 60 * 24 * 7)
+											: period === 'oneMonth' ? Date.now() + (1000 * 60 * 60 * 24 * 30)
+												: null;
 
-							os.apiWithDialog('admin/roles/assign', { roleId: r.id, userId: user.id, expiresAt });
+							os.apiWithDialog('admin/roles/assign', {roleId: r.id, userId: user.id, expiresAt});
 						},
 					}));
 				},
@@ -361,7 +361,7 @@ export function getUserMenu(user: Misskey.entities.UserDetailed, router: IRouter
 		});
 		//}
 
-		menuItems.push({ type: 'divider' }, {
+		menuItems.push({type: 'divider'}, {
 			icon: user.isMuted ? 'ti ti-eye' : 'ti ti-eye-off',
 			text: user.isMuted ? i18n.ts.unmute : i18n.ts.mute,
 			action: toggleMute,
@@ -383,7 +383,7 @@ export function getUserMenu(user: Misskey.entities.UserDetailed, router: IRouter
 			});
 		}
 
-		menuItems.push({ type: 'divider' }, {
+		menuItems.push({type: 'divider'}, {
 			icon: 'ti ti-exclamation-circle',
 			text: i18n.ts.reportAbuse,
 			action: reportAbuse,
@@ -391,7 +391,7 @@ export function getUserMenu(user: Misskey.entities.UserDetailed, router: IRouter
 	}
 
 	if (user.host !== null) {
-		menuItems.push({ type: 'divider' }, {
+		menuItems.push({type: 'divider'}, {
 			icon: 'ti ti-refresh',
 			text: i18n.ts.updateRemoteUser,
 			action: userInfoUpdate,
@@ -399,7 +399,7 @@ export function getUserMenu(user: Misskey.entities.UserDetailed, router: IRouter
 	}
 
 	if (defaultStore.state.devMode) {
-		menuItems.push({ type: 'divider' }, {
+		menuItems.push({type: 'divider'}, {
 			icon: 'ti ti-id',
 			text: i18n.ts.copyUserId,
 			action: () => {
@@ -409,7 +409,7 @@ export function getUserMenu(user: Misskey.entities.UserDetailed, router: IRouter
 	}
 
 	if ($i && meId === user.id) {
-		menuItems.push({ type: 'divider' }, {
+		menuItems.push({type: 'divider'}, {
 			icon: 'ti ti-pencil',
 			text: i18n.ts.editProfile,
 			action: () => {
@@ -419,7 +419,7 @@ export function getUserMenu(user: Misskey.entities.UserDetailed, router: IRouter
 	}
 
 	if (userActions.length > 0) {
-		menuItems.push({ type: 'divider' }, ...userActions.map(action => ({
+		menuItems.push({type: 'divider'}, ...userActions.map(action => ({
 			icon: 'ti ti-plug',
 			text: action.title,
 			action: () => {

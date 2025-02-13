@@ -4,24 +4,24 @@
  */
 
 import * as assert from 'node:assert';
-import { readFile } from 'node:fs/promises';
-import { basename, isAbsolute } from 'node:path';
-import { randomUUID } from 'node:crypto';
-import { inspect } from 'node:util';
-import WebSocket, { ClientOptions } from 'ws';
-import fetch, { File, RequestInit, type Headers } from 'node-fetch';
-import { DataSource } from 'typeorm';
-import { JSDOM } from 'jsdom';
-import { type Response } from 'node-fetch';
+import {readFile} from 'node:fs/promises';
+import {basename, isAbsolute} from 'node:path';
+import {randomUUID} from 'node:crypto';
+import {inspect} from 'node:util';
+import WebSocket, {ClientOptions} from 'ws';
+import fetch, {File, RequestInit, type Headers} from 'node-fetch';
+import {DataSource} from 'typeorm';
+import {JSDOM} from 'jsdom';
+import {type Response} from 'node-fetch';
 import Fastify from 'fastify';
-import { entities } from '../src/postgres.js';
-import { loadConfig } from '../src/config.js';
+import {entities} from '../src/postgres.js';
+import {loadConfig} from '../src/config.js';
 import type * as misskey from 'misskey-js';
-import { DEFAULT_POLICIES } from '@/core/RoleService.js';
-import { validateContentTypeSetAsActivityPub } from '@/core/activitypub/misc/validator.js';
-import { ApiError } from '@/server/api/error.js';
+import {DEFAULT_POLICIES} from '@/core/RoleService.js';
+import {validateContentTypeSetAsActivityPub} from '@/core/activitypub/misc/validator.js';
+import {ApiError} from '@/server/api/error.js';
 
-export { server as startServer, jobQueue as startJobQueue } from '@/boot/common.js';
+export {server as startServer, jobQueue as startJobQueue} from '@/boot/common.js';
 
 export interface UserToken {
 	token: string;
@@ -58,10 +58,10 @@ export type ApiRequest<E extends keyof misskey.Endpoints, P extends misskey.Endp
 export const successfulApiCall = async <E extends keyof misskey.Endpoints, P extends misskey.Endpoints[E]['req']>(request: ApiRequest<E, P>, assertion: {
 	status?: number,
 } = {}): Promise<misskey.api.SwitchCaseResponseType<E, P>> => {
-	const { endpoint, parameters, user } = request;
+	const {endpoint, parameters, user} = request;
 	const res = await api(endpoint, parameters, user);
 	const status = assertion.status ?? (res.body == null ? 204 : 200);
-	assert.strictEqual(res.status, status, inspect(res.body, { depth: 5, colors: true }));
+	assert.strictEqual(res.status, status, inspect(res.body, {depth: 5, colors: true}));
 
 	return res.body as misskey.api.SwitchCaseResponseType<E, P>;
 };
@@ -71,8 +71,8 @@ export const failedApiCall = async <E extends keyof misskey.Endpoints, P extends
 	code: string,
 	id: string
 }): Promise<void> => {
-	const { endpoint, parameters, user } = request;
-	const { status, code, id } = assertion;
+	const {endpoint, parameters, user} = request;
+	const {status, code, id} = assertion;
 	const res = await api(endpoint, parameters, user);
 	assert.strictEqual(res.status, status, inspect(res.body));
 	assert.ok(res.body);
@@ -136,7 +136,9 @@ function timeoutPromise<T>(p: Promise<T>, timeout: number): Promise<T> {
 	return Promise.race([
 		p,
 		new Promise((reject) => {
-			setTimeout(() => { reject(new Error('timed out')); }, timeout);
+			setTimeout(() => {
+				reject(new Error('timed out'));
+			}, timeout);
 		}) as never,
 	]);
 }
@@ -308,7 +310,7 @@ interface UploadOptions {
  * Upload file
  * @param user User
  */
-export const uploadFile = async (user?: UserToken, { path, name, blob }: UploadOptions = {}): Promise<{
+export const uploadFile = async (user?: UserToken, {path, name, blob}: UploadOptions = {}): Promise<{
 	status: number,
 	headers: Headers,
 	body: misskey.entities.DriveFile | null
@@ -373,7 +375,7 @@ export function connectStream<C extends keyof misskey.Channels>(user: UserToken,
 		const url = new URL(`ws://127.0.0.1:${port}/streaming`);
 		const options: ClientOptions = {};
 		if (user.bearer) {
-			options.headers = { Authorization: `Bearer ${user.token}` };
+			options.headers = {Authorization: `Bearer ${user.token}`};
 		} else {
 			url.searchParams.set('i', user.token);
 		}
@@ -499,8 +501,8 @@ export const simpleGet = async (path: string, accept = '*/*', cookie: any = unde
 
 	const body =
 		jsonTypes.includes(res.headers.get('content-type') ?? '') ? await res.json() :
-		htmlTypes.includes(res.headers.get('content-type') ?? '') ? new JSDOM(await res.text()) :
-		await bodyExtractor(res);
+			htmlTypes.includes(res.headers.get('content-type') ?? '') ? new JSDOM(await res.text()) :
+				await bodyExtractor(res);
 
 	return {
 		status: res.status,
@@ -532,11 +534,11 @@ export async function testPaginationConsistency<Entity extends { id: string, cre
 	ordering: 'desc' | 'asc' = 'desc'): Promise<void> {
 	const rangeToParam = (p: { limit?: number, until?: Entity, since?: Entity }): object => {
 		if (offsetBy === 'id') {
-			return { limit: p.limit, sinceId: p.since?.id, untilId: p.until?.id };
+			return {limit: p.limit, sinceId: p.since?.id, untilId: p.until?.id};
 		} else {
 			const sinceDate = p.since?.createdAt !== undefined ? new Date(p.since.createdAt).getTime() : undefined;
 			const untilDate = p.until?.createdAt !== undefined ? new Date(p.until.createdAt).getTime() : undefined;
-			return { limit: p.limit, sinceDate, untilDate };
+			return {limit: p.limit, sinceDate, untilDate};
 		}
 	};
 
@@ -574,30 +576,30 @@ export async function testPaginationConsistency<Entity extends { id: string, cre
 
 		// 3. untilId指定+limitで取得してつなぎ合わせた結果が期待通りになっていること
 		if (ordering === 'desc') {
-			let last = await fetchEntities({ limit });
+			let last = await fetchEntities({limit});
 			const actual: Entity[] = [];
 			while (last.length !== 0) {
 				actual.push(...last);
-				last = await fetchEntities(rangeToParam({ limit, until: last.at(-1) }));
+				last = await fetchEntities(rangeToParam({limit, until: last.at(-1)}));
 			}
 			assert.deepStrictEqual(
-				actual.map(({ id, createdAt }) => id + ':' + createdAt),
-				expected.map(({ id, createdAt }) => id + ':' + createdAt));
+				actual.map(({id, createdAt}) => id + ':' + createdAt),
+				expected.map(({id, createdAt}) => id + ':' + createdAt));
 		}
 
 		// 4. offset指定+limitで取得してつなぎ合わせた結果が期待通りになっていること
 		if (offsetBy === 'offset') {
-			let last = await fetchEntities({ limit, offset: 0 });
+			let last = await fetchEntities({limit, offset: 0});
 			let offset = limit ?? 10;
 			const actual: Entity[] = [];
 			while (last.length !== 0) {
 				actual.push(...last);
-				last = await fetchEntities({ limit, offset });
+				last = await fetchEntities({limit, offset});
 				offset += limit ?? 10;
 			}
 			assert.deepStrictEqual(
-				actual.map(({ id, createdAt }) => id + ':' + createdAt),
-				expected.map(({ id, createdAt }) => id + ':' + createdAt));
+				actual.map(({id, createdAt}) => id + ':' + createdAt),
+				expected.map(({id, createdAt}) => id + ':' + createdAt));
 		}
 	}
 }
@@ -673,7 +675,7 @@ export async function captureWebhook<T = SystemWebhookPayload>(postAction: () =>
 			resolve(body);
 		});
 
-		await fastify.listen({ port });
+		await fastify.listen({port});
 
 		timeoutHandle = setTimeout(async () => {
 			await fastify.close();

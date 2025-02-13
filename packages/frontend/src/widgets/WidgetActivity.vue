@@ -4,32 +4,34 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkContainer :showHeader="widgetProps.showHeader" :naked="widgetProps.transparent" data-cy-mkw-activity class="mkw-activity">
-	<template #icon><i class="ti ti-chart-line"></i></template>
-	<template #header>{{ i18n.ts._widgets.activity }}</template>
-	<template #func="{ buttonStyleClass }"><button class="_button" :class="buttonStyleClass" @click="toggleView()"><i class="ti ti-selector"></i></button></template>
-
-	<div>
-		<MkLoading v-if="fetching"/>
-		<template v-else>
-			<XCalendar v-show="widgetProps.view === 0" :activity="activity ?? []"/>
-			<XChart v-show="widgetProps.view === 1" :activity="activity ?? []"/>
+	<MkContainer :naked="widgetProps.transparent" :showHeader="widgetProps.showHeader" class="mkw-activity" data-cy-mkw-activity>
+		<template #icon><i class="ti ti-chart-line"></i></template>
+		<template #header>{{ i18n.ts._widgets.activity }}</template>
+		<template #func="{ buttonStyleClass }">
+			<button :class="buttonStyleClass" class="_button" @click="toggleView()"><i class="ti ti-selector"></i></button>
 		</template>
-	</div>
-</MkContainer>
+
+		<div>
+			<MkLoading v-if="fetching"/>
+			<template v-else>
+				<XCalendar v-show="widgetProps.view === 0" :activity="activity ?? []"/>
+				<XChart v-show="widgetProps.view === 1" :activity="activity ?? []"/>
+			</template>
+		</div>
+	</MkContainer>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { useWidgetPropsManager } from './widget.js';
-import type { WidgetComponentProps, WidgetComponentEmits, WidgetComponentExpose } from './widget.js';
+import {ref} from 'vue';
+import {useWidgetPropsManager} from './widget.js';
+import type {WidgetComponentProps, WidgetComponentEmits, WidgetComponentExpose} from './widget.js';
 import XCalendar from './WidgetActivity.calendar.vue';
 import XChart from './WidgetActivity.chart.vue';
-import type { GetFormResultType } from '@/scripts/form.js';
-import { misskeyApiGet } from '@/scripts/misskey-api.js';
+import type {GetFormResultType} from '@/scripts/form.js';
+import {misskeyApiGet} from '@/scripts/misskey-api.js';
 import MkContainer from '@/components/MkContainer.vue';
-import { $i } from '@/account.js';
-import { i18n } from '@/i18n.js';
+import {$i} from '@/account.js';
+import {i18n} from '@/i18n.js';
 
 const name = 'activity';
 
@@ -54,7 +56,7 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 const props = defineProps<WidgetComponentProps<WidgetProps>>();
 const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 
-const { widgetProps, configure, save } = useWidgetPropsManager(name,
+const {widgetProps, configure, save} = useWidgetPropsManager(name,
 	widgetPropsDef,
 	props,
 	emit,

@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { IsNull, MoreThan, Not } from 'typeorm';
-import { DI } from '@/di-symbols.js';
-import type { MiDriveFile, DriveFilesRepository } from '@/models/_.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {IsNull, MoreThan, Not} from 'typeorm';
+import {DI} from '@/di-symbols.js';
+import type {MiDriveFile, DriveFilesRepository} from '@/models/_.js';
 import type Logger from '@/logger.js';
-import { DriveService } from '@/core/DriveService.js';
-import { bindThis } from '@/decorators.js';
-import { QueueLoggerService } from '../QueueLoggerService.js';
+import {DriveService} from '@/core/DriveService.js';
+import {bindThis} from '@/decorators.js';
+import {QueueLoggerService} from '../QueueLoggerService.js';
 import type * as Bull from 'bullmq';
 
 @Injectable()
@@ -20,7 +20,6 @@ export class CleanRemoteFilesProcessorService {
 	constructor(
 		@Inject(DI.driveFilesRepository)
 		private driveFilesRepository: DriveFilesRepository,
-
 		private driveService: DriveService,
 		private queueLoggerService: QueueLoggerService,
 	) {
@@ -39,7 +38,7 @@ export class CleanRemoteFilesProcessorService {
 				where: {
 					userHost: Not(IsNull()),
 					isLink: false,
-					...(cursor ? { id: MoreThan(cursor) } : {}),
+					...(cursor ? {id: MoreThan(cursor)} : {}),
 				},
 				take: 8,
 				order: {

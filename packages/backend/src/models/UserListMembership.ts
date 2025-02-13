@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne } from 'typeorm';
-import { id } from './util/id.js';
-import { MiUser } from './User.js';
-import { MiUserList } from './UserList.js';
+import {PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne} from 'typeorm';
+import {id} from './util/id.js';
+import {MiUser} from './User.js';
+import {MiUserList} from './UserList.js';
 
 @Entity('user_list_membership')
-@Index(['userId', 'userListId'], { unique: true })
+@Index(['userId', 'userListId'], {unique: true})
 export class MiUserListMembership {
 	@PrimaryColumn(id())
 	public id: string;

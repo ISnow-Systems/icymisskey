@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import type { UserListsRepository, UserListFavoritesRepository, UserListMembershipsRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { UserListEntityService } from '@/core/entities/UserListEntityService.js';
-import { DI } from '@/di-symbols.js';
-import { QueryService } from '@/core/QueryService.js';
-import { ApiError } from '../../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {UserListsRepository, UserListFavoritesRepository, UserListMembershipsRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {UserListEntityService} from '@/core/entities/UserListEntityService.js';
+import {DI} from '@/di-symbols.js';
+import {QueryService} from '@/core/QueryService.js';
+import {ApiError} from '../../../error.js';
 
 export const meta = {
 	tags: ['lists', 'account'],
@@ -59,11 +59,11 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		listId: { type: 'string', format: 'misskey:id' },
-		forPublic: { type: 'boolean', default: false },
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 30 },
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
+		listId: {type: 'string', format: 'misskey:id'},
+		forPublic: {type: 'boolean', default: false},
+		limit: {type: 'integer', minimum: 1, maximum: 100, default: 30},
+		sinceId: {type: 'string', format: 'misskey:id'},
+		untilId: {type: 'string', format: 'misskey:id'},
 	},
 	required: ['listId'],
 } as const;
@@ -73,10 +73,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 	constructor(
 		@Inject(DI.userListsRepository)
 		private userListsRepository: UserListsRepository,
-
 		@Inject(DI.userListMembershipsRepository)
 		private userListMembershipsRepository: UserListMembershipsRepository,
-
 		private userListEntityService: UserListEntityService,
 		private queryService: QueryService,
 	) {
@@ -95,7 +93,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			}
 
 			const query = this.queryService.makePaginationQuery(this.userListMembershipsRepository.createQueryBuilder('membership'), ps.sinceId, ps.untilId)
-				.andWhere('membership.userListId = :userListId', { userListId: userList.id })
+				.andWhere('membership.userListId = :userListId', {userListId: userList.id})
 				.innerJoinAndSelect('membership.user', 'user');
 
 			const memberships = await query

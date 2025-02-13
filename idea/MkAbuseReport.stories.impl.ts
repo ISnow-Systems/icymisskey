@@ -4,12 +4,13 @@
  */
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { action } from '@storybook/addon-actions';
-import { StoryObj } from '@storybook/vue3';
-import { HttpResponse, http } from 'msw';
-import { abuseUserReport } from '../packages/frontend/.storybook/fakes.js';
-import { commonHandlers } from '../packages/frontend/.storybook/mocks.js';
+import {action} from '@storybook/addon-actions';
+import {StoryObj} from '@storybook/vue3';
+import {http, HttpResponse} from 'msw';
+import {abuseUserReport} from '../packages/frontend/.storybook/fakes.js';
+import {commonHandlers} from '../packages/frontend/.storybook/mocks.js';
 import MkAbuseReport from './MkAbuseReport.vue';
+
 export const Default = {
 	render(args) {
 		return {
@@ -44,7 +45,7 @@ export const Default = {
 		msw: {
 			handlers: [
 				...commonHandlers,
-				http.post('/api/admin/resolve-abuse-user-report', async ({ request }) => {
+				http.post('/api/admin/resolve-abuse-user-report', async ({request}) => {
 					action('POST /api/admin/resolve-abuse-user-report')(await request.json());
 					return HttpResponse.json({});
 				}),

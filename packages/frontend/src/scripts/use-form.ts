@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { computed, reactive, watch } from 'vue';
-import type { Reactive } from 'vue';
+import {computed, reactive, watch} from 'vue';
+import type {Reactive} from 'vue';
 
 function copy<T>(v: T): T {
 	return JSON.parse(JSON.stringify(v));
@@ -29,7 +29,7 @@ export function useForm<T extends Record<string, any>>(initialState: T, save: (n
 		for (const key in modifiedStates) {
 			modifiedStates[key] = currentState[key] !== previousState[key];
 		}
-	}, { deep: true });
+	}, {deep: true});
 
 	async function _save() {
 		await save(unwrapReactive(currentState));

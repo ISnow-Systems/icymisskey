@@ -5,10 +5,10 @@
 
 import cluster from 'node:cluster';
 import * as Sentry from '@sentry/node';
-import { nodeProfilingIntegration } from '@sentry/profiling-node';
-import { envOption } from '@/env.js';
-import { loadConfig } from '@/config.js';
-import { jobQueue, server } from './common.js';
+import {nodeProfilingIntegration} from '@sentry/profiling-node';
+import {envOption} from '@/env.js';
+import {loadConfig} from '@/config.js';
+import {jobQueue, server} from './common.js';
 
 /**
  * Init worker process

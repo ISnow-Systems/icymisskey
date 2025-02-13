@@ -4,39 +4,39 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<img
-	v-if="errored && fallbackToImage"
-	:class="[$style.root, { [$style.normal]: normal, [$style.noStyle]: noStyle }]"
-	src="/client-assets/dummy.png"
-	:title="alt"
-/>
-<span v-else-if="errored">:{{ customEmojiName }}:</span>
-<img
-	v-else
-	:class="[$style.root, { [$style.normal]: normal, [$style.noStyle]: noStyle }]"
-	:src="url"
-	:alt="alt"
-	:title="alt"
-	decoding="async"
-	@error="errored = true"
-	@load="errored = false"
-	@click="onClick"
-/>
+	<img
+		v-if="errored && fallbackToImage"
+		:class="[$style.root, { [$style.normal]: normal, [$style.noStyle]: noStyle }]"
+		:title="alt"
+		src="/client-assets/dummy.png"
+	/>
+	<span v-else-if="errored">:{{ customEmojiName }}:</span>
+	<img
+		v-else
+		:alt="alt"
+		:class="[$style.root, { [$style.normal]: normal, [$style.noStyle]: noStyle }]"
+		:src="url"
+		:title="alt"
+		decoding="async"
+		@click="onClick"
+		@error="errored = true"
+		@load="errored = false"
+	/>
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, inject, ref } from 'vue';
-import type { MenuItem } from '@/types/menu.js';
-import { getProxiedImageUrl, getStaticImageUrl } from '@/scripts/media-proxy.js';
-import { defaultStore } from '@/store.js';
-import { customEmojisMap } from '@/custom-emojis.js';
+import {computed, defineAsyncComponent, inject, ref} from 'vue';
+import type {MenuItem} from '@/types/menu.js';
+import {getProxiedImageUrl, getStaticImageUrl} from '@/scripts/media-proxy.js';
+import {defaultStore} from '@/store.js';
+import {customEmojisMap} from '@/custom-emojis.js';
 import * as os from '@/os.js';
-import { misskeyApi, misskeyApiGet } from '@/scripts/misskey-api.js';
-import { copyToClipboard } from '@/scripts/copy-to-clipboard.js';
+import {misskeyApi, misskeyApiGet} from '@/scripts/misskey-api.js';
+import {copyToClipboard} from '@/scripts/copy-to-clipboard.js';
 import * as sound from '@/scripts/sound.js';
-import { i18n } from '@/i18n.js';
+import {i18n} from '@/i18n.js';
 import MkCustomEmojiDetailedDialog from '@/components/MkCustomEmojiDetailedDialog.vue';
-import { $i } from '@/account.js';
+import {$i} from '@/account.js';
 
 const props = defineProps<{
 	name: string;
@@ -116,7 +116,7 @@ function onClick(ev: MouseEvent) {
 			text: i18n.ts.info,
 			icon: 'ti ti-info-circle',
 			action: async () => {
-				const { dispose } = os.popup(MkCustomEmojiDetailedDialog, {
+				const {dispose} = os.popup(MkCustomEmojiDetailedDialog, {
 					emoji: await misskeyApiGet('emoji', {
 						name: customEmojiName.value,
 					}),
@@ -144,7 +144,7 @@ async function edit(name: string) {
 	const emoji = await misskeyApi('emoji', {
 		name: name,
 	});
-	const { dispose } = os.popup(defineAsyncComponent(() => import('@/pages/emoji-edit-dialog.vue')), {
+	const {dispose} = os.popup(defineAsyncComponent(() => import('@/pages/emoji-edit-dialog.vue')), {
 		emoji: emoji,
 	}, {
 		closed: () => dispose(),

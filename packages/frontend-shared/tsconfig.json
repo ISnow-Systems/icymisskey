@@ -19,8 +19,12 @@
 		"verbatimModuleSyntax": true,
 		"baseUrl": ".",
 		"paths": {
-			"@/*": ["./*"],
-			"@@/*": ["./*"]
+			"@/*": [
+				"./*"
+			],
+			"@@/*": [
+				"./*"
+			]
 		},
 		"typeRoots": [
 			"./@types",

@@ -4,27 +4,27 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div>
-	<Transition
-		:enterActiveClass="defaultStore.state.animation ? $style.transition_toast_enterActive : ''"
-		:leaveActiveClass="defaultStore.state.animation ? $style.transition_toast_leaveActive : ''"
-		:enterFromClass="defaultStore.state.animation ? $style.transition_toast_enterFrom : ''"
-		:leaveToClass="defaultStore.state.animation ? $style.transition_toast_leaveTo : ''"
-		appear @afterLeave="emit('closed')"
-	>
-		<div v-if="showing" class="_acrylic" :class="$style.root" :style="{ zIndex }">
-			<div style="padding: 16px 24px;">
-				{{ message }}
+	<div>
+		<Transition
+			:enterActiveClass="defaultStore.state.animation ? $style.transition_toast_enterActive : ''"
+			:enterFromClass="defaultStore.state.animation ? $style.transition_toast_enterFrom : ''"
+			:leaveActiveClass="defaultStore.state.animation ? $style.transition_toast_leaveActive : ''"
+			:leaveToClass="defaultStore.state.animation ? $style.transition_toast_leaveTo : ''"
+			appear @afterLeave="emit('closed')"
+		>
+			<div v-if="showing" :class="$style.root" :style="{ zIndex }" class="_acrylic">
+				<div style="padding: 16px 24px;">
+					{{ message }}
+				</div>
 			</div>
-		</div>
-	</Transition>
-</div>
+		</Transition>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import * as os from '@/os.js';
-import { defaultStore } from '@/store.js';
+import {defaultStore} from '@/store.js';
 
 defineProps<{
 	message: string;
@@ -49,6 +49,7 @@ onMounted(() => {
 .transition_toast_leaveActive {
 	transition: opacity 0.3s, transform 0.3s !important;
 }
+
 .transition_toast_enterFrom,
 .transition_toast_leaveTo {
 	opacity: 0;

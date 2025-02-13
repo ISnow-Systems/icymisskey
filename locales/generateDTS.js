@@ -1,6 +1,6 @@
 import * as fs from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { dirname } from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {dirname} from 'node:path';
 import * as yaml from 'js-yaml';
 import ts from 'typescript';
 
@@ -18,15 +18,15 @@ function createMemberType(item) {
 	);
 	return parameters.length
 		? ts.factory.createTypeReferenceNode(
-				ts.factory.createIdentifier('ParameterizedString'),
-				[
-					ts.factory.createUnionTypeNode(
-						parameters.map((parameter) =>
-							ts.factory.createStringLiteral(parameter),
-						),
+			ts.factory.createIdentifier('ParameterizedString'),
+			[
+				ts.factory.createUnionTypeNode(
+					parameters.map((parameter) =>
+						ts.factory.createStringLiteral(parameter),
 					),
-				],
-			)
+				),
+			],
+		)
 		: ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword);
 }
 

@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { URL } from 'node:url';
-import { Inject, Injectable } from '@nestjs/common';
+import {URL} from 'node:url';
+import {Inject, Injectable} from '@nestjs/common';
 import * as parse5 from 'parse5';
-import { Window, XMLSerializer } from 'happy-dom';
-import { DI } from '@/di-symbols.js';
-import type { Config } from '@/config.js';
-import { intersperse } from '@/misc/prelude/array.js';
-import { normalizeForSearch } from '@/misc/normalize-for-search.js';
-import type { IMentionedRemoteUsers } from '@/models/Note.js';
-import { bindThis } from '@/decorators.js';
-import type { DefaultTreeAdapterMap } from 'parse5';
+import {Window, XMLSerializer} from 'happy-dom';
+import {DI} from '@/di-symbols.js';
+import type {Config} from '@/config.js';
+import {intersperse} from '@/misc/prelude/array.js';
+import {normalizeForSearch} from '@/misc/normalize-for-search.js';
+import type {IMentionedRemoteUsers} from '@/models/Note.js';
+import {bindThis} from '@/decorators.js';
+import type {DefaultTreeAdapterMap} from 'parse5';
 import type * as mfm from 'mfm-js';
 
 const treeAdapter = parse5.defaultTreeAdapter;
@@ -272,7 +272,7 @@ export class MfmService {
 			return null;
 		}
 
-		const { happyDOM, window } = new Window();
+		const {happyDOM, window} = new Window();
 
 		const doc = window.document;
 
@@ -438,7 +438,7 @@ export class MfmService {
 
 			mention: (node) => {
 				const a = doc.createElement('a');
-				const { username, host, acct } = node.props;
+				const {username, host, acct} = node.props;
 				const remoteUserInfo = mentionedRemoteUsers.find(remoteUser => remoteUser.username.toLowerCase() === username.toLowerCase() && remoteUser.host?.toLowerCase() === host?.toLowerCase());
 				a.setAttribute('href', remoteUserInfo
 					? (remoteUserInfo.url ? remoteUserInfo.url : remoteUserInfo.uri)
@@ -494,7 +494,8 @@ export class MfmService {
 
 		const serialized = new XMLSerializer().serializeToString(body);
 
-		happyDOM.close().catch(err => {});
+		happyDOM.close().catch(err => {
+		});
 
 		return serialized;
 	}

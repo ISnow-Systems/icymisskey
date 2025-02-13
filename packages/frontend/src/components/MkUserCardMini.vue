@@ -4,22 +4,22 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div v-adaptive-bg :class="[$style.root]">
-	<MkAvatar :class="$style.avatar" :user="user" indicator/>
-	<div :class="$style.body">
-		<span :class="$style.name"><MkUserName :user="user"/></span>
-		<span :class="$style.sub"><span class="_monospace">@{{ acct(user) }}</span></span>
+	<div v-adaptive-bg :class="[$style.root]">
+		<MkAvatar :class="$style.avatar" :user="user" indicator/>
+		<div :class="$style.body">
+			<span :class="$style.name"><MkUserName :user="user"/></span>
+			<span :class="$style.sub"><span class="_monospace">@{{ acct(user) }}</span></span>
+		</div>
+		<MkMiniChart v-if="chartValues" :class="$style.chart" :src="chartValues"/>
 	</div>
-	<MkMiniChart v-if="chartValues" :class="$style.chart" :src="chartValues"/>
-</div>
 </template>
 
 <script lang="ts" setup>
 import * as Misskey from 'misskey-js';
-import { onMounted, ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import MkMiniChart from '@/components/MkMiniChart.vue';
-import { misskeyApiGet } from '@/scripts/misskey-api.js';
-import { acct } from '@/filters/user.js';
+import {misskeyApiGet} from '@/scripts/misskey-api.js';
+import {acct} from '@/filters/user.js';
 
 const props = withDefaults(defineProps<{
 	user: Misskey.entities.User;
@@ -32,7 +32,7 @@ const chartValues = ref<number[] | null>(null);
 
 onMounted(() => {
 	if (props.withChart) {
-		misskeyApiGet('charts/user/notes', { userId: props.user.id, limit: 16 + 1, span: 'day' }).then(res => {
+		misskeyApiGet('charts/user/notes', {userId: props.user.id, limit: 16 + 1, span: 'day'}).then(res => {
 			// 今日のぶんの値はまだ途中の値であり、それも含めると大抵の場合前日よりも下降しているようなグラフになってしまうため今日は弾く
 			res.inc.splice(0, 1);
 			chartValues.value = res.inc;

@@ -25,7 +25,7 @@ export function searchEmoji(query: string | null, emojiDb: EmojiDef[], max = 30)
 	// 完全一致（エイリアスなし）
 	emojiDb.some(x => {
 		if (x.name === query && !x.aliasOf) {
-			matched.set(x.name, { emoji: x, score: query.length + 3 });
+			matched.set(x.name, {emoji: x, score: query.length + 3});
 		}
 		return matched.size === max;
 	});
@@ -34,7 +34,7 @@ export function searchEmoji(query: string | null, emojiDb: EmojiDef[], max = 30)
 	if (matched.size < max) {
 		emojiDb.some(x => {
 			if (x.name === query && !matched.has(x.aliasOf ?? x.name)) {
-				matched.set(x.aliasOf ?? x.name, { emoji: x, score: query.length + 2 });
+				matched.set(x.aliasOf ?? x.name, {emoji: x, score: query.length + 2});
 			}
 			return matched.size === max;
 		});
@@ -44,7 +44,7 @@ export function searchEmoji(query: string | null, emojiDb: EmojiDef[], max = 30)
 	if (matched.size < max) {
 		emojiDb.some(x => {
 			if (x.name.startsWith(query) && !x.aliasOf && !matched.has(x.name)) {
-				matched.set(x.name, { emoji: x, score: query.length + 1 });
+				matched.set(x.name, {emoji: x, score: query.length + 1});
 			}
 			return matched.size === max;
 		});
@@ -54,7 +54,7 @@ export function searchEmoji(query: string | null, emojiDb: EmojiDef[], max = 30)
 	if (matched.size < max) {
 		emojiDb.some(x => {
 			if (x.name.startsWith(query) && !matched.has(x.aliasOf ?? x.name)) {
-				matched.set(x.aliasOf ?? x.name, { emoji: x, score: query.length });
+				matched.set(x.aliasOf ?? x.name, {emoji: x, score: query.length});
 			}
 			return matched.size === max;
 		});
@@ -64,7 +64,7 @@ export function searchEmoji(query: string | null, emojiDb: EmojiDef[], max = 30)
 	if (matched.size < max) {
 		emojiDb.some(x => {
 			if (x.name.includes(query) && !matched.has(x.aliasOf ?? x.name)) {
-				matched.set(x.aliasOf ?? x.name, { emoji: x, score: query.length - 1 });
+				matched.set(x.aliasOf ?? x.name, {emoji: x, score: query.length - 1});
 			}
 			return matched.size === max;
 		});
@@ -88,7 +88,7 @@ export function searchEmoji(query: string | null, emojiDb: EmojiDef[], max = 30)
 
 			// 半分以上の文字が含まれていればヒットとする
 			if (hit > Math.ceil(queryChars.length / 2) && hit - 2 > (matched.get(x.aliasOf ?? x.name)?.score ?? 0)) {
-				hitEmojis.set(x.aliasOf ?? x.name, { emoji: x, score: hit - 2 });
+				hitEmojis.set(x.aliasOf ?? x.name, {emoji: x, score: hit - 2});
 			}
 		}
 

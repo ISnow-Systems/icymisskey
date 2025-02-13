@@ -3,35 +3,31 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { In, IsNull } from 'typeorm';
-import { Feed } from 'feed';
-import { DI } from '@/di-symbols.js';
-import type { DriveFilesRepository, NotesRepository, UserProfilesRepository } from '@/models/_.js';
-import type { Config } from '@/config.js';
-import type { MiUser } from '@/models/User.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { DriveFileEntityService } from '@/core/entities/DriveFileEntityService.js';
-import { bindThis } from '@/decorators.js';
-import { IdService } from '@/core/IdService.js';
-import { MfmService } from "@/core/MfmService.js";
-import { parse as mfmParse } from 'mfm-js';
+import {Inject, Injectable} from '@nestjs/common';
+import {In, IsNull} from 'typeorm';
+import {Feed} from 'feed';
+import {DI} from '@/di-symbols.js';
+import type {DriveFilesRepository, NotesRepository, UserProfilesRepository} from '@/models/_.js';
+import type {Config} from '@/config.js';
+import type {MiUser} from '@/models/User.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {DriveFileEntityService} from '@/core/entities/DriveFileEntityService.js';
+import {bindThis} from '@/decorators.js';
+import {IdService} from '@/core/IdService.js';
+import {MfmService} from "@/core/MfmService.js";
+import {parse as mfmParse} from 'mfm-js';
 
 @Injectable()
 export class FeedService {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
-
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		@Inject(DI.driveFilesRepository)
 		private driveFilesRepository: DriveFilesRepository,
-
 		private userEntityService: UserEntityService,
 		private driveFileEntityService: DriveFileEntityService,
 		private idService: IdService,
@@ -46,7 +42,7 @@ export class FeedService {
 			name: user.name ?? user.username,
 		};
 
-		const profile = await this.userProfilesRepository.findOneByOrFail({ userId: user.id });
+		const profile = await this.userProfilesRepository.findOneByOrFail({userId: user.id});
 
 		const notes = await this.notesRepository.find({
 			where: {
@@ -54,7 +50,7 @@ export class FeedService {
 				renoteId: IsNull(),
 				visibility: In(['public', 'home']),
 			},
-			order: { id: -1 },
+			order: {id: -1},
 			take: 20,
 		});
 

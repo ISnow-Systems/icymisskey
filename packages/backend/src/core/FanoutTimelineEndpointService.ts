@@ -3,20 +3,20 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { DI } from '@/di-symbols.js';
-import { bindThis } from '@/decorators.js';
-import type { MiUser } from '@/models/User.js';
-import type { MiNote } from '@/models/Note.js';
-import { Packed } from '@/misc/json-schema.js';
-import type { NotesRepository } from '@/models/_.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { FanoutTimelineName, FanoutTimelineService } from '@/core/FanoutTimelineService.js';
-import { isUserRelated } from '@/misc/is-user-related.js';
-import { isQuote, isRenote } from '@/misc/is-renote.js';
-import { CacheService } from '@/core/CacheService.js';
-import { isReply } from '@/misc/is-reply.js';
-import { isInstanceMuted } from '@/misc/is-instance-muted.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {DI} from '@/di-symbols.js';
+import {bindThis} from '@/decorators.js';
+import type {MiUser} from '@/models/User.js';
+import type {MiNote} from '@/models/Note.js';
+import {Packed} from '@/misc/json-schema.js';
+import type {NotesRepository} from '@/models/_.js';
+import {NoteEntityService} from '@/core/entities/NoteEntityService.js';
+import {FanoutTimelineName, FanoutTimelineService} from '@/core/FanoutTimelineService.js';
+import {isUserRelated} from '@/misc/is-user-related.js';
+import {isQuote, isRenote} from '@/misc/is-renote.js';
+import {CacheService} from '@/core/CacheService.js';
+import {isReply} from '@/misc/is-reply.js';
+import {isInstanceMuted} from '@/misc/is-instance-muted.js';
 
 type TimelineOptions = {
 	untilId: string | null,
@@ -41,7 +41,6 @@ export class FanoutTimelineEndpointService {
 	constructor(
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
-
 		private noteEntityService: NoteEntityService,
 		private cacheService: CacheService,
 		private fanoutTimelineService: FanoutTimelineService,
@@ -162,7 +161,7 @@ export class FanoutTimelineEndpointService {
 
 	private async getAndFilterFromDb(noteIds: string[], noteFilter: (note: MiNote) => boolean, idCompare: (a: string, b: string) => number): Promise<MiNote[]> {
 		const query = this.notesRepository.createQueryBuilder('note')
-			.where('note.id IN (:...noteIds)', { noteIds: noteIds })
+			.where('note.id IN (:...noteIds)', {noteIds: noteIds})
 			.innerJoinAndSelect('note.user', 'user')
 			.leftJoinAndSelect('note.reply', 'reply')
 			.leftJoinAndSelect('note.renote', 'renote')

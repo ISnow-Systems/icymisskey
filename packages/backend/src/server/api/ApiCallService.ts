@@ -3,28 +3,28 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { randomUUID } from 'node:crypto';
+import {randomUUID} from 'node:crypto';
 import * as fs from 'node:fs';
 import * as stream from 'node:stream/promises';
-import { Inject, Injectable } from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import * as Sentry from '@sentry/node';
-import { DI } from '@/di-symbols.js';
-import { getIpHash } from '@/misc/get-ip-hash.js';
-import type { MiLocalUser, MiUser } from '@/models/User.js';
-import type { MiAccessToken } from '@/models/AccessToken.js';
+import {DI} from '@/di-symbols.js';
+import {getIpHash} from '@/misc/get-ip-hash.js';
+import type {MiLocalUser, MiUser} from '@/models/User.js';
+import type {MiAccessToken} from '@/models/AccessToken.js';
 import type Logger from '@/logger.js';
-import type { MiMeta, UserIpsRepository } from '@/models/_.js';
-import { createTemp } from '@/misc/create-temp.js';
-import { bindThis } from '@/decorators.js';
-import { RoleService } from '@/core/RoleService.js';
-import type { Config } from '@/config.js';
-import { ApiError } from './error.js';
-import { RateLimiterService } from './RateLimiterService.js';
-import { ApiLoggerService } from './ApiLoggerService.js';
-import { AuthenticateService, AuthenticationError } from './AuthenticateService.js';
-import type { FastifyRequest, FastifyReply } from 'fastify';
-import type { OnApplicationShutdown } from '@nestjs/common';
-import type { IEndpointMeta, IEndpoint } from './endpoints.js';
+import type {MiMeta, UserIpsRepository} from '@/models/_.js';
+import {createTemp} from '@/misc/create-temp.js';
+import {bindThis} from '@/decorators.js';
+import {RoleService} from '@/core/RoleService.js';
+import type {Config} from '@/config.js';
+import {ApiError} from './error.js';
+import {RateLimiterService} from './RateLimiterService.js';
+import {ApiLoggerService} from './ApiLoggerService.js';
+import {AuthenticateService, AuthenticationError} from './AuthenticateService.js';
+import type {FastifyRequest, FastifyReply} from 'fastify';
+import type {OnApplicationShutdown} from '@nestjs/common';
+import type {IEndpointMeta, IEndpoint} from './endpoints.js';
 
 const accessDenied = {
 	message: 'Access denied.',
@@ -41,13 +41,10 @@ export class ApiCallService implements OnApplicationShutdown {
 	constructor(
 		@Inject(DI.meta)
 		private meta: MiMeta,
-
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.userIpsRepository)
 		private userIpsRepository: UserIpsRepository,
-
 		private authenticateService: AuthenticateService,
 		private rateLimiterService: RateLimiterService,
 		private roleService: RoleService,
@@ -59,94 +56,6 @@ export class ApiCallService implements OnApplicationShutdown {
 		this.userIpHistoriesClearIntervalId = setInterval(() => {
 			this.userIpHistories.clear();
 		}, 1000 * 60 * 60);
-	}
-
-	#sendApiError(reply: FastifyReply, err: ApiError): void {
-		let statusCode = err.httpStatusCode;
-		if (err.httpStatusCode === 401) {
-			reply.header('WWW-Authenticate', 'Bearer realm="Misskey"');
-		} else if (err.code === 'RATE_LIMIT_EXCEEDED') {
-			const info: unknown = err.info;
-			const unixEpochInSeconds = Date.now();
-			if (typeof(info) === 'object' && info && 'resetMs' in info && typeof(info.resetMs) === 'number') {
-				const cooldownInSeconds = Math.ceil((info.resetMs - unixEpochInSeconds) / 1000);
-				// もしかするとマイナスになる可能性がなくはないのでマイナスだったら0にしておく
-				reply.header('Retry-After', Math.max(cooldownInSeconds, 0).toString(10));
-			} else {
-				this.logger.warn(`rate limit information has unexpected type ${typeof(err.info?.reset)}`);
-			}
-		} else if (err.kind === 'client') {
-			reply.header('WWW-Authenticate', `Bearer realm="Misskey", error="invalid_request", error_description="${err.message}"`);
-			statusCode = statusCode ?? 400;
-		} else if (err.kind === 'permission') {
-			// (ROLE_PERMISSION_DENIEDは関係ない)
-			if (err.code === 'PERMISSION_DENIED') {
-				reply.header('WWW-Authenticate', `Bearer realm="Misskey", error="insufficient_scope", error_description="${err.message}"`);
-			}
-			statusCode = statusCode ?? 403;
-		} else if (!statusCode) {
-			statusCode = 500;
-		}
-		this.send(reply, statusCode, err);
-	}
-
-	#sendAuthenticationError(reply: FastifyReply, err: unknown): void {
-		if (err instanceof AuthenticationError) {
-			const message = 'Authentication failed. Please ensure your token is correct.';
-			reply.header('WWW-Authenticate', `Bearer realm="Misskey", error="invalid_token", error_description="${message}"`);
-			this.send(reply, 401, new ApiError({
-				message: 'Authentication failed. Please ensure your token is correct.',
-				code: 'AUTHENTICATION_FAILED',
-				id: 'b0a7f5f8-dc2f-4171-b91f-de88ad238e14',
-			}));
-		} else {
-			this.send(reply, 500, new ApiError());
-		}
-	}
-
-	#onExecError(ep: IEndpoint, data: any, err: Error, userId?: MiUser['id']): void {
-		if (err instanceof ApiError || err instanceof AuthenticationError) {
-			throw err;
-		} else {
-			const errId = randomUUID();
-			this.logger.error(`Internal error occurred in ${ep.name}: ${err.message}`, {
-				ep: ep.name,
-				ps: data,
-				e: {
-					message: err.message,
-					code: err.name,
-					stack: err.stack,
-					id: errId,
-				},
-			});
-
-			if (this.config.sentryForBackend) {
-				Sentry.captureMessage(`Internal error occurred in ${ep.name}: ${err.message}`, {
-					level: 'error',
-					user: {
-						id: userId,
-					},
-					extra: {
-						ep: ep.name,
-						ps: data,
-						e: {
-							message: err.message,
-							code: err.name,
-							stack: err.stack,
-							id: errId,
-						},
-					},
-				});
-			}
-
-			throw new ApiError(null, {
-				e: {
-					message: err.message,
-					code: err.name,
-					id: errId,
-				},
-			});
-		}
 	}
 
 	@bindThis
@@ -244,6 +153,104 @@ export class ApiCallService implements OnApplicationShutdown {
 	}
 
 	@bindThis
+	public dispose(): void {
+		clearInterval(this.userIpHistoriesClearIntervalId);
+	}
+
+	@bindThis
+	public onApplicationShutdown(signal?: string | undefined): void {
+		this.dispose();
+	}
+
+	#sendApiError(reply: FastifyReply, err: ApiError): void {
+		let statusCode = err.httpStatusCode;
+		if (err.httpStatusCode === 401) {
+			reply.header('WWW-Authenticate', 'Bearer realm="Misskey"');
+		} else if (err.code === 'RATE_LIMIT_EXCEEDED') {
+			const info: unknown = err.info;
+			const unixEpochInSeconds = Date.now();
+			if (typeof (info) === 'object' && info && 'resetMs' in info && typeof (info.resetMs) === 'number') {
+				const cooldownInSeconds = Math.ceil((info.resetMs - unixEpochInSeconds) / 1000);
+				// もしかするとマイナスになる可能性がなくはないのでマイナスだったら0にしておく
+				reply.header('Retry-After', Math.max(cooldownInSeconds, 0).toString(10));
+			} else {
+				this.logger.warn(`rate limit information has unexpected type ${typeof (err.info?.reset)}`);
+			}
+		} else if (err.kind === 'client') {
+			reply.header('WWW-Authenticate', `Bearer realm="Misskey", error="invalid_request", error_description="${err.message}"`);
+			statusCode = statusCode ?? 400;
+		} else if (err.kind === 'permission') {
+			// (ROLE_PERMISSION_DENIEDは関係ない)
+			if (err.code === 'PERMISSION_DENIED') {
+				reply.header('WWW-Authenticate', `Bearer realm="Misskey", error="insufficient_scope", error_description="${err.message}"`);
+			}
+			statusCode = statusCode ?? 403;
+		} else if (!statusCode) {
+			statusCode = 500;
+		}
+		this.send(reply, statusCode, err);
+	}
+
+	#sendAuthenticationError(reply: FastifyReply, err: unknown): void {
+		if (err instanceof AuthenticationError) {
+			const message = 'Authentication failed. Please ensure your token is correct.';
+			reply.header('WWW-Authenticate', `Bearer realm="Misskey", error="invalid_token", error_description="${message}"`);
+			this.send(reply, 401, new ApiError({
+				message: 'Authentication failed. Please ensure your token is correct.',
+				code: 'AUTHENTICATION_FAILED',
+				id: 'b0a7f5f8-dc2f-4171-b91f-de88ad238e14',
+			}));
+		} else {
+			this.send(reply, 500, new ApiError());
+		}
+	}
+
+	#onExecError(ep: IEndpoint, data: any, err: Error, userId?: MiUser['id']): void {
+		if (err instanceof ApiError || err instanceof AuthenticationError) {
+			throw err;
+		} else {
+			const errId = randomUUID();
+			this.logger.error(`Internal error occurred in ${ep.name}: ${err.message}`, {
+				ep: ep.name,
+				ps: data,
+				e: {
+					message: err.message,
+					code: err.name,
+					stack: err.stack,
+					id: errId,
+				},
+			});
+
+			if (this.config.sentryForBackend) {
+				Sentry.captureMessage(`Internal error occurred in ${ep.name}: ${err.message}`, {
+					level: 'error',
+					user: {
+						id: userId,
+					},
+					extra: {
+						ep: ep.name,
+						ps: data,
+						e: {
+							message: err.message,
+							code: err.name,
+							stack: err.stack,
+							id: errId,
+						},
+					},
+				});
+			}
+
+			throw new ApiError(null, {
+				e: {
+					message: err.message,
+					code: err.name,
+					id: errId,
+				},
+			});
+		}
+	}
+
+	@bindThis
 	private send(reply: FastifyReply, x?: any, y?: ApiError) {
 		if (x == null) {
 			reply.code(204);
@@ -256,7 +263,7 @@ export class ApiCallService implements OnApplicationShutdown {
 					code: y!.code,
 					id: y!.id,
 					kind: y!.kind,
-					...(y!.info ? { info: y!.info } : {}),
+					...(y!.info ? {info: y!.info} : {}),
 				},
 			});
 		} else {
@@ -445,15 +452,5 @@ export class ApiCallService implements OnApplicationShutdown {
 			return await ep.exec(data, user, token, file, request.ip, request.headers)
 				.catch((err: Error) => this.#onExecError(ep, data, err, user?.id));
 		}
-	}
-
-	@bindThis
-	public dispose(): void {
-		clearInterval(this.userIpHistoriesClearIntervalId);
-	}
-
-	@bindThis
-	public onApplicationShutdown(signal?: string | undefined): void {
-		this.dispose();
 	}
 }

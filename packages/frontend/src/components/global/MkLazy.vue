@@ -4,14 +4,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div ref="rootEl" :class="$style.root">
-	<div v-if="!showing" :class="$style.placeholder"></div>
-	<slot v-else></slot>
-</div>
+	<div ref="rootEl" :class="$style.root">
+		<div v-if="!showing" :class="$style.placeholder"></div>
+		<slot v-else></slot>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { nextTick, onMounted, onActivated, onBeforeUnmount, ref, shallowRef } from 'vue';
+import {nextTick, onMounted, onActivated, onBeforeUnmount, ref, shallowRef} from 'vue';
 
 const rootEl = shallowRef<HTMLDivElement>();
 const showing = ref(false);

@@ -4,10 +4,11 @@
  */
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { expect, userEvent, within } from '@storybook/test';
-import type { StoryObj } from '@storybook/vue3';
+import {expect, userEvent, within} from '@storybook/test';
+import type {StoryObj} from '@storybook/vue3';
 import MkA from './MkA.vue';
-import { tick } from '@/scripts/test-utils.js';
+import {tick} from '@/scripts/test-utils.js';
+
 export const Default = {
 	render(args) {
 		return {
@@ -29,12 +30,12 @@ export const Default = {
 			template: '<MkA v-bind="props">Misskey</MkA>',
 		};
 	},
-	async play({ canvasElement }) {
+	async play({canvasElement}) {
 		const canvas = within(canvasElement);
 		const a = canvas.getByRole<HTMLAnchorElement>('link');
 		// FIXME: 通るけどその後落ちるのでコメントアウト
 		// await expect(a.href).toMatch(/^https?:\/\/.*#test$/);
-		await userEvent.pointer({ keys: '[MouseRight]', target: a });
+		await userEvent.pointer({keys: '[MouseRight]', target: a});
 		const menu = canvas.getByRole('menu');
 		await expect(menu).toBeInTheDocument();
 		await userEvent.click(a);

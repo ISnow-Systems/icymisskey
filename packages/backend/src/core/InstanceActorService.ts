@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { IsNull, Not } from 'typeorm';
-import type { MiLocalUser } from '@/models/User.js';
-import type { UsersRepository } from '@/models/_.js';
-import { MemorySingleCache } from '@/misc/cache.js';
-import { DI } from '@/di-symbols.js';
-import { CreateSystemUserService } from '@/core/CreateSystemUserService.js';
-import { bindThis } from '@/decorators.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {IsNull, Not} from 'typeorm';
+import type {MiLocalUser} from '@/models/User.js';
+import type {UsersRepository} from '@/models/_.js';
+import {MemorySingleCache} from '@/misc/cache.js';
+import {DI} from '@/di-symbols.js';
+import {CreateSystemUserService} from '@/core/CreateSystemUserService.js';
+import {bindThis} from '@/decorators.js';
 
 const ACTOR_USERNAME = 'instance.actor' as const;
 
@@ -21,7 +21,6 @@ export class InstanceActorService {
 	constructor(
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		private createSystemUserService: CreateSystemUserService,
 	) {
 		this.cache = new MemorySingleCache<MiLocalUser>(Infinity);

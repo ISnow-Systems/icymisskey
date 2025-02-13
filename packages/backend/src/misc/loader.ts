@@ -16,7 +16,9 @@ export class DebounceLoader<K, V> {
 	private resolverMap = new Map<K, ResolverPair<V>>();
 	private promiseMap = new Map<K, Promise<V>>();
 	private resolvedPromise = Promise.resolve();
-	constructor(private loadFn: FetchFunction<K, V>) {}
+
+	constructor(private loadFn: FetchFunction<K, V>) {
+	}
 
 	public load(key: K): Promise<V> {
 		const promise = this.promiseMap.get(key);
@@ -26,7 +28,7 @@ export class DebounceLoader<K, V> {
 
 		const isFirst = this.promiseMap.size === 0;
 		const newPromise = new Promise<V>((resolve, reject) => {
-			this.resolverMap.set(key, { resolve, reject });
+			this.resolverMap.set(key, {resolve, reject});
 		});
 		this.promiseMap.set(key, newPromise);
 
@@ -42,7 +44,7 @@ export class DebounceLoader<K, V> {
 		this.resolverMap.clear();
 		this.promiseMap.clear();
 
-		for (const [key, { resolve, reject }] of resolvers) {
+		for (const [key, {resolve, reject}] of resolvers) {
 			this.loadFn(key).then(resolve, reject);
 		}
 	}

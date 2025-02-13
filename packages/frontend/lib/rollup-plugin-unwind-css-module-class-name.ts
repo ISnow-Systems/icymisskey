@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { generate } from 'astring';
-import { walk } from '../node_modules/estree-walker/src/index.js';
+import {generate} from 'astring';
+import {walk} from '../node_modules/estree-walker/src/index.js';
 import type * as estree from 'estree';
 import type * as estreeWalker from 'estree-walker';
-import type { Plugin } from 'vite';
+import type {Plugin} from 'vite';
 
 function isFalsyIdentifier(identifier: estree.Identifier): boolean {
 	return identifier.name === 'undefined' || identifier.name === 'NaN';
@@ -477,7 +477,7 @@ export default function pluginUnwindCssModuleClassName(): Plugin {
 		renderChunk(code): { code: string } {
 			const ast = this.parse(code) as unknown as estree.Node;
 			unwindCssModuleClassName(ast);
-			return { code: generate(ast) };
+			return {code: generate(ast)};
 		},
 	};
 }

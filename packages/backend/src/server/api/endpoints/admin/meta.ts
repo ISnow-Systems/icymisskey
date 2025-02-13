@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { MetaService } from '@/core/MetaService.js';
-import type { Config } from '@/config.js';
-import { DI } from '@/di-symbols.js';
-import { DEFAULT_POLICIES } from '@/core/RoleService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {MetaService} from '@/core/MetaService.js';
+import type {Config} from '@/config.js';
+import {DI} from '@/di-symbols.js';
+import {DEFAULT_POLICIES} from '@/core/RoleService.js';
 
 export const meta = {
 	tags: ['meta'],
@@ -529,8 +529,7 @@ export const meta = {
 
 export const paramDef = {
 	type: 'object',
-	properties: {
-	},
+	properties: {},
 	required: [],
 } as const;
 
@@ -539,7 +538,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
 		private metaService: MetaService,
 	) {
 		super(meta, paramDef, async () => {
@@ -644,7 +642,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				enableServerMachineStats: instance.enableServerMachineStats,
 				enableIdenticonGeneration: instance.enableIdenticonGeneration,
 				bannedEmailDomains: instance.bannedEmailDomains,
-				policies: { ...DEFAULT_POLICIES, ...instance.policies },
+				policies: {...DEFAULT_POLICIES, ...instance.policies},
 				manifestJsonOverride: instance.manifestJsonOverride,
 				enableFanoutTimeline: instance.enableFanoutTimeline,
 				enableFanoutTimelineDbFallback: instance.enableFanoutTimelineDbFallback,

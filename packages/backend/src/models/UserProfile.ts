@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Entity, Column, Index, OneToOne, JoinColumn, PrimaryColumn } from 'typeorm';
-import { obsoleteNotificationTypes, followingVisibilities, followersVisibilities, notificationTypes } from '@/types.js';
-import { id } from './util/id.js';
-import { MiUser } from './User.js';
-import { MiPage } from './Page.js';
-import { MiUserList } from './UserList.js';
+import {Entity, Column, Index, OneToOne, JoinColumn, PrimaryColumn} from 'typeorm';
+import {obsoleteNotificationTypes, followingVisibilities, followersVisibilities, notificationTypes} from '@/types.js';
+import {id} from './util/id.js';
+import {MiUser} from './User.js';
+import {MiPage} from './Page.js';
+import {MiUserList} from './UserList.js';
 
 // TODO: このテーブルで管理している情報すべてレジストリで管理するようにしても良いかも
 //       ただ、「emailVerified が true なユーザーを find する」のようなクエリは書けなくなるからウーン
@@ -248,21 +248,21 @@ export class MiUserProfile {
 	})
 	public notificationRecieveConfig: {
 		[notificationType in typeof notificationTypes[number]]?: {
-			type: 'all';
-		} | {
-			type: 'never';
-		} | {
-			type: 'following';
-		} | {
-			type: 'follower';
-		} | {
-			type: 'mutualFollow';
-		} | {
-			type: 'followingOrFollower';
-		} | {
-			type: 'list';
-			userListId: MiUserList['id'];
-		};
+		type: 'all';
+	} | {
+		type: 'never';
+	} | {
+		type: 'following';
+	} | {
+		type: 'follower';
+	} | {
+		type: 'mutualFollow';
+	} | {
+		type: 'followingOrFollower';
+	} | {
+		type: 'list';
+		userListId: MiUserList['id'];
+	};
 	};
 
 	@Column('varchar', {
@@ -285,6 +285,7 @@ export class MiUserProfile {
 		comment: '[Denormalized]',
 	})
 	public userHost: string | null;
+
 	//#endregion
 
 	constructor(data: Partial<MiUserProfile>) {

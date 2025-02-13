@@ -4,53 +4,55 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="800" :marginMin="16" :marginMax="32">
-		<FormSuspense :p="init" class="_gaps">
-			<MkInput v-model="title">
-				<template #label>{{ i18n.ts.title }}</template>
-			</MkInput>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs"/>
+		</template>
+		<MkSpacer :contentMax="800" :marginMax="32" :marginMin="16">
+			<FormSuspense :p="init" class="_gaps">
+				<MkInput v-model="title">
+					<template #label>{{ i18n.ts.title }}</template>
+				</MkInput>
 
-			<MkTextarea v-model="description" :max="500">
-				<template #label>{{ i18n.ts.description }}</template>
-			</MkTextarea>
+				<MkTextarea v-model="description" :max="500">
+					<template #label>{{ i18n.ts.description }}</template>
+				</MkTextarea>
 
-			<div class="_gaps_s">
-				<div v-for="file in files" :key="file.id" class="wqugxsfx" :style="{ backgroundImage: file ? `url(${ file.thumbnailUrl })` : null }">
-					<div class="name">{{ file.name }}</div>
-					<button v-tooltip="i18n.ts.remove" class="remove _button" @click="remove(file)"><i class="ti ti-x"></i></button>
+				<div class="_gaps_s">
+					<div v-for="file in files" :key="file.id" :style="{ backgroundImage: file ? `url(${ file.thumbnailUrl })` : null }" class="wqugxsfx">
+						<div class="name">{{ file.name }}</div>
+						<button v-tooltip="i18n.ts.remove" class="remove _button" @click="remove(file)"><i class="ti ti-x"></i></button>
+					</div>
+					<MkButton primary @click="selectFile"><i class="ti ti-plus"></i> {{ i18n.ts.attachFile }}</MkButton>
 				</div>
-				<MkButton primary @click="selectFile"><i class="ti ti-plus"></i> {{ i18n.ts.attachFile }}</MkButton>
-			</div>
 
-			<MkSwitch v-model="isSensitive">{{ i18n.ts.markAsSensitive }}</MkSwitch>
+				<MkSwitch v-model="isSensitive">{{ i18n.ts.markAsSensitive }}</MkSwitch>
 
-			<div class="_buttons">
-				<MkButton v-if="postId" primary @click="save"><i class="ti ti-device-floppy"></i> {{ i18n.ts.save }}</MkButton>
-				<MkButton v-else primary @click="save"><i class="ti ti-device-floppy"></i> {{ i18n.ts.publish }}</MkButton>
+				<div class="_buttons">
+					<MkButton v-if="postId" primary @click="save"><i class="ti ti-device-floppy"></i> {{ i18n.ts.save }}</MkButton>
+					<MkButton v-else primary @click="save"><i class="ti ti-device-floppy"></i> {{ i18n.ts.publish }}</MkButton>
 
-				<MkButton v-if="postId" danger @click="del"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
-			</div>
-		</FormSuspense>
-	</MkSpacer>
-</MkStickyContainer>
+					<MkButton v-if="postId" danger @click="del"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
+				</div>
+			</FormSuspense>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { computed, watch, ref } from 'vue';
+import {computed, watch, ref} from 'vue';
 import * as Misskey from 'misskey-js';
 import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/MkInput.vue';
 import MkTextarea from '@/components/MkTextarea.vue';
 import MkSwitch from '@/components/MkSwitch.vue';
 import FormSuspense from '@/components/form/suspense.vue';
-import { selectFiles } from '@/scripts/select-file.js';
+import {selectFiles} from '@/scripts/select-file.js';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
-import { i18n } from '@/i18n.js';
-import { useRouter } from '@/router/supplier.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
+import {i18n} from '@/i18n.js';
+import {useRouter} from '@/router/supplier.js';
 
 const router = useRouter();
 
@@ -96,7 +98,7 @@ async function save() {
 }
 
 async function del() {
-	const { canceled } = await os.confirm({
+	const {canceled} = await os.confirm({
 		type: 'warning',
 		text: i18n.ts.deleteConfirm,
 	});
@@ -116,7 +118,7 @@ watch(() => props.postId, () => {
 		description.value = post.description;
 		isSensitive.value = post.isSensitive;
 	}) : Promise.resolve(null);
-}, { immediate: true });
+}, {immediate: true});
 
 const headerActions = computed(() => []);
 

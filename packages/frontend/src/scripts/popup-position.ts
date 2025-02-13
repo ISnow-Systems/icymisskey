@@ -125,16 +125,16 @@ export function calcPopupPosition(el: HTMLElement, props: {
 				// ツールチップを上に向かって表示するスペースがなければ下に向かって出す
 				if (top - window.scrollY < 0) {
 					const [left, top] = calcPosWhenBottom();
-					return { left, top, transformOrigin: 'center top' };
+					return {left, top, transformOrigin: 'center top'};
 				}
 
-				return { left, top, transformOrigin: 'center bottom' };
+				return {left, top, transformOrigin: 'center bottom'};
 			}
 
 			case 'bottom': {
 				const [left, top] = calcPosWhenBottom();
 				// TODO: ツールチップを下に向かって表示するスペースがなければ上に向かって出す
-				return { left, top, transformOrigin: 'center top' };
+				return {left, top, transformOrigin: 'center top'};
 			}
 
 			case 'left': {
@@ -143,16 +143,16 @@ export function calcPopupPosition(el: HTMLElement, props: {
 				// ツールチップを左に向かって表示するスペースがなければ右に向かって出す
 				if (left - window.scrollX < 0) {
 					const [left, top] = calcPosWhenRight();
-					return { left, top, transformOrigin: 'left center' };
+					return {left, top, transformOrigin: 'left center'};
 				}
 
-				return { left, top, transformOrigin: 'right center' };
+				return {left, top, transformOrigin: 'right center'};
 			}
 
 			case 'right': {
 				const [left, top] = calcPosWhenRight();
 				// TODO: ツールチップを右に向かって表示するスペースがなければ左に向かって出す
-				return { left, top, transformOrigin: 'left center' };
+				return {left, top, transformOrigin: 'left center'};
 			}
 		}
 	};

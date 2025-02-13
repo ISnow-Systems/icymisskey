@@ -4,7 +4,7 @@ import Stream from '../src/streaming.js';
 describe('Streaming', () => {
 	test('useChannel', async () => {
 		const server = new WS('wss://misskey.test/streaming');
-		const stream = new Stream('https://misskey.test', { token: 'TOKEN' });
+		const stream = new Stream('https://misskey.test', {token: 'TOKEN'});
 		const mainChannelReceived: any[] = [];
 		const main = stream.useChannel('main');
 		main.on('meUpdated', payload => {
@@ -41,9 +41,9 @@ describe('Streaming', () => {
 
 	test('useChannel with parameters', async () => {
 		const server = new WS('wss://misskey.test/streaming');
-		const stream = new Stream('https://misskey.test', { token: 'TOKEN' });
+		const stream = new Stream('https://misskey.test', {token: 'TOKEN'});
 		const messagingChannelReceived: any[] = [];
-		const messaging = stream.useChannel('messaging', { otherparty: 'aaa' });
+		const messaging = stream.useChannel('messaging', {otherparty: 'aaa'});
 		messaging.on('message', payload => {
 			messagingChannelReceived.push(payload);
 		});
@@ -55,7 +55,7 @@ describe('Streaming', () => {
 		const messagingChannelId = msg.body.id;
 		expect(msg.type).toEqual('connect');
 		expect(msg.body.channel).toEqual('messaging');
-		expect(msg.body.params).toEqual({ otherparty: 'aaa' });
+		expect(msg.body.params).toEqual({otherparty: 'aaa'});
 		expect(messagingChannelId != null).toEqual(true);
 
 		server.send(JSON.stringify({
@@ -79,10 +79,10 @@ describe('Streaming', () => {
 
 	test('ちゃんとチャンネルごとにidが異なる', async () => {
 		const server = new WS('wss://misskey.test/streaming');
-		const stream = new Stream('https://misskey.test', { token: 'TOKEN' });
+		const stream = new Stream('https://misskey.test', {token: 'TOKEN'});
 
-		stream.useChannel('messaging', { otherparty: 'aaa' });
-		stream.useChannel('messaging', { otherparty: 'bbb' });
+		stream.useChannel('messaging', {otherparty: 'aaa'});
+		stream.useChannel('messaging', {otherparty: 'bbb'});
 
 		const ws = await server.connected;
 		expect(new URLSearchParams(new URL(ws.url).search).get('i')).toEqual('TOKEN');
@@ -102,10 +102,10 @@ describe('Streaming', () => {
 
 	test('Connection#send', async () => {
 		const server = new WS('wss://misskey.test/streaming');
-		const stream = new Stream('https://misskey.test', { token: 'TOKEN' });
+		const stream = new Stream('https://misskey.test', {token: 'TOKEN'});
 
-		const messaging = stream.useChannel('messaging', { otherparty: 'aaa' });
-		messaging.send('read', { id: 'aaa' });
+		const messaging = stream.useChannel('messaging', {otherparty: 'aaa'});
+		messaging.send('read', {id: 'aaa'});
 
 		const ws = await server.connected;
 		expect(new URLSearchParams(new URL(ws.url).search).get('i')).toEqual('TOKEN');
@@ -117,7 +117,7 @@ describe('Streaming', () => {
 		expect(msg.type).toEqual('ch');
 		expect(msg.body.id).toEqual(channelId);
 		expect(msg.body.type).toEqual('read');
-		expect(msg.body.body).toEqual({ id: 'aaa' });
+		expect(msg.body.body).toEqual({id: 'aaa'});
 
 		stream.close();
 		server.close();
@@ -125,7 +125,7 @@ describe('Streaming', () => {
 
 	test('Connection#dispose', async () => {
 		const server = new WS('wss://misskey.test/streaming');
-		const stream = new Stream('https://misskey.test', { token: 'TOKEN' });
+		const stream = new Stream('https://misskey.test', {token: 'TOKEN'});
 		const mainChannelReceived: any[] = [];
 		const main = stream.useChannel('main');
 		main.on('meUpdated', payload => {

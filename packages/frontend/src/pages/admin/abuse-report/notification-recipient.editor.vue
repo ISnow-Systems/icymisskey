@@ -4,83 +4,83 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkModalWindow
-	ref="dialogEl"
-	:width="400"
-	:height="490"
-	:withOkButton="false"
-	:okButtonDisabled="false"
-	@close="onCancelClicked"
-	@closed="emit('closed')"
->
-	<template #header>
-		{{ mode === 'create' ? i18n.ts._abuseReport._notificationRecipient.createRecipient : i18n.ts._abuseReport._notificationRecipient.modifyRecipient }}
-	</template>
-	<div v-if="loading === 0" style="display: flex; flex-direction: column; min-height: 100%;">
-		<MkSpacer :marginMin="20" :marginMax="28" style="flex-grow: 1;">
-			<div :class="$style.root" class="_gaps_m">
-				<MkInput v-model="title">
-					<template #label>{{ i18n.ts.title }}</template>
-				</MkInput>
-				<MkSelect v-model="method">
-					<template #label>{{ i18n.ts._abuseReport._notificationRecipient.recipientType }}</template>
-					<option value="email">{{ i18n.ts._abuseReport._notificationRecipient._recipientType.mail }}</option>
-					<option value="webhook">{{ i18n.ts._abuseReport._notificationRecipient._recipientType.webhook }}</option>
-					<template #caption>
-						{{ methodCaption }}
-					</template>
-				</MkSelect>
-				<div>
-					<MkSelect v-if="method === 'email'" v-model="userId">
-						<template #label>{{ i18n.ts._abuseReport._notificationRecipient.notifiedUser }}</template>
-						<option v-for="user in moderators" :key="user.id" :value="user.id">
-							{{ user.name ? `${user.name}(${user.username})` : user.username }}
-						</option>
+	<MkModalWindow
+		ref="dialogEl"
+		:height="490"
+		:okButtonDisabled="false"
+		:width="400"
+		:withOkButton="false"
+		@close="onCancelClicked"
+		@closed="emit('closed')"
+	>
+		<template #header>
+			{{ mode === 'create' ? i18n.ts._abuseReport._notificationRecipient.createRecipient : i18n.ts._abuseReport._notificationRecipient.modifyRecipient }}
+		</template>
+		<div v-if="loading === 0" style="display: flex; flex-direction: column; min-height: 100%;">
+			<MkSpacer :marginMax="28" :marginMin="20" style="flex-grow: 1;">
+				<div :class="$style.root" class="_gaps_m">
+					<MkInput v-model="title">
+						<template #label>{{ i18n.ts.title }}</template>
+					</MkInput>
+					<MkSelect v-model="method">
+						<template #label>{{ i18n.ts._abuseReport._notificationRecipient.recipientType }}</template>
+						<option value="email">{{ i18n.ts._abuseReport._notificationRecipient._recipientType.mail }}</option>
+						<option value="webhook">{{ i18n.ts._abuseReport._notificationRecipient._recipientType.webhook }}</option>
+						<template #caption>
+							{{ methodCaption }}
+						</template>
 					</MkSelect>
-					<div v-else-if="method === 'webhook'" :class="$style.systemWebhook">
-						<MkSelect v-model="systemWebhookId" style="flex: 1">
-							<template #label>{{ i18n.ts._abuseReport._notificationRecipient.notifiedWebhook }}</template>
-							<option v-for="webhook in systemWebhooks" :key="webhook.id ?? undefined" :value="webhook.id">
-								{{ webhook.name }}
+					<div>
+						<MkSelect v-if="method === 'email'" v-model="userId">
+							<template #label>{{ i18n.ts._abuseReport._notificationRecipient.notifiedUser }}</template>
+							<option v-for="user in moderators" :key="user.id" :value="user.id">
+								{{ user.name ? `${user.name}(${user.username})` : user.username }}
 							</option>
 						</MkSelect>
-						<MkButton rounded :class="$style.systemWebhookEditButton" @click="onEditSystemWebhookClicked">
-							<span v-if="systemWebhookId === null" class="ti ti-plus" style="line-height: normal"/>
-							<span v-else class="ti ti-settings" style="line-height: normal"/>
-						</MkButton>
+						<div v-else-if="method === 'webhook'" :class="$style.systemWebhook">
+							<MkSelect v-model="systemWebhookId" style="flex: 1">
+								<template #label>{{ i18n.ts._abuseReport._notificationRecipient.notifiedWebhook }}</template>
+								<option v-for="webhook in systemWebhooks" :key="webhook.id ?? undefined" :value="webhook.id">
+									{{ webhook.name }}
+								</option>
+							</MkSelect>
+							<MkButton :class="$style.systemWebhookEditButton" rounded @click="onEditSystemWebhookClicked">
+								<span v-if="systemWebhookId === null" class="ti ti-plus" style="line-height: normal"/>
+								<span v-else class="ti ti-settings" style="line-height: normal"/>
+							</MkButton>
+						</div>
 					</div>
+
+					<MkDivider/>
+
+					<MkSwitch v-model="isActive">
+						<template #label>{{ i18n.ts.enable }}</template>
+					</MkSwitch>
 				</div>
+			</MkSpacer>
 
-				<MkDivider/>
-
-				<MkSwitch v-model="isActive">
-					<template #label>{{ i18n.ts.enable }}</template>
-				</MkSwitch>
+			<div :class="$style.footer" class="_buttonsCenter">
+				<MkButton :disabled="disableSubmitButton" primary rounded @click="onSubmitClicked"><i class="ti ti-check"></i> {{ i18n.ts.ok }}</MkButton>
+				<MkButton rounded @click="onCancelClicked"><i class="ti ti-x"></i> {{ i18n.ts.cancel }}</MkButton>
 			</div>
-		</MkSpacer>
-
-		<div :class="$style.footer" class="_buttonsCenter">
-			<MkButton primary rounded :disabled="disableSubmitButton" @click="onSubmitClicked"><i class="ti ti-check"></i> {{ i18n.ts.ok }}</MkButton>
-			<MkButton rounded @click="onCancelClicked"><i class="ti ti-x"></i> {{ i18n.ts.cancel }}</MkButton>
 		</div>
-	</div>
-	<div v-else>
-		<MkLoading/>
-	</div>
-</MkModalWindow>
+		<div v-else>
+			<MkLoading/>
+		</div>
+	</MkModalWindow>
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, shallowRef, toRefs } from 'vue';
-import { entities } from 'misskey-js';
+import {computed, onMounted, ref, shallowRef, toRefs} from 'vue';
+import {entities} from 'misskey-js';
 import MkButton from '@/components/MkButton.vue';
 import MkModalWindow from '@/components/MkModalWindow.vue';
-import { i18n } from '@/i18n.js';
+import {i18n} from '@/i18n.js';
 import MkInput from '@/components/MkInput.vue';
-import { misskeyApi } from '@/scripts/misskey-api.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
 import MkSelect from '@/components/MkSelect.vue';
-import { showSystemWebhookEditorDialog } from '@/components/MkSystemWebhookEditor.impl.js';
-import type { MkSystemWebhookResult } from '@/components/MkSystemWebhookEditor.impl.js';
+import {showSystemWebhookEditorDialog} from '@/components/MkSystemWebhookEditor.impl.js';
+import type {MkSystemWebhookResult} from '@/components/MkSystemWebhookEditor.impl.js';
 import MkSwitch from '@/components/MkSwitch.vue';
 import MkDivider from '@/components/MkDivider.vue';
 import * as os from '@/os.js';
@@ -98,7 +98,7 @@ const props = defineProps<{
 	id?: string;
 }>();
 
-const { mode, id } = toRefs(props);
+const {mode, id} = toRefs(props);
 
 const dialogEl = shallowRef<InstanceType<typeof MkModalWindow>>();
 
@@ -165,7 +165,7 @@ async function onSubmitClicked() {
 				}
 				case 'edit': {
 					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-					await misskeyApi('admin/abuse-report/notification-recipient/update', { id: id.value!, ...params });
+					await misskeyApi('admin/abuse-report/notification-recipient/update', {id: id.value!, ...params});
 					break;
 				}
 			}
@@ -175,7 +175,7 @@ async function onSubmitClicked() {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (ex: any) {
 			const msg = ex.message ?? i18n.ts.internalServerErrorDescription;
-			await os.alert({ type: 'error', title: i18n.ts.error, text: msg });
+			await os.alert({type: 'error', title: i18n.ts.error, text: msg});
 			dialogEl.value?.close();
 			emit('canceled');
 		}
@@ -210,8 +210,8 @@ async function onEditSystemWebhookClicked() {
 async function fetchSystemWebhooks() {
 	await loadingScope(async () => {
 		systemWebhooks.value = [
-			{ id: null, name: i18n.ts.createNew },
-			...await misskeyApi('admin/system-webhook/list', { }),
+			{id: null, name: i18n.ts.createNew},
+			...await misskeyApi('admin/system-webhook/list', {}),
 		];
 	});
 }
@@ -258,7 +258,7 @@ onMounted(async () => {
 			}
 
 			try {
-				const res = await misskeyApi('admin/abuse-report/notification-recipient/show', { id: id.value });
+				const res = await misskeyApi('admin/abuse-report/notification-recipient/show', {id: id.value});
 
 				title.value = res.name;
 				method.value = res.method;
@@ -268,7 +268,7 @@ onMounted(async () => {
 				// eslint-disable-next-line
 			} catch (ex: any) {
 				const msg = ex.message ?? i18n.ts.internalServerErrorDescription;
-				await os.alert({ type: 'error', title: i18n.ts.error, text: msg });
+				await os.alert({type: 'error', title: i18n.ts.error, text: msg});
 				dialogEl.value?.close();
 				emit('canceled');
 			}

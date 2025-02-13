@@ -4,18 +4,18 @@
  */
 
 import Xev from 'xev';
-import { Injectable } from '@nestjs/common';
-import { bindThis } from '@/decorators.js';
-import { isJsonObject } from '@/misc/json-value.js';
-import type { JsonObject, JsonValue } from '@/misc/json-value.js';
-import Channel, { type MiChannelService } from '../channel.js';
+import {Injectable} from '@nestjs/common';
+import {bindThis} from '@/decorators.js';
+import {isJsonObject} from '@/misc/json-value.js';
+import type {JsonObject, JsonValue} from '@/misc/json-value.js';
+import Channel, {type MiChannelService} from '../channel.js';
 
 const ev = new Xev();
 
 class QueueStatsChannel extends Channel {
-	public readonly chName = 'queueStats';
 	public static shouldShare = true;
 	public static requireCredential = false as const;
+	public readonly chName = 'queueStats';
 
 	constructor(id: string, connection: Channel['connection']) {
 		super(id, connection);
@@ -26,11 +26,6 @@ class QueueStatsChannel extends Channel {
 	@bindThis
 	public async init(params: JsonObject) {
 		ev.addListener('queueStats', this.onStats);
-	}
-
-	@bindThis
-	private onStats(stats: JsonObject) {
-		this.send('stats', stats);
 	}
 
 	@bindThis
@@ -55,6 +50,11 @@ class QueueStatsChannel extends Channel {
 	public dispose() {
 		ev.removeListener('queueStats', this.onStats);
 	}
+
+	@bindThis
+	private onStats(stats: JsonObject) {
+		this.send('stats', stats);
+	}
 }
 
 @Injectable()
@@ -63,8 +63,7 @@ export class QueueStatsChannelService implements MiChannelService<false> {
 	public readonly requireCredential = QueueStatsChannel.requireCredential;
 	public readonly kind = QueueStatsChannel.kind;
 
-	constructor(
-	) {
+	constructor() {
 	}
 
 	@bindThis

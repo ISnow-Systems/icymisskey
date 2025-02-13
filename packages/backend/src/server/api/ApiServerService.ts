@@ -3,38 +3,34 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import cors from '@fastify/cors';
 import multipart from '@fastify/multipart';
 import fastifyCookie from '@fastify/cookie';
-import { ModuleRef } from '@nestjs/core';
-import { AuthenticationResponseJSON } from '@simplewebauthn/types';
-import type { Config } from '@/config.js';
-import type { InstancesRepository, AccessTokensRepository } from '@/models/_.js';
-import { DI } from '@/di-symbols.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { bindThis } from '@/decorators.js';
+import {ModuleRef} from '@nestjs/core';
+import {AuthenticationResponseJSON} from '@simplewebauthn/types';
+import type {Config} from '@/config.js';
+import type {InstancesRepository, AccessTokensRepository} from '@/models/_.js';
+import {DI} from '@/di-symbols.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {bindThis} from '@/decorators.js';
 import endpoints from './endpoints.js';
-import { ApiCallService } from './ApiCallService.js';
-import { SignupApiService } from './SignupApiService.js';
-import { SigninApiService } from './SigninApiService.js';
-import { SigninWithPasskeyApiService } from './SigninWithPasskeyApiService.js';
-import type { FastifyInstance, FastifyPluginOptions } from 'fastify';
+import {ApiCallService} from './ApiCallService.js';
+import {SignupApiService} from './SignupApiService.js';
+import {SigninApiService} from './SigninApiService.js';
+import {SigninWithPasskeyApiService} from './SigninWithPasskeyApiService.js';
+import type {FastifyInstance, FastifyPluginOptions} from 'fastify';
 
 @Injectable()
 export class ApiServerService {
 	constructor(
 		private moduleRef: ModuleRef,
-
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.instancesRepository)
 		private instancesRepository: InstancesRepository,
-
 		@Inject(DI.accessTokensRepository)
 		private accessTokensRepository: AccessTokensRepository,
-
 		private userEntityService: UserEntityService,
 		private apiCallService: ApiCallService,
 		private signupApiService: SignupApiService,
@@ -70,7 +66,7 @@ export class ApiServerService {
 				name: endpoint.name,
 				meta: endpoint.meta,
 				params: endpoint.params,
-				exec: this.moduleRef.get('ep:' + endpoint.name, { strict: false }).exec,
+				exec: this.moduleRef.get('ep:' + endpoint.name, {strict: false}).exec,
 			};
 
 			if (endpoint.meta.requireFile) {
@@ -94,7 +90,7 @@ export class ApiServerService {
 					Params: { endpoint: string; },
 					Body: Record<string, unknown>,
 					Querystring: Record<string, unknown>,
-				}>('/' + endpoint.name, { bodyLimit: 1024 * 1024 }, async (request, reply) => {
+				}>('/' + endpoint.name, {bodyLimit: 1024 * 1024}, async (request, reply) => {
 					if (request.method === 'GET' && !endpoint.meta.allowGet) {
 						reply.code(405);
 						reply.send();
@@ -170,7 +166,7 @@ export class ApiServerService {
 				return {
 					ok: true,
 					token: token.token,
-					user: await this.userEntityService.pack(token.userId, null, { schema: 'UserDetailedNotMe' }),
+					user: await this.userEntityService.pack(token.userId, null, {schema: 'UserDetailedNotMe'}),
 				};
 			} else {
 				return {

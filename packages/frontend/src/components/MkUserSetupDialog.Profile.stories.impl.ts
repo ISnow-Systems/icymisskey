@@ -4,8 +4,9 @@
  */
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import type { StoryObj } from '@storybook/vue3';
+import type {StoryObj} from '@storybook/vue3';
 import MkUserSetupDialog_Profile from './MkUserSetupDialog.Profile.vue';
+
 export const Default = {
 	render(args) {
 		return {
@@ -27,9 +28,7 @@ export const Default = {
 			template: '<MkUserSetupDialog_Profile v-bind="props" />',
 		};
 	},
-	args: {
-
-	},
+	args: {},
 	parameters: {
 		layout: 'centered',
 	},

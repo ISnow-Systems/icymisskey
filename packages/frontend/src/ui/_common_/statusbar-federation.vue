@@ -8,15 +8,15 @@ SPDX-License-Identifier: AGPL-3.0-only
 	<template v-if="display === 'marquee'">
 		<Transition
 			:enterActiveClass="$style.transition_change_enterActive"
-			:leaveActiveClass="$style.transition_change_leaveActive"
 			:enterFromClass="$style.transition_change_enterFrom"
+			:leaveActiveClass="$style.transition_change_leaveActive"
 			:leaveToClass="$style.transition_change_leaveTo"
 			mode="default"
 		>
 			<MarqueeText :key="key" :duration="marqueeDuration" :reverse="marqueeReverse">
 				<span v-for="instance in instances" :key="instance.id" :class="[$style.item, { [$style.colored]: colored }]" :style="{ background: colored ? instance.themeColor : null }">
 					<img :class="$style.icon" :src="getInstanceIcon(instance)" alt=""/>
-					<MkA :to="`/instance-info/${instance.host}`" :class="$style.host" class="_monospace">
+					<MkA :class="$style.host" :to="`/instance-info/${instance.host}`" class="_monospace">
 						{{ instance.host }}
 					</MkA>
 					<span></span>
@@ -31,12 +31,12 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import {ref} from 'vue';
 import * as Misskey from 'misskey-js';
 import MarqueeText from '@/components/MkMarquee.vue';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { useInterval } from '@@/js/use-interval.js';
-import { getProxiedImageUrlNullable } from '@/scripts/media-proxy.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {useInterval} from '@@/js/use-interval.js';
+import {getProxiedImageUrlNullable} from '@/scripts/media-proxy.js';
 
 const props = defineProps<{
 	display?: 'marquee' | 'oneByOne';
@@ -77,12 +77,14 @@ function getInstanceIcon(instance): string {
 .transition_change_leaveActive {
 	position: absolute;
 	top: 0;
-  transition: all 1s ease;
+	transition: all 1s ease;
 }
+
 .transition_change_enterFrom {
 	opacity: 0;
 	transform: translateY(-100%);
 }
+
 .transition_change_leaveTo {
 	opacity: 0;
 	transform: translateY(100%);

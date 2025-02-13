@@ -4,28 +4,28 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="[$style.root, { [$style.inline]: inline }]">
-	<a v-if="external" :class="$style.main" class="_button" :href="to" target="_blank">
-		<span :class="$style.icon"><slot name="icon"></slot></span>
-		<span :class="$style.text"><slot></slot></span>
-		<span :class="$style.suffix">
+	<div :class="[$style.root, { [$style.inline]: inline }]">
+		<a v-if="external" :class="$style.main" :href="to" class="_button" target="_blank">
+			<span :class="$style.icon"><slot name="icon"></slot></span>
+			<span :class="$style.text"><slot></slot></span>
+			<span :class="$style.suffix">
 			<span :class="$style.suffixText"><slot name="suffix"></slot></span>
 			<i class="ti ti-external-link"></i>
 		</span>
-	</a>
-	<MkA v-else :class="[$style.main, { [$style.active]: active }]" class="_button" :to="to" :behavior="behavior">
-		<span :class="$style.icon"><slot name="icon"></slot></span>
-		<span :class="$style.text"><slot></slot></span>
-		<span :class="$style.suffix">
+		</a>
+		<MkA v-else :behavior="behavior" :class="[$style.main, { [$style.active]: active }]" :to="to" class="_button">
+			<span :class="$style.icon"><slot name="icon"></slot></span>
+			<span :class="$style.text"><slot></slot></span>
+			<span :class="$style.suffix">
 			<span :class="$style.suffixText"><slot name="suffix"></slot></span>
 			<i class="ti ti-chevron-right"></i>
 		</span>
-	</MkA>
-</div>
+		</MkA>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import {} from 'vue';
 
 const props = defineProps<{
 	to: string;

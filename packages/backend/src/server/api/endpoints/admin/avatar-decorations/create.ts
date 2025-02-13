@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { AvatarDecorationService } from '@/core/AvatarDecorationService.js';
-import { IdService } from '@/core/IdService.js';
+import {Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {AvatarDecorationService} from '@/core/AvatarDecorationService.js';
+import {IdService} from '@/core/IdService.js';
 
 export const meta = {
 	tags: ['admin'],
@@ -62,12 +62,14 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		name: { type: 'string', minLength: 1 },
-		description: { type: 'string' },
-		url: { type: 'string', minLength: 1 },
-		roleIdsThatCanBeUsedThisDecoration: { type: 'array', items: {
-			type: 'string',
-		} },
+		name: {type: 'string', minLength: 1},
+		description: {type: 'string'},
+		url: {type: 'string', minLength: 1},
+		roleIdsThatCanBeUsedThisDecoration: {
+			type: 'array', items: {
+				type: 'string',
+			}
+		},
 	},
 	required: ['name', 'description', 'url'],
 } as const;

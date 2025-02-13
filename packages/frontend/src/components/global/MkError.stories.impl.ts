@@ -4,10 +4,11 @@
  */
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { action } from '@storybook/addon-actions';
-import { expect, waitFor } from '@storybook/test';
-import type { StoryObj } from '@storybook/vue3';
+import {action} from '@storybook/addon-actions';
+import {expect, waitFor} from '@storybook/test';
+import type {StoryObj} from '@storybook/vue3';
 import MkError from './MkError.vue';
+
 export const Default = {
 	render(args) {
 		return {
@@ -34,12 +35,11 @@ export const Default = {
 			template: '<MkError v-bind="props" v-on="events" />',
 		};
 	},
-	async play({ canvasElement }) {
+	async play({canvasElement}) {
 		await expect(canvasElement.firstElementChild).not.toBeNull();
 		await waitFor(async () => expect(canvasElement.firstElementChild?.classList).not.toContain('_transition_zoom-enter-active'));
 	},
-	args: {
-	},
+	args: {},
 	parameters: {
 		layout: 'centered',
 	},

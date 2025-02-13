@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { parse } from 'acorn';
-import { generate } from 'astring';
-import { describe, expect, it } from 'vitest';
-import { normalizeClass, unwindCssModuleClassName } from './rollup-plugin-unwind-css-module-class-name.js';
+import {parse} from 'acorn';
+import {generate} from 'astring';
+import {describe, expect, it} from 'vitest';
+import {normalizeClass, unwindCssModuleClassName} from './rollup-plugin-unwind-css-module-class-name.js';
 import type * as estree from 'estree';
 
 function parseExpression(code: string): estree.Expression {
-	const program = parse(code, { ecmaVersion: 'latest', sourceType: 'module' }) as unknown as estree.Program;
+	const program = parse(code, {ecmaVersion: 'latest', sourceType: 'module'}) as unknown as estree.Program;
 	const statement = program.body[0] as estree.ExpressionStatement;
 	return statement.expression;
 }
@@ -170,7 +170,7 @@ const cssModules = {
 const index_photos = /* @__PURE__ */ _export_sfc(_sfc_main, [["__cssModules", cssModules]]);
 
 export { index_photos as default };
-`.slice(1), { ecmaVersion: 'latest', sourceType: 'module' });
+`.slice(1), {ecmaVersion: 'latest', sourceType: 'module'});
 	unwindCssModuleClassName(ast);
 	expect(generate(ast)).toBe(`
 import {c as api, d as defaultStore, i as i18n, aD as notePage, bN as ImgWithBlurhash, bY as getStaticImageUrl, _ as _export_sfc} from './app-!~{001}~.js';
@@ -437,7 +437,7 @@ const cssModules = {
 const MkDateSeparatedList = /* @__PURE__ */ _export_sfc(_sfc_main, [["__cssModules", cssModules]]);
 
 export { MkDateSeparatedList as M };
-`.slice(1), { ecmaVersion: 'latest', sourceType: 'module' });
+`.slice(1), {ecmaVersion: 'latest', sourceType: 'module'});
 	unwindCssModuleClassName(ast);
 	expect(generate(ast)).toBe(`
 import {a7 as getCurrentInstance, b as defineComponent, G as useCssModule, a1 as h, H as TransitionGroup} from './!~{002}~.js';

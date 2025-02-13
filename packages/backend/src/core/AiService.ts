@@ -4,14 +4,14 @@
  */
 
 import * as fs from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { dirname } from 'node:path';
-import { Injectable } from '@nestjs/common';
+import {fileURLToPath} from 'node:url';
+import {dirname} from 'node:path';
+import {Injectable} from '@nestjs/common';
 import * as nsfw from 'nsfwjs';
 import si from 'systeminformation';
-import { Mutex } from 'async-mutex';
+import {Mutex} from 'async-mutex';
 import fetch from 'node-fetch';
-import { bindThis } from '@/decorators.js';
+import {bindThis} from '@/decorators.js';
 
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
@@ -24,8 +24,7 @@ export class AiService {
 	private model: nsfw.NSFWJS;
 	private modelLoadMutex: Mutex = new Mutex();
 
-	constructor(
-	) {
+	constructor() {
 	}
 
 	@bindThis
@@ -46,7 +45,7 @@ export class AiService {
 			if (this.model == null) {
 				await this.modelLoadMutex.runExclusive(async () => {
 					if (this.model == null) {
-						this.model = await nsfw.load(`file://${_dirname}/../../nsfw-model/`, { size: 299 });
+						this.model = await nsfw.load(`file://${_dirname}/../../nsfw-model/`, {size: 299});
 					}
 				});
 			}

@@ -4,15 +4,15 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkSpacer :contentMax="700">
-	<MkPagination v-slot="{items}" ref="list" :pagination="pagination">
-		<MkPagePreview v-for="page in items" :key="page.id" :page="page" class="_margin"/>
-	</MkPagination>
-</MkSpacer>
+	<MkSpacer :contentMax="700">
+		<MkPagination ref="list" v-slot="{items}" :pagination="pagination">
+			<MkPagePreview v-for="page in items" :key="page.id" :page="page" class="_margin"/>
+		</MkPagination>
+	</MkSpacer>
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+import {computed} from 'vue';
 import * as Misskey from 'misskey-js';
 import MkPagePreview from '@/components/MkPagePreview.vue';
 import MkPagination from '@/components/MkPagination.vue';

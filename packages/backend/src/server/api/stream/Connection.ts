@@ -4,20 +4,20 @@
  */
 
 import * as WebSocket from 'ws';
-import type { MiUser } from '@/models/User.js';
-import type { MiAccessToken } from '@/models/AccessToken.js';
-import type { Packed } from '@/misc/json-schema.js';
-import type { NoteReadService } from '@/core/NoteReadService.js';
-import type { NotificationService } from '@/core/NotificationService.js';
-import { bindThis } from '@/decorators.js';
-import { CacheService } from '@/core/CacheService.js';
-import { MiFollowing, MiUserProfile } from '@/models/_.js';
-import type { StreamEventEmitter, GlobalEvents } from '@/core/GlobalEventService.js';
-import { ChannelFollowingService } from '@/core/ChannelFollowingService.js';
-import { isJsonObject } from '@/misc/json-value.js';
-import type { JsonObject, JsonValue } from '@/misc/json-value.js';
-import type { ChannelsService } from './ChannelsService.js';
-import type { EventEmitter } from 'events';
+import type {MiUser} from '@/models/User.js';
+import type {MiAccessToken} from '@/models/AccessToken.js';
+import type {Packed} from '@/misc/json-schema.js';
+import type {NoteReadService} from '@/core/NoteReadService.js';
+import type {NotificationService} from '@/core/NotificationService.js';
+import {bindThis} from '@/decorators.js';
+import {CacheService} from '@/core/CacheService.js';
+import {MiFollowing, MiUserProfile} from '@/models/_.js';
+import type {StreamEventEmitter, GlobalEvents} from '@/core/GlobalEventService.js';
+import {ChannelFollowingService} from '@/core/ChannelFollowingService.js';
+import {isJsonObject} from '@/misc/json-value.js';
+import type {JsonObject, JsonValue} from '@/misc/json-value.js';
+import type {ChannelsService} from './ChannelsService.js';
+import type {EventEmitter} from 'events';
 import type Channel from './channel.js';
 
 const MAX_CHANNELS_PER_CONNECTION = 32;
@@ -29,11 +29,7 @@ const MAX_CHANNELS_PER_CONNECTION = 32;
 export default class Connection {
 	public user?: MiUser;
 	public token?: MiAccessToken;
-	private wsConnection: WebSocket.WebSocket;
 	public subscriber: StreamEventEmitter;
-	private channels: Channel[] = [];
-	private subscribingNotes: Partial<Record<string, number>> = {};
-	private cachedNotes: Packed<'Note'>[] = [];
 	public userProfile: MiUserProfile | null = null;
 	public following: Record<string, Pick<MiFollowing, 'withReplies'> | undefined> = {};
 	public followingChannels: Set<string> = new Set();
@@ -41,6 +37,10 @@ export default class Connection {
 	public userIdsWhoBlockingMe: Set<string> = new Set();
 	public userIdsWhoMeMutingRenotes: Set<string> = new Set();
 	public userMutedInstances: Set<string> = new Set();
+	private wsConnection: WebSocket.WebSocket;
+	private channels: Channel[] = [];
+	private subscribingNotes: Partial<Record<string, number>> = {};
+	private cachedNotes: Packed<'Note'>[] = [];
 	private fetchIntervalId: NodeJS.Timeout | null = null;
 
 	constructor(
@@ -49,7 +49,6 @@ export default class Connection {
 		private notificationService: NotificationService,
 		private cacheService: CacheService,
 		private channelFollowingService: ChannelFollowingService,
-
 		user: MiUser | null | undefined,
 		token: MiAccessToken | null | undefined,
 	) {
@@ -100,40 +99,6 @@ export default class Connection {
 		});
 	}
 
-	/**
-	 * クライアントからメッセージ受信時
-	 */
-	@bindThis
-	private async onWsConnectionMessage(data: WebSocket.RawData) {
-		let obj: JsonObject;
-
-		try {
-			obj = JSON.parse(data.toString());
-		} catch (e) {
-			return;
-		}
-
-		const { type, body } = obj;
-
-		switch (type) {
-			case 'readNotification': this.onReadNotification(body); break;
-			case 'subNote': this.onSubscribeNote(body); break;
-			case 's': this.onSubscribeNote(body); break; // alias
-			case 'sr': this.onSubscribeNote(body); this.readNote(body); break;
-			case 'unsubNote': this.onUnsubscribeNote(body); break;
-			case 'un': this.onUnsubscribeNote(body); break; // alias
-			case 'connect': this.onChannelConnectRequested(body); break;
-			case 'disconnect': this.onChannelDisconnectRequested(body); break;
-			case 'channel': this.onChannelMessageRequested(body); break;
-			case 'ch': this.onChannelMessageRequested(body); break; // alias
-		}
-	}
-
-	@bindThis
-	private onBroadcastMessage(data: GlobalEvents['broadcast']['payload']) {
-		this.sendMessageToWs(data.type, data.body);
-	}
-
 	@bindThis
 	public cacheNote(note: Packed<'Note'>) {
 		const add = (note: Packed<'Note'>) => {
@@ -152,6 +117,133 @@ export default class Connection {
 		add(note);
 		if (note.reply) add(note.reply);
 		if (note.renote) add(note.renote);
+	}
+
+	/**
+	 * クライアントにメッセージ送信
+	 */
+	@bindThis
+	public sendMessageToWs(type: string, payload: JsonObject) {
+		this.wsConnection.send(JSON.stringify({
+			type: type,
+			body: payload,
+		}));
+	}
+
+	/**
+	 * チャンネルに接続
+	 */
+	@bindThis
+	public connectChannel(id: string, params: JsonObject | undefined, channel: string, pong = false) {
+		if (this.channels.length >= MAX_CHANNELS_PER_CONNECTION) {
+			return;
+		}
+
+		const channelService = this.channelsService.getChannelService(channel);
+
+		if (channelService.requireCredential && this.user == null) {
+			return;
+		}
+
+		if (this.token && ((channelService.kind && !this.token.permission.some(p => p === channelService.kind))
+			|| (!channelService.kind && channelService.requireCredential))) {
+			return;
+		}
+
+		// 共有可能チャンネルに接続しようとしていて、かつそのチャンネルに既に接続していたら無意味なので無視
+		if (channelService.shouldShare && this.channels.some(c => c.chName === channel)) {
+			return;
+		}
+
+		const ch: Channel = channelService.create(id, this);
+		this.channels.push(ch);
+		ch.init(params ?? {});
+
+		if (pong) {
+			this.sendMessageToWs('connected', {
+				id: id,
+			});
+		}
+	}
+
+	/**
+	 * チャンネルから切断
+	 * @param id チャンネルコネクションID
+	 */
+	@bindThis
+	public disconnectChannel(id: string) {
+		const channel = this.channels.find(c => c.id === id);
+
+		if (channel) {
+			if (channel.dispose) channel.dispose();
+			this.channels = this.channels.filter(c => c.id !== id);
+		}
+	}
+
+	/**
+	 * ストリームが切れたとき
+	 */
+	@bindThis
+	public dispose() {
+		if (this.fetchIntervalId) clearInterval(this.fetchIntervalId);
+		for (const c of this.channels.filter(c => c.dispose)) {
+			if (c.dispose) c.dispose();
+		}
+	}
+
+	/**
+	 * クライアントからメッセージ受信時
+	 */
+	@bindThis
+	private async onWsConnectionMessage(data: WebSocket.RawData) {
+		let obj: JsonObject;
+
+		try {
+			obj = JSON.parse(data.toString());
+		} catch (e) {
+			return;
+		}
+
+		const {type, body} = obj;
+
+		switch (type) {
+			case 'readNotification':
+				this.onReadNotification(body);
+				break;
+			case 'subNote':
+				this.onSubscribeNote(body);
+				break;
+			case 's':
+				this.onSubscribeNote(body);
+				break; // alias
+			case 'sr':
+				this.onSubscribeNote(body);
+				this.readNote(body);
+				break;
+			case 'unsubNote':
+				this.onUnsubscribeNote(body);
+				break;
+			case 'un':
+				this.onUnsubscribeNote(body);
+				break; // alias
+			case 'connect':
+				this.onChannelConnectRequested(body);
+				break;
+			case 'disconnect':
+				this.onChannelDisconnectRequested(body);
+				break;
+			case 'channel':
+				this.onChannelMessageRequested(body);
+				break;
+			case 'ch':
+				this.onChannelMessageRequested(body);
+				break; // alias
+		}
+	}
+
+	@bindThis
+	private onBroadcastMessage(data: GlobalEvents['broadcast']['payload']) {
+		this.sendMessageToWs(data.type, data.body);
 	}
 
 	@bindThis
@@ -222,7 +314,7 @@ export default class Connection {
 	@bindThis
 	private onChannelConnectRequested(payload: JsonValue | undefined) {
 		if (!isJsonObject(payload)) return;
-		const { channel, id, params, pong } = payload;
+		const {channel, id, params, pong} = payload;
 		if (typeof id !== 'string') return;
 		if (typeof channel !== 'string') return;
 		if (typeof pong !== 'boolean' && typeof pong !== 'undefined' && pong !== null) return;
@@ -236,70 +328,9 @@ export default class Connection {
 	@bindThis
 	private onChannelDisconnectRequested(payload: JsonValue | undefined) {
 		if (!isJsonObject(payload)) return;
-		const { id } = payload;
+		const {id} = payload;
 		if (typeof id !== 'string') return;
 		this.disconnectChannel(id);
-	}
-
-	/**
-	 * クライアントにメッセージ送信
-	 */
-	@bindThis
-	public sendMessageToWs(type: string, payload: JsonObject) {
-		this.wsConnection.send(JSON.stringify({
-			type: type,
-			body: payload,
-		}));
-	}
-
-	/**
-	 * チャンネルに接続
-	 */
-	@bindThis
-	public connectChannel(id: string, params: JsonObject | undefined, channel: string, pong = false) {
-		if (this.channels.length >= MAX_CHANNELS_PER_CONNECTION) {
-			return;
-		}
-
-		const channelService = this.channelsService.getChannelService(channel);
-
-		if (channelService.requireCredential && this.user == null) {
-			return;
-		}
-
-		if (this.token && ((channelService.kind && !this.token.permission.some(p => p === channelService.kind))
-			|| (!channelService.kind && channelService.requireCredential))) {
-			return;
-		}
-
-		// 共有可能チャンネルに接続しようとしていて、かつそのチャンネルに既に接続していたら無意味なので無視
-		if (channelService.shouldShare && this.channels.some(c => c.chName === channel)) {
-			return;
-		}
-
-		const ch: Channel = channelService.create(id, this);
-		this.channels.push(ch);
-		ch.init(params ?? {});
-
-		if (pong) {
-			this.sendMessageToWs('connected', {
-				id: id,
-			});
-		}
-	}
-
-	/**
-	 * チャンネルから切断
-	 * @param id チャンネルコネクションID
-	 */
-	@bindThis
-	public disconnectChannel(id: string) {
-		const channel = this.channels.find(c => c.id === id);
-
-		if (channel) {
-			if (channel.dispose) channel.dispose();
-			this.channels = this.channels.filter(c => c.id !== id);
-		}
 	}
 
 	/**
@@ -316,17 +347,6 @@ export default class Connection {
 		const channel = this.channels.find(c => c.id === data.id);
 		if (channel != null && channel.onMessage != null) {
 			channel.onMessage(data.type, data.body);
-		}
-	}
-
-	/**
-	 * ストリームが切れたとき
-	 */
-	@bindThis
-	public dispose() {
-		if (this.fetchIntervalId) clearInterval(this.fetchIntervalId);
-		for (const c of this.channels.filter(c => c.dispose)) {
-			if (c.dispose) c.dispose();
 		}
 	}
 }

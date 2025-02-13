@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { RolesRepository } from '@/models/_.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '@/server/api/error.js';
-import { RoleService } from '@/core/RoleService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {RolesRepository} from '@/models/_.js';
+import {DI} from '@/di-symbols.js';
+import {ApiError} from '@/server/api/error.js';
+import {RoleService} from '@/core/RoleService.js';
 
 export const meta = {
 	tags: ['admin', 'role'],
@@ -29,20 +29,20 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		roleId: { type: 'string', format: 'misskey:id' },
-		name: { type: 'string' },
-		description: { type: 'string' },
-		color: { type: 'string', nullable: true },
-		iconUrl: { type: 'string', nullable: true },
-		target: { type: 'string', enum: ['manual', 'conditional'] },
-		condFormula: { type: 'object' },
-		isPublic: { type: 'boolean' },
-		isModerator: { type: 'boolean' },
-		isAdministrator: { type: 'boolean' },
-		isExplorable: { type: 'boolean' },
-		asBadge: { type: 'boolean' },
-		canEditMembersByModerator: { type: 'boolean' },
-		displayOrder: { type: 'number' },
+		roleId: {type: 'string', format: 'misskey:id'},
+		name: {type: 'string'},
+		description: {type: 'string'},
+		color: {type: 'string', nullable: true},
+		iconUrl: {type: 'string', nullable: true},
+		target: {type: 'string', enum: ['manual', 'conditional']},
+		condFormula: {type: 'object'},
+		isPublic: {type: 'boolean'},
+		isModerator: {type: 'boolean'},
+		isAdministrator: {type: 'boolean'},
+		isExplorable: {type: 'boolean'},
+		asBadge: {type: 'boolean'},
+		canEditMembersByModerator: {type: 'boolean'},
+		displayOrder: {type: 'number'},
 		policies: {
 			type: 'object',
 		},
@@ -57,11 +57,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.rolesRepository)
 		private rolesRepository: RolesRepository,
-
 		private roleService: RoleService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const role = await this.rolesRepository.findOneBy({ id: ps.roleId });
+			const role = await this.rolesRepository.findOneBy({id: ps.roleId});
 			if (role == null) {
 				throw new ApiError(meta.errors.noSuchRole);
 			}

@@ -4,75 +4,75 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="_gaps">
-	<div :class="$style.header">
-		<MkSelect v-model="type" :class="$style.typeSelect">
-			<option value="isLocal">{{ i18n.ts._role._condition.isLocal }}</option>
-			<option value="isRemote">{{ i18n.ts._role._condition.isRemote }}</option>
-			<option value="isSuspended">{{ i18n.ts._role._condition.isSuspended }}</option>
-			<option value="isLocked">{{ i18n.ts._role._condition.isLocked }}</option>
-			<option value="isBot">{{ i18n.ts._role._condition.isBot }}</option>
-			<option value="isCat">{{ i18n.ts._role._condition.isCat }}</option>
-			<option value="isExplorable">{{ i18n.ts._role._condition.isExplorable }}</option>
-			<option value="roleAssignedTo">{{ i18n.ts._role._condition.roleAssignedTo }}</option>
-			<option value="createdLessThan">{{ i18n.ts._role._condition.createdLessThan }}</option>
-			<option value="createdMoreThan">{{ i18n.ts._role._condition.createdMoreThan }}</option>
-			<option value="followersLessThanOrEq">{{ i18n.ts._role._condition.followersLessThanOrEq }}</option>
-			<option value="followersMoreThanOrEq">{{ i18n.ts._role._condition.followersMoreThanOrEq }}</option>
-			<option value="followingLessThanOrEq">{{ i18n.ts._role._condition.followingLessThanOrEq }}</option>
-			<option value="followingMoreThanOrEq">{{ i18n.ts._role._condition.followingMoreThanOrEq }}</option>
-			<option value="notesLessThanOrEq">{{ i18n.ts._role._condition.notesLessThanOrEq }}</option>
-			<option value="notesMoreThanOrEq">{{ i18n.ts._role._condition.notesMoreThanOrEq }}</option>
-			<option value="and">{{ i18n.ts._role._condition.and }}</option>
-			<option value="or">{{ i18n.ts._role._condition.or }}</option>
-			<option value="not">{{ i18n.ts._role._condition.not }}</option>
+	<div class="_gaps">
+		<div :class="$style.header">
+			<MkSelect v-model="type" :class="$style.typeSelect">
+				<option value="isLocal">{{ i18n.ts._role._condition.isLocal }}</option>
+				<option value="isRemote">{{ i18n.ts._role._condition.isRemote }}</option>
+				<option value="isSuspended">{{ i18n.ts._role._condition.isSuspended }}</option>
+				<option value="isLocked">{{ i18n.ts._role._condition.isLocked }}</option>
+				<option value="isBot">{{ i18n.ts._role._condition.isBot }}</option>
+				<option value="isCat">{{ i18n.ts._role._condition.isCat }}</option>
+				<option value="isExplorable">{{ i18n.ts._role._condition.isExplorable }}</option>
+				<option value="roleAssignedTo">{{ i18n.ts._role._condition.roleAssignedTo }}</option>
+				<option value="createdLessThan">{{ i18n.ts._role._condition.createdLessThan }}</option>
+				<option value="createdMoreThan">{{ i18n.ts._role._condition.createdMoreThan }}</option>
+				<option value="followersLessThanOrEq">{{ i18n.ts._role._condition.followersLessThanOrEq }}</option>
+				<option value="followersMoreThanOrEq">{{ i18n.ts._role._condition.followersMoreThanOrEq }}</option>
+				<option value="followingLessThanOrEq">{{ i18n.ts._role._condition.followingLessThanOrEq }}</option>
+				<option value="followingMoreThanOrEq">{{ i18n.ts._role._condition.followingMoreThanOrEq }}</option>
+				<option value="notesLessThanOrEq">{{ i18n.ts._role._condition.notesLessThanOrEq }}</option>
+				<option value="notesMoreThanOrEq">{{ i18n.ts._role._condition.notesMoreThanOrEq }}</option>
+				<option value="and">{{ i18n.ts._role._condition.and }}</option>
+				<option value="or">{{ i18n.ts._role._condition.or }}</option>
+				<option value="not">{{ i18n.ts._role._condition.not }}</option>
+			</MkSelect>
+			<button v-if="draggable" :class="$style.dragHandle" class="drag-handle _button">
+				<i class="ti ti-menu-2"></i>
+			</button>
+			<button v-if="draggable" :class="$style.remove" class="_button" @click="removeSelf">
+				<i class="ti ti-x"></i>
+			</button>
+		</div>
+
+		<div v-if="type === 'and' || type === 'or'" class="_gaps">
+			<Sortable v-model="v.values" :animation="150" :group="{ name: 'roleFormula' }" :swapThreshold="0.5" class="_gaps" handle=".drag-handle" itemKey="id" tag="div">
+				<template #item="{element}">
+					<div :class="$style.item">
+						<!-- divが無いとエラーになる https://github.com/SortableJS/vue.draggable.next/issues/189 -->
+						<RolesEditorFormula :modelValue="element" draggable @remove="removeItem(element)" @update:modelValue="updated => valuesItemUpdated(updated)"/>
+					</div>
+				</template>
+			</Sortable>
+			<MkButton rounded style="margin: 0 auto;" @click="addValue"><i class="ti ti-plus"></i> {{ i18n.ts.add }}</MkButton>
+		</div>
+
+		<div v-else-if="type === 'not'" :class="$style.item">
+			<RolesEditorFormula v-model="v.value"/>
+		</div>
+
+		<MkInput v-else-if="type === 'createdLessThan' || type === 'createdMoreThan'" v-model="v.sec" type="number">
+			<template #suffix>sec</template>
+		</MkInput>
+
+		<MkInput v-else-if="['followersLessThanOrEq', 'followersMoreThanOrEq', 'followingLessThanOrEq', 'followingMoreThanOrEq', 'notesLessThanOrEq', 'notesMoreThanOrEq'].includes(type)" v-model="v.value" type="number">
+		</MkInput>
+
+		<MkSelect v-else-if="type === 'roleAssignedTo'" v-model="v.roleId">
+			<option v-for="role in roles.filter(r => r.target === 'manual')" :key="role.id" :value="role.id">{{ role.name }}</option>
 		</MkSelect>
-		<button v-if="draggable" class="drag-handle _button" :class="$style.dragHandle">
-			<i class="ti ti-menu-2"></i>
-		</button>
-		<button v-if="draggable" class="_button" :class="$style.remove" @click="removeSelf">
-			<i class="ti ti-x"></i>
-		</button>
 	</div>
-
-	<div v-if="type === 'and' || type === 'or'" class="_gaps">
-		<Sortable v-model="v.values" tag="div" class="_gaps" itemKey="id" handle=".drag-handle" :group="{ name: 'roleFormula' }" :animation="150" :swapThreshold="0.5">
-			<template #item="{element}">
-				<div :class="$style.item">
-					<!-- divが無いとエラーになる https://github.com/SortableJS/vue.draggable.next/issues/189 -->
-					<RolesEditorFormula :modelValue="element" draggable @update:modelValue="updated => valuesItemUpdated(updated)" @remove="removeItem(element)"/>
-				</div>
-			</template>
-		</Sortable>
-		<MkButton rounded style="margin: 0 auto;" @click="addValue"><i class="ti ti-plus"></i> {{ i18n.ts.add }}</MkButton>
-	</div>
-
-	<div v-else-if="type === 'not'" :class="$style.item">
-		<RolesEditorFormula v-model="v.value"/>
-	</div>
-
-	<MkInput v-else-if="type === 'createdLessThan' || type === 'createdMoreThan'" v-model="v.sec" type="number">
-		<template #suffix>sec</template>
-	</MkInput>
-
-	<MkInput v-else-if="['followersLessThanOrEq', 'followersMoreThanOrEq', 'followingLessThanOrEq', 'followingMoreThanOrEq', 'notesLessThanOrEq', 'notesMoreThanOrEq'].includes(type)" v-model="v.value" type="number">
-	</MkInput>
-
-	<MkSelect v-else-if="type === 'roleAssignedTo'" v-model="v.roleId">
-		<option v-for="role in roles.filter(r => r.target === 'manual')" :key="role.id" :value="role.id">{{ role.name }}</option>
-	</MkSelect>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, ref, watch } from 'vue';
-import { v4 as uuid } from 'uuid';
+import {computed, defineAsyncComponent, ref, watch} from 'vue';
+import {v4 as uuid} from 'uuid';
 import MkInput from '@/components/MkInput.vue';
 import MkSelect from '@/components/MkSelect.vue';
 import MkButton from '@/components/MkButton.vue';
-import { i18n } from '@/i18n.js';
-import { deepClone } from '@/scripts/clone.js';
-import { rolesCache } from '@/cache.js';
+import {i18n} from '@/i18n.js';
+import {deepClone} from '@/scripts/clone.js';
+import {rolesCache} from '@/cache.js';
 
 const Sortable = defineAsyncComponent(() => import('vuedraggable').then(x => x.default));
 
@@ -93,18 +93,18 @@ const roles = await rolesCache.fetch();
 watch(() => props.modelValue, () => {
 	if (JSON.stringify(props.modelValue) === JSON.stringify(v.value)) return;
 	v.value = deepClone(props.modelValue);
-}, { deep: true });
+}, {deep: true});
 
 watch(v, () => {
 	emit('update:modelValue', v.value);
-}, { deep: true });
+}, {deep: true});
 
 const type = computed({
 	get: () => v.value.type,
 	set: (t) => {
 		if (t === 'and') v.value.values = [];
 		if (t === 'or') v.value.values = [];
-		if (t === 'not') v.value.value = { id: uuid(), type: 'isRemote' };
+		if (t === 'not') v.value.value = {id: uuid(), type: 'isRemote'};
 		if (t === 'roleAssignedTo') v.value.roleId = '';
 		if (t === 'createdLessThan') v.value.sec = 86400;
 		if (t === 'createdMoreThan') v.value.sec = 86400;
@@ -119,7 +119,7 @@ const type = computed({
 });
 
 function addValue() {
-	v.value.values.push({ id: uuid(), type: 'isRemote' });
+	v.value.values.push({id: uuid(), type: 'isRemote'});
 }
 
 function valuesItemUpdated(item) {

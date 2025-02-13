@@ -6,7 +6,7 @@
 process.env.NODE_ENV = 'test';
 
 import * as assert from 'assert';
-import { api, signup, simpleGet } from '../utils.js';
+import {api, signup, simpleGet} from '../utils.js';
 import type * as misskey from 'misskey-js';
 
 describe('FF visibility', () => {
@@ -14,8 +14,8 @@ describe('FF visibility', () => {
 	let bob: misskey.entities.SignupResponse;
 
 	beforeAll(async () => {
-		alice = await signup({ username: 'alice' });
-		bob = await signup({ username: 'bob' });
+		alice = await signup({username: 'alice'});
+		bob = await signup({username: 'bob'});
 	}, 1000 * 60 * 2);
 
 	test('followingVisibility, followersVisibility がともに public なユーザーのフォロー/フォロワーを誰でも見れる', async () => {

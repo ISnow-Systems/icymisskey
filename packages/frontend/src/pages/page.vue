@@ -4,124 +4,133 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="800">
-		<Transition
-			:enterActiveClass="defaultStore.state.animation ? $style.fadeEnterActive : ''"
-			:leaveActiveClass="defaultStore.state.animation ? $style.fadeLeaveActive : ''"
-			:enterFromClass="defaultStore.state.animation ? $style.fadeEnterFrom : ''"
-			:leaveToClass="defaultStore.state.animation ? $style.fadeLeaveTo : ''"
-			mode="out-in"
-		>
-			<div v-if="page" :key="page.id" class="_gaps">
-				<div :class="$style.pageMain">
-					<div :class="$style.pageBanner">
-						<div :class="$style.pageBannerBgRoot">
-							<MkImgWithBlurhash
-								v-if="page.eyeCatchingImageId"
-								:class="$style.pageBannerBg"
-								:hash="page.eyeCatchingImage?.blurhash"
-								:cover="true"
-								:forceBlurhash="true"
-							/>
-							<img
-								v-else-if="instance.backgroundImageUrl || instance.bannerUrl"
-								:class="[$style.pageBannerBg, $style.pageBannerBgFallback1]"
-								:src="getStaticImageUrl(instance.backgroundImageUrl ?? instance.bannerUrl!)"
-							/>
-							<div v-else :class="[$style.pageBannerBg, $style.pageBannerBgFallback2]"></div>
-						</div>
-						<div v-if="page.eyeCatchingImageId" :class="$style.pageBannerImage">
-							<MkMediaImage
-								:image="page.eyeCatchingImage!"
-								:cover="true"
-								:disableImageLink="true"
-								:class="$style.thumbnail"
-							/>
-						</div>
-						<div :class="$style.pageBannerTitle" class="_gaps_s">
-							<h1>{{ page.title || page.name }}</h1>
-							<div :class="$style.pageBannerTitleSub">
-								<div v-if="page.user" :class="$style.pageBannerTitleUser">
-									<MkAvatar :user="page.user" :class="$style.avatar" indicator link preview/> <MkA :to="`/@${username}`"><MkUserName :user="page.user" :nowrap="false"/></MkA>
-								</div>
-								<div :class="$style.pageBannerTitleSubActions">
-									<MkA v-if="page.userId === $i?.id" v-tooltip="i18n.ts._pages.editThisPage" :to="`/pages/edit/${page.id}`" class="_button" :class="$style.generalActionButton"><i class="ti ti-pencil ti-fw"></i></MkA>
-									<button v-tooltip="i18n.ts.share" class="_button" :class="$style.generalActionButton" @click="share"><i class="ti ti-share ti-fw"></i></button>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs"/>
+		</template>
+		<MkSpacer :contentMax="800">
+			<Transition
+				:enterActiveClass="defaultStore.state.animation ? $style.fadeEnterActive : ''"
+				:enterFromClass="defaultStore.state.animation ? $style.fadeEnterFrom : ''"
+				:leaveActiveClass="defaultStore.state.animation ? $style.fadeLeaveActive : ''"
+				:leaveToClass="defaultStore.state.animation ? $style.fadeLeaveTo : ''"
+				mode="out-in"
+			>
+				<div v-if="page" :key="page.id" class="_gaps">
+					<div :class="$style.pageMain">
+						<div :class="$style.pageBanner">
+							<div :class="$style.pageBannerBgRoot">
+								<MkImgWithBlurhash
+									v-if="page.eyeCatchingImageId"
+									:class="$style.pageBannerBg"
+									:cover="true"
+									:forceBlurhash="true"
+									:hash="page.eyeCatchingImage?.blurhash"
+								/>
+								<img
+									v-else-if="instance.backgroundImageUrl || instance.bannerUrl"
+									:class="[$style.pageBannerBg, $style.pageBannerBgFallback1]"
+									:src="getStaticImageUrl(instance.backgroundImageUrl ?? instance.bannerUrl!)"
+								/>
+								<div v-else :class="[$style.pageBannerBg, $style.pageBannerBgFallback2]"></div>
+							</div>
+							<div v-if="page.eyeCatchingImageId" :class="$style.pageBannerImage">
+								<MkMediaImage
+									:class="$style.thumbnail"
+									:cover="true"
+									:disableImageLink="true"
+									:image="page.eyeCatchingImage!"
+								/>
+							</div>
+							<div :class="$style.pageBannerTitle" class="_gaps_s">
+								<h1>{{ page.title || page.name }}</h1>
+								<div :class="$style.pageBannerTitleSub">
+									<div v-if="page.user" :class="$style.pageBannerTitleUser">
+										<MkAvatar :class="$style.avatar" :user="page.user" indicator link preview/>
+										<MkA :to="`/@${username}`">
+											<MkUserName :nowrap="false" :user="page.user"/>
+										</MkA>
+									</div>
+									<div :class="$style.pageBannerTitleSubActions">
+										<MkA v-if="page.userId === $i?.id" v-tooltip="i18n.ts._pages.editThisPage" :class="$style.generalActionButton" :to="`/pages/edit/${page.id}`" class="_button"><i class="ti ti-pencil ti-fw"></i></MkA>
+										<button v-tooltip="i18n.ts.share" :class="$style.generalActionButton" class="_button" @click="share"><i class="ti ti-share ti-fw"></i></button>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
-					<div :class="$style.pageContent">
-						<XPage :page="page"/>
-					</div>
-					<div :class="$style.pageActions">
-						<div>
-							<MkButton v-if="page.isLiked" v-tooltip="i18n.ts._pages.unlike" class="button" asLike primary @click="unlike()"><i class="ti ti-heart-off"></i><span v-if="page.likedCount > 0" class="count">{{ page.likedCount }}</span></MkButton>
-							<MkButton v-else v-tooltip="i18n.ts._pages.like" class="button" asLike @click="like()"><i class="ti ti-heart"></i><span v-if="page.likedCount > 0" class="count">{{ page.likedCount }}</span></MkButton>
+						<div :class="$style.pageContent">
+							<XPage :page="page"/>
 						</div>
-						<div :class="$style.other">
-							<MkA v-if="page.userId === $i?.id" v-tooltip="i18n.ts._pages.editThisPage" :to="`/pages/edit/${page.id}`" class="_button" :class="$style.generalActionButton"><i class="ti ti-pencil ti-fw"></i></MkA>
-							<button v-tooltip="i18n.ts.copyLink" class="_button" :class="$style.generalActionButton" @click="copyLink"><i class="ti ti-link ti-fw"></i></button>
-							<button v-tooltip="i18n.ts.share" class="_button" :class="$style.generalActionButton" @click="share"><i class="ti ti-share ti-fw"></i></button>
-							<button v-if="$i" v-click-anime class="_button" :class="$style.generalActionButton" @mousedown="showMenu"><i class="ti ti-dots ti-fw"></i></button>
+						<div :class="$style.pageActions">
+							<div>
+								<MkButton v-if="page.isLiked" v-tooltip="i18n.ts._pages.unlike" asLike class="button" primary @click="unlike()"><i class="ti ti-heart-off"></i><span v-if="page.likedCount > 0" class="count">{{ page.likedCount }}</span></MkButton>
+								<MkButton v-else v-tooltip="i18n.ts._pages.like" asLike class="button" @click="like()"><i class="ti ti-heart"></i><span v-if="page.likedCount > 0" class="count">{{ page.likedCount }}</span></MkButton>
+							</div>
+							<div :class="$style.other">
+								<MkA v-if="page.userId === $i?.id" v-tooltip="i18n.ts._pages.editThisPage" :class="$style.generalActionButton" :to="`/pages/edit/${page.id}`" class="_button"><i class="ti ti-pencil ti-fw"></i></MkA>
+								<button v-tooltip="i18n.ts.copyLink" :class="$style.generalActionButton" class="_button" @click="copyLink"><i class="ti ti-link ti-fw"></i></button>
+								<button v-tooltip="i18n.ts.share" :class="$style.generalActionButton" class="_button" @click="share"><i class="ti ti-share ti-fw"></i></button>
+								<button v-if="$i" v-click-anime :class="$style.generalActionButton" class="_button" @mousedown="showMenu"><i class="ti ti-dots ti-fw"></i></button>
+							</div>
+						</div>
+						<div :class="$style.pageUser">
+							<MkAvatar :class="$style.avatar" :user="page.user" link preview/>
+							<MkA :to="`/@${username}`">
+								<MkUserName :class="$style.name" :user="page.user"/>
+								<MkAcct :class="$style.acct" :user="page.user"/>
+							</MkA>
+							<MkFollowButton v-if="!$i || $i.id != page.user.id" :class="$style.follow" :full="true" :inline="true" :transparent="false" :user="page.user!"/>
+						</div>
+						<div :class="$style.pageDate">
+							<div><i class="ti ti-clock"></i> {{ i18n.ts.createdAt }}:
+								<MkTime :time="page.createdAt" mode="detail"/>
+							</div>
+							<div v-if="page.createdAt != page.updatedAt"><i class="ti ti-clock-edit"></i> {{ i18n.ts.updatedAt }}:
+								<MkTime :time="page.updatedAt" mode="detail"/>
+							</div>
 						</div>
 					</div>
-					<div :class="$style.pageUser">
-						<MkAvatar :user="page.user" :class="$style.avatar" link preview/>
-						<MkA :to="`/@${username}`">
-							<MkUserName :user="page.user" :class="$style.name"/>
-							<MkAcct :user="page.user" :class="$style.acct"/>
-						</MkA>
-						<MkFollowButton v-if="!$i || $i.id != page.user.id" :user="page.user!" :inline="true" :transparent="false" :full="true" :class="$style.follow"/>
-					</div>
-					<div :class="$style.pageDate">
-						<div><i class="ti ti-clock"></i> {{ i18n.ts.createdAt }}: <MkTime :time="page.createdAt" mode="detail"/></div>
-						<div v-if="page.createdAt != page.updatedAt"><i class="ti ti-clock-edit"></i> {{ i18n.ts.updatedAt }}: <MkTime :time="page.updatedAt" mode="detail"/></div>
-					</div>
+					<MkAd :prefer="['horizontal', 'horizontal-big']"/>
+					<MkContainer :foldable="true" :max-height="300" class="other">
+						<template #icon><i class="ti ti-clock"></i></template>
+						<template #header>{{ i18n.ts.recentPosts }}</template>
+						<MkPagination v-slot="{items}" :class="$style.relatedPagesRoot" :pagination="otherPostsPagination" class="_gaps">
+							<MkPagePreview v-for="page in items" :key="page.id" :class="$style.relatedPagesItem" :page="page"/>
+						</MkPagination>
+					</MkContainer>
 				</div>
-				<MkAd :prefer="['horizontal', 'horizontal-big']"/>
-				<MkContainer :max-height="300" :foldable="true" class="other">
-					<template #icon><i class="ti ti-clock"></i></template>
-					<template #header>{{ i18n.ts.recentPosts }}</template>
-					<MkPagination v-slot="{items}" :pagination="otherPostsPagination" :class="$style.relatedPagesRoot" class="_gaps">
-						<MkPagePreview v-for="page in items" :key="page.id" :page="page" :class="$style.relatedPagesItem"/>
-					</MkPagination>
-				</MkContainer>
-			</div>
-			<MkError v-else-if="error" @retry="fetchPage()"/>
-			<MkLoading v-else/>
-		</Transition>
-	</MkSpacer>
-</MkStickyContainer>
+				<MkError v-else-if="error" @retry="fetchPage()"/>
+				<MkLoading v-else/>
+			</Transition>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { computed, watch, ref, defineAsyncComponent } from 'vue';
+import {computed, watch, ref, defineAsyncComponent} from 'vue';
 import * as Misskey from 'misskey-js';
 import XPage from '@/components/page/page.vue';
 import MkButton from '@/components/MkButton.vue';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { url } from '@@/js/config.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {url} from '@@/js/config.js';
 import MkMediaImage from '@/components/MkMediaImage.vue';
 import MkImgWithBlurhash from '@/components/MkImgWithBlurhash.vue';
 import MkFollowButton from '@/components/MkFollowButton.vue';
 import MkContainer from '@/components/MkContainer.vue';
 import MkPagination from '@/components/MkPagination.vue';
 import MkPagePreview from '@/components/MkPagePreview.vue';
-import { i18n } from '@/i18n.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
-import { pageViewInterruptors, defaultStore } from '@/store.js';
-import { deepClone } from '@/scripts/clone.js';
-import { $i } from '@/account.js';
-import { isSupportShare } from '@/scripts/navigator.js';
-import { instance } from '@/instance.js';
-import { getStaticImageUrl } from '@/scripts/media-proxy.js';
-import { copyToClipboard } from '@/scripts/copy-to-clipboard.js';
-import { useRouter } from '@/router/supplier.js';
-import type { MenuItem } from '@/types/menu.js';
+import {i18n} from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
+import {pageViewInterruptors, defaultStore} from '@/store.js';
+import {deepClone} from '@/scripts/clone.js';
+import {$i} from '@/account.js';
+import {isSupportShare} from '@/scripts/navigator.js';
+import {instance} from '@/instance.js';
+import {getStaticImageUrl} from '@/scripts/media-proxy.js';
+import {copyToClipboard} from '@/scripts/copy-to-clipboard.js';
+import {useRouter} from '@/router/supplier.js';
+import type {MenuItem} from '@/types/menu.js';
 
 const router = useRouter();
 
@@ -250,7 +259,7 @@ function reportAbuse() {
 
 	const pageUrl = `${url}/@${props.username}/pages/${props.pageName}`;
 
-	const { dispose } = os.popup(defineAsyncComponent(() => import('@/components/MkAbuseReportWindow.vue')), {
+	const {dispose} = os.popup(defineAsyncComponent(() => import('@/components/MkAbuseReportWindow.vue')), {
 		user: page.value.user,
 		initialComment: `Page: ${pageUrl}\n-----\n`,
 	}, {
@@ -300,10 +309,10 @@ function showMenu(ev: MouseEvent) {
 				action: () => os.confirm({
 					type: 'warning',
 					text: i18n.ts.deleteConfirm,
-				}).then(({ canceled }) => {
+				}).then(({canceled}) => {
 					if (canceled || !page.value) return;
 
-					os.apiWithDialog('pages/delete', { pageId: page.value.id });
+					os.apiWithDialog('pages/delete', {pageId: page.value.id});
 				}),
 			});
 		}
@@ -312,7 +321,7 @@ function showMenu(ev: MouseEvent) {
 	os.popupMenu(menuItems, ev.currentTarget ?? ev.target);
 }
 
-watch(() => path.value, fetchPage, { immediate: true });
+watch(() => path.value, fetchPage, {immediate: true});
 
 const headerActions = computed(() => []);
 
@@ -336,6 +345,7 @@ definePageMetadata(() => ({
 .fadeLeaveActive {
 	transition: opacity 0.125s ease;
 }
+
 .fadeEnterFrom,
 .fadeLeaveTo {
 	opacity: 0;

@@ -4,112 +4,112 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="$style.root">
-	<nav :class="$style.nav">
-		<div :class="$style.navPath" @contextmenu.prevent.stop="() => {}">
-			<XNavFolder
-				:class="[$style.navPathItem, { [$style.navCurrent]: folder == null }]"
-				:parentFolder="folder"
-				@move="move"
-				@upload="upload"
-				@removeFile="removeFile"
-				@removeFolder="removeFolder"
-			/>
-			<template v-for="f in hierarchyFolders">
-				<span :class="[$style.navPathItem, $style.navSeparator]"><i class="ti ti-chevron-right"></i></span>
+	<div :class="$style.root">
+		<nav :class="$style.nav">
+			<div :class="$style.navPath" @contextmenu.prevent.stop="() => {}">
 				<XNavFolder
-					:folder="f"
+					:class="[$style.navPathItem, { [$style.navCurrent]: folder == null }]"
 					:parentFolder="folder"
-					:class="[$style.navPathItem]"
 					@move="move"
-					@upload="upload"
 					@removeFile="removeFile"
 					@removeFolder="removeFolder"
-				/>
-			</template>
-			<span v-if="folder != null" :class="[$style.navPathItem, $style.navSeparator]"><i class="ti ti-chevron-right"></i></span>
-			<span v-if="folder != null" :class="[$style.navPathItem, $style.navCurrent]">{{ folder.name }}</span>
-		</div>
-		<button class="_button" :class="$style.navMenu" @click="showMenu"><i class="ti ti-dots"></i></button>
-	</nav>
-	<div
-		ref="main"
-		:class="[$style.main, { [$style.uploading]: uploadings.length > 0, [$style.fetching]: fetching }]"
-		@dragover.prevent.stop="onDragover"
-		@dragenter="onDragenter"
-		@dragleave="onDragleave"
-		@drop.prevent.stop="onDrop"
-		@contextmenu.stop="onContextmenu"
-	>
-		<div ref="contents">
-			<div v-show="folders.length > 0" ref="foldersContainer" :class="$style.folders">
-				<XFolder
-					v-for="(f, i) in folders"
-					:key="f.id"
-					v-anim="i"
-					:class="$style.folder"
-					:folder="f"
-					:selectMode="select === 'folder'"
-					:isSelected="selectedFolders.some(x => x.id === f.id)"
-					@chosen="chooseFolder"
-					@unchose="unchoseFolder"
-					@move="move"
 					@upload="upload"
-					@removeFile="removeFile"
-					@removeFolder="removeFolder"
-					@dragstart="isDragSource = true"
-					@dragend="isDragSource = false"
 				/>
-				<!-- SEE: https://stackoverflow.com/questions/18744164/flex-box-align-last-row-to-grid -->
-				<div v-for="(n, i) in 16" :key="i" :class="$style.padding"></div>
-				<MkButton v-if="moreFolders" ref="moreFolders" @click="fetchMoreFolders">{{ i18n.ts.loadMore }}</MkButton>
+				<template v-for="f in hierarchyFolders">
+					<span :class="[$style.navPathItem, $style.navSeparator]"><i class="ti ti-chevron-right"></i></span>
+					<XNavFolder
+						:class="[$style.navPathItem]"
+						:folder="f"
+						:parentFolder="folder"
+						@move="move"
+						@removeFile="removeFile"
+						@removeFolder="removeFolder"
+						@upload="upload"
+					/>
+				</template>
+				<span v-if="folder != null" :class="[$style.navPathItem, $style.navSeparator]"><i class="ti ti-chevron-right"></i></span>
+				<span v-if="folder != null" :class="[$style.navPathItem, $style.navCurrent]">{{ folder.name }}</span>
 			</div>
-			<div v-show="files.length > 0" ref="filesContainer" :class="$style.files">
-				<XFile
-					v-for="(file, i) in files"
-					:key="file.id"
-					v-anim="i"
-					:class="$style.file"
-					:file="file"
-					:folder="folder"
-					:selectMode="select === 'file'"
-					:isSelected="selectedFiles.some(x => x.id === file.id)"
-					@chosen="chooseFile"
-					@dragstart="isDragSource = true"
-					@dragend="isDragSource = false"
-				/>
-				<!-- SEE: https://stackoverflow.com/questions/18744164/flex-box-align-last-row-to-grid -->
-				<div v-for="(n, i) in 16" :key="i" :class="$style.padding"></div>
-				<MkButton v-show="moreFiles" ref="loadMoreFiles" @click="fetchMoreFiles">{{ i18n.ts.loadMore }}</MkButton>
+			<button :class="$style.navMenu" class="_button" @click="showMenu"><i class="ti ti-dots"></i></button>
+		</nav>
+		<div
+			ref="main"
+			:class="[$style.main, { [$style.uploading]: uploadings.length > 0, [$style.fetching]: fetching }]"
+			@dragenter="onDragenter"
+			@dragleave="onDragleave"
+			@dragover.prevent.stop="onDragover"
+			@drop.prevent.stop="onDrop"
+			@contextmenu.stop="onContextmenu"
+		>
+			<div ref="contents">
+				<div v-show="folders.length > 0" ref="foldersContainer" :class="$style.folders">
+					<XFolder
+						v-for="(f, i) in folders"
+						:key="f.id"
+						v-anim="i"
+						:class="$style.folder"
+						:folder="f"
+						:isSelected="selectedFolders.some(x => x.id === f.id)"
+						:selectMode="select === 'folder'"
+						@chosen="chooseFolder"
+						@dragend="isDragSource = false"
+						@dragstart="isDragSource = true"
+						@move="move"
+						@removeFile="removeFile"
+						@removeFolder="removeFolder"
+						@unchose="unchoseFolder"
+						@upload="upload"
+					/>
+					<!-- SEE: https://stackoverflow.com/questions/18744164/flex-box-align-last-row-to-grid -->
+					<div v-for="(n, i) in 16" :key="i" :class="$style.padding"></div>
+					<MkButton v-if="moreFolders" ref="moreFolders" @click="fetchMoreFolders">{{ i18n.ts.loadMore }}</MkButton>
+				</div>
+				<div v-show="files.length > 0" ref="filesContainer" :class="$style.files">
+					<XFile
+						v-for="(file, i) in files"
+						:key="file.id"
+						v-anim="i"
+						:class="$style.file"
+						:file="file"
+						:folder="folder"
+						:isSelected="selectedFiles.some(x => x.id === file.id)"
+						:selectMode="select === 'file'"
+						@chosen="chooseFile"
+						@dragend="isDragSource = false"
+						@dragstart="isDragSource = true"
+					/>
+					<!-- SEE: https://stackoverflow.com/questions/18744164/flex-box-align-last-row-to-grid -->
+					<div v-for="(n, i) in 16" :key="i" :class="$style.padding"></div>
+					<MkButton v-show="moreFiles" ref="loadMoreFiles" @click="fetchMoreFiles">{{ i18n.ts.loadMore }}</MkButton>
+				</div>
+				<div v-if="files.length == 0 && folders.length == 0 && !fetching" :class="$style.empty">
+					<div v-if="draghover">{{ i18n.ts['empty-draghover'] }}</div>
+					<div v-if="!draghover && folder == null"><strong>{{ i18n.ts.emptyDrive }}</strong><br/>{{ i18n.ts['empty-drive-description'] }}</div>
+					<div v-if="!draghover && folder != null">{{ i18n.ts.emptyFolder }}</div>
+				</div>
 			</div>
-			<div v-if="files.length == 0 && folders.length == 0 && !fetching" :class="$style.empty">
-				<div v-if="draghover">{{ i18n.ts['empty-draghover'] }}</div>
-				<div v-if="!draghover && folder == null"><strong>{{ i18n.ts.emptyDrive }}</strong><br/>{{ i18n.ts['empty-drive-description'] }}</div>
-				<div v-if="!draghover && folder != null">{{ i18n.ts.emptyFolder }}</div>
-			</div>
+			<MkLoading v-if="fetching"/>
 		</div>
-		<MkLoading v-if="fetching"/>
+		<div v-if="draghover" :class="$style.dropzone"></div>
+		<input ref="fileInput" accept="*/*" multiple style="display: none;" tabindex="-1" type="file" @change="onChangeFileInput"/>
 	</div>
-	<div v-if="draghover" :class="$style.dropzone"></div>
-	<input ref="fileInput" style="display: none;" type="file" accept="*/*" multiple tabindex="-1" @change="onChangeFileInput"/>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { nextTick, onActivated, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue';
+import {nextTick, onActivated, onBeforeUnmount, onMounted, ref, shallowRef, watch} from 'vue';
 import * as Misskey from 'misskey-js';
 import MkButton from './MkButton.vue';
-import type { MenuItem } from '@/types/menu.js';
+import type {MenuItem} from '@/types/menu.js';
 import XNavFolder from '@/components/MkDrive.navFolder.vue';
 import XFolder from '@/components/MkDrive.folder.vue';
 import XFile from '@/components/MkDrive.file.vue';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { useStream } from '@/stream.js';
-import { defaultStore } from '@/store.js';
-import { i18n } from '@/i18n.js';
-import { uploadFile, uploads } from '@/scripts/upload.js';
-import { claimAchievement } from '@/scripts/achievements.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {useStream} from '@/stream.js';
+import {defaultStore} from '@/store.js';
+import {i18n} from '@/i18n.js';
+import {uploadFile, uploads} from '@/scripts/upload.js';
+import {claimAchievement} from '@/scripts/achievements.js';
 
 const props = withDefaults(defineProps<{
 	initialFolder?: Misskey.entities.DriveFolder;
@@ -313,7 +313,7 @@ function urlUpload() {
 		title: i18n.ts.uploadFromUrl,
 		type: 'url',
 		placeholder: i18n.ts.uploadFromUrlDescription,
-	}).then(({ canceled, result: url }) => {
+	}).then(({canceled, result: url}) => {
 		if (canceled || !url) return;
 		misskeyApi('drive/files/upload-from-url', {
 			url: url,
@@ -331,7 +331,7 @@ function createFolder() {
 	os.inputText({
 		title: i18n.ts.createFolder,
 		placeholder: i18n.ts.folderName,
-	}).then(({ canceled, result: name }) => {
+	}).then(({canceled, result: name}) => {
 		if (canceled || name == null) return;
 		misskeyApi('drive/folders/create', {
 			name: name,
@@ -347,7 +347,7 @@ function renameFolder(folderToRename: Misskey.entities.DriveFolder) {
 		title: i18n.ts.renameFolder,
 		placeholder: i18n.ts.inputNewFolderName,
 		default: folderToRename.name,
-	}).then(({ canceled, result: name }) => {
+	}).then(({canceled, result: name}) => {
 		if (canceled) return;
 		misskeyApi('drive/folders/update', {
 			folderId: folderToRename.id,
@@ -633,18 +633,22 @@ function getMenu() {
 		type: 'switch',
 		text: i18n.ts.keepOriginalUploading,
 		ref: keepOriginal,
-	}, { type: 'divider' }, {
+	}, {type: 'divider'}, {
 		text: i18n.ts.addFile,
 		type: 'label',
 	}, {
 		text: i18n.ts.upload,
 		icon: 'ti ti-upload',
-		action: () => { selectLocalFile(); },
+		action: () => {
+			selectLocalFile();
+		},
 	}, {
 		text: i18n.ts.fromUrl,
 		icon: 'ti ti-link',
-		action: () => { urlUpload(); },
-	}, { type: 'divider' }, {
+		action: () => {
+			urlUpload();
+		},
+	}, {type: 'divider'}, {
 		text: folder.value ? folder.value.name : i18n.ts.drive,
 		type: 'label',
 	});
@@ -656,32 +660,44 @@ function getMenu() {
 		children: [{
 			text: `${i18n.ts.registeredDate} (${i18n.ts.descendingOrder})`,
 			icon: 'ti ti-sort-descending-letters',
-			action: () => { sortModeSelect.value = '+createdAt'; },
+			action: () => {
+				sortModeSelect.value = '+createdAt';
+			},
 			active: sortModeSelect.value === '+createdAt',
 		}, {
 			text: `${i18n.ts.registeredDate} (${i18n.ts.ascendingOrder})`,
 			icon: 'ti ti-sort-ascending-letters',
-			action: () => { sortModeSelect.value = '-createdAt'; },
+			action: () => {
+				sortModeSelect.value = '-createdAt';
+			},
 			active: sortModeSelect.value === '-createdAt',
 		}, {
 			text: `${i18n.ts.size} (${i18n.ts.descendingOrder})`,
 			icon: 'ti ti-sort-descending-letters',
-			action: () => { sortModeSelect.value = '+size'; },
+			action: () => {
+				sortModeSelect.value = '+size';
+			},
 			active: sortModeSelect.value === '+size',
 		}, {
 			text: `${i18n.ts.size} (${i18n.ts.ascendingOrder})`,
 			icon: 'ti ti-sort-ascending-letters',
-			action: () => { sortModeSelect.value = '-size'; },
+			action: () => {
+				sortModeSelect.value = '-size';
+			},
 			active: sortModeSelect.value === '-size',
 		}, {
 			text: `${i18n.ts.name} (${i18n.ts.descendingOrder})`,
 			icon: 'ti ti-sort-descending-letters',
-			action: () => { sortModeSelect.value = '+name'; },
+			action: () => {
+				sortModeSelect.value = '+name';
+			},
 			active: sortModeSelect.value === '+name',
 		}, {
 			text: `${i18n.ts.name} (${i18n.ts.ascendingOrder})`,
 			icon: 'ti ti-sort-ascending-letters',
-			action: () => { sortModeSelect.value = '-name'; },
+			action: () => {
+				sortModeSelect.value = '-name';
+			},
 			active: sortModeSelect.value === '-name',
 		}],
 	});
@@ -690,18 +706,24 @@ function getMenu() {
 		menu.push({
 			text: i18n.ts.renameFolder,
 			icon: 'ti ti-forms',
-			action: () => { if (folder.value) renameFolder(folder.value); },
+			action: () => {
+				if (folder.value) renameFolder(folder.value);
+			},
 		}, {
 			text: i18n.ts.deleteFolder,
 			icon: 'ti ti-trash',
-			action: () => { deleteFolder(folder.value as Misskey.entities.DriveFolder); },
+			action: () => {
+				deleteFolder(folder.value as Misskey.entities.DriveFolder);
+			},
 		});
 	}
 
 	menu.push({
 		text: i18n.ts.createFolder,
 		icon: 'ti ti-folder-plus',
-		action: () => { createFolder(); },
+		action: () => {
+			createFolder();
+		},
 	});
 
 	return menu;

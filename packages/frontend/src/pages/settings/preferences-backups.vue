@@ -4,54 +4,54 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="_gaps_m">
-	<div :class="$style.buttons">
-		<MkButton inline primary @click="saveNew">{{ i18n.ts._preferencesBackups.saveNew }}</MkButton>
-		<MkButton inline @click="loadFile">{{ i18n.ts._preferencesBackups.loadFile }}</MkButton>
-	</div>
-
-	<FormSection>
-		<template #label>{{ i18n.ts._preferencesBackups.list }}</template>
-		<template v-if="profiles && Object.keys(profiles).length > 0">
-			<div class="_gaps_s">
-				<div
-					v-for="(profile, id) in profiles"
-					:key="id"
-					class="_panel"
-					:class="$style.profile"
-					@click="$event => menu($event, id)"
-					@contextmenu.prevent.stop="$event => menu($event, id)"
-				>
-					<div :class="$style.profileName">{{ profile.name }}</div>
-					<div :class="$style.profileTime">{{ i18n.tsx._preferencesBackups.createdAt({ date: (new Date(profile.createdAt)).toLocaleDateString(), time: (new Date(profile.createdAt)).toLocaleTimeString() }) }}</div>
-					<div v-if="profile.updatedAt" :class="$style.profileTime">{{ i18n.tsx._preferencesBackups.updatedAt({ date: (new Date(profile.updatedAt)).toLocaleDateString(), time: (new Date(profile.updatedAt)).toLocaleTimeString() }) }}</div>
-				</div>
-			</div>
-		</template>
-		<div v-else-if="profiles">
-			<MkInfo>{{ i18n.ts._preferencesBackups.noBackups }}</MkInfo>
+	<div class="_gaps_m">
+		<div :class="$style.buttons">
+			<MkButton inline primary @click="saveNew">{{ i18n.ts._preferencesBackups.saveNew }}</MkButton>
+			<MkButton inline @click="loadFile">{{ i18n.ts._preferencesBackups.loadFile }}</MkButton>
 		</div>
-		<MkLoading v-else/>
-	</FormSection>
-</div>
+
+		<FormSection>
+			<template #label>{{ i18n.ts._preferencesBackups.list }}</template>
+			<template v-if="profiles && Object.keys(profiles).length > 0">
+				<div class="_gaps_s">
+					<div
+						v-for="(profile, id) in profiles"
+						:key="id"
+						:class="$style.profile"
+						class="_panel"
+						@click="$event => menu($event, id)"
+						@contextmenu.prevent.stop="$event => menu($event, id)"
+					>
+						<div :class="$style.profileName">{{ profile.name }}</div>
+						<div :class="$style.profileTime">{{ i18n.tsx._preferencesBackups.createdAt({date: (new Date(profile.createdAt)).toLocaleDateString(), time: (new Date(profile.createdAt)).toLocaleTimeString()}) }}</div>
+						<div v-if="profile.updatedAt" :class="$style.profileTime">{{ i18n.tsx._preferencesBackups.updatedAt({date: (new Date(profile.updatedAt)).toLocaleDateString(), time: (new Date(profile.updatedAt)).toLocaleTimeString()}) }}</div>
+					</div>
+				</div>
+			</template>
+			<div v-else-if="profiles">
+				<MkInfo>{{ i18n.ts._preferencesBackups.noBackups }}</MkInfo>
+			</div>
+			<MkLoading v-else/>
+		</FormSection>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref } from 'vue';
-import { v4 as uuid } from 'uuid';
-import { version, host } from '@@/js/config.js';
+import {onMounted, onUnmounted, ref} from 'vue';
+import {v4 as uuid} from 'uuid';
+import {version, host} from '@@/js/config.js';
 import FormSection from '@/components/form/section.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkInfo from '@/components/MkInfo.vue';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { ColdDeviceStorage, defaultStore } from '@/store.js';
-import { unisonReload } from '@/scripts/unison-reload.js';
-import { useStream } from '@/stream.js';
-import { $i } from '@/account.js';
-import { i18n } from '@/i18n.js';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
-import { miLocalStorage } from '@/local-storage.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {ColdDeviceStorage, defaultStore} from '@/store.js';
+import {unisonReload} from '@/scripts/unison-reload.js';
+import {useStream} from '@/stream.js';
+import {$i} from '@/account.js';
+import {i18n} from '@/i18n.js';
+import {definePageMetadata} from '@/scripts/page-metadata.js';
+import {miLocalStorage} from '@/local-storage.js';
 
 const defaultStoreSaveKeys: (keyof typeof defaultStore['state'])[] = [
 	'collapseRenotes',
@@ -143,7 +143,7 @@ const connection = $i && useStream().useChannel('main');
 
 const profiles = ref<Record<string, Profile> | null>(null);
 
-misskeyApi('i/registry/get-all', { scope })
+misskeyApi('i/registry/get-all', {scope})
 	.then(res => {
 		profiles.value = res || {};
 	});
@@ -200,7 +200,7 @@ function getSettings(): Profile['settings'] {
 async function saveNew(): Promise<void> {
 	if (!profiles.value) return;
 
-	const { canceled, result: name } = await os.inputText({
+	const {canceled, result: name} = await os.inputText({
 		title: i18n.ts._preferencesBackups.inputName,
 		default: '',
 	});
@@ -209,7 +209,7 @@ async function saveNew(): Promise<void> {
 	if (Object.values(profiles.value).some(x => x.name === name)) {
 		return os.alert({
 			title: i18n.ts._preferencesBackups.cannotSave,
-			text: i18n.tsx._preferencesBackups.nameAlreadyExists({ name }),
+			text: i18n.tsx._preferencesBackups.nameAlreadyExists({name}),
 		});
 	}
 
@@ -222,7 +222,7 @@ async function saveNew(): Promise<void> {
 		host,
 		settings: getSettings(),
 	};
-	await os.apiWithDialog('i/registry/set', { scope, key: id, value: profile });
+	await os.apiWithDialog('i/registry/set', {scope, key: id, value: profile});
 }
 
 function loadFile(): void {
@@ -256,7 +256,7 @@ function loadFile(): void {
 		}
 
 		const id = uuid();
-		await os.apiWithDialog('i/registry/set', { scope, key: id, value: profile });
+		await os.apiWithDialog('i/registry/set', {scope, key: id, value: profile});
 
 		// 一応廃棄
 		(window as any).__misskey_input_ref__ = null;
@@ -274,10 +274,10 @@ async function applyProfile(id: string): Promise<void> {
 
 	const profile = profiles.value[id];
 
-	const { canceled: cancel1 } = await os.confirm({
+	const {canceled: cancel1} = await os.confirm({
 		type: 'warning',
 		title: i18n.ts._preferencesBackups.apply,
-		text: i18n.tsx._preferencesBackups.applyConfirm({ name: profile.name }),
+		text: i18n.tsx._preferencesBackups.applyConfirm({name: profile.name}),
 	});
 	if (cancel1) return;
 
@@ -327,7 +327,7 @@ async function applyProfile(id: string): Promise<void> {
 		miLocalStorage.removeItem('wallpaperMode');
 	}
 
-	const { canceled: cancel2 } = await os.confirm({
+	const {canceled: cancel2} = await os.confirm({
 		type: 'info',
 		text: i18n.ts.reloadToApplySetting,
 	});
@@ -339,26 +339,26 @@ async function applyProfile(id: string): Promise<void> {
 async function deleteProfile(id: string): Promise<void> {
 	if (!profiles.value) return;
 
-	const { canceled } = await os.confirm({
+	const {canceled} = await os.confirm({
 		type: 'info',
 		title: i18n.ts.delete,
-		text: i18n.tsx.deleteAreYouSure({ x: profiles.value[id].name }),
+		text: i18n.tsx.deleteAreYouSure({x: profiles.value[id].name}),
 	});
 	if (canceled) return;
 
-	await os.apiWithDialog('i/registry/remove', { scope, key: id });
+	await os.apiWithDialog('i/registry/remove', {scope, key: id});
 	delete profiles.value[id];
 }
 
 async function save(id: string): Promise<void> {
 	if (!profiles.value) return;
 
-	const { name, createdAt } = profiles.value[id];
+	const {name, createdAt} = profiles.value[id];
 
-	const { canceled } = await os.confirm({
+	const {canceled} = await os.confirm({
 		type: 'info',
 		title: i18n.ts._preferencesBackups.save,
-		text: i18n.tsx._preferencesBackups.saveConfirm({ name }),
+		text: i18n.tsx._preferencesBackups.saveConfirm({name}),
 	});
 	if (canceled) return;
 
@@ -370,13 +370,13 @@ async function save(id: string): Promise<void> {
 		host,
 		settings: getSettings(),
 	};
-	await os.apiWithDialog('i/registry/set', { scope, key: id, value: profile });
+	await os.apiWithDialog('i/registry/set', {scope, key: id, value: profile});
 }
 
 async function rename(id: string): Promise<void> {
 	if (!profiles.value) return;
 
-	const { canceled: cancel1, result: name } = await os.inputText({
+	const {canceled: cancel1, result: name} = await os.inputText({
 		title: i18n.ts._preferencesBackups.inputName,
 		default: '',
 	});
@@ -385,21 +385,21 @@ async function rename(id: string): Promise<void> {
 	if (Object.values(profiles.value).some(x => x.name === name)) {
 		return os.alert({
 			title: i18n.ts._preferencesBackups.cannotSave,
-			text: i18n.tsx._preferencesBackups.nameAlreadyExists({ name }),
+			text: i18n.tsx._preferencesBackups.nameAlreadyExists({name}),
 		});
 	}
 
-	const registry = Object.assign({}, { ...profiles.value[id] });
+	const registry = Object.assign({}, {...profiles.value[id]});
 
-	const { canceled: cancel2 } = await os.confirm({
+	const {canceled: cancel2} = await os.confirm({
 		type: 'info',
 		title: i18n.ts.rename,
-		text: i18n.tsx._preferencesBackups.renameConfirm({ old: registry.name, new: name }),
+		text: i18n.tsx._preferencesBackups.renameConfirm({old: registry.name, new: name}),
 	});
 	if (cancel2) return;
 
 	registry.name = name;
-	await os.apiWithDialog('i/registry/set', { scope, key: id, value: registry });
+	await os.apiWithDialog('i/registry/set', {scope, key: id, value: registry});
 }
 
 function menu(ev: MouseEvent, profileId: string) {
@@ -413,9 +413,9 @@ function menu(ev: MouseEvent, profileId: string) {
 		type: 'a',
 		text: i18n.ts.download,
 		icon: 'ti ti-download',
-		href: URL.createObjectURL(new Blob([JSON.stringify(profiles.value[profileId], null, 2)], { type: 'application/json' })),
+		href: URL.createObjectURL(new Blob([JSON.stringify(profiles.value[profileId], null, 2)], {type: 'application/json'})),
 		download: `${profiles.value[profileId].name}.json`,
-	}, { type: 'divider' }, {
+	}, {type: 'divider'}, {
 		text: i18n.ts.rename,
 		icon: 'ti ti-forms',
 		action: () => rename(profileId),
@@ -423,7 +423,7 @@ function menu(ev: MouseEvent, profileId: string) {
 		text: i18n.ts._preferencesBackups.save,
 		icon: 'ti ti-device-floppy',
 		action: () => save(profileId),
-	}, { type: 'divider' }, {
+	}, {type: 'divider'}, {
 		text: i18n.ts.delete,
 		icon: 'ti ti-trash',
 		action: () => deleteProfile(profileId),
@@ -433,7 +433,7 @@ function menu(ev: MouseEvent, profileId: string) {
 
 onMounted(() => {
 	// streamingのuser storage updateイベントを監視して更新
-	connection?.on('registryUpdated', ({ scope: recievedScope, key, value }) => {
+	connection?.on('registryUpdated', ({scope: recievedScope, key, value}) => {
 		if (!recievedScope || recievedScope.length !== scope.length || recievedScope[0] !== scope[0]) return;
 		if (!profiles.value) return;
 

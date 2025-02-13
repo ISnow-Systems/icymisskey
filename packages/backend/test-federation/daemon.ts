@@ -1,5 +1,5 @@
 import IPCIDR from 'ip-cidr';
-import { Redis } from 'ioredis';
+import {Redis} from 'ioredis';
 
 const TESTER_IP_ADDRESS = '172.20.1.1';
 

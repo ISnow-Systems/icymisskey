@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { RolesRepository, UsersRepository } from '@/models/_.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '@/server/api/error.js';
-import { RoleService } from '@/core/RoleService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {RolesRepository, UsersRepository} from '@/models/_.js';
+import {DI} from '@/di-symbols.js';
+import {ApiError} from '@/server/api/error.js';
+import {RoleService} from '@/core/RoleService.js';
 
 export const meta = {
 	tags: ['admin', 'role'],
@@ -41,8 +41,8 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		roleId: { type: 'string', format: 'misskey:id' },
-		userId: { type: 'string', format: 'misskey:id' },
+		roleId: {type: 'string', format: 'misskey:id'},
+		userId: {type: 'string', format: 'misskey:id'},
 		expiresAt: {
 			type: 'integer',
 			nullable: true,
@@ -59,14 +59,12 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.rolesRepository)
 		private rolesRepository: RolesRepository,
-
 		private roleService: RoleService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const role = await this.rolesRepository.findOneBy({ id: ps.roleId });
+			const role = await this.rolesRepository.findOneBy({id: ps.roleId});
 			if (role == null) {
 				throw new ApiError(meta.errors.noSuchRole);
 			}
@@ -75,7 +73,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				throw new ApiError(meta.errors.accessDenied);
 			}
 
-			const user = await this.usersRepository.findOneBy({ id: ps.userId });
+			const user = await this.usersRepository.findOneBy({id: ps.userId});
 			if (user == null) {
 				throw new ApiError(meta.errors.noSuchUser);
 			}

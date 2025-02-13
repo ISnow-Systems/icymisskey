@@ -4,7 +4,7 @@
  */
 
 import * as fs from 'node:fs/promises';
-import type { PathLike } from 'node:fs';
+import type {PathLike} from 'node:fs';
 
 /**
  * `fs.createWriteStream()`相当のことを行う`WritableStream` (Web標準)

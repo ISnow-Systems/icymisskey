@@ -4,16 +4,16 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkContainer :naked="widgetProps.transparent" :showHeader="false" data-cy-mkw-aichan class="mkw-aichan">
-	<iframe ref="live2d" :class="$style.root" src="https://misskey-dev.github.io/mascot-web/?scale=1.5&y=1.1&eyeY=100" @click="touched"></iframe>
-</MkContainer>
+	<MkContainer :naked="widgetProps.transparent" :showHeader="false" class="mkw-aichan" data-cy-mkw-aichan>
+		<iframe ref="live2d" :class="$style.root" src="https://misskey-dev.github.io/mascot-web/?scale=1.5&y=1.1&eyeY=100" @click="touched"></iframe>
+	</MkContainer>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, shallowRef } from 'vue';
-import { useWidgetPropsManager } from './widget.js';
-import type { WidgetComponentProps, WidgetComponentEmits, WidgetComponentExpose } from './widget.js';
-import type { GetFormResultType } from '@/scripts/form.js';
+import {onMounted, onUnmounted, shallowRef} from 'vue';
+import {useWidgetPropsManager} from './widget.js';
+import type {WidgetComponentProps, WidgetComponentEmits, WidgetComponentExpose} from './widget.js';
+import type {GetFormResultType} from '@/scripts/form.js';
 
 const name = 'ai';
 
@@ -29,7 +29,7 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 const props = defineProps<WidgetComponentProps<WidgetProps>>();
 const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 
-const { widgetProps, configure } = useWidgetPropsManager(name,
+const {widgetProps, configure} = useWidgetPropsManager(name,
 	widgetPropsDef,
 	props,
 	emit,
@@ -53,7 +53,7 @@ const onMousemove = (ev: MouseEvent) => {
 };
 
 onMounted(() => {
-	window.addEventListener('mousemove', onMousemove, { passive: true });
+	window.addEventListener('mousemove', onMousemove, {passive: true});
 });
 
 onUnmounted(() => {

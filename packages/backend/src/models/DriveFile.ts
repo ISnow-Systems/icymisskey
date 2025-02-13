@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne } from 'typeorm';
-import { id } from './util/id.js';
-import { MiUser } from './User.js';
-import { MiDriveFolder } from './DriveFolder.js';
+import {PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne} from 'typeorm';
+import {id} from './util/id.js';
+import {MiUser} from './User.js';
+import {MiDriveFolder} from './DriveFolder.js';
 
 @Entity('drive_file')
 @Index(['userId', 'folderId', 'id'])
@@ -104,19 +104,19 @@ export class MiDriveFile {
 	})
 	public webpublicType: string | null;
 
-	@Index({ unique: true })
+	@Index({unique: true})
 	@Column('varchar', {
 		length: 256, nullable: true,
 	})
 	public accessKey: string | null;
 
-	@Index({ unique: true })
+	@Index({unique: true})
 	@Column('varchar', {
 		length: 256, nullable: true,
 	})
 	public thumbnailAccessKey: string | null;
 
-	@Index({ unique: true })
+	@Index({unique: true})
 	@Column('varchar', {
 		length: 256, nullable: true,
 	})

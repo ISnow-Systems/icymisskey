@@ -84,7 +84,7 @@ export function physics(container: HTMLElement) {
 				objEl.offsetWidth,
 				objEl.offsetHeight,
 				{
-					chamfer: { radius: parseInt(style.borderRadius || '0', 10) },
+					chamfer: {radius: parseInt(style.borderRadius || '0', 10)},
 					restitution: 0.5,
 				},
 			);

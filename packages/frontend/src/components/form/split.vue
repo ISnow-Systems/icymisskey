@@ -4,13 +4,13 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="$style.root">
-	<slot></slot>
-</div>
+	<div :class="$style.root">
+		<slot></slot>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { provide } from 'vue';
+import {provide} from 'vue';
 
 const props = withDefaults(defineProps<{
 	minWidth?: number;

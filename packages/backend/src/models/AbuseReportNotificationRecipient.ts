@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import { MiSystemWebhook } from '@/models/SystemWebhook.js';
-import { MiUserProfile } from '@/models/UserProfile.js';
-import { id } from './util/id.js';
-import { MiUser } from './User.js';
+import {Column, Entity, Index, JoinColumn, ManyToOne, PrimaryColumn} from 'typeorm';
+import {MiSystemWebhook} from '@/models/SystemWebhook.js';
+import {MiUserProfile} from '@/models/UserProfile.js';
+import {id} from './util/id.js';
+import {MiUser} from './User.js';
 
 /**
  * 通報受信時に通知を送信する方法.
@@ -69,14 +69,14 @@ export class MiAbuseReportNotificationRecipient {
 	@ManyToOne(type => MiUser, {
 		onDelete: 'CASCADE',
 	})
-	@JoinColumn({ name: 'userId', referencedColumnName: 'id', foreignKeyConstraintName: 'FK_abuse_report_notification_recipient_userId1' })
+	@JoinColumn({name: 'userId', referencedColumnName: 'id', foreignKeyConstraintName: 'FK_abuse_report_notification_recipient_userId1'})
 	public user: MiUser | null;
 
 	/**
 	 * 通知先のユーザプロフィール.
 	 */
 	@ManyToOne(type => MiUserProfile, {})
-	@JoinColumn({ name: 'userId', referencedColumnName: 'userId', foreignKeyConstraintName: 'FK_abuse_report_notification_recipient_userId2' })
+	@JoinColumn({name: 'userId', referencedColumnName: 'userId', foreignKeyConstraintName: 'FK_abuse_report_notification_recipient_userId2'})
 	public userProfile: MiUserProfile | null;
 
 	/**

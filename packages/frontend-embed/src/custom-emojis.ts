@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { shallowRef, watch } from 'vue';
+import {shallowRef, watch} from 'vue';
 import * as Misskey from 'misskey-js';
-import { misskeyApi, misskeyApiGet } from '@/misskey-api.js';
+import {misskeyApi, misskeyApiGet} from '@/misskey-api.js';
 
 function get(key: string) {
 	const value = localStorage.getItem(key);
@@ -26,7 +26,7 @@ watch(customEmojis, emojis => {
 	for (const emoji of emojis) {
 		customEmojisMap.set(emoji.name, emoji);
 	}
-}, { immediate: true });
+}, {immediate: true});
 
 export async function fetchCustomEmojis(force = false) {
 	const now = Date.now();
@@ -46,6 +46,7 @@ export async function fetchCustomEmojis(force = false) {
 }
 
 let cachedTags;
+
 export function getCustomEmojiTags() {
 	if (cachedTags) return cachedTags;
 

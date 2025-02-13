@@ -4,15 +4,15 @@
  */
 
 import bcrypt from 'bcryptjs';
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { DI } from '@/di-symbols.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import type { UserProfilesRepository, UserSecurityKeysRepository } from '@/models/_.js';
-import { WebAuthnService } from '@/core/WebAuthnService.js';
-import { ApiError } from '@/server/api/error.js';
-import { UserAuthService } from '@/core/UserAuthService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {UserEntityService} from '@/core/entities/UserEntityService.js';
+import {DI} from '@/di-symbols.js';
+import {GlobalEventService} from '@/core/GlobalEventService.js';
+import type {UserProfilesRepository, UserSecurityKeysRepository} from '@/models/_.js';
+import {WebAuthnService} from '@/core/WebAuthnService.js';
+import {ApiError} from '@/server/api/error.js';
+import {UserAuthService} from '@/core/UserAuthService.js';
 
 export const meta = {
 	requireCredential: true,
@@ -38,8 +38,8 @@ export const meta = {
 		nullable: false,
 		optional: false,
 		properties: {
-			id: { type: 'string' },
-			name: { type: 'string' },
+			id: {type: 'string'},
+			name: {type: 'string'},
 		},
 	},
 } as const;
@@ -47,10 +47,10 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		password: { type: 'string' },
-		token: { type: 'string', nullable: true },
-		name: { type: 'string', minLength: 1, maxLength: 30 },
-		credential: { type: 'object' },
+		password: {type: 'string'},
+		token: {type: 'string', nullable: true},
+		name: {type: 'string', minLength: 1, maxLength: 30},
+		credential: {type: 'object'},
 	},
 	required: ['password', 'name', 'credential'],
 } as const;
@@ -61,10 +61,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 	constructor(
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
-
 		@Inject(DI.userSecurityKeysRepository)
 		private userSecurityKeysRepository: UserSecurityKeysRepository,
-
 		private webAuthnService: WebAuthnService,
 		private userAuthService: UserAuthService,
 		private userEntityService: UserEntityService,
@@ -72,7 +70,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			const token = ps.token;
-			const profile = await this.userProfilesRepository.findOneByOrFail({ userId: me.id });
+			const profile = await this.userProfilesRepository.findOneByOrFail({userId: me.id});
 
 			if (profile.twoFactorEnabled) {
 				if (token == null) {

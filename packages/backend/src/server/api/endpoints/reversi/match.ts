@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { ReversiService } from '@/core/ReversiService.js';
-import { ReversiGameEntityService } from '@/core/entities/ReversiGameEntityService.js';
-import { ApiError } from '../../error.js';
-import { GetterService } from '../../GetterService.js';
+import {Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {ReversiService} from '@/core/ReversiService.js';
+import {ReversiGameEntityService} from '@/core/entities/ReversiGameEntityService.js';
+import {ApiError} from '../../error.js';
+import {GetterService} from '../../GetterService.js';
 
 export const meta = {
 	requireCredential: true,
@@ -39,9 +39,9 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		userId: { type: 'string', format: 'misskey:id', nullable: true },
-		noIrregularRules: { type: 'boolean', default: false },
-		multiple: { type: 'boolean', default: false },
+		userId: {type: 'string', format: 'misskey:id', nullable: true},
+		noIrregularRules: {type: 'boolean', default: false},
+		multiple: {type: 'boolean', default: false},
 	},
 	required: [],
 } as const;
@@ -63,7 +63,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			const game = target
 				? await this.reversiService.matchSpecificUser(me, target, ps.multiple)
-				: await this.reversiService.matchAnyUser(me, { noIrregularRules: ps.noIrregularRules }, ps.multiple);
+				: await this.reversiService.matchAnyUser(me, {noIrregularRules: ps.noIrregularRules}, ps.multiple);
 
 			if (game == null) return;
 

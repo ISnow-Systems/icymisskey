@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import type { MiDriveFile } from '@/models/DriveFile.js';
-import type { DriveFilesRepository } from '@/models/_.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DriveFileEntityService } from '@/core/entities/DriveFileEntityService.js';
-import { DI } from '@/di-symbols.js';
-import { RoleService } from '@/core/RoleService.js';
-import { ApiError } from '../../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import type {MiDriveFile} from '@/models/DriveFile.js';
+import type {DriveFilesRepository} from '@/models/_.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {DriveFileEntityService} from '@/core/entities/DriveFileEntityService.js';
+import {DI} from '@/di-symbols.js';
+import {RoleService} from '@/core/RoleService.js';
+import {ApiError} from '../../../error.js';
 
 export const meta = {
 	tags: ['drive'],
@@ -45,12 +45,12 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		fileId: { type: 'string', format: 'misskey:id' },
-		url: { type: 'string' },
+		fileId: {type: 'string', format: 'misskey:id'},
+		url: {type: 'string'},
 	},
 	anyOf: [
-		{ required: ['fileId'] },
-		{ required: ['url'] },
+		{required: ['fileId']},
+		{required: ['url']},
 	],
 } as const;
 
@@ -59,7 +59,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.driveFilesRepository)
 		private driveFilesRepository: DriveFilesRepository,
-
 		private driveFileEntityService: DriveFileEntityService,
 		private roleService: RoleService,
 	) {
@@ -67,7 +66,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			let file: MiDriveFile | null = null;
 
 			if (ps.fileId) {
-				file = await this.driveFilesRepository.findOneBy({ id: ps.fileId });
+				file = await this.driveFilesRepository.findOneBy({id: ps.fileId});
 			} else if (ps.url) {
 				file = await this.driveFilesRepository.findOne({
 					where: [{

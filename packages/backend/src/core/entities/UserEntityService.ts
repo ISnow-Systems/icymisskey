@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import * as Redis from 'ioredis';
 import _Ajv from 'ajv';
-import { ModuleRef } from '@nestjs/core';
-import { In } from 'typeorm';
-import { DI } from '@/di-symbols.js';
-import type { Config } from '@/config.js';
-import type { Packed } from '@/misc/json-schema.js';
-import type { Promiseable } from '@/misc/prelude/await-all.js';
-import { awaitAll } from '@/misc/prelude/await-all.js';
-import { USER_ACTIVE_THRESHOLD, USER_ONLINE_THRESHOLD } from '@/const.js';
-import type { MiLocalUser, MiPartialLocalUser, MiPartialRemoteUser, MiRemoteUser, MiUser } from '@/models/User.js';
+import {ModuleRef} from '@nestjs/core';
+import {In} from 'typeorm';
+import {DI} from '@/di-symbols.js';
+import type {Config} from '@/config.js';
+import type {Packed} from '@/misc/json-schema.js';
+import type {Promiseable} from '@/misc/prelude/await-all.js';
+import {awaitAll} from '@/misc/prelude/await-all.js';
+import {USER_ACTIVE_THRESHOLD, USER_ONLINE_THRESHOLD} from '@/const.js';
+import type {MiLocalUser, MiPartialLocalUser, MiPartialRemoteUser, MiRemoteUser, MiUser} from '@/models/User.js';
 import {
 	birthdaySchema,
 	descriptionSchema,
@@ -39,18 +39,18 @@ import type {
 	UserSecurityKeysRepository,
 	UsersRepository,
 } from '@/models/_.js';
-import { bindThis } from '@/decorators.js';
-import { RoleService } from '@/core/RoleService.js';
-import { ApPersonService } from '@/core/activitypub/models/ApPersonService.js';
-import { FederatedInstanceService } from '@/core/FederatedInstanceService.js';
-import { IdService } from '@/core/IdService.js';
-import type { AnnouncementService } from '@/core/AnnouncementService.js';
-import type { CustomEmojiService } from '@/core/CustomEmojiService.js';
-import { AvatarDecorationService } from '@/core/AvatarDecorationService.js';
-import type { OnModuleInit } from '@nestjs/common';
-import type { NoteEntityService } from './NoteEntityService.js';
-import type { DriveFileEntityService } from './DriveFileEntityService.js';
-import type { PageEntityService } from './PageEntityService.js';
+import {bindThis} from '@/decorators.js';
+import {RoleService} from '@/core/RoleService.js';
+import {ApPersonService} from '@/core/activitypub/models/ApPersonService.js';
+import {FederatedInstanceService} from '@/core/FederatedInstanceService.js';
+import {IdService} from '@/core/IdService.js';
+import type {AnnouncementService} from '@/core/AnnouncementService.js';
+import type {CustomEmojiService} from '@/core/CustomEmojiService.js';
+import {AvatarDecorationService} from '@/core/AvatarDecorationService.js';
+import type {OnModuleInit} from '@nestjs/common';
+import type {NoteEntityService} from './NoteEntityService.js';
+import type {DriveFileEntityService} from './DriveFileEntityService.js';
+import type {PageEntityService} from './PageEntityService.js';
 
 const Ajv = _Ajv.default;
 const ajv = new Ajv();
@@ -82,6 +82,15 @@ export type UserRelation = {
 
 @Injectable()
 export class UserEntityService implements OnModuleInit {
+	//#region Validators
+	public validateLocalUsername = ajv.compile(localUsernameSchema);
+	public validatePassword = ajv.compile(passwordSchema);
+	public validateName = ajv.compile(nameSchema);
+	public validateDescription = ajv.compile(descriptionSchema);
+	public validateLocation = ajv.compile(locationSchema);
+	public validateBirthday = ajv.compile(birthdaySchema);
+	public isLocalUser = isLocalUser;
+	public isRemoteUser = isRemoteUser;
 	private apPersonService: ApPersonService;
 	private noteEntityService: NoteEntityService;
 	private pageEntityService: PageEntityService;
@@ -91,46 +100,34 @@ export class UserEntityService implements OnModuleInit {
 	private federatedInstanceService: FederatedInstanceService;
 	private idService: IdService;
 	private avatarDecorationService: AvatarDecorationService;
+	//#endregion
 
 	constructor(
 		private moduleRef: ModuleRef,
-
 		@Inject(DI.config)
 		private config: Config,
-
 		@Inject(DI.redis)
 		private redisClient: Redis.Redis,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-
 		@Inject(DI.userSecurityKeysRepository)
 		private userSecurityKeysRepository: UserSecurityKeysRepository,
-
 		@Inject(DI.followingsRepository)
 		private followingsRepository: FollowingsRepository,
-
 		@Inject(DI.followRequestsRepository)
 		private followRequestsRepository: FollowRequestsRepository,
-
 		@Inject(DI.blockingsRepository)
 		private blockingsRepository: BlockingsRepository,
-
 		@Inject(DI.mutingsRepository)
 		private mutingsRepository: MutingsRepository,
-
 		@Inject(DI.renoteMutingsRepository)
 		private renoteMutingsRepository: RenoteMutingsRepository,
-
 		@Inject(DI.noteUnreadsRepository)
 		private noteUnreadsRepository: NoteUnreadsRepository,
-
 		@Inject(DI.userNotePiningsRepository)
 		private userNotePiningsRepository: UserNotePiningsRepository,
-
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
-
 		@Inject(DI.userMemosRepository)
 		private userMemosRepository: UserMemoRepository,
 	) {
@@ -147,18 +144,6 @@ export class UserEntityService implements OnModuleInit {
 		this.idService = this.moduleRef.get('IdService');
 		this.avatarDecorationService = this.moduleRef.get('AvatarDecorationService');
 	}
-
-	//#region Validators
-	public validateLocalUsername = ajv.compile(localUsernameSchema);
-	public validatePassword = ajv.compile(passwordSchema);
-	public validateName = ajv.compile(nameSchema);
-	public validateDescription = ajv.compile(descriptionSchema);
-	public validateLocation = ajv.compile(locationSchema);
-	public validateBirthday = ajv.compile(birthdaySchema);
-	//#endregion
-
-	public isLocalUser = isLocalUser;
-	public isRemoteUser = isRemoteUser;
 
 	@bindThis
 	public async getRelation(me: MiUser['id'], target: MiUser['id']): Promise<UserRelation> {
@@ -246,41 +231,41 @@ export class UserEntityService implements OnModuleInit {
 			muters,
 			renoteMuters,
 		] = await Promise.all([
-			this.followingsRepository.findBy({ followerId: me })
+			this.followingsRepository.findBy({followerId: me})
 				.then(f => new Map(f.map(it => [it.followeeId, it]))),
 			this.followingsRepository.createQueryBuilder('f')
 				.select('f.followerId')
-				.where('f.followeeId = :me', { me })
+				.where('f.followeeId = :me', {me})
 				.getRawMany<{ f_followerId: string }>()
 				.then(it => it.map(it => it.f_followerId)),
 			this.followRequestsRepository.createQueryBuilder('f')
 				.select('f.followeeId')
-				.where('f.followerId = :me', { me })
+				.where('f.followerId = :me', {me})
 				.getRawMany<{ f_followeeId: string }>()
 				.then(it => it.map(it => it.f_followeeId)),
 			this.followRequestsRepository.createQueryBuilder('f')
 				.select('f.followerId')
-				.where('f.followeeId = :me', { me })
+				.where('f.followeeId = :me', {me})
 				.getRawMany<{ f_followerId: string }>()
 				.then(it => it.map(it => it.f_followerId)),
 			this.blockingsRepository.createQueryBuilder('b')
 				.select('b.blockeeId')
-				.where('b.blockerId = :me', { me })
+				.where('b.blockerId = :me', {me})
 				.getRawMany<{ b_blockeeId: string }>()
 				.then(it => it.map(it => it.b_blockeeId)),
 			this.blockingsRepository.createQueryBuilder('b')
 				.select('b.blockerId')
-				.where('b.blockeeId = :me', { me })
+				.where('b.blockeeId = :me', {me})
 				.getRawMany<{ b_blockerId: string }>()
 				.then(it => it.map(it => it.b_blockerId)),
 			this.mutingsRepository.createQueryBuilder('m')
 				.select('m.muteeId')
-				.where('m.muterId = :me', { me })
+				.where('m.muterId = :me', {me})
 				.getRawMany<{ m_muteeId: string }>()
 				.then(it => it.map(it => it.m_muteeId)),
 			this.renoteMutingsRepository.createQueryBuilder('m')
 				.select('m.muteeId')
-				.where('m.muterId = :me', { me })
+				.where('m.muterId = :me', {me})
 				.getRawMany<{ m_muteeId: string }>()
 				.then(it => it.map(it => it.m_muteeId)),
 		]);
@@ -372,8 +357,8 @@ export class UserEntityService implements OnModuleInit {
 		const elapsed = Date.now() - user.lastActiveDate.getTime();
 		return (
 			elapsed < USER_ONLINE_THRESHOLD ? 'online' :
-			elapsed < USER_ACTIVE_THRESHOLD ? 'active' :
-			'offline'
+				elapsed < USER_ACTIVE_THRESHOLD ? 'active' :
+					'offline'
 		);
 	}
 
@@ -410,7 +395,7 @@ export class UserEntityService implements OnModuleInit {
 			includeSecrets: false,
 		}, options);
 
-		const user = typeof src === 'object' ? src : await this.usersRepository.findOneByOrFail({ id: src });
+		const user = typeof src === 'object' ? src : await this.usersRepository.findOneByOrFail({id: src});
 
 		const isDetailed = opts.schema !== 'UserLite';
 		const meId = me ? me.id : null;
@@ -418,7 +403,7 @@ export class UserEntityService implements OnModuleInit {
 		const iAmModerator = me ? await this.roleService.isModerator(me as MiUser) : false;
 
 		const profile = isDetailed
-			? (opts.userProfile ?? await this.userProfilesRepository.findOneByOrFail({ userId: user.id }))
+			? (opts.userProfile ?? await this.userProfilesRepository.findOneByOrFail({userId: user.id}))
 			: null;
 
 		let relation: UserRelation | null = null;
@@ -435,7 +420,7 @@ export class UserEntityService implements OnModuleInit {
 			if (opts.userMemos) {
 				memo = opts.userMemos.get(user.id) ?? null;
 			} else {
-				memo = await this.userMemosRepository.findOneBy({ userId: meId, targetUserId: user.id })
+				memo = await this.userMemosRepository.findOneBy({userId: meId, targetUserId: user.id})
 					.then(row => row?.memo ?? null);
 			}
 		}
@@ -446,7 +431,7 @@ export class UserEntityService implements OnModuleInit {
 				pins = opts.pinNotes.get(user.id) ?? [];
 			} else {
 				pins = await this.userNotePiningsRepository.createQueryBuilder('pin')
-					.where('pin.userId = :userId', { userId: user.id })
+					.where('pin.userId = :userId', {userId: user.id})
 					.innerJoinAndSelect('pin.note', 'note')
 					.orderBy('pin.id', 'DESC')
 					.getMany();
@@ -455,13 +440,13 @@ export class UserEntityService implements OnModuleInit {
 
 		const followingCount = profile == null ? null :
 			(profile.followingVisibility === 'public') || isMe || iAmModerator ? user.followingCount :
-			(profile.followingVisibility === 'followers') && (relation && relation.isFollowing) ? user.followingCount :
-			null;
+				(profile.followingVisibility === 'followers') && (relation && relation.isFollowing) ? user.followingCount :
+					null;
 
 		const followersCount = profile == null ? null :
 			(profile.followersVisibility === 'public') || isMe || iAmModerator ? user.followersCount :
-			(profile.followersVisibility === 'followers') && (relation && relation.isFollowing) ? user.followersCount :
-			null;
+				(profile.followersVisibility === 'followers') && (relation && relation.isFollowing) ? user.followersCount :
+					null;
 
 		const isModerator = isMe && isDetailed ? this.roleService.isModerator(user) : null;
 		const isAdmin = isMe && isDetailed ? this.roleService.isAdministrator(user) : null;
@@ -566,7 +551,7 @@ export class UserEntityService implements OnModuleInit {
 				twoFactorEnabled: profile!.twoFactorEnabled,
 				usePasswordLessLogin: profile!.usePasswordLessLogin,
 				securityKeys: profile!.twoFactorEnabled
-					? this.userSecurityKeysRepository.countBy({ userId: user.id }).then(result => result >= 1)
+					? this.userSecurityKeysRepository.countBy({userId: user.id}).then(result => result >= 1)
 					: false,
 			} : {}),
 
@@ -589,11 +574,11 @@ export class UserEntityService implements OnModuleInit {
 				twoFactorBackupCodesStock: profile?.twoFactorBackupSecret?.length === 5 ? 'full' : (profile?.twoFactorBackupSecret?.length ?? 0) > 0 ? 'partial' : 'none',
 				hideOnlineStatus: user.hideOnlineStatus,
 				hasUnreadSpecifiedNotes: this.noteUnreadsRepository.count({
-					where: { userId: user.id, isSpecified: true },
+					where: {userId: user.id, isSpecified: true},
 					take: 1,
 				}).then(count => count > 0),
 				hasUnreadMentions: this.noteUnreadsRepository.count({
-					where: { userId: user.id, isMentioned: true },
+					where: {userId: user.id, isMentioned: true},
 					take: 1,
 				}).then(count => count > 0),
 				hasUnreadAnnouncement: unreadAnnouncements!.length > 0,
@@ -677,18 +662,18 @@ export class UserEntityService implements OnModuleInit {
 		let pinNotes: Map<MiUser['id'], MiUserNotePining[]> = new Map();
 
 		if (options?.schema !== 'UserLite') {
-			profilesMap = await this.userProfilesRepository.findBy({ userId: In(_userIds) })
+			profilesMap = await this.userProfilesRepository.findBy({userId: In(_userIds)})
 				.then(profiles => new Map(profiles.map(p => [p.userId, p])));
 
 			const meId = me ? me.id : null;
 			if (meId) {
-				userMemos = await this.userMemosRepository.findBy({ userId: meId })
+				userMemos = await this.userMemosRepository.findBy({userId: meId})
 					.then(memos => new Map(memos.map(memo => [memo.targetUserId, memo.memo])));
 
 				if (_userIds.length > 0) {
 					userRelations = await this.getRelations(meId, _userIds);
 					pinNotes = await this.userNotePiningsRepository.createQueryBuilder('pin')
-						.where('pin.userId IN (:...userIds)', { userIds: _userIds })
+						.where('pin.userId IN (:...userIds)', {userIds: _userIds})
 						.innerJoinAndSelect('pin.note', 'note')
 						.getMany()
 						.then(pinsNotes => {

@@ -4,42 +4,42 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<EmLoading v-if="fetching"/>
+	<EmLoading v-if="fetching"/>
 
-<EmError v-else-if="error" @retry="init()"/>
+	<EmError v-else-if="error" @retry="init()"/>
 
-<div v-else-if="empty" key="_empty_" class="empty">
-	<slot name="empty">
-		<div class="_fullinfo">
-			<div>{{ i18n.ts.nothing }}</div>
+	<div v-else-if="empty" key="_empty_" class="empty">
+		<slot name="empty">
+			<div class="_fullinfo">
+				<div>{{ i18n.ts.nothing }}</div>
+			</div>
+		</slot>
+	</div>
+
+	<div v-else ref="rootEl">
+		<div v-show="pagination.reversed && more" key="_more_" class="_margin">
+			<button v-if="!moreFetching" :class="$style.more" :disabled="moreFetching" :style="{ cursor: moreFetching ? 'wait' : 'pointer' }" class="_buttonPrimary" @click="fetchMoreAhead">
+				{{ i18n.ts.loadMore }}
+			</button>
+			<EmLoading v-else class="loading"/>
 		</div>
-	</slot>
-</div>
-
-<div v-else ref="rootEl">
-	<div v-show="pagination.reversed && more" key="_more_" class="_margin">
-		<button v-if="!moreFetching" class="_buttonPrimary" :class="$style.more" :disabled="moreFetching" :style="{ cursor: moreFetching ? 'wait' : 'pointer' }" @click="fetchMoreAhead">
-			{{ i18n.ts.loadMore }}
-		</button>
-		<EmLoading v-else class="loading"/>
+		<slot :fetching="fetching || moreFetching" :items="Array.from(items.values())"></slot>
+		<div v-show="!pagination.reversed && more" key="_more_" class="_margin">
+			<button v-if="!moreFetching" :class="$style.more" :disabled="moreFetching" :style="{ cursor: moreFetching ? 'wait' : 'pointer' }" class="_buttonRounded _buttonPrimary" @click="fetchMore">
+				{{ i18n.ts.loadMore }}
+			</button>
+			<EmLoading v-else class="loading"/>
+		</div>
 	</div>
-	<slot :items="Array.from(items.values())" :fetching="fetching || moreFetching"></slot>
-	<div v-show="!pagination.reversed && more" key="_more_" class="_margin">
-		<button v-if="!moreFetching" class="_buttonRounded _buttonPrimary" :class="$style.more" :disabled="moreFetching" :style="{ cursor: moreFetching ? 'wait' : 'pointer' }" @click="fetchMore">
-			{{ i18n.ts.loadMore }}
-		</button>
-		<EmLoading v-else class="loading"/>
-	</div>
-</div>
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, isRef, nextTick, onActivated, onBeforeMount, onBeforeUnmount, onDeactivated, ref, shallowRef, watch } from 'vue';
+import {computed, ComputedRef, isRef, nextTick, onActivated, onBeforeMount, onBeforeUnmount, onDeactivated, ref, shallowRef, watch} from 'vue';
 import * as Misskey from 'misskey-js';
-import { useDocumentVisibility } from '@@/js/use-document-visibility.js';
-import { onScrollTop, isTopVisible, getBodyScrollHeight, getScrollContainer, onScrollBottom, scrollToBottom, scroll, isBottomVisible } from '@@/js/scroll.js';
-import { misskeyApi } from '@/misskey-api.js';
-import { i18n } from '@/i18n.js';
+import {useDocumentVisibility} from '@@/js/use-document-visibility.js';
+import {onScrollTop, isTopVisible, getBodyScrollHeight, getScrollContainer, onScrollBottom, scrollToBottom, scroll, isBottomVisible} from '@@/js/scroll.js';
+import {misskeyApi} from '@/misskey-api.js';
+import {i18n} from '@/i18n.js';
 
 const SECOND_FETCH_LIMIT = 30;
 const TOLERANCE = 16;
@@ -158,7 +158,7 @@ watch([() => props.pagination.reversed, scrollableElement], () => {
 		rootMargin: props.pagination.reversed ? '-100% 0px 100% 0px' : '100% 0px -100% 0px',
 		threshold: 0.01,
 	});
-}, { immediate: true });
+}, {immediate: true});
 
 watch(rootEl, () => {
 	scrollObserver.value?.disconnect();
@@ -179,12 +179,12 @@ watch([backed, contentEl], () => {
 });
 
 // パラメータに何らかの変更があった際、再読込したい（チャンネル等のIDが変わったなど）
-watch(() => [props.pagination.endpoint, props.pagination.params], init, { deep: true });
+watch(() => [props.pagination.endpoint, props.pagination.params], init, {deep: true});
 
 watch(queue, (a, b) => {
 	if (a.size === 0 && b.size === 0) return;
 	emit('queue', queue.value.size);
-}, { deep: true });
+}, {deep: true});
 
 watch(error, (n, o) => {
 	if (n === o) return;
@@ -254,9 +254,9 @@ const fetchMore = async (): Promise<void> => {
 
 			return nextTick(() => {
 				if (scrollableElement.value) {
-					scroll(scrollableElement.value, { top: oldScroll + (scrollableElement.value.scrollHeight - oldHeight), behavior: 'instant' });
+					scroll(scrollableElement.value, {top: oldScroll + (scrollableElement.value.scrollHeight - oldHeight), behavior: 'instant'});
 				} else {
-					window.scroll({ top: oldScroll + (getBodyScrollHeight() - oldHeight), behavior: 'instant' });
+					window.scroll({top: oldScroll + (getBodyScrollHeight() - oldHeight), behavior: 'instant'});
 				}
 
 				return nextTick();
@@ -349,10 +349,10 @@ const isTop = (): boolean => isBackTop.value || (props.pagination.reversed ? isB
 watch(visibility, () => {
 	if (visibility.value === 'hidden') {
 		timerForSetPause = window.setTimeout(() => {
-			isPausingUpdate = true;
-			timerForSetPause = null;
-		},
-		BACKGROUND_PAUSE_WAIT_SEC * 1000);
+				isPausingUpdate = true;
+				timerForSetPause = null;
+			},
+			BACKGROUND_PAUSE_WAIT_SEC * 1000);
 	} else { // 'visible'
 		if (timerForSetPause) {
 			clearTimeout(timerForSetPause);
@@ -491,6 +491,7 @@ defineExpose({
 .transition_fade_leaveActive {
 	transition: opacity 0.125s ease;
 }
+
 .transition_fade_enterFrom,
 .transition_fade_leaveTo {
 	opacity: 0;

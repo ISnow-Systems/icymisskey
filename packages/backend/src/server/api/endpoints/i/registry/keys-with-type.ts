@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { RegistryApiService } from '@/core/RegistryApiService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {RegistryApiService} from '@/core/RegistryApiService.js';
 
 export const meta = {
 	requireCredential: true,
@@ -22,10 +22,12 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		scope: { type: 'array', default: [], items: {
-			type: 'string', pattern: /^[a-zA-Z0-9_]+$/.toString().slice(1, -1),
-		} },
-		domain: { type: 'string', nullable: true },
+		scope: {
+			type: 'array', default: [], items: {
+				type: 'string', pattern: /^[a-zA-Z0-9_]+$/.toString().slice(1, -1),
+			}
+		},
+		domain: {type: 'string', nullable: true},
 	},
 	required: ['scope'],
 } as const;
@@ -44,12 +46,12 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				const type = typeof item.value;
 				res[item.key] =
 					item.value === null ? 'null' :
-					Array.isArray(item.value) ? 'array' :
-					type === 'number' ? 'number' :
-					type === 'string' ? 'string' :
-					type === 'boolean' ? 'boolean' :
-					type === 'object' ? 'object' :
-					null as never;
+						Array.isArray(item.value) ? 'array' :
+							type === 'number' ? 'number' :
+								type === 'string' ? 'string' :
+									type === 'boolean' ? 'boolean' :
+										type === 'object' ? 'object' :
+											null as never;
 			}
 
 			return res;

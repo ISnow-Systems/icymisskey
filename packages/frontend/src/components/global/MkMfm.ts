@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { h, provide } from 'vue';
-import type { VNode, SetupContext } from 'vue';
+import {h, provide} from 'vue';
+import type {VNode, SetupContext} from 'vue';
 import * as mfm from 'mfm-js';
 import * as Misskey from 'misskey-js';
-import { host } from '@@/js/config.js';
+import {host} from '@@/js/config.js';
 import MkUrl from '@/components/global/MkUrl.vue';
 import MkTime from '@/components/global/MkTime.vue';
 import MkLink from '@/components/MkLink.vue';
@@ -19,8 +19,8 @@ import MkCodeInline from '@/components/MkCodeInline.vue';
 import MkGoogle from '@/components/MkGoogle.vue';
 import MkSparkle from '@/components/MkSparkle.vue';
 import MkA from '@/components/global/MkA.vue';
-import type { MkABehavior } from '@/components/global/MkA.vue';
-import { defaultStore } from '@/store.js';
+import type {MkABehavior} from '@/components/global/MkA.vue';
+import {defaultStore} from '@/store.js';
 
 function safeParseFloat(str: unknown): number | null {
 	if (typeof str !== 'string' || str === '') return null;
@@ -58,7 +58,7 @@ type MfmEvents = {
 };
 
 // eslint-disable-next-line import/no-default-export
-export default function (props: MfmProps, { emit }: { emit: SetupContext<MfmEvents>['emit'] }) {
+export default function (props: MfmProps, {emit}: { emit: SetupContext<MfmEvents>['emit'] }) {
 	// こうしたいところだけど functional component 内では provide は使えない
 	//provide('linkNavigationBehavior', props.linkNavigationBehavior);
 
@@ -155,12 +155,12 @@ export default function (props: MfmProps, { emit }: { emit: SetupContext<MfmEven
 					case 'spin': {
 						const direction =
 							token.props.args.left ? 'reverse' :
-							token.props.args.alternate ? 'alternate' :
-							'normal';
+								token.props.args.alternate ? 'alternate' :
+									'normal';
 						const anime =
 							token.props.args.x ? 'mfm-spinX' :
-							token.props.args.y ? 'mfm-spinY' :
-							'mfm-spin';
+								token.props.args.y ? 'mfm-spinY' :
+									'mfm-spin';
 						const speed = validTime(token.props.args.speed) ?? '1.5s';
 						const delay = validTime(token.props.args.delay) ?? '0s';
 						style = useAnim ? `animation: ${anime} ${speed} linear infinite; animation-direction: ${direction}; animation-delay: ${delay};` : '';
@@ -181,8 +181,8 @@ export default function (props: MfmProps, { emit }: { emit: SetupContext<MfmEven
 					case 'flip': {
 						const transform =
 							(token.props.args.h && token.props.args.v) ? 'scale(-1, -1)' :
-							token.props.args.v ? 'scaleY(-1)' :
-							'scaleX(-1)';
+								token.props.args.v ? 'scaleY(-1)' :
+									'scaleX(-1)';
 						style = `transform: ${transform};`;
 						break;
 					}
@@ -204,12 +204,12 @@ export default function (props: MfmProps, { emit }: { emit: SetupContext<MfmEven
 					case 'font': {
 						const family =
 							token.props.args.serif ? 'serif' :
-							token.props.args.monospace ? 'monospace' :
-							token.props.args.cursive ? 'cursive' :
-							token.props.args.fantasy ? 'fantasy' :
-							token.props.args.emoji ? 'emoji' :
-							token.props.args.math ? 'math' :
-							null;
+								token.props.args.monospace ? 'monospace' :
+									token.props.args.cursive ? 'cursive' :
+										token.props.args.fantasy ? 'fantasy' :
+											token.props.args.emoji ? 'emoji' :
+												token.props.args.math ? 'math' :
+													null;
 						if (family) style = `font-family: ${family};`;
 						break;
 					}
@@ -319,12 +319,14 @@ export default function (props: MfmProps, { emit }: { emit: SetupContext<MfmEven
 						]);
 					}
 					case 'clickable': {
-						return h('span', { onClick(ev: MouseEvent): void {
-							ev.stopPropagation();
-							ev.preventDefault();
-							const clickEv = typeof token.props.args.ev === 'string' ? token.props.args.ev : '';
-							emit('clickEv', clickEv);
-						} }, genEl(token.children, scale));
+						return h('span', {
+							onClick(ev: MouseEvent): void {
+								ev.stopPropagation();
+								ev.preventDefault();
+								const clickEv = typeof token.props.args.ev === 'string' ? token.props.args.ev : '';
+								emit('clickEv', clickEv);
+							}
+						}, genEl(token.children, scale));
 					}
 				}
 				if (style === undefined) {

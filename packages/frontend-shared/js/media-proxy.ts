@@ -4,7 +4,7 @@
  */
 
 import * as Misskey from 'misskey-js';
-import { query } from './url.js';
+import {query} from './url.js';
 
 export class MediaProxy {
 	private serverMetadata: Misskey.entities.MetaDetailed;
@@ -26,12 +26,12 @@ export class MediaProxy {
 
 		return `${mustOrigin ? localProxy : this.serverMetadata.mediaProxy}/${
 			type === 'preview' ? 'preview.webp'
-			: 'image.webp'
+				: 'image.webp'
 		}?${query({
 			url: _imageUrl,
-			...(!noFallback ? { 'fallback': '1' } : {}),
-			...(type ? { [type]: '1' } : {}),
-			...(mustOrigin ? { origin: '1' } : {}),
+			...(!noFallback ? {'fallback': '1'} : {}),
+			...(type ? {[type]: '1'} : {}),
+			...(mustOrigin ? {origin: '1'} : {}),
 		})}`;
 	}
 

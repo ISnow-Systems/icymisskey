@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { defineAsyncComponent } from 'vue';
-import type { MenuItem } from '@/types/menu.js';
+import {defineAsyncComponent} from 'vue';
+import type {MenuItem} from '@/types/menu.js';
 import * as os from '@/os.js';
-import { instance } from '@/instance.js';
-import { host } from '@@/js/config.js';
-import { i18n } from '@/i18n.js';
-import { $i } from '@/account.js';
+import {instance} from '@/instance.js';
+import {host} from '@@/js/config.js';
+import {i18n} from '@/i18n.js';
+import {$i} from '@/account.js';
 
 function toolsMenuItems(): MenuItem[] {
 	return [{
@@ -72,7 +72,7 @@ export function openInstanceMenu(ev: MouseEvent) {
 		text: i18n.ts.charts,
 		icon: 'ti ti-chart-line',
 		to: '/about#charts',
-	}, { type: 'divider' }, {
+	}, {type: 'divider'}, {
 		type: 'link',
 		text: i18n.ts.ads,
 		icon: 'ti ti-ad',
@@ -93,7 +93,7 @@ export function openInstanceMenu(ev: MouseEvent) {
 		text: i18n.ts.tools,
 		icon: 'ti ti-tool',
 		children: toolsMenuItems(),
-	}, { type: 'divider' }, {
+	}, {type: 'divider'}, {
 		type: 'link',
 		text: i18n.ts.inquiry,
 		icon: 'ti ti-help-circle',
@@ -131,7 +131,7 @@ export function openInstanceMenu(ev: MouseEvent) {
 	}
 
 	if (instance.impressumUrl != null || instance.tosUrl != null || instance.privacyPolicyUrl != null) {
-		menuItems.push({ type: 'divider' });
+		menuItems.push({type: 'divider'});
 	}
 
 	menuItems.push({
@@ -147,7 +147,7 @@ export function openInstanceMenu(ev: MouseEvent) {
 			text: i18n.ts._initialTutorial.launchTutorial,
 			icon: 'ti ti-presentation',
 			action: () => {
-				const { dispose } = os.popup(defineAsyncComponent(() => import('@/components/MkTutorialDialog.vue')), {}, {
+				const {dispose} = os.popup(defineAsyncComponent(() => import('@/components/MkTutorialDialog.vue')), {}, {
 					closed: () => dispose(),
 				});
 			},

@@ -49,7 +49,7 @@ export function roleIdsParser(text: string): { id: string, name: string }[] {
 			return [];
 		}
 
-		return obj.map(it => ({ id: it.id, name: it.name }));
+		return obj.map(it => ({id: it.id, name: it.name}));
 	} catch (ex) {
 		console.warn(ex);
 		return [];

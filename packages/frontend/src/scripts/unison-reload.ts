@@ -4,7 +4,7 @@
  */
 
 // SafariがBroadcastChannel未実装なのでライブラリを使う
-import { BroadcastChannel } from 'broadcast-channel';
+import {BroadcastChannel} from 'broadcast-channel';
 
 export const reloadChannel = new BroadcastChannel<string | null>('reload');
 

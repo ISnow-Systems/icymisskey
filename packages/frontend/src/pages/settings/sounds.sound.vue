@@ -4,43 +4,43 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="_gaps_m">
-	<MkSelect v-model="type">
-		<template #label>{{ i18n.ts.sound }}</template>
-		<option v-for="x in soundsTypes" :key="x ?? 'null'" :value="x">{{ getSoundTypeName(x) }}</option>
-	</MkSelect>
-	<div v-if="type === '_driveFile_' && driveFileError === true" :class="$style.fileSelectorRoot">
-		<MkButton :class="$style.fileSelectorButton" inline rounded primary @click="selectSound">{{ i18n.ts.selectFile }}</MkButton>
-		<div :class="$style.fileErrorRoot">
-			<MkCondensedLine>{{ i18n.ts._soundSettings.driveFileError }}</MkCondensedLine>
+	<div class="_gaps_m">
+		<MkSelect v-model="type">
+			<template #label>{{ i18n.ts.sound }}</template>
+			<option v-for="x in soundsTypes" :key="x ?? 'null'" :value="x">{{ getSoundTypeName(x) }}</option>
+		</MkSelect>
+		<div v-if="type === '_driveFile_' && driveFileError === true" :class="$style.fileSelectorRoot">
+			<MkButton :class="$style.fileSelectorButton" inline primary rounded @click="selectSound">{{ i18n.ts.selectFile }}</MkButton>
+			<div :class="$style.fileErrorRoot">
+				<MkCondensedLine>{{ i18n.ts._soundSettings.driveFileError }}</MkCondensedLine>
+			</div>
+		</div>
+		<div v-else-if="type === '_driveFile_'" :class="$style.fileSelectorRoot">
+			<MkButton :class="$style.fileSelectorButton" inline primary rounded @click="selectSound">{{ i18n.ts.selectFile }}</MkButton>
+			<div :class="['_nowrap', !fileUrl && $style.fileNotSelected]">{{ friendlyFileName }}</div>
+		</div>
+		<MkRange v-model="volume" :max="1" :min="0" :step="0.05" :textConverter="(v) => `${Math.floor(v * 100)}%`">
+			<template #label>{{ i18n.ts.volume }}</template>
+		</MkRange>
+
+		<div class="_buttons">
+			<MkButton inline @click="listen"><i class="ti ti-player-play"></i> {{ i18n.ts.listen }}</MkButton>
+			<MkButton :disabled="!hasChanged || driveFileError" inline primary @click="save"><i class="ti ti-check"></i> {{ i18n.ts.save }}</MkButton>
 		</div>
 	</div>
-	<div v-else-if="type === '_driveFile_'" :class="$style.fileSelectorRoot">
-		<MkButton :class="$style.fileSelectorButton" inline rounded primary @click="selectSound">{{ i18n.ts.selectFile }}</MkButton>
-		<div :class="['_nowrap', !fileUrl && $style.fileNotSelected]">{{ friendlyFileName }}</div>
-	</div>
-	<MkRange v-model="volume" :min="0" :max="1" :step="0.05" :textConverter="(v) => `${Math.floor(v * 100)}%`">
-		<template #label>{{ i18n.ts.volume }}</template>
-	</MkRange>
-
-	<div class="_buttons">
-		<MkButton inline @click="listen"><i class="ti ti-player-play"></i> {{ i18n.ts.listen }}</MkButton>
-		<MkButton inline primary :disabled="!hasChanged || driveFileError" @click="save"><i class="ti ti-check"></i> {{ i18n.ts.save }}</MkButton>
-	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, watch } from 'vue';
-import type { SoundType } from '@/scripts/sound.js';
+import {ref, computed, watch} from 'vue';
+import type {SoundType} from '@/scripts/sound.js';
 import MkSelect from '@/components/MkSelect.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkRange from '@/components/MkRange.vue';
-import { i18n } from '@/i18n.js';
+import {i18n} from '@/i18n.js';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { playMisskeySfxFile, soundsTypes, getSoundDuration } from '@/scripts/sound.js';
-import { selectFile } from '@/scripts/select-file.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {playMisskeySfxFile, soundsTypes, getSoundDuration} from '@/scripts/sound.js';
+import {selectFile} from '@/scripts/select-file.js';
 
 const props = defineProps<{
 	type: SoundType;
@@ -105,7 +105,7 @@ function selectSound(ev) {
 		}
 		const duration = await getSoundDuration(file.url);
 		if (duration >= 2000) {
-			const { canceled } = await os.confirm({
+			const {canceled} = await os.confirm({
 				type: 'warning',
 				title: i18n.ts._soundSettings.driveFileDurationWarn,
 				text: i18n.ts._soundSettings.driveFileDurationWarnDescription,

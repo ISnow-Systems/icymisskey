@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne } from 'typeorm';
-import { id } from './util/id.js';
-import { MiUser } from './User.js';
+import {PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne} from 'typeorm';
+import {id} from './util/id.js';
+import {MiUser} from './User.js';
 
 @Entity('following')
-@Index(['followerId', 'followeeId'], { unique: true })
+@Index(['followerId', 'followeeId'], {unique: true})
 @Index(['followeeId', 'followerHost', 'isFollowerHibernated'])
 export class MiFollowing {
 	@PrimaryColumn(id())

@@ -1,11 +1,8 @@
 {
 	id: '6128c2a9-5c54-43fe-a47d-17942356470b',
-
 	name: 'Mi Vivid Light',
 	author: 'syuilo',
-
 	base: 'light',
-
 	props: {
 		bg: '#fafafa',
 		fg: '#444',

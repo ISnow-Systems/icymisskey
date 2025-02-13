@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { AntennasRepository, UserListsRepository } from '@/models/_.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { AntennaEntityService } from '@/core/entities/AntennaEntityService.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../error.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {AntennasRepository, UserListsRepository} from '@/models/_.js';
+import {GlobalEventService} from '@/core/GlobalEventService.js';
+import {AntennaEntityService} from '@/core/entities/AntennaEntityService.js';
+import {DI} from '@/di-symbols.js';
+import {ApiError} from '../../error.js';
 
 export const meta = {
 	tags: ['antennas'],
@@ -50,28 +50,34 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		antennaId: { type: 'string', format: 'misskey:id' },
-		name: { type: 'string', minLength: 1, maxLength: 100 },
-		src: { type: 'string', enum: ['home', 'all', 'users', 'list', 'users_blacklist'] },
-		userListId: { type: 'string', format: 'misskey:id', nullable: true },
-		keywords: { type: 'array', items: {
+		antennaId: {type: 'string', format: 'misskey:id'},
+		name: {type: 'string', minLength: 1, maxLength: 100},
+		src: {type: 'string', enum: ['home', 'all', 'users', 'list', 'users_blacklist']},
+		userListId: {type: 'string', format: 'misskey:id', nullable: true},
+		keywords: {
+			type: 'array', items: {
+				type: 'array', items: {
+					type: 'string',
+				},
+			}
+		},
+		excludeKeywords: {
+			type: 'array', items: {
+				type: 'array', items: {
+					type: 'string',
+				},
+			}
+		},
+		users: {
 			type: 'array', items: {
 				type: 'string',
-			},
-		} },
-		excludeKeywords: { type: 'array', items: {
-			type: 'array', items: {
-				type: 'string',
-			},
-		} },
-		users: { type: 'array', items: {
-			type: 'string',
-		} },
-		caseSensitive: { type: 'boolean' },
-		localOnly: { type: 'boolean' },
-		excludeBots: { type: 'boolean' },
-		withReplies: { type: 'boolean' },
-		withFile: { type: 'boolean' },
+			}
+		},
+		caseSensitive: {type: 'boolean'},
+		localOnly: {type: 'boolean'},
+		excludeBots: {type: 'boolean'},
+		withReplies: {type: 'boolean'},
+		withFile: {type: 'boolean'},
 	},
 	required: ['antennaId'],
 } as const;
@@ -81,10 +87,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.antennasRepository)
 		private antennasRepository: AntennasRepository,
-
 		@Inject(DI.userListsRepository)
 		private userListsRepository: UserListsRepository,
-
 		private antennaEntityService: AntennaEntityService,
 		private globalEventService: GlobalEventService,
 	) {
@@ -133,7 +137,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				lastUsedAt: new Date(),
 			});
 
-			this.globalEventService.publishInternalEvent('antennaUpdated', await this.antennasRepository.findOneByOrFail({ id: antenna.id }));
+			this.globalEventService.publishInternalEvent('antennaUpdated', await this.antennasRepository.findOneByOrFail({id: antenna.id}));
 
 			return await this.antennaEntityService.pack(antenna.id);
 		});

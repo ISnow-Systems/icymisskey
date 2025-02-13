@@ -4,18 +4,18 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="$style.root" :style="themeColorStyle">
-	<img v-if="faviconUrl" :class="$style.icon" :src="faviconUrl"/>
-	<div :class="$style.name">{{ instanceName }}</div>
-</div>
+	<div :class="$style.root" :style="themeColorStyle">
+		<img v-if="faviconUrl" :class="$style.icon" :src="faviconUrl"/>
+		<div :class="$style.name">{{ instanceName }}</div>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-import type { CSSProperties } from 'vue';
-import { instanceName as localInstanceName } from '@@/js/config.js';
-import { instance as localInstance } from '@/instance.js';
-import { getProxiedImageUrlNullable } from '@/scripts/media-proxy.js';
+import {computed} from 'vue';
+import type {CSSProperties} from 'vue';
+import {instanceName as localInstanceName} from '@@/js/config.js';
+import {instance as localInstance} from '@/instance.js';
+import {getProxiedImageUrlNullable} from '@/scripts/media-proxy.js';
 
 const props = defineProps<{
 	host: string | null;
@@ -75,9 +75,9 @@ $height: 2ex;
 		.5px -.866px 1px #000,
 		.866px -.5px 1px #000;
 	mask-image: linear-gradient(90deg,
-		rgb(0,0,0),
-		rgb(0,0,0) calc(100% - 16px),
-		rgba(0,0,0,0) 100%
+		rgb(0, 0, 0),
+		rgb(0, 0, 0) calc(100% - 16px),
+		rgba(0, 0, 0, 0) 100%
 	);
 }
 

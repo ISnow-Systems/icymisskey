@@ -4,44 +4,44 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<component :is="link ? EmA : 'span'" v-bind="bound" class="_noSelect" :class="[$style.root, { [$style.cat]: user.isCat }]">
-	<EmImgWithBlurhash :class="$style.inner" :src="url" :hash="user.avatarBlurhash" :cover="true" :onlyAvgColor="true"/>
-	<div v-if="user.isCat" :class="[$style.ears]">
-		<div :class="$style.earLeft">
-			<div v-if="false" :class="$style.layer">
-				<div :class="$style.plot" :style="{ backgroundImage: `url(${JSON.stringify(url)})` }"/>
-				<div :class="$style.plot" :style="{ backgroundImage: `url(${JSON.stringify(url)})` }"/>
-				<div :class="$style.plot" :style="{ backgroundImage: `url(${JSON.stringify(url)})` }"/>
+	<component :is="link ? EmA : 'span'" :class="[$style.root, { [$style.cat]: user.isCat }]" class="_noSelect" v-bind="bound">
+		<EmImgWithBlurhash :class="$style.inner" :cover="true" :hash="user.avatarBlurhash" :onlyAvgColor="true" :src="url"/>
+		<div v-if="user.isCat" :class="[$style.ears]">
+			<div :class="$style.earLeft">
+				<div v-if="false" :class="$style.layer">
+					<div :class="$style.plot" :style="{ backgroundImage: `url(${JSON.stringify(url)})` }"/>
+					<div :class="$style.plot" :style="{ backgroundImage: `url(${JSON.stringify(url)})` }"/>
+					<div :class="$style.plot" :style="{ backgroundImage: `url(${JSON.stringify(url)})` }"/>
+				</div>
+			</div>
+			<div :class="$style.earRight">
+				<div v-if="false" :class="$style.layer">
+					<div :class="$style.plot" :style="{ backgroundImage: `url(${JSON.stringify(url)})` }"/>
+					<div :class="$style.plot" :style="{ backgroundImage: `url(${JSON.stringify(url)})` }"/>
+					<div :class="$style.plot" :style="{ backgroundImage: `url(${JSON.stringify(url)})` }"/>
+				</div>
 			</div>
 		</div>
-		<div :class="$style.earRight">
-			<div v-if="false" :class="$style.layer">
-				<div :class="$style.plot" :style="{ backgroundImage: `url(${JSON.stringify(url)})` }"/>
-				<div :class="$style.plot" :style="{ backgroundImage: `url(${JSON.stringify(url)})` }"/>
-				<div :class="$style.plot" :style="{ backgroundImage: `url(${JSON.stringify(url)})` }"/>
-			</div>
-		</div>
-	</div>
-	<img
-		v-for="decoration in user.avatarDecorations"
-		:class="[$style.decoration]"
-		:src="getDecorationUrl(decoration)"
-		:style="{
+		<img
+			v-for="decoration in user.avatarDecorations"
+			:class="[$style.decoration]"
+			:src="getDecorationUrl(decoration)"
+			:style="{
 			rotate: getDecorationAngle(decoration),
 			scale: getDecorationScale(decoration),
 			translate: getDecorationOffset(decoration),
 		}"
-		alt=""
-	>
-</component>
+			alt=""
+		>
+	</component>
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+import {computed} from 'vue';
 import * as Misskey from 'misskey-js';
 import EmImgWithBlurhash from './EmImgWithBlurhash.vue';
 import EmA from './EmA.vue';
-import { userPage } from '@/utils.js';
+import {userPage} from '@/utils.js';
 
 const props = withDefaults(defineProps<{
 	user: Misskey.entities.User;
@@ -59,7 +59,7 @@ const emit = defineEmits<{
 }>();
 
 const bound = computed(() => props.link
-	? { to: userPage(props.user) }
+	? {to: userPage(props.user)}
 	: {});
 
 const url = computed(() => {
@@ -187,11 +187,8 @@ function getDecorationOffset(decoration: Omit<Misskey.entities.UserDetailed['ava
 
 			> .layer {
 				left: 0;
-				transform:
-					skew(-30deg)
-					rotate(-37.5deg)
-					translate(-2.82842712475%, /* -2 * sqrt(2) */
-										-38.5857864376%); /* 40 - 2 * sqrt(2) */
+				transform: skew(-30deg) rotate(-37.5deg) translate(-2.82842712475%, /* -2 * sqrt(2) */
+					-38.5857864376%); /* 40 - 2 * sqrt(2) */
 
 				> .plot {
 					background-position: 20% 10%; /* ~= 37.5deg */
@@ -216,11 +213,8 @@ function getDecorationOffset(decoration: Omit<Misskey.entities.UserDetailed['ava
 
 			> .layer {
 				right: 0;
-				transform:
-					skew(30deg)
-					rotate(37.5deg)
-					translate(2.82842712475%, /* 2 * sqrt(2) */
-										-38.5857864376%); /* 40 - 2 * sqrt(2) */
+				transform: skew(30deg) rotate(37.5deg) translate(2.82842712475%, /* 2 * sqrt(2) */
+					-38.5857864376%); /* 40 - 2 * sqrt(2) */
 
 				> .plot {
 					position: absolute;

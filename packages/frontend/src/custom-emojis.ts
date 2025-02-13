@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { shallowRef, computed, markRaw, watch } from 'vue';
+import {shallowRef, computed, markRaw, watch} from 'vue';
 import * as Misskey from 'misskey-js';
-import { misskeyApi, misskeyApiGet } from '@/scripts/misskey-api.js';
-import { get, set } from '@/scripts/idb-proxy.js';
+import {misskeyApi, misskeyApiGet} from '@/scripts/misskey-api.js';
+import {get, set} from '@/scripts/idb-proxy.js';
 
 const storageCache = await get('emojis');
 export const customEmojis = shallowRef<Misskey.entities.EmojiSimple[]>(Array.isArray(storageCache) ? storageCache : []);
-export const customEmojiCategories = computed<[ ...string[], null ]>(() => {
+export const customEmojiCategories = computed<[...string[], null]>(() => {
 	const categories = new Set<string>();
 	for (const emoji of customEmojis.value) {
 		if (emoji.category && emoji.category !== 'null') {
@@ -26,7 +26,7 @@ watch(customEmojis, emojis => {
 	for (const emoji of emojis) {
 		customEmojisMap.set(emoji.name, emoji);
 	}
-}, { immediate: true });
+}, {immediate: true});
 
 export function addCustomEmoji(emoji: Misskey.entities.EmojiSimple) {
 	customEmojis.value = [emoji, ...customEmojis.value];
@@ -61,6 +61,7 @@ export async function fetchCustomEmojis(force = false) {
 }
 
 let cachedTags;
+
 export function getCustomEmojiTags() {
 	if (cachedTags) return cachedTags;
 

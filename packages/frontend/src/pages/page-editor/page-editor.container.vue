@@ -4,31 +4,33 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="cpjygsrt">
-	<header>
-		<div class="title"><slot name="header"></slot></div>
-		<div class="buttons">
-			<slot name="func"></slot>
-			<button v-if="removable" class="_button" @click="remove()">
-				<i class="ti ti-trash"></i>
-			</button>
-			<button v-if="draggable" class="drag-handle _button">
-				<i class="ti ti-menu-2"></i>
-			</button>
-			<button class="_button" @click="toggleContent(!showBody)">
-				<template v-if="showBody"><i class="ti ti-chevron-up"></i></template>
-				<template v-else><i class="ti ti-chevron-down"></i></template>
-			</button>
+	<div class="cpjygsrt">
+		<header>
+			<div class="title">
+				<slot name="header"></slot>
+			</div>
+			<div class="buttons">
+				<slot name="func"></slot>
+				<button v-if="removable" class="_button" @click="remove()">
+					<i class="ti ti-trash"></i>
+				</button>
+				<button v-if="draggable" class="drag-handle _button">
+					<i class="ti ti-menu-2"></i>
+				</button>
+				<button class="_button" @click="toggleContent(!showBody)">
+					<template v-if="showBody"><i class="ti ti-chevron-up"></i></template>
+					<template v-else><i class="ti ti-chevron-down"></i></template>
+				</button>
+			</div>
+		</header>
+		<div v-show="showBody" class="body">
+			<slot></slot>
 		</div>
-	</header>
-	<div v-show="showBody" class="body">
-		<slot></slot>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import {ref} from 'vue';
 
 const props = withDefaults(defineProps<{
 	expanded?: boolean;

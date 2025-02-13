@@ -4,7 +4,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <script lang="ts">
-import { defineComponent, h, resolveDirective, withDirectives } from 'vue';
+import {defineComponent, h, resolveDirective, withDirectives} from 'vue';
 
 export default defineComponent({
 	props: {
@@ -12,13 +12,13 @@ export default defineComponent({
 			required: true,
 		},
 	},
-	setup(props, { emit, slots }) {
+	setup(props, {emit, slots}) {
 		const options = slots.default?.() ?? [];
 
 		return () => h('div', {
 			class: 'pxhvhrfw',
 		}, options.map(option => withDirectives(h('button', {
-			class: ['_button', { active: props.modelValue === option.props?.value }],
+			class: ['_button', {active: props.modelValue === option.props?.value}],
 			key: option.key as string,
 			disabled: props.modelValue === option.props?.value,
 			onClick: () => {

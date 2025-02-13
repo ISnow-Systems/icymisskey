@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { id } from './util/id.js';
-import { MiUser } from './User.js';
+import {Entity, Column, PrimaryColumn, ManyToOne, JoinColumn} from 'typeorm';
+import {id} from './util/id.js';
+import {MiUser} from './User.js';
 
 @Entity('meta')
 export class MiMeta {
@@ -545,7 +545,7 @@ export class MiMeta {
 	public enableIdenticonGeneration: boolean;
 
 	@Column('jsonb', {
-		default: { },
+		default: {},
 	})
 	public policies: Record<string, any>;
 

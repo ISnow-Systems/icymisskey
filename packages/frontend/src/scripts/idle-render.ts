@@ -31,17 +31,6 @@ class IdlingRenderScheduler {
 		this.#ricId = requestIdleCallback((deadline) => this.#schedule(deadline));
 	}
 
-	#schedule(deadline: IdleDeadline): void {
-		if (deadline.timeRemaining()) {
-			this.#rafId = requestAnimationFrame((time) => {
-				for (const renderer of this.#renderers) {
-					renderer(time);
-				}
-			});
-		}
-		this.#ricId = requestIdleCallback((arg) => this.#schedule(arg));
-	}
-
 	add(renderer: FrameRequestCallback): void {
 		this.#renderers.add(renderer);
 	}
@@ -54,6 +43,17 @@ class IdlingRenderScheduler {
 		this.#renderers.clear();
 		cancelAnimationFrame(this.#rafId);
 		cancelIdleCallback(this.#ricId);
+	}
+
+	#schedule(deadline: IdleDeadline): void {
+		if (deadline.timeRemaining()) {
+			this.#rafId = requestAnimationFrame((time) => {
+				for (const renderer of this.#renderers) {
+					renderer(time);
+				}
+			});
+		}
+		this.#ricId = requestIdleCallback((arg) => this.#schedule(arg));
 	}
 }
 

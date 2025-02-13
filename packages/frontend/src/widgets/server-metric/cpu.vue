@@ -4,18 +4,18 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="vrvdvrys">
-	<XPie class="pie" :value="usage"/>
-	<div>
-		<p><i class="ti ti-cpu"></i>CPU</p>
-		<p>{{ meta.cpu.cores }} Logical cores</p>
-		<p>{{ meta.cpu.model }}</p>
+	<div class="vrvdvrys">
+		<XPie :value="usage" class="pie"/>
+		<div>
+			<p><i class="ti ti-cpu"></i>CPU</p>
+			<p>{{ meta.cpu.cores }} Logical cores</p>
+			<p>{{ meta.cpu.model }}</p>
+		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onBeforeUnmount, ref } from 'vue';
+import {onMounted, onBeforeUnmount, ref} from 'vue';
 import * as Misskey from 'misskey-js';
 import XPie from './pie.vue';
 

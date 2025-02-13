@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import {Inject, Injectable} from '@nestjs/common';
+import {DataSource} from 'typeorm';
 import * as Redis from 'ioredis';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
-import { resetDb } from '@/misc/reset-db.js';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {DI} from '@/di-symbols.js';
+import {resetDb} from '@/misc/reset-db.js';
 
 export const meta = {
 	tags: ['non-productive'],
@@ -17,9 +17,7 @@ export const meta = {
 
 	description: 'Only available when running with <code>NODE_ENV=testing</code>. Reset the database and flush Redis.',
 
-	errors: {
-
-	},
+	errors: {},
 } as const;
 
 export const paramDef = {
@@ -33,7 +31,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.db)
 		private db: DataSource,
-
 		@Inject(DI.redis)
 		private redisClient: Redis.Redis,
 	) {

@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { AdsRepository } from '@/models/_.js';
-import { IdService } from '@/core/IdService.js';
-import { DI } from '@/di-symbols.js';
-import { ModerationLogService } from '@/core/ModerationLogService.js';
+import {Inject, Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import type {AdsRepository} from '@/models/_.js';
+import {IdService} from '@/core/IdService.js';
+import {DI} from '@/di-symbols.js';
+import {ModerationLogService} from '@/core/ModerationLogService.js';
 
 export const meta = {
 	tags: ['admin'],
@@ -27,15 +27,15 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		url: { type: 'string', minLength: 1 },
-		memo: { type: 'string' },
-		place: { type: 'string' },
-		priority: { type: 'string' },
-		ratio: { type: 'integer' },
-		expiresAt: { type: 'integer' },
-		startsAt: { type: 'integer' },
-		imageUrl: { type: 'string', minLength: 1 },
-		dayOfWeek: { type: 'integer' },
+		url: {type: 'string', minLength: 1},
+		memo: {type: 'string'},
+		place: {type: 'string'},
+		priority: {type: 'string'},
+		ratio: {type: 'integer'},
+		expiresAt: {type: 'integer'},
+		startsAt: {type: 'integer'},
+		imageUrl: {type: 'string', minLength: 1},
+		dayOfWeek: {type: 'integer'},
 	},
 	required: ['url', 'memo', 'place', 'priority', 'ratio', 'expiresAt', 'startsAt', 'imageUrl', 'dayOfWeek'],
 } as const;
@@ -45,7 +45,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.adsRepository)
 		private adsRepository: AdsRepository,
-
 		private idService: IdService,
 		private moderationLogService: ModerationLogService,
 	) {

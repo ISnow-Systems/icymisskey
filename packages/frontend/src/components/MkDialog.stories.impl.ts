@@ -3,11 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { action } from '@storybook/addon-actions';
-import { expect, userEvent, waitFor, within } from '@storybook/test';
-import type { StoryObj } from '@storybook/vue3';
-import { i18n } from '@/i18n.js';
+import {action} from '@storybook/addon-actions';
+import {expect, userEvent, waitFor, within} from '@storybook/test';
+import type {StoryObj} from '@storybook/vue3';
+import {i18n} from '@/i18n.js';
 import MkDialog from './MkDialog.vue';
+
 const Base = {
 	render(args) {
 		return {
@@ -143,16 +144,16 @@ export const DialogWithInput = {
 			maxLength: 3,
 		},
 	},
-	async play({ canvasElement }) {
+	async play({canvasElement}) {
 		const canvas = within(canvasElement);
-		await expect(canvasElement).toHaveTextContent(i18n.tsx._dialog.charactersBelow({ current: 0, min: 2 }));
-		const okButton = canvas.getByRole('button', { name: i18n.ts.ok });
+		await expect(canvasElement).toHaveTextContent(i18n.tsx._dialog.charactersBelow({current: 0, min: 2}));
+		const okButton = canvas.getByRole('button', {name: i18n.ts.ok});
 		await expect(okButton).toBeDisabled();
 		const input = canvas.getByRole<HTMLInputElement>('combobox');
 		await waitFor(() => userEvent.hover(input));
 		await waitFor(() => userEvent.click(input));
 		await waitFor(() => userEvent.type(input, 'M'));
-		await expect(canvasElement).toHaveTextContent(i18n.tsx._dialog.charactersBelow({ current: 1, min: 2 }));
+		await expect(canvasElement).toHaveTextContent(i18n.tsx._dialog.charactersBelow({current: 1, min: 2}));
 		await waitFor(() => userEvent.type(input, 'i'));
 		await expect(okButton).toBeEnabled();
 	},

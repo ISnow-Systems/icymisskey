@@ -4,46 +4,56 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div ref="el" class="hiyeyicy" :class="{ wide: !narrow }">
-	<div v-if="!narrow || currentPage?.route.name == null" class="nav">
-		<MkSpacer :contentMax="700" :marginMin="16">
-			<div class="lxpfedzu _gaps">
-				<div class="banner">
-					<img :src="instance.iconUrl || '/favicon.ico'" alt="" class="icon"/>
-				</div>
+	<div ref="el" :class="{ wide: !narrow }" class="hiyeyicy">
+		<div v-if="!narrow || currentPage?.route.name == null" class="nav">
+			<MkSpacer :contentMax="700" :marginMin="16">
+				<div class="lxpfedzu _gaps">
+					<div class="banner">
+						<img :src="instance.iconUrl || '/favicon.ico'" alt="" class="icon"/>
+					</div>
 
-				<div class="_gaps_s">
-					<MkInfo v-if="thereIsUnresolvedAbuseReport" warn>{{ i18n.ts.thereIsUnresolvedAbuseReportWarning }} <MkA to="/admin/abuses" class="_link">{{ i18n.ts.check }}</MkA></MkInfo>
-					<MkInfo v-if="noMaintainerInformation" warn>{{ i18n.ts.noMaintainerInformationWarning }} <MkA to="/admin/settings" class="_link">{{ i18n.ts.configure }}</MkA></MkInfo>
-					<MkInfo v-if="noInquiryUrl" warn>{{ i18n.ts.noInquiryUrlWarning }} <MkA to="/admin/settings" class="_link">{{ i18n.ts.configure }}</MkA></MkInfo>
-					<MkInfo v-if="noBotProtection" warn>{{ i18n.ts.noBotProtectionWarning }} <MkA to="/admin/security" class="_link">{{ i18n.ts.configure }}</MkA></MkInfo>
-					<MkInfo v-if="noEmailServer" warn>{{ i18n.ts.noEmailServerWarning }} <MkA to="/admin/email-settings" class="_link">{{ i18n.ts.configure }}</MkA></MkInfo>
-				</div>
+					<div class="_gaps_s">
+						<MkInfo v-if="thereIsUnresolvedAbuseReport" warn>{{ i18n.ts.thereIsUnresolvedAbuseReportWarning }}
+							<MkA class="_link" to="/admin/abuses">{{ i18n.ts.check }}</MkA>
+						</MkInfo>
+						<MkInfo v-if="noMaintainerInformation" warn>{{ i18n.ts.noMaintainerInformationWarning }}
+							<MkA class="_link" to="/admin/settings">{{ i18n.ts.configure }}</MkA>
+						</MkInfo>
+						<MkInfo v-if="noInquiryUrl" warn>{{ i18n.ts.noInquiryUrlWarning }}
+							<MkA class="_link" to="/admin/settings">{{ i18n.ts.configure }}</MkA>
+						</MkInfo>
+						<MkInfo v-if="noBotProtection" warn>{{ i18n.ts.noBotProtectionWarning }}
+							<MkA class="_link" to="/admin/security">{{ i18n.ts.configure }}</MkA>
+						</MkInfo>
+						<MkInfo v-if="noEmailServer" warn>{{ i18n.ts.noEmailServerWarning }}
+							<MkA class="_link" to="/admin/email-settings">{{ i18n.ts.configure }}</MkA>
+						</MkInfo>
+					</div>
 
-				<MkSuperMenu :def="menuDef" :grid="narrow"></MkSuperMenu>
-			</div>
-		</MkSpacer>
+					<MkSuperMenu :def="menuDef" :grid="narrow"></MkSuperMenu>
+				</div>
+			</MkSpacer>
+		</div>
+		<div v-if="!(narrow && currentPage?.route.name == null)" class="main">
+			<RouterView nested/>
+		</div>
 	</div>
-	<div v-if="!(narrow && currentPage?.route.name == null)" class="main">
-		<RouterView nested/>
-	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { onActivated, onMounted, onUnmounted, provide, watch, ref, computed } from 'vue';
-import { i18n } from '@/i18n.js';
+import {onActivated, onMounted, onUnmounted, provide, watch, ref, computed} from 'vue';
+import {i18n} from '@/i18n.js';
 import MkSuperMenu from '@/components/MkSuperMenu.vue';
-import type { SuperMenuDef } from '@/components/MkSuperMenu.vue';
+import type {SuperMenuDef} from '@/components/MkSuperMenu.vue';
 import MkInfo from '@/components/MkInfo.vue';
-import { instance } from '@/instance.js';
-import { lookup } from '@/scripts/lookup.js';
+import {instance} from '@/instance.js';
+import {lookup} from '@/scripts/lookup.js';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
-import { lookupUser, lookupUserByEmail, lookupFile } from '@/scripts/admin-lookup.js';
-import { definePageMetadata, provideMetadataReceiver, provideReactiveMetadata } from '@/scripts/page-metadata.js';
-import type { PageMetadata } from '@/scripts/page-metadata.js';
-import { useRouter } from '@/router/supplier.js';
+import {misskeyApi} from '@/scripts/misskey-api.js';
+import {lookupUser, lookupUserByEmail, lookupFile} from '@/scripts/admin-lookup.js';
+import {definePageMetadata, provideMetadataReceiver, provideReactiveMetadata} from '@/scripts/page-metadata.js';
+import type {PageMetadata} from '@/scripts/page-metadata.js';
+import {useRouter} from '@/router/supplier.js';
 
 const isEmpty = (x: string | null) => x == null || x === '';
 

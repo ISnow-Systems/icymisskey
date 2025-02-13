@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import { MiAbuseUserReport, MiNote, MiUser, MiWebhook } from '@/models/_.js';
-import { bindThis } from '@/decorators.js';
-import { MiSystemWebhook, type SystemWebhookEventType } from '@/models/SystemWebhook.js';
-import { AbuseReportPayload, SystemWebhookPayload, SystemWebhookService } from '@/core/SystemWebhookService.js';
-import { Packed } from '@/misc/json-schema.js';
-import { type WebhookEventTypes } from '@/models/Webhook.js';
-import { type UserWebhookPayload, UserWebhookService } from '@/core/UserWebhookService.js';
-import { QueueService } from '@/core/QueueService.js';
-import { ModeratorInactivityRemainingTime } from '@/queue/processors/CheckModeratorsActivityProcessorService.js';
+import {Injectable} from '@nestjs/common';
+import {MiAbuseUserReport, MiNote, MiUser, MiWebhook} from '@/models/_.js';
+import {bindThis} from '@/decorators.js';
+import {MiSystemWebhook, type SystemWebhookEventType} from '@/models/SystemWebhook.js';
+import {AbuseReportPayload, SystemWebhookPayload, SystemWebhookService} from '@/core/SystemWebhookService.js';
+import {Packed} from '@/misc/json-schema.js';
+import {type WebhookEventTypes} from '@/models/Webhook.js';
+import {type UserWebhookPayload, UserWebhookService} from '@/core/UserWebhookService.js';
+import {QueueService} from '@/core/QueueService.js';
+import {ModeratorInactivityRemainingTime} from '@/queue/processors/CheckModeratorsActivityProcessorService.js';
 
 const oneDayMillis = 24 * 60 * 60 * 1000;
 
@@ -308,7 +308,7 @@ export class WebhookTestService {
 		},
 		sender: MiUser | null,
 	) {
-		const webhooks = await this.userWebhookService.fetchWebhooks({ ids: [params.webhookId] })
+		const webhooks = await this.userWebhookService.fetchWebhooks({ids: [params.webhookId]})
 			.then(it => it.filter(it => it.userId === sender?.id));
 		if (webhooks.length === 0) {
 			throw new WebhookTestService.NoSuchWebhookError();
@@ -323,7 +323,7 @@ export class WebhookTestService {
 
 			// テスト目的なのでUserWebhookServiceの機能を経由せず直接キューに追加する（チェック処理などをスキップする意図）.
 			// また、Jobの試行回数も1回だけ.
-			this.queueService.userWebhookDeliver(merged, type, contents, { attempts: 1 });
+			this.queueService.userWebhookDeliver(merged, type, contents, {attempts: 1});
 		};
 
 		const dummyNote1 = generateDummyNote({
@@ -355,31 +355,31 @@ export class WebhookTestService {
 
 		switch (params.type) {
 			case 'note': {
-				send('note', { note: toPackedNote(dummyNote1) });
+				send('note', {note: toPackedNote(dummyNote1)});
 				break;
 			}
 			case 'reply': {
-				send('reply', { note: toPackedNote(dummyReply1) });
+				send('reply', {note: toPackedNote(dummyReply1)});
 				break;
 			}
 			case 'renote': {
-				send('renote', { note: toPackedNote(dummyRenote1) });
+				send('renote', {note: toPackedNote(dummyRenote1)});
 				break;
 			}
 			case 'mention': {
-				send('mention', { note: toPackedNote(dummyMention1) });
+				send('mention', {note: toPackedNote(dummyMention1)});
 				break;
 			}
 			case 'follow': {
-				send('follow', { user: toPackedUserDetailedNotMe(dummyUser1) });
+				send('follow', {user: toPackedUserDetailedNotMe(dummyUser1)});
 				break;
 			}
 			case 'followed': {
-				send('followed', { user: toPackedUserLite(dummyUser2) });
+				send('followed', {user: toPackedUserLite(dummyUser2)});
 				break;
 			}
 			case 'unfollow': {
-				send('unfollow', { user: toPackedUserDetailedNotMe(dummyUser3) });
+				send('unfollow', {user: toPackedUserDetailedNotMe(dummyUser3)});
 				break;
 			}
 			// まだ実装されていない (#9485)
@@ -409,7 +409,7 @@ export class WebhookTestService {
 			override?: Partial<Omit<MiSystemWebhook, 'id'>>,
 		},
 	) {
-		const webhooks = await this.systemWebhookService.fetchSystemWebhooks({ ids: [params.webhookId] });
+		const webhooks = await this.systemWebhookService.fetchSystemWebhooks({ids: [params.webhookId]});
 		if (webhooks.length === 0) {
 			throw new WebhookTestService.NoSuchWebhookError();
 		}
@@ -423,7 +423,7 @@ export class WebhookTestService {
 
 			// テスト目的なのでSystemWebhookServiceの機能を経由せず直接キューに追加する（チェック処理などをスキップする意図）.
 			// また、Jobの試行回数も1回だけ.
-			this.queueService.systemWebhookDeliver(merged, type, contents, { attempts: 1 });
+			this.queueService.systemWebhookDeliver(merged, type, contents, {attempts: 1});
 		};
 
 		switch (params.type) {

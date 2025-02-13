@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { CaptchaService, supportedCaptchaProviders } from '@/core/CaptchaService.js';
+import {Injectable} from '@nestjs/common';
+import {Endpoint} from '@/server/api/endpoint-base.js';
+import {CaptchaService, supportedCaptchaProviders} from '@/core/CaptchaService.js';
 
 export const meta = {
 	tags: ['admin', 'captcha'],
@@ -26,30 +26,30 @@ export const meta = {
 			hcaptcha: {
 				type: 'object',
 				properties: {
-					siteKey: { type: 'string', nullable: true },
-					secretKey: { type: 'string', nullable: true },
+					siteKey: {type: 'string', nullable: true},
+					secretKey: {type: 'string', nullable: true},
 				},
 			},
 			mcaptcha: {
 				type: 'object',
 				properties: {
-					siteKey: { type: 'string', nullable: true },
-					secretKey: { type: 'string', nullable: true },
-					instanceUrl: { type: 'string', nullable: true },
+					siteKey: {type: 'string', nullable: true},
+					secretKey: {type: 'string', nullable: true},
+					instanceUrl: {type: 'string', nullable: true},
 				},
 			},
 			recaptcha: {
 				type: 'object',
 				properties: {
-					siteKey: { type: 'string', nullable: true },
-					secretKey: { type: 'string', nullable: true },
+					siteKey: {type: 'string', nullable: true},
+					secretKey: {type: 'string', nullable: true},
 				},
 			},
 			turnstile: {
 				type: 'object',
 				properties: {
-					siteKey: { type: 'string', nullable: true },
-					secretKey: { type: 'string', nullable: true },
+					siteKey: {type: 'string', nullable: true},
+					secretKey: {type: 'string', nullable: true},
 				},
 			},
 		},

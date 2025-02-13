@@ -4,54 +4,62 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div>
-	<div :class="$style.label" @click="focus"><slot name="label"></slot></div>
-	<div :class="[$style.input, { [$style.inline]: inline, [$style.disabled]: disabled, [$style.focused]: focused }]">
-		<div ref="prefixEl" :class="$style.prefix"><slot name="prefix"></slot></div>
-		<input
-			ref="inputEl"
-			v-model="v"
-			v-adaptive-border
-			:class="$style.inputCore"
-			:type="type"
-			:disabled="disabled"
-			:required="required"
-			:readonly="readonly"
-			:placeholder="placeholder"
-			:pattern="pattern"
-			:autocomplete="autocomplete"
-			:autocapitalize="autocapitalize"
-			:spellcheck="spellcheck"
-			:inputmode="inputmode"
-			:step="step"
-			:list="id"
-			:min="min"
-			:max="max"
-			@focus="focused = true"
-			@blur="focused = false"
-			@keydown="onKeydown($event)"
-			@input="onInput"
-		>
-		<datalist v-if="datalist" :id="id">
-			<option v-for="data in datalist" :key="data" :value="data"/>
-		</datalist>
-		<div ref="suffixEl" :class="$style.suffix"><slot name="suffix"></slot></div>
-	</div>
-	<div :class="$style.caption"><slot name="caption"></slot></div>
+	<div>
+		<div :class="$style.label" @click="focus">
+			<slot name="label"></slot>
+		</div>
+		<div :class="[$style.input, { [$style.inline]: inline, [$style.disabled]: disabled, [$style.focused]: focused }]">
+			<div ref="prefixEl" :class="$style.prefix">
+				<slot name="prefix"></slot>
+			</div>
+			<input
+				ref="inputEl"
+				v-model="v"
+				v-adaptive-border
+				:autocapitalize="autocapitalize"
+				:autocomplete="autocomplete"
+				:class="$style.inputCore"
+				:disabled="disabled"
+				:inputmode="inputmode"
+				:list="id"
+				:max="max"
+				:min="min"
+				:pattern="pattern"
+				:placeholder="placeholder"
+				:readonly="readonly"
+				:required="required"
+				:spellcheck="spellcheck"
+				:step="step"
+				:type="type"
+				@blur="focused = false"
+				@focus="focused = true"
+				@input="onInput"
+				@keydown="onKeydown($event)"
+			>
+			<datalist v-if="datalist" :id="id">
+				<option v-for="data in datalist" :key="data" :value="data"/>
+			</datalist>
+			<div ref="suffixEl" :class="$style.suffix">
+				<slot name="suffix"></slot>
+			</div>
+		</div>
+		<div :class="$style.caption">
+			<slot name="caption"></slot>
+		</div>
 
-	<MkButton v-if="manualSave && changed" primary :class="$style.save" @click="updated"><i class="ti ti-check"></i> {{ i18n.ts.save }}</MkButton>
-</div>
+		<MkButton v-if="manualSave && changed" :class="$style.save" primary @click="updated"><i class="ti ti-check"></i> {{ i18n.ts.save }}</MkButton>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, nextTick, ref, shallowRef, watch, computed, toRefs } from 'vue';
-import type { InputHTMLAttributes } from 'vue';
-import { debounce } from 'throttle-debounce';
+import {onMounted, onUnmounted, nextTick, ref, shallowRef, watch, computed, toRefs} from 'vue';
+import type {InputHTMLAttributes} from 'vue';
+import {debounce} from 'throttle-debounce';
 import MkButton from '@/components/MkButton.vue';
-import { useInterval } from '@@/js/use-interval.js';
-import { i18n } from '@/i18n.js';
-import { Autocomplete } from '@/scripts/autocomplete.js';
-import type { SuggestionType } from '@/scripts/autocomplete.js';
+import {useInterval} from '@@/js/use-interval.js';
+import {i18n} from '@/i18n.js';
+import {Autocomplete} from '@/scripts/autocomplete.js';
+import type {SuggestionType} from '@/scripts/autocomplete.js';
 
 const props = defineProps<{
 	modelValue: string | number | null;
@@ -85,7 +93,7 @@ const emit = defineEmits<{
 	(ev: 'update:modelValue', value: string | number): void;
 }>();
 
-const { modelValue, type, autofocus } = toRefs(props);
+const {modelValue, type, autofocus} = toRefs(props);
 const v = ref(modelValue.value);
 const id = Math.random().toString(); // TODO: uuid?
 const focused = ref(false);
@@ -97,8 +105,8 @@ const prefixEl = shallowRef<HTMLElement>();
 const suffixEl = shallowRef<HTMLElement>();
 const height =
 	props.small ? 33 :
-	props.large ? 39 :
-	36;
+		props.large ? 39 :
+			36;
 let autocompleteWorker: Autocomplete | null = null;
 
 const focus = () => inputEl.value?.focus();
@@ -290,6 +298,7 @@ defineExpose({
 	right: 0;
 	padding-left: 6px;
 }
+
 .save {
 	margin: 8px 0 0 0;
 }
