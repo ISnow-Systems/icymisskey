@@ -18,14 +18,14 @@ export interface Locale extends ILocale {
      */
     "headlineMisskey": string;
     /**
-     * ようこそ！Misskeyは、オープンソースの分散型マイクロブログサービスです。
+     * ようこそ！IcyMisskeyは、オープンソースの分散型マイクロブログサービスです。
      * 「ノート」を作成して、いま起こっていることを共有したり、あなたについて皆に発信しよう📡
      * 「リアクション」機能で、皆のノートに素早く反応を追加することもできます👍
      * 新しい世界を探検しよう🚀
      */
     "introMisskey": string;
     /**
-     * {name}は、オープンソースのプラットフォーム<b>Misskey</b>のサーバーのひとつです。
+     * {name}は、オープンソースのプラットフォーム<b>IcyMisskey</b>のサーバーのひとつです。
      */
     "poweredByMisskeyDescription": ParameterizedString<"name">;
     /**
@@ -61,8 +61,8 @@ export interface Locale extends ILocale {
      */
     "initialPasswordIsIncorrect": string;
     /**
-     * Misskeyを自分でインストールした場合は、設定ファイルに入力したパスワードを使用してください。
-     * Misskeyのホスティングサービスなどを使用している場合は、提供されたパスワードを使用してください。
+     * IcyMisskeyを自分でインストールした場合は、設定ファイルに入力したパスワードを使用してください。
+     * IcyMisskeyのホスティングサービスなどを使用している場合は、提供されたパスワードを使用してください。
      * パスワードを設定していない場合は、空欄にしたまま続行してください。
      */
     "initialPasswordForSetupDescription": string;
@@ -727,7 +727,7 @@ export interface Locale extends ILocale {
      */
     "flagAsBot": string;
     /**
-     * このアカウントがプログラムによって運用される場合は、このフラグをオンにします。オンにすると、反応の連鎖を防ぐためのフラグとして他の開発者に役立ったり、Misskeyのシステム上での扱いがBotに合ったものになります。
+     * このアカウントがプログラムによって運用される場合は、このフラグをオンにします。オンにすると、反応の連鎖を防ぐためのフラグとして他の開発者に役立ったり、IcyMisskeyのシステム上での扱いがBotに合ったものになります。
      */
     "flagAsBotDescription": string;
     /**
@@ -771,7 +771,7 @@ export interface Locale extends ILocale {
      */
     "continueOnRemote": string;
     /**
-     * Misskey Hubからサーバーを選択
+     * IcyMisskey Hubからサーバーを選択
      */
     "chooseServerOnMisskeyHub": string;
     /**
@@ -1019,7 +1019,7 @@ export interface Locale extends ILocale {
      */
     "pinLimitExceeded": string;
     /**
-     * Misskeyのインストールが完了しました！管理者アカウントを作成しましょう。
+     * IcyMisskeyのインストールが完了しました！管理者アカウントを作成しましょう。
      */
     "intro": string;
     /**
@@ -1799,7 +1799,7 @@ export interface Locale extends ILocale {
      */
     "about": string;
     /**
-     * Misskeyについて
+     * IcyMisskeyについて
      */
     "aboutMisskey": string;
     /**
@@ -2363,7 +2363,7 @@ export interface Locale extends ILocale {
      */
     "notUseSound": string;
     /**
-     * Misskeyがアクティブな時のみサウンドを出力する
+     * IcyMisskeyがアクティブな時のみサウンドを出力する
      */
     "useSoundOnlyWhenActive": string;
     /**
@@ -2431,7 +2431,7 @@ export interface Locale extends ILocale {
      */
     "scratchpad": string;
     /**
-     * スクラッチパッドは、AiScriptの実験環境を提供します。Misskeyと対話するコードの記述、実行、結果の確認ができます。
+     * スクラッチパッドは、AiScriptの実験環境を提供します。IcyMisskeyと対話するコードの記述、実行、結果の確認ができます。
      */
     "scratchpadDescription": string;
     /**
@@ -2999,7 +2999,7 @@ export interface Locale extends ILocale {
      */
     "private": string;
     /**
-     * Misskeyは有志によって様々な言語に翻訳されています。{link}で翻訳に協力できます。
+     * IcyMisskeyは有志によって様々な言語に翻訳されています。{link}で翻訳に協力できます。
      */
     "i18nInfo": ParameterizedString<"link">;
     /**
@@ -3215,7 +3215,7 @@ export interface Locale extends ILocale {
      */
     "sendErrorReports": string;
     /**
-     * オンにすると、問題が発生したときにエラーの詳細情報がMisskeyに共有され、ソフトウェアの品質向上に役立てることができます。エラー情報には、OSのバージョン、ブラウザの種類、行動履歴などが含まれます。
+     * オンにすると、問題が発生したときにエラーの詳細情報がIcyMisskeyに共有され、ソフトウェアの品質向上に役立てることができます。エラー情報には、OSのバージョン、ブラウザの種類、行動履歴などが含まれます。
      */
     "sendErrorReportsDescription": string;
     /**
@@ -3595,7 +3595,7 @@ export interface Locale extends ILocale {
      */
     "learnMore": string;
     /**
-     * Misskeyが更新されました！
+     * IcyMisskeyが更新されました！
      */
     "misskeyUpdated": string;
     /**
@@ -4127,11 +4127,11 @@ export interface Locale extends ILocale {
      */
     "remindMeLater": string;
     /**
-     * Misskeyを気に入っていただけましたか？
+     * IcyMisskeyを気に入っていただけましたか？
      */
     "didYouLikeMisskey": string;
     /**
-     * Misskeyは{host}が使用している無料のソフトウェアです。これからも開発を続けられるように、ぜひ寄付をお願いします！
+     * IcyMisskeyは{host}が使用している無料のソフトウェアです。これからも開発を続けられるように、ぜひ寄付をお願いします！
      */
     "pleaseDonate": ParameterizedString<"host">;
     /**
@@ -4639,7 +4639,7 @@ export interface Locale extends ILocale {
      */
     "later": string;
     /**
-     * Misskeyへ
+     * IcyMisskeyへ
      */
     "goToMisskey": string;
     /**
@@ -4887,7 +4887,7 @@ export interface Locale extends ILocale {
      */
     "repositoryUrl": string;
     /**
-     * ソースコードが公開されているリポジトリがある場合、そのURLを記入します。Misskeyを現状のまま（ソースコードにいかなる変更も加えずに）使用している場合は https://github.com/misskey-dev/misskey と記入します。
+     * ソースコードが公開されているリポジトリがある場合、そのURLを記入します。IcyMisskeyを現状のまま（ソースコードにいかなる変更も加えずに）使用している場合は https://github.com/IcyMisskey-dev/IcyMisskey と記入します。
      */
     "repositoryUrlDescription": string;
     /**
@@ -5509,7 +5509,7 @@ export interface Locale extends ILocale {
          */
         "haveFun": ParameterizedString<"name">;
         /**
-         * このまま{name}(Misskey)の使い方についてのチュートリアルに進むこともできますが、ここで中断してすぐに使い始めることもできます。
+         * このまま{name}(IcyMisskey)の使い方についてのチュートリアルに進むこともできますが、ここで中断してすぐに使い始めることもできます。
          */
         "youCanContinueTutorial": ParameterizedString<"name">;
         /**
@@ -5548,7 +5548,7 @@ export interface Locale extends ILocale {
              */
             "title": string;
             /**
-             * ここでは、Misskeyの基本的な使い方や機能を確認できます。
+             * ここでは、IcyMisskeyの基本的な使い方や機能を確認できます。
              */
             "description": string;
         };
@@ -5558,7 +5558,7 @@ export interface Locale extends ILocale {
              */
             "title": string;
             /**
-             * Misskeyでの投稿は「ノート」と呼びます。ノートはタイムラインに時系列で並んでいて、リアルタイムで更新されていきます。
+             * IcyMisskeyでの投稿は「ノート」と呼びます。ノートはタイムラインに時系列で並んでいて、リアルタイムで更新されていきます。
              */
             "description": string;
             /**
@@ -5610,7 +5610,7 @@ export interface Locale extends ILocale {
              */
             "title": string;
             /**
-             * Misskeyには、使い方に応じて複数のタイムラインが用意されています（サーバーによってはいずれかが無効になっていることがあります）。
+             * IcyMisskeyには、使い方に応じて複数のタイムラインが用意されています（サーバーによってはいずれかが無効になっていることがあります）。
              */
             "description1": string;
             /**
@@ -5644,7 +5644,7 @@ export interface Locale extends ILocale {
              */
             "title": string;
             /**
-             * Misskeyにノートを投稿する際には、様々なオプションの設定が可能です。投稿フォームはこのようになっています。
+             * IcyMisskeyにノートを投稿する際には、様々なオプションの設定が可能です。投稿フォームはこのようになっています。
              */
             "description1": string;
             "_visibility": {
@@ -5744,7 +5744,7 @@ export interface Locale extends ILocale {
              */
             "title": string;
             /**
-             * ここで紹介した機能はほんの一部にすぎません。Misskeyの使い方をより詳しく知るには、{link}をご覧ください。
+             * ここで紹介した機能はほんの一部にすぎません。IcyMisskeyの使い方をより詳しく知るには、{link}をご覧ください。
              */
             "description": ParameterizedString<"link">;
         };
@@ -5883,7 +5883,7 @@ export interface Locale extends ILocale {
          * フォロワーの移行は自動ですが、フォローの移行は手動で行う必要があります。移行前にこのアカウントでフォローエクスポートし、移行後すぐに移行先アカウントでインポートを行なってください。
          * リスト・ミュート・ブロックについても同様ですので、手動で移行する必要があります。
          *
-         * （この説明はこのサーバー（Misskey v13.12.0以降）の仕様です。Mastodonなどの他のActivityPubソフトウェアでは挙動が異なる場合があります。）
+         * （この説明はこのサーバー（IcyMisskey v13.12.0以降）の仕様です。Mastodonなどの他のActivityPubソフトウェアでは挙動が異なる場合があります。）
          */
         "moveAccountDescription": string;
         /**
@@ -5931,7 +5931,7 @@ export interface Locale extends ILocale {
                  */
                 "description": string;
                 /**
-                 * 良いMisskeyライフを！
+                 * 良いIcyMisskeyライフを！
                  */
                 "flavor": string;
             };
@@ -6255,7 +6255,7 @@ export interface Locale extends ILocale {
                  */
                 "description": string;
                 /**
-                 * Misskeyを使ってくれてありがとう！
+                 * IcyMisskeyを使ってくれてありがとう！
                  */
                 "flavor": string;
             };
@@ -6455,15 +6455,15 @@ export interface Locale extends ILocale {
             };
             "_iLoveMisskey": {
                 /**
-                 * I Love Misskey
+                 * I Love IcyMisskey
                  */
                 "title": string;
                 /**
-                 * "I ❤ #Misskey"を投稿した
+                 * "I ❤ #IcyMisskey"を投稿した
                  */
                 "description": string;
                 /**
-                 * Misskeyを使ってくださりありがとうございます！ by 開発チーム
+                 * IcyMisskeyを使ってくださりありがとうございます！ by 開発チーム
                  */
                 "flavor": string;
             };
@@ -6489,7 +6489,7 @@ export interface Locale extends ILocale {
             };
             "_client60min": {
                 /**
-                 * Misskeyの見すぎ
+                 * IcyMisskeyの見すぎ
                  */
                 "title": string;
                 /**
@@ -6713,7 +6713,7 @@ export interface Locale extends ILocale {
                  */
                 "description": string;
                 /**
-                 * Misskey-Misskey La-Tu-Ma
+                 * IcyMisskey-IcyMisskey La-Tu-Ma
                  */
                 "flavor": string;
             };
@@ -6729,7 +6729,7 @@ export interface Locale extends ILocale {
             };
             "_tutorialCompleted": {
                 /**
-                 * Misskey初心者講座 修了証
+                 * IcyMisskey初心者講座 修了証
                  */
                 "title": string;
                 /**
@@ -7419,7 +7419,7 @@ export interface Locale extends ILocale {
     };
     "_aboutMisskey": {
         /**
-         * Misskeyはsyuiloによって2014年から開発されている、オープンソースのソフトウェアです。
+         * IcyMisskeyはISnow Systemsによって2023年から開発されている、オープンソースのソフトウェアです。
          */
         "about": string;
         /**
@@ -7439,15 +7439,15 @@ export interface Locale extends ILocale {
          */
         "original": string;
         /**
-         * {name}はオリジナルのMisskeyを改変したバージョンを使用しています。
+         * {name}はオリジナルのIcyMisskeyを改変したバージョンを使用しています。
          */
         "thisIsModifiedVersion": ParameterizedString<"name">;
         /**
-         * Misskeyを翻訳
+         * IcyMisskeyを翻訳
          */
         "translation": string;
         /**
-         * Misskeyに寄付
+         * IcyMisskeyに寄付
          */
         "donate": string;
         /**
@@ -7921,7 +7921,7 @@ export interface Locale extends ILocale {
          */
         "driveFileDurationWarn": string;
         /**
-         * 長い音声を使用するとMisskeyの使用に支障をきたす可能性があります。それでも続行しますか？
+         * 長い音声を使用するとIcyMisskeyの使用に支障をきたす可能性があります。それでも続行しますか？
          */
         "driveFileDurationWarnDescription": string;
         /**
@@ -10415,7 +10415,7 @@ export interface Locale extends ILocale {
          */
         "shareToTlTheGameWhenStart": string;
         /**
-         * 対局を開始しました！ #MisskeyReversi
+         * 対局を開始しました！ #IcyMisskeyReversi
          */
         "iStartedAGame": string;
         /**
@@ -10495,7 +10495,7 @@ export interface Locale extends ILocale {
          */
         "summaryProxy": string;
         /**
-         * Misskey本体ではなく、サマリープロキシを使用してプレビューを生成します。
+         * IcyMisskey本体ではなく、サマリープロキシを使用してプレビューを生成します。
          */
         "summaryProxyDescription": string;
         /**
