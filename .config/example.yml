@@ -271,21 +271,31 @@ id: 'aidx'
 # Number of worker processes
 #clusterLimit: 1
 
-# Job concurrency per worker
-#deliverJobConcurrency: 128
-#inboxJobConcurrency: 16
-#relationshipJobConcurrency: 16
 # What's relationshipJob?:
 #  Follow, unfollow, block and unblock(ings) while following-imports, etc. or account migrations.
+queueConfig:
+  concurrency:
+  # Job concurrency per worker
+  #  deliver: 128
+  #  inbox: 16
+  #  relationship: 16
+  #  userWebhook: 64
+  #  systemWebhook: 16
+  #  objectStorage: 16
 
-# Job rate limiter
-#deliverJobPerSec: 128
-#inboxJobPerSec: 32
-#relationshipJobPerSec: 64
+  rateLimit:
+  # Job rate limiter
+  #  deliver: 128
+  #  inbox: 32
+  #  relationship: 64
+  #  userWebhook: 64
+  #  systemWebhook: 16
+  #  objectStorage: 128
 
-# Job attempts
-#deliverJobMaxAttempts: 12
-#inboxJobMaxAttempts: 8
+  attempts:
+  # Job attempts
+  #  deliver: 12
+  #  inbox: 8
 
 # Local address used for outgoing requests
 #outgoingAddress: 127.0.0.1

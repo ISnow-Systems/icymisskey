@@ -83,14 +83,28 @@ type Source = {
 	outgoingAddress?: string;
 	outgoingAddressFamily?: 'ipv4' | 'ipv6' | 'dual';
 
-	deliverJobConcurrency?: number;
-	inboxJobConcurrency?: number;
-	relationshipJobConcurrency?: number;
-	deliverJobPerSec?: number;
-	inboxJobPerSec?: number;
-	relationshipJobPerSec?: number;
-	deliverJobMaxAttempts?: number;
-	inboxJobMaxAttempts?: number;
+	queueConfig: {
+		concurrency: {
+			deliver?: number;
+			inbox?: number;
+			relationship?: number;
+			userWebhook?: number;
+			systemWebhook?: number;
+			objectStorage?: number;
+		},
+		rateLimit: {
+			deliver?: number;
+			inbox?: number;
+			relationship?: number;
+			userWebhook?: number;
+			systemWebhook?: number;
+			objectStorage?: number;
+		},
+		attempts: {
+			deliver?: number;
+			inbox?: number;
+		}
+	},
 
 	mediaProxy?: string;
 	proxyRemoteFiles?: boolean;
@@ -154,14 +168,28 @@ export type Config = {
 	id: string;
 	outgoingAddress: string | undefined;
 	outgoingAddressFamily: 'ipv4' | 'ipv6' | 'dual' | undefined;
-	deliverJobConcurrency: number | undefined;
-	inboxJobConcurrency: number | undefined;
-	relationshipJobConcurrency: number | undefined;
-	deliverJobPerSec: number | undefined;
-	inboxJobPerSec: number | undefined;
-	relationshipJobPerSec: number | undefined;
-	deliverJobMaxAttempts: number | undefined;
-	inboxJobMaxAttempts: number | undefined;
+	queueConfig: {
+		concurrency: {
+			deliver: number | undefined;
+			inbox: number | undefined;
+			relationship: number | undefined;
+			userWebhook: number | undefined;
+			systemWebhook: number | undefined;
+			objectStorage: number | undefined;
+		},
+		rateLimit: {
+			deliver: number | undefined;
+			inbox: number | undefined;
+			relationship: number | undefined;
+			userWebhook: number | undefined;
+			systemWebhook: number | undefined;
+			objectStorage: number | undefined;
+		},
+		attempts: {
+			deliver: number | undefined;
+			inbox: number | undefined;
+		}
+	},
 	proxyRemoteFiles: boolean | undefined;
 	signToActivityPubGet: boolean | undefined;
 	logging?: {
@@ -291,14 +319,28 @@ export function loadConfig(): Config {
 		clusterLimit: config.clusterLimit,
 		outgoingAddress: config.outgoingAddress,
 		outgoingAddressFamily: config.outgoingAddressFamily,
-		deliverJobConcurrency: config.deliverJobConcurrency,
-		inboxJobConcurrency: config.inboxJobConcurrency,
-		relationshipJobConcurrency: config.relationshipJobConcurrency,
-		deliverJobPerSec: config.deliverJobPerSec,
-		inboxJobPerSec: config.inboxJobPerSec,
-		relationshipJobPerSec: config.relationshipJobPerSec,
-		deliverJobMaxAttempts: config.deliverJobMaxAttempts,
-		inboxJobMaxAttempts: config.inboxJobMaxAttempts,
+		queueConfig: {
+			concurrency: {
+				deliver: config.queueConfig.concurrency.deliver,
+				userWebhook: config.queueConfig.concurrency.userWebhook,
+				systemWebhook: config.queueConfig.concurrency.systemWebhook,
+				inbox: config.queueConfig.concurrency.inbox,
+				objectStorage: config.queueConfig.concurrency.objectStorage,
+				relationship: config.queueConfig.concurrency.relationship,
+			},
+			rateLimit: {
+				deliver: config.queueConfig.rateLimit.deliver,
+				userWebhook: config.queueConfig.rateLimit.userWebhook,
+				systemWebhook: config.queueConfig.rateLimit.systemWebhook,
+				inbox: config.queueConfig.rateLimit.inbox,
+				objectStorage: config.queueConfig.rateLimit.objectStorage,
+				relationship: config.queueConfig.rateLimit.relationship,
+			},
+			attempts: {
+				deliver: config.queueConfig.attempts.deliver,
+				inbox: config.queueConfig.attempts.inbox,
+			}
+		},
 		proxyRemoteFiles: config.proxyRemoteFiles,
 		signToActivityPubGet: config.signToActivityPubGet ?? true,
 		mediaProxy: externalMediaProxy ?? internalMediaProxy,

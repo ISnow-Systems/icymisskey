@@ -114,7 +114,7 @@ export class QueueService {
 		};
 
 		return this.deliverQueue.add(to, data, {
-			attempts: this.config.deliverJobMaxAttempts ?? 12,
+			attempts: this.config.queueConfig.attempts.deliver ?? 12,
 			backoff: {
 				type: 'custom',
 			},
@@ -137,7 +137,7 @@ export class QueueService {
 		const digest = ApRequestCreator.createDigest(contentBody);
 
 		const opts = {
-			attempts: this.config.deliverJobMaxAttempts ?? 12,
+			attempts: this.config.queueConfig.attempts.deliver ?? 12,
 			backoff: {
 				type: 'custom',
 			},
@@ -168,7 +168,7 @@ export class QueueService {
 		};
 
 		return this.inboxQueue.add('', data, {
-			attempts: this.config.inboxJobMaxAttempts ?? 8,
+			attempts: this.config.queueConfig.attempts.inbox ?? 8,
 			backoff: {
 				type: 'custom',
 			},

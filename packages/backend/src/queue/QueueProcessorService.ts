@@ -294,9 +294,9 @@ export class QueueProcessorService implements OnApplicationShutdown {
 			}, {
 				...baseQueueOptions(this.config, QUEUE.DELIVER),
 				autorun: false,
-				concurrency: this.config.deliverJobConcurrency ?? 128,
+				concurrency: this.config.queueConfig.concurrency.deliver ?? 128,
 				limiter: {
-					max: this.config.deliverJobPerSec ?? 128,
+					max: this.config.queueConfig.rateLimit.deliver ?? 128,
 					duration: 1000,
 				},
 				settings: {
@@ -334,9 +334,9 @@ export class QueueProcessorService implements OnApplicationShutdown {
 			}, {
 				...baseQueueOptions(this.config, QUEUE.INBOX),
 				autorun: false,
-				concurrency: this.config.inboxJobConcurrency ?? 16,
+				concurrency: this.config.queueConfig.concurrency.inbox ?? 16,
 				limiter: {
-					max: this.config.inboxJobPerSec ?? 32,
+					max: this.config.queueConfig.rateLimit.inbox ?? 32,
 					duration: 1000,
 				},
 				settings: {
@@ -374,10 +374,10 @@ export class QueueProcessorService implements OnApplicationShutdown {
 			}, {
 				...baseQueueOptions(this.config, QUEUE.USER_WEBHOOK_DELIVER),
 				autorun: false,
-				concurrency: 64,
+				concurrency: this.config.queueConfig.concurrency.userWebhook ?? 64,
 				limiter: {
-					max: 64,
-					duration: 1000,
+					max: this.config.queueConfig.rateLimit.userWebhook ?? 64,
+					duration: 1000
 				},
 				settings: {
 					backoffStrategy: httpRelatedBackoff,
@@ -414,10 +414,10 @@ export class QueueProcessorService implements OnApplicationShutdown {
 			}, {
 				...baseQueueOptions(this.config, QUEUE.SYSTEM_WEBHOOK_DELIVER),
 				autorun: false,
-				concurrency: 16,
+				concurrency: this.config.queueConfig.concurrency.systemWebhook ?? 16,
 				limiter: {
-					max: 16,
-					duration: 1000,
+					max: this.config.queueConfig.rateLimit.systemWebhook ?? 16,
+					duration: 1000
 				},
 				settings: {
 					backoffStrategy: httpRelatedBackoff,
@@ -469,9 +469,9 @@ export class QueueProcessorService implements OnApplicationShutdown {
 			}, {
 				...baseQueueOptions(this.config, QUEUE.RELATIONSHIP),
 				autorun: false,
-				concurrency: this.config.relationshipJobConcurrency ?? 16,
+				concurrency: this.config.queueConfig.concurrency.relationship ?? 16,
 				limiter: {
-					max: this.config.relationshipJobPerSec ?? 64,
+					max: this.config.queueConfig.rateLimit.relationship ?? 64,
 					duration: 1000,
 				},
 			});
@@ -517,7 +517,11 @@ export class QueueProcessorService implements OnApplicationShutdown {
 			}, {
 				...baseQueueOptions(this.config, QUEUE.OBJECT_STORAGE),
 				autorun: false,
-				concurrency: 16,
+				concurrency: this.config.queueConfig.concurrency.objectStorage ?? 16,
+				limiter: {
+					max: this.config.queueConfig.rateLimit.objectStorage ?? 128,
+					duration: 1000
+				},
 			});
 
 			const logger = this.logger.createSubLogger('objectStorage');
