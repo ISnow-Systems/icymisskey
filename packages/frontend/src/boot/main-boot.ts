@@ -331,7 +331,15 @@ export async function mainBoot() {
 		}
 
 		const modifiedVersionMustProminentlyOfferInAgplV3Section13Read = miLocalStorage.getItem('modifiedVersionMustProminentlyOfferInAgplV3Section13Read');
-		if (modifiedVersionMustProminentlyOfferInAgplV3Section13Read !== 'true' && instance.repositoryUrl !== 'https://github.com/misskey-dev/misskey') {
+		if (
+			modifiedVersionMustProminentlyOfferInAgplV3Section13Read !== 'true' &&
+			!(
+				//IcyMisskeyではMisskey(フォーク元)とはURLが異なり、"ISnow-Systems"に表記揺れが存在する
+				//Misskey(フォーク元)のURL判定式は `instance.repositoryUrl !== 'https://github.com/misskey-dev/misskey'`
+				instance.repositoryUrl.toLowerCase() === 'https://github.com/isnow-systems/icymisskey' ||
+				instance.repositoryUrl.toLowerCase() === 'https://github.com/isnow-systems/icymisskey.git'
+			)
+		) {
 			const {dispose} = popup(defineAsyncComponent(() => import('@/components/MkSourceCodeAvailablePopup.vue')), {}, {
 				closed: () => dispose(),
 			});
