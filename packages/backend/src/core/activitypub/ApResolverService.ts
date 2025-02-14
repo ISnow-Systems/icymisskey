@@ -75,6 +75,23 @@ export class Resolver {
 	public async resolve(value: string | IObject): Promise<IObject> {
 		if (typeof value !== 'string') {
 			return value;
+		} else {
+			value = value.trim();
+		}
+
+		if (
+			(value.startsWith("{") && value.endsWith("}")) ||
+			(value.startsWith("[") && value.endsWith("]"))
+		) {
+			//URLがなぜかJSONなので処理
+			const jsonValue = JSON.parse(value) as ({ [key: string]: any } | unknown[]);
+			const jsonValues = Array.isArray(jsonValue) ? jsonValue : Object.values(jsonValue);
+			for (const jsonElement of jsonValues) {
+				if (typeof jsonElement === 'string' && jsonElement.startsWith('http')) {
+					value = jsonElement;
+					break;
+				}
+			}
 		}
 
 		if (value.includes('#')) {
