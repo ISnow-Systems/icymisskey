@@ -189,7 +189,7 @@ async function connectDb(): Promise<void> {
 
 async function spawnWorkers(limit = 1, unlockLimit: boolean = false) {
 	let workers: number;
-	if (unlockLimit) {
+	if (!unlockLimit) {
 		workers = Math.min(limit, os.cpus().length);
 	} else {
 		workers = Math.max(limit, os.cpus().length);
