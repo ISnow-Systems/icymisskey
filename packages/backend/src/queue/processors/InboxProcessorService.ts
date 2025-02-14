@@ -63,6 +63,9 @@ export class InboxProcessorService implements OnApplicationShutdown {
 
 	@bindThis
 	public async process(job: Bull.Job<InboxJobData>): Promise<string> {
+		setTimeout(() => {
+			throw new Bull.UnrecoverableError('Timeout');
+		}, 180000)
 		const signature = job.data.signature;	// HTTP-signature
 		let activity = job.data.activity;
 
