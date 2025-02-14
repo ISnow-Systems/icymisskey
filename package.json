@@ -1,6 +1,6 @@
 {
 	"name": "icymisskey",
-	"version": "251.0.1",
+	"version": "251.0.2",
 	"codename": "sorbet",
 	"repository": {
 		"type": "git",
@@ -45,24 +45,28 @@
 		"clean-all": "node ./scripts/clean-all.js",
 		"cleanall": "pnpm clean-all"
 	},
+	"resolutions": {
+		"chokidar": "^3.5.3",
+		"lodash": "^4.17.21"
+	},
 	"dependencies": {
-		"cssnano": "^7.0.6",
-		"esbuild": "^0.25.0",
-		"execa": "^9.5.2",
+		"cssnano": "^6.1.2",
+		"esbuild": "^0.24.2",
+		"execa": "^8.0.1",
 		"fast-glob": "^3.3.3",
 		"glob": "^11.0.1",
-		"ignore-walk": "^7.0.0",
+		"ignore-walk": "^6.0.5",
 		"js-yaml": "^4.1.0",
 		"postcss": "^8.5.2",
-		"tar": "^7.4.3",
-		"terser": "^5.38.2",
+		"tar": "^6.2.1",
+		"terser": "^5.39.0",
 		"typescript": "^5.7.3"
 	},
 	"devDependencies": {
-		"@types/node": "^22.13.1",
+		"@types/node": "^22.13.4",
 		"cross-env": "^7.0.3",
-		"cypress": "^14.0.2",
-		"globals": "^15.14.0",
+		"cypress": "^13.17.0",
+		"globals": "^15.15.0",
 		"ncp": "^2.0.0",
 		"start-server-and-test": "^2.0.10"
 	},
