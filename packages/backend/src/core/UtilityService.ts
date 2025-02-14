@@ -98,7 +98,33 @@ export class UtilityService {
 
 	@bindThis
 	public extractDbHost(uri: string): string {
-		const url = new URL(uri);
+		let url: URL;
+		try {
+			url = new URL(uri);
+		} catch (err) {
+			// JSONとして再試行
+			const json = JSON.parse(uri);
+			if (typeof json === 'string') {
+				url = new URL(json);
+			} else if (typeof json === "object") {
+				//配列かオブジェクト
+				const jsonValues = Object.values(json)
+				for (const value of jsonValues) {
+					if (typeof value === 'string') {
+						if (value.startsWith('http://') || value.startsWith('https://')) {
+							url = new URL(value);
+						}
+					}
+				}
+				for (const value of jsonValues) {
+					if (typeof value === 'string') {
+						url = new URL(value);
+					}
+				}
+			}
+		}
+		// 再三のパース試行を経てパースできなければ意図的にTypeErrorを発生させる
+		url ??= new URL(uri);
 		return this.toPuny(url.host);
 	}
 
