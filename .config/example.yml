@@ -119,6 +119,9 @@ db:
   user: example-misskey-user
   pass: example-misskey-pass
 
+  # Timeout settings
+  #timeout: 10
+
   # Whether disable Caching queries
   #disableCache: true
 

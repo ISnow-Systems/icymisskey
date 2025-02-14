@@ -35,6 +35,7 @@ type Source = {
 		user?: string;
 		pass?: string;
 		disableCache?: boolean;
+		timeout?: number;
 		extra?: { [x: string]: string };
 	};
 	dbReplications?: boolean;
@@ -138,6 +139,7 @@ export type Config = {
 		user: string;
 		pass: string;
 		disableCache?: boolean;
+		timeout: number;
 		extra?: { [x: string]: string };
 	};
 	dbReplications: boolean | undefined;
@@ -274,6 +276,7 @@ export function loadConfig(): Config {
 	const dbDb = config.db.db ?? process.env.DATABASE_DB ?? '';
 	const dbUser = config.db.user ?? process.env.DATABASE_USER ?? '';
 	const dbPass = config.db.pass ?? process.env.DATABASE_PASSWORD ?? '';
+	const dbTimeout = config.db.timeout ?? 10;
 
 	const externalMediaProxy = config.mediaProxy ?
 		config.mediaProxy.endsWith('/') ? config.mediaProxy.substring(0, config.mediaProxy.length - 1) : config.mediaProxy
@@ -298,7 +301,7 @@ export function loadConfig(): Config {
 		apiUrl: `${scheme}://${host}/api`,
 		authUrl: `${scheme}://${host}/auth`,
 		driveUrl: `${scheme}://${host}/files`,
-		db: {...config.db, db: dbDb, user: dbUser, pass: dbPass},
+		db: {...config.db, db: dbDb, user: dbUser, pass: dbPass, timeout: dbTimeout},
 		dbReplications: config.dbReplications,
 		dbSlaves: config.dbSlaves,
 		fulltextSearch: config.fulltextSearch,
