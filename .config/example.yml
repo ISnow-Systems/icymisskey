@@ -274,6 +274,9 @@ id: 'aidx'
 # Number of worker processes
 #clusterLimit: 1
 
+# If commented out, it ignores the limit on the number of CPU threads and increases the number of workers.
+#unlockWorkerProcessLimitByCpu: true
+
 # What's relationshipJob?:
 #  Follow, unfollow, block and unblock(ings) while following-imports, etc. or account migrations.
 queueConfig:

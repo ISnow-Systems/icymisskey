@@ -78,6 +78,7 @@ type Source = {
 	maxFileSize?: number;
 
 	clusterLimit?: number;
+	unlockWorkerProcessLimitByCpu?: boolean;
 
 	id: string;
 
@@ -167,6 +168,7 @@ export type Config = {
 	allowedPrivateNetworks: string[] | undefined;
 	maxFileSize: number;
 	clusterLimit: number | undefined;
+	unlockWorkerProcessLimitByCpu: boolean | undefined;
 	id: string;
 	outgoingAddress: string | undefined;
 	outgoingAddressFamily: 'ipv4' | 'ipv6' | 'dual' | undefined;
@@ -320,6 +322,7 @@ export function loadConfig(): Config {
 		allowedPrivateNetworks: config.allowedPrivateNetworks,
 		maxFileSize: config.maxFileSize ?? 262144000,
 		clusterLimit: config.clusterLimit,
+		unlockWorkerProcessLimitByCpu: config.unlockWorkerProcessLimitByCpu,
 		outgoingAddress: config.outgoingAddress,
 		outgoingAddressFamily: config.outgoingAddressFamily,
 		queueConfig: {

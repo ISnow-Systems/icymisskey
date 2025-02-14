@@ -109,7 +109,7 @@ export async function masterMain() {
 			await server();
 		}
 
-		await spawnWorkers(config.clusterLimit);
+		await spawnWorkers(config.clusterLimit, config.unlockWorkerProcessLimitByCpu);
 	} else {
 		// clusterモジュール無効時
 
@@ -187,8 +187,13 @@ async function connectDb(): Promise<void> {
 }
 */
 
-async function spawnWorkers(limit = 1) {
-	const workers = Math.min(limit, os.cpus().length);
+async function spawnWorkers(limit = 1, unlockLimit: boolean = false) {
+	let workers: number;
+	if (unlockLimit) {
+		workers = Math.min(limit, os.cpus().length);
+	} else {
+		workers = Math.max(limit, os.cpus().length);
+	}
 	bootLogger.info(`Starting ${workers} worker${workers === 1 ? '' : 's'}...`);
 	await Promise.all([...Array(workers)].map(spawnWorker));
 	bootLogger.succ('All workers started');
