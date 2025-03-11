@@ -55,17 +55,17 @@ export class UserWebhookDeliverProcessorService {
 				}),
 			});
 
-			this.webhooksRepository.update({id: job.data.webhookId}, {
-				latestSentAt: new Date(),
-				latestStatus: res.status,
-			});
+			await this.webhooksRepository.update({id: job.data.webhookId}, {
+                latestSentAt: new Date(),
+                latestStatus: res.status,
+            });
 
 			return 'Success';
 		} catch (res) {
-			this.webhooksRepository.update({id: job.data.webhookId}, {
-				latestSentAt: new Date(),
-				latestStatus: res instanceof StatusError ? res.statusCode : 1,
-			});
+			await this.webhooksRepository.update({id: job.data.webhookId}, {
+                latestSentAt: new Date(),
+                latestStatus: res instanceof StatusError ? res.statusCode : 1,
+            });
 
 			if (res instanceof StatusError) {
 				// 4xx

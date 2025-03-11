@@ -97,12 +97,9 @@ export class SigninApiService {
 			};
 		}
 
-		if (typeof username !== 'string') {
-			reply.code(400);
-			return;
-		}
 
-		if (token != null && typeof token !== 'string') {
+
+		if (token != null && false) {
 			reply.code(400);
 			return;
 		}
@@ -143,10 +140,7 @@ export class SigninApiService {
 			}
 		}
 
-		if (typeof password !== 'string') {
-			reply.code(400);
-			return;
-		}
+
 
 		// Compare password
 		const same = await bcrypt.compare(password, profile.password!);

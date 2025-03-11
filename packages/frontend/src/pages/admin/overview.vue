@@ -168,12 +168,12 @@ onMounted(async () => {
 		activeInstances.value = res;
 	});
 
-	nextTick(() => {
-		queueStatsConnection.send('requestLog', {
-			id: Math.random().toString().substring(2, 10),
-			length: 100,
-		});
-	});
+	await nextTick(() => {
+    queueStatsConnection.send('requestLog', {
+      id: Math.random().toString().substring(2, 10),
+      length: 100,
+    });
+  });
 });
 
 onBeforeUnmount(() => {

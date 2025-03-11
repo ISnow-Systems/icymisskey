@@ -112,15 +112,15 @@ async function unsubscribe() {
 	pushRegistrationInServer.value = undefined;
 
 	if ($i && accounts.length >= 2) {
-		apiWithDialog('sw/unregister', {
-			i: $i.token,
-			endpoint,
-		});
+		await apiWithDialog('sw/unregister', {
+      i: $i.token,
+      endpoint,
+    });
 	} else {
 		pushSubscription.value.unsubscribe();
-		apiWithDialog('sw/unregister', {
-			endpoint,
-		});
+		await apiWithDialog('sw/unregister', {
+      endpoint,
+    });
 		pushSubscription.value = null;
 	}
 }

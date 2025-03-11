@@ -8,7 +8,6 @@ import {DI} from '@/di-symbols.js';
 import type {FollowingsRepository} from '@/models/_.js';
 import {awaitAll} from '@/misc/prelude/await-all.js';
 import type {Packed} from '@/misc/json-schema.js';
-import type {} from '@/models/Blocking.js';
 import type {MiUser} from '@/models/User.js';
 import type {MiFollowing} from '@/models/Following.js';
 import {bindThis} from '@/decorators.js';
@@ -91,12 +90,12 @@ export class FollowingEntityService {
 			createdAt: this.idService.parse(following.id).date.toISOString(),
 			followeeId: following.followeeId,
 			followerId: following.followerId,
-			followee: opts.populateFollowee ? hint?.packedFollowee ?? this.userEntityService.pack(following.followee ?? following.followeeId, me, {
-				schema: 'UserDetailedNotMe',
-			}) : undefined,
-			follower: opts.populateFollower ? hint?.packedFollower ?? this.userEntityService.pack(following.follower ?? following.followerId, me, {
-				schema: 'UserDetailedNotMe',
-			}) : undefined,
+			followee: opts.populateFollowee ? hint?.packedFollowee ?? await this.userEntityService.pack(following.followee ?? following.followeeId, me, {
+                schema: 'UserDetailedNotMe',
+            }) : undefined,
+			follower: opts.populateFollower ? hint?.packedFollower ?? await this.userEntityService.pack(following.follower ?? following.followerId, me, {
+                schema: 'UserDetailedNotMe',
+            }) : undefined,
 		});
 	}
 

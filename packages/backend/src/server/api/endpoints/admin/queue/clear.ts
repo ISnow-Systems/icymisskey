@@ -31,7 +31,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		super(meta, paramDef, async (ps, me) => {
 			this.queueService.destroy();
 
-			this.moderationLogService.log(me, 'clearQueue');
+			await this.moderationLogService.log(me, 'clearQueue');
 		});
 	}
 }

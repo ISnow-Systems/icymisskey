@@ -10,7 +10,7 @@ import {fetchCustomEmojis} from '@/custom-emojis.js';
 import {fetchInstance} from '@/instance.js';
 
 export async function clearCache() {
-	os.waiting();
+	await os.waiting();
 	miLocalStorage.removeItem('instance');
 	miLocalStorage.removeItem('instanceCachedAt');
 	miLocalStorage.removeItem('locale');

@@ -54,7 +54,7 @@ export async function lookupUserByEmail() {
 		os.pageWindow(`/admin/user/${user.id}`);
 	} catch (err) {
 		if (err.code === 'USER_NOT_FOUND') {
-			os.alert({
+			await os.alert({
 				type: 'error',
 				text: i18n.ts.noSuchUser,
 			});

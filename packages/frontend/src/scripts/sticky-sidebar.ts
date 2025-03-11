@@ -7,12 +7,12 @@ export class StickySidebar {
 	private lastScrollTop = 0;
 	private container: HTMLElement;
 	private el: HTMLElement;
-	private spacer: HTMLElement;
-	private marginTop: number;
+	private readonly spacer: HTMLElement;
+	private readonly marginTop: number;
 	private isTop = false;
 	private isBottom = false;
-	private offsetTop: number;
-	private globalHeaderHeight = 59;
+	private readonly offsetTop: number;
+	private readonly globalHeaderHeight = 59;
 
 	constructor(container: StickySidebar['container'], marginTop = 0, globalHeaderHeight = 0) {
 		this.container = container;

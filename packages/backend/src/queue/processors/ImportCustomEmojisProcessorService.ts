@@ -110,7 +110,7 @@ export class ImportCustomEmojisProcessorService {
 					if (e instanceof Error || typeof e === 'string') {
 						this.logger.error(`couldn't import ${emojiPath} for ${emojiInfo.name}: ${e}`);
 					}
-					continue;
+
 				}
 			}
 

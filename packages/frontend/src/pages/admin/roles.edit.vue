@@ -74,10 +74,10 @@ if (props.id) {
 async function save() {
 	rolesCache.delete();
 	if (role.value) {
-		os.apiWithDialog('admin/roles/update', {
-			roleId: role.value.id,
-			...data.value,
-		});
+		await os.apiWithDialog('admin/roles/update', {
+      roleId: role.value.id,
+      ...data.value,
+    });
 		router.push('/admin/roles/' + role.value.id);
 	} else {
 		const created = await os.apiWithDialog('admin/roles/create', {

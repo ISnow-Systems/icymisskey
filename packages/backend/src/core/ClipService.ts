@@ -126,11 +126,11 @@ export class ClipService {
 			throw e;
 		}
 
-		this.clipsRepository.update(clip.id, {
-			lastClippedAt: new Date(),
-		});
+		await this.clipsRepository.update(clip.id, {
+            lastClippedAt: new Date(),
+        });
 
-		this.notesRepository.increment({id: noteId}, 'clippedCount', 1);
+		await this.notesRepository.increment({id: noteId}, 'clippedCount', 1);
 	}
 
 	@bindThis
@@ -155,6 +155,6 @@ export class ClipService {
 			clipId: clip.id,
 		});
 
-		this.notesRepository.decrement({id: noteId}, 'clippedCount', 1);
+		await this.notesRepository.decrement({id: noteId}, 'clippedCount', 1);
 	}
 }

@@ -54,19 +54,19 @@ export class SystemWebhookDeliverProcessorService {
 				}),
 			});
 
-			this.systemWebhooksRepository.update({id: job.data.webhookId}, {
-				latestSentAt: new Date(),
-				latestStatus: res.status,
-			});
+			await this.systemWebhooksRepository.update({id: job.data.webhookId}, {
+                latestSentAt: new Date(),
+                latestStatus: res.status,
+            });
 
 			return 'Success';
 		} catch (res) {
 			this.logger.error(res as Error);
 
-			this.systemWebhooksRepository.update({id: job.data.webhookId}, {
-				latestSentAt: new Date(),
-				latestStatus: res instanceof StatusError ? res.statusCode : 1,
-			});
+			await this.systemWebhooksRepository.update({id: job.data.webhookId}, {
+                latestSentAt: new Date(),
+                latestStatus: res instanceof StatusError ? res.statusCode : 1,
+            });
 
 			if (res instanceof StatusError) {
 				// 4xx

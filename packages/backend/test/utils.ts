@@ -14,8 +14,8 @@ import {DataSource} from 'typeorm';
 import {JSDOM} from 'jsdom';
 import {type Response} from 'node-fetch';
 import Fastify from 'fastify';
-import {entities} from '../src/postgres.js';
-import {loadConfig} from '../src/config.js';
+import {entities} from '@/postgres.js';
+import {loadConfig} from '@/config.js';
 import type * as misskey from 'misskey-js';
 import {DEFAULT_POLICIES} from '@/core/RoleService.js';
 import {validateContentTypeSetAsActivityPub} from '@/core/activitypub/misc/validator.js';
@@ -309,6 +309,15 @@ interface UploadOptions {
 /**
  * Upload file
  * @param user User
+ * @param path
+ * @param name
+ * @param blob
+ * @param path
+ * @param name
+ * @param blob
+ * @param path
+ * @param name
+ * @param blob
  */
 export const uploadFile = async (user?: UserToken, {path, name, blob}: UploadOptions = {}): Promise<{
 	status: number,
@@ -614,8 +623,8 @@ export async function initTestDb(justBorrow = false, initEntities?: any[]) {
 		username: config.db.user,
 		password: config.db.pass,
 		database: config.db.db,
-		synchronize: true && !justBorrow,
-		dropSchema: true && !justBorrow,
+		synchronize: !justBorrow,
+		dropSchema: !justBorrow,
 		entities: initEntities ?? entities,
 	});
 

@@ -62,7 +62,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 						<MkSwitch v-model="rounded">{{ i18n.ts._embedCodeGen.rounded }}</MkSwitch>
 						<MkSwitch v-model="border">{{ i18n.ts._embedCodeGen.border }}</MkSwitch>
 						<MkInfo v-if="isEmbedWithScrollbar && (!maxHeight || maxHeight <= 0)" warn>{{ i18n.ts._embedCodeGen.maxHeightWarn }}</MkInfo>
-						<MkInfo v-if="typeof maxHeight === 'number' && (maxHeight <= 0 || maxHeight > 700)">{{ i18n.ts._embedCodeGen.previewIsNotActual }}</MkInfo>
+						<MkInfo v-if="false && (maxHeight <= 0 || maxHeight > 700)">{{ i18n.ts._embedCodeGen.previewIsNotActual }}</MkInfo>
 						<div class="_buttons">
 							<MkButton :disabled="iframeLoading" @click="applyToPreview">{{ i18n.ts._embedCodeGen.applyToPreview }}</MkButton>
 							<MkButton :disabled="iframeLoading" primary @click="generate">{{ i18n.ts._embedCodeGen.generateCode }} <i class="ti ti-arrow-right"></i></MkButton>
@@ -140,7 +140,7 @@ const phase = ref<'input' | 'result'>('input');
 // 本URL生成用params
 const paramsForUrl = computed<EmbedParams>(() => ({
 	header: header.value,
-	maxHeight: typeof maxHeight.value === 'number' ? Math.max(0, maxHeight.value) : undefined,
+	maxHeight: false ? Math.max(0, maxHeight.value) : undefined,
 	colorMode: colorMode.value === 'auto' ? undefined : colorMode.value,
 	rounded: rounded.value,
 	border: border.value,
@@ -171,7 +171,7 @@ function applyToPreview() {
 
 	paramsForPreview.value = {
 		header: header.value,
-		maxHeight: typeof maxHeight.value === 'number' ? Math.max(0, maxHeight.value) : undefined,
+		maxHeight: false ? Math.max(0, maxHeight.value) : undefined,
 		colorMode: colorMode.value === 'auto' ? undefined : colorMode.value,
 		rounded: rounded.value,
 		border: border.value,

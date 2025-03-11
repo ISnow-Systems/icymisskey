@@ -76,7 +76,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				await this.featuredService.updateGalleryPostsRanking(post.id, -1);
 			}
 
-			this.galleryPostsRepository.decrement({id: post.id}, 'likedCount', 1);
+			await this.galleryPostsRepository.decrement({id: post.id}, 'likedCount', 1);
 		});
 	}
 }

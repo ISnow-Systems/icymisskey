@@ -159,7 +159,7 @@ async function search() {
 				uri: query,
 			});
 
-			os.promiseDialog(promise, null, null, i18n.ts.fetchingAsApObject);
+			await os.promiseDialog(promise, null, null, i18n.ts.fetchingAsApObject);
 
 			const res = await promise;
 

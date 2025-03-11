@@ -166,7 +166,7 @@ async function save(announcement) {
 		await os.apiWithDialog('admin/announcements/create', announcement);
 		refresh();
 	} else {
-		os.apiWithDialog('admin/announcements/update', announcement);
+		await os.apiWithDialog('admin/announcements/update', announcement);
 	}
 }
 

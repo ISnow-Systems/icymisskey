@@ -51,9 +51,9 @@ function compileValue(value: V): string {
 		return `'${value}'`; // TODO: escape
 	} else if (typeof value === 'number') {
 		return value.toString();
-	} else if (typeof value === 'boolean') {
-		return value.toString();
-	}
+	} else {
+        return value.toString();
+    }
 	throw new Error('unrecognized value');
 }
 
@@ -308,8 +308,8 @@ export class SearchService {
 			id: In(res.hits.map(x => x.id)),
 		})).filter(note => {
 			if (me && isUserRelated(note, userIdsWhoBlockingMe)) return false;
-			if (me && isUserRelated(note, userIdsWhoMeMuting)) return false;
-			return true;
+			return !(me && isUserRelated(note, userIdsWhoMeMuting));
+
 		});
 
 		return notes.sort((a, b) => a.id > b.id ? -1 : 1);

@@ -175,7 +175,7 @@ export async function common(createVue: () => App<Element>) {
 
 	//#region Sync dark mode
 	if (ColdDeviceStorage.get('syncDeviceDarkMode')) {
-		defaultStore.set('darkMode', isDeviceDarkmode());
+		await defaultStore.set('darkMode', isDeviceDarkmode());
 	}
 
 	window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (mql) => {
@@ -235,7 +235,7 @@ export async function common(createVue: () => App<Element>) {
 			console.log('account cache found. refreshing...');
 		}
 
-		refreshAccount();
+		await refreshAccount();
 	}
 	//#endregion
 

@@ -39,7 +39,7 @@ html(class='embed')
 			include ../style.embed.css
 
 		script.
-			var VERSION = "#{version}";
+			const VERSION = "#{version}";
 			var CLIENT_ENTRY = "#{entry.file}";
 
 		script(type='application/json' id='misskey_meta' data-generated-at=now)

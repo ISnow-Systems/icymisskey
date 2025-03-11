@@ -769,7 +769,7 @@ describe('OAuth', () => {
 			const url = new URL('/oauth/authorize', host);
 			url.searchParams.append('response_type', 'token');
 			const response = await fetch(url);
-			assertDirectError(response, 501, 'unsupported_response_type');
+			await assertDirectError(response, 501, 'unsupported_response_type');
 		});
 
 		test('Resource owner grant is not supported', async () => {

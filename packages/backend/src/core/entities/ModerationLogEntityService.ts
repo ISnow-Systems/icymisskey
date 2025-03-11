@@ -7,7 +7,6 @@ import {Inject, Injectable} from '@nestjs/common';
 import {DI} from '@/di-symbols.js';
 import type {ModerationLogsRepository} from '@/models/_.js';
 import {awaitAll} from '@/misc/prelude/await-all.js';
-import type {} from '@/models/Blocking.js';
 import {MiModerationLog} from '@/models/ModerationLog.js';
 import {bindThis} from '@/decorators.js';
 import {IdService} from '@/core/IdService.js';
@@ -39,9 +38,9 @@ export class ModerationLogEntityService {
 			type: log.type,
 			info: log.info,
 			userId: log.userId,
-			user: hint?.packedUser ?? this.userEntityService.pack(log.user ?? log.userId, null, {
-				schema: 'UserDetailedNotMe',
-			}),
+			user: hint?.packedUser ?? await this.userEntityService.pack(log.user ?? log.userId, null, {
+                schema: 'UserDetailedNotMe',
+            }),
 		});
 	}
 

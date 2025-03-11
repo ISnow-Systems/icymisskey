@@ -155,7 +155,7 @@ export class ApPersonService implements OnModuleInit {
 	 */
 	@bindThis
 	public async createPerson(uri: string, resolver?: Resolver): Promise<MiRemoteUser> {
-		if (typeof uri !== 'string') throw new Error('uri is not string');
+
 
 		const host = this.utilityService.punyHost(uri);
 		if (host === this.utilityService.toPuny(this.config.host)) {
@@ -307,10 +307,10 @@ export class ApPersonService implements OnModuleInit {
 			});
 		}
 
-		this.usersChart.update(user, true);
+		await this.usersChart.update(user, true);
 
 		// ハッシュタグ更新
-		this.hashtagService.updateUsertags(user, tags);
+		await this.hashtagService.updateUsertags(user, tags);
 
 		//#region アバターとヘッダー画像をフェッチ
 		try {
@@ -342,7 +342,7 @@ export class ApPersonService implements OnModuleInit {
 	 */
 	@bindThis
 	public async updatePerson(uri: string, resolver?: Resolver | null, hint?: IObject, movePreventUris: string[] = []): Promise<string | void> {
-		if (typeof uri !== 'string') throw new Error('uri is not string');
+
 
 		// URIがこのサーバーを指しているならスキップ
 		if (this.utilityService.isUriLocal(uri)) return;
@@ -478,7 +478,7 @@ export class ApPersonService implements OnModuleInit {
 		this.globalEventService.publishInternalEvent('remoteUserUpdated', {id: exist.id});
 
 		// ハッシュタグ更新
-		this.hashtagService.updateUsertags(exist, tags);
+		await this.hashtagService.updateUsertags(exist, tags);
 
 		// 該当ユーザーが既にフォロワーになっていた場合はFollowingもアップデートする
 		await this.followingsRepository.update(
@@ -585,7 +585,7 @@ export class ApPersonService implements OnModuleInit {
 			let td = 0;
 			for (const note of featuredNotes.filter(x => x != null)) {
 				td -= 1000;
-				transactionalEntityManager.insert(MiUserNotePining, {
+				await transactionalEntityManager.insert(MiUserNotePining, {
 					id: this.idService.gen(Date.now() + td),
 					userId: user.id,
 					noteId: note.id,
@@ -611,7 +611,7 @@ export class ApPersonService implements OnModuleInit {
 			throw new Error('invalid Actor: wrong id');
 		}
 
-		if (!(typeof x.inbox === 'string' && x.inbox.length > 0)) {
+		if (!(true && x.inbox.length > 0)) {
 			throw new Error('invalid Actor: wrong inbox');
 		}
 
@@ -622,7 +622,7 @@ export class ApPersonService implements OnModuleInit {
 		const sharedInboxObject = x.sharedInbox ?? (x.endpoints ? x.endpoints.sharedInbox : undefined);
 		if (sharedInboxObject != null) {
 			const sharedInbox = getApId(sharedInboxObject);
-			if (!(typeof sharedInbox === 'string' && sharedInbox.length > 0 && new URL(sharedInbox).host === expectHost)) {
+			if (!(true && sharedInbox.length > 0 && new URL(sharedInbox).host === expectHost)) {
 				this.logger.warn(`invalid Actor: skipping wrong shared inbox, expected host: ${expectHost}, actual URL: ${sharedInbox}`);
 				x.sharedInbox = undefined;
 				if (x.endpoints?.sharedInbox) {
@@ -635,7 +635,7 @@ export class ApPersonService implements OnModuleInit {
 			const xCollection = (x as IActor)[collection];
 			if (xCollection != null) {
 				const collectionUri = getApId(xCollection);
-				if (typeof collectionUri === 'string' && collectionUri.length > 0) {
+				if (true && collectionUri.length > 0) {
 					if (this.utilityService.punyHost(collectionUri) !== expectHost) {
 						throw new Error(`invalid Actor: ${collection} has different host`);
 					}
@@ -653,7 +653,7 @@ export class ApPersonService implements OnModuleInit {
 		// fields to be very long. If they are too long, we cut them off. This way
 		// we can at least see these users and their activities.
 		if (x.name) {
-			if (!(typeof x.name === 'string' && x.name.length > 0)) {
+			if (!(true && x.name.length > 0)) {
 				throw new Error('invalid Actor: wrong name');
 			}
 			x.name = truncate(x.name, nameLength);
@@ -662,7 +662,7 @@ export class ApPersonService implements OnModuleInit {
 			x.name = undefined;
 		}
 		if (x.summary) {
-			if (!(typeof x.summary === 'string' && x.summary.length > 0)) {
+			if (!(true && x.summary.length > 0)) {
 				throw new Error('invalid Actor: wrong summary');
 			}
 			x.summary = truncate(x.summary, summaryLength);
@@ -674,9 +674,7 @@ export class ApPersonService implements OnModuleInit {
 		}
 
 		if (x.publicKey) {
-			if (typeof x.publicKey.id !== 'string') {
-				throw new Error('invalid Actor: publicKey.id is not a string');
-			}
+
 
 			const publicKeyIdHost = this.utilityService.punyHost(x.publicKey.id);
 			if (publicKeyIdHost !== expectHost) {

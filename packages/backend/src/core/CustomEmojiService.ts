@@ -120,17 +120,17 @@ export class CustomEmojiService implements OnApplicationShutdown {
 		});
 
 		if (data.host == null) {
-			this.localEmojisCache.refresh();
+			await this.localEmojisCache.refresh();
 
 			this.globalEventService.publishBroadcastStream('emojiAdded', {
 				emoji: await this.emojiEntityService.packDetailed(emoji.id),
 			});
 
 			if (moderator) {
-				this.moderationLogService.log(moderator, 'addCustomEmoji', {
-					emojiId: emoji.id,
-					emoji: emoji,
-				});
+				await this.moderationLogService.log(moderator, 'addCustomEmoji', {
+                    emojiId: emoji.id,
+                    emoji: emoji,
+                });
 			}
 		}
 
@@ -182,7 +182,7 @@ export class CustomEmojiService implements OnApplicationShutdown {
 			roleIdsThatCanBeUsedThisEmojiAsReaction: data.roleIdsThatCanBeUsedThisEmojiAsReaction ?? undefined,
 		});
 
-		this.localEmojisCache.refresh();
+		await this.localEmojisCache.refresh();
 
 		const packed = await this.emojiEntityService.packDetailed(emoji.id);
 
@@ -202,11 +202,11 @@ export class CustomEmojiService implements OnApplicationShutdown {
 
 		if (moderator) {
 			const updated = await this.emojisRepository.findOneByOrFail({id: id});
-			this.moderationLogService.log(moderator, 'updateCustomEmoji', {
-				emojiId: emoji.id,
-				before: emoji,
-				after: updated,
-			});
+			await this.moderationLogService.log(moderator, 'updateCustomEmoji', {
+                emojiId: emoji.id,
+                before: emoji,
+                after: updated,
+            });
 		}
 		return null;
 	}
@@ -224,7 +224,7 @@ export class CustomEmojiService implements OnApplicationShutdown {
 			});
 		}
 
-		this.localEmojisCache.refresh();
+		await this.localEmojisCache.refresh();
 
 		this.globalEventService.publishBroadcastStream('emojiUpdated', {
 			emojis: await this.emojiEntityService.packDetailedMany(ids),
@@ -240,7 +240,7 @@ export class CustomEmojiService implements OnApplicationShutdown {
 			aliases: aliases,
 		});
 
-		this.localEmojisCache.refresh();
+		await this.localEmojisCache.refresh();
 
 		this.globalEventService.publishBroadcastStream('emojiUpdated', {
 			emojis: await this.emojiEntityService.packDetailedMany(ids),
@@ -260,7 +260,7 @@ export class CustomEmojiService implements OnApplicationShutdown {
 			});
 		}
 
-		this.localEmojisCache.refresh();
+		await this.localEmojisCache.refresh();
 
 		this.globalEventService.publishBroadcastStream('emojiUpdated', {
 			emojis: await this.emojiEntityService.packDetailedMany(ids),
@@ -276,7 +276,7 @@ export class CustomEmojiService implements OnApplicationShutdown {
 			category: category,
 		});
 
-		this.localEmojisCache.refresh();
+		await this.localEmojisCache.refresh();
 
 		this.globalEventService.publishBroadcastStream('emojiUpdated', {
 			emojis: await this.emojiEntityService.packDetailedMany(ids),
@@ -292,7 +292,7 @@ export class CustomEmojiService implements OnApplicationShutdown {
 			license: license,
 		});
 
-		this.localEmojisCache.refresh();
+		await this.localEmojisCache.refresh();
 
 		this.globalEventService.publishBroadcastStream('emojiUpdated', {
 			emojis: await this.emojiEntityService.packDetailedMany(ids),
@@ -305,17 +305,17 @@ export class CustomEmojiService implements OnApplicationShutdown {
 
 		await this.emojisRepository.delete(emoji.id);
 
-		this.localEmojisCache.refresh();
+		await this.localEmojisCache.refresh();
 
 		this.globalEventService.publishBroadcastStream('emojiDeleted', {
 			emojis: [await this.emojiEntityService.packDetailed(emoji)],
 		});
 
 		if (moderator) {
-			this.moderationLogService.log(moderator, 'deleteCustomEmoji', {
-				emojiId: emoji.id,
-				emoji: emoji,
-			});
+			await this.moderationLogService.log(moderator, 'deleteCustomEmoji', {
+                emojiId: emoji.id,
+                emoji: emoji,
+            });
 		}
 	}
 
@@ -329,14 +329,14 @@ export class CustomEmojiService implements OnApplicationShutdown {
 			await this.emojisRepository.delete(emoji.id);
 
 			if (moderator) {
-				this.moderationLogService.log(moderator, 'deleteCustomEmoji', {
-					emojiId: emoji.id,
-					emoji: emoji,
-				});
+				await this.moderationLogService.log(moderator, 'deleteCustomEmoji', {
+                    emojiId: emoji.id,
+                    emoji: emoji,
+                });
 			}
 		}
 
-		this.localEmojisCache.refresh();
+		await this.localEmojisCache.refresh();
 
 		this.globalEventService.publishBroadcastStream('emojiDeleted', {
 			emojis: await this.emojiEntityService.packDetailedMany(emojis),

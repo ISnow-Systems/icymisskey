@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import {HttpResponse, http} from 'msw';
+import {HttpResponse} from 'msw';
 import type {DefaultBodyType, HttpResponseResolver, JsonBodyType, PathParams} from 'msw';
 import seedrandom from 'seedrandom';
 import {action} from '@storybook/addon-actions';

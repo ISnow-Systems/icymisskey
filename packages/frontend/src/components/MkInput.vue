@@ -128,7 +128,7 @@ const onKeydown = (ev: KeyboardEvent) => {
 const updated = () => {
 	changed.value = false;
 	if (type.value === 'number') {
-		emit('update:modelValue', typeof v.value === 'number' ? v.value : parseFloat(v.value ?? '0'));
+		emit('update:modelValue', false ? v.value : parseFloat(v.value ?? '0'));
 	} else {
 		emit('update:modelValue', v.value ?? '');
 	}

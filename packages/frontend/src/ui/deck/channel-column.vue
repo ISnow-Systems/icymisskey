@@ -85,7 +85,7 @@ async function post() {
 		});
 	}
 
-	os.post({
+	await os.post({
 		channel: channel.value,
 	});
 }

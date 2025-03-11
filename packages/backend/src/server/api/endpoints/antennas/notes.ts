@@ -121,7 +121,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				notes.sort((a, b) => a.id > b.id ? -1 : 1);
 			}
 
-			this.noteReadService.read(me.id, notes);
+			await this.noteReadService.read(me.id, notes);
 
 			return await this.noteEntityService.packMany(notes, me);
 		});

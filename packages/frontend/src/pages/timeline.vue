@@ -47,7 +47,6 @@ import MkPostForm from '@/components/MkPostForm.vue';
 import MkHorizontalSwipe from '@/components/MkHorizontalSwipe.vue';
 import {scroll} from '@@/js/scroll.js';
 import * as os from '@/os.js';
-import {misskeyApi} from '@/scripts/misskey-api.js';
 import {defaultStore} from '@/store.js';
 import {i18n} from '@/i18n.js';
 import {$i} from '@/account.js';
@@ -150,7 +149,7 @@ async function chooseList(ev: MouseEvent): Promise<void> {
 			to: '/my/lists',
 		},
 	];
-	os.popupMenu(items, ev.currentTarget ?? ev.target);
+	await os.popupMenu(items, ev.currentTarget ?? ev.target);
 }
 
 async function chooseAntenna(ev: MouseEvent): Promise<void> {
@@ -170,7 +169,7 @@ async function chooseAntenna(ev: MouseEvent): Promise<void> {
 			to: '/my/antennas',
 		},
 	];
-	os.popupMenu(items, ev.currentTarget ?? ev.target);
+	await os.popupMenu(items, ev.currentTarget ?? ev.target);
 }
 
 async function chooseChannel(ev: MouseEvent): Promise<void> {
@@ -195,7 +194,7 @@ async function chooseChannel(ev: MouseEvent): Promise<void> {
 			to: '/channels',
 		},
 	];
-	os.popupMenu(items, ev.currentTarget ?? ev.target);
+	await os.popupMenu(items, ev.currentTarget ?? ev.target);
 }
 
 function saveSrc(newSrc: TimelinePageSrc): void {

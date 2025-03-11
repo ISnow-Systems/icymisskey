@@ -174,7 +174,7 @@ describe('アンテナ', () => {
 			response.sort(compareBy(s => s.id)),
 			expected.sort(compareBy(s => s.id)));
 
-		failedApiCall({
+		await failedApiCall({
 			endpoint: 'antennas/create',
 			parameters: {...defaultParam},
 			user: alice,
@@ -186,9 +186,13 @@ describe('アンテナ', () => {
 	});
 
 	test('を作成するとき他人のリストを指定したらエラーになる', async () => {
-		failedApiCall({
+		await failedApiCall({
 			endpoint: 'antennas/create',
-			parameters: {...defaultParam, src: 'list', userListId: bobList.id},
+			parameters: {
+				...defaultParam,
+				src: 'list',
+				userListId: bobList.id
+			},
 			user: alice,
 		}, {
 			status: 400,
@@ -256,9 +260,13 @@ describe('アンテナ', () => {
 
 	test('を変更するとき他人のリストを指定したらエラーになる', async () => {
 		const antenna = await successfulApiCall({endpoint: 'antennas/create', parameters: defaultParam, user: alice});
-		failedApiCall({
+		await failedApiCall({
 			endpoint: 'antennas/update',
-			parameters: {antennaId: antenna.id, ...defaultParam, src: 'list', userListId: bobList.id},
+			parameters: {
+				antennaId: antenna.id, ...defaultParam,
+				src: 'list',
+				userListId: bobList.id
+			},
 			user: alice,
 		}, {
 			status: 400,

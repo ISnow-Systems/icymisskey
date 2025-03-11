@@ -161,11 +161,11 @@ async function run() {
 	try {
 		ast = parser.parse(code.value);
 	} catch (err: any) {
-		os.alert({
-			type: 'error',
-			title: 'Syntax Error',
-			text: err.toString(),
-		});
+		await os.alert({
+      type: 'error',
+      title: 'Syntax Error',
+      text: err.toString(),
+    });
 		return;
 	}
 	try {
@@ -173,11 +173,11 @@ async function run() {
 	} catch (err: any) {
 		// AiScript runtime errors should be processed by error callback function
 		// so errors caught here are AiScript's internal errors.
-		os.alert({
-			type: 'error',
-			title: 'Internal Error',
-			text: err.toString(),
-		});
+		await os.alert({
+      type: 'error',
+      title: 'Internal Error',
+      text: err.toString(),
+    });
 	}
 }
 

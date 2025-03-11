@@ -116,7 +116,7 @@ async function save(): Promise<void> {
 		alsoKnownAs,
 	});
 	$i.alsoKnownAs = i.alsoKnownAs;
-	init();
+	await init();
 }
 
 init();

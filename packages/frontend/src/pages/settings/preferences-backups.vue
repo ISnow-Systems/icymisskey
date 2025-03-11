@@ -288,7 +288,7 @@ async function applyProfile(id: string): Promise<void> {
 	// defaultStore
 	for (const key of defaultStoreSaveKeys) {
 		if (settings.hot[key] !== undefined) {
-			defaultStore.set(key, settings.hot[key]);
+			await defaultStore.set(key, settings.hot[key]);
 		}
 	}
 

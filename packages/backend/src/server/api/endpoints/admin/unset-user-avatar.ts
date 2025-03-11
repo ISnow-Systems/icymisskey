@@ -49,12 +49,12 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				avatarBlurhash: null,
 			});
 
-			this.moderationLogService.log(me, 'unsetUserAvatar', {
-				userId: user.id,
-				userUsername: user.username,
-				userHost: user.host,
-				fileId: user.avatarId,
-			});
+			await this.moderationLogService.log(me, 'unsetUserAvatar', {
+                userId: user.id,
+                userUsername: user.username,
+                userHost: user.host,
+                fileId: user.avatarId,
+            });
 		});
 	}
 }

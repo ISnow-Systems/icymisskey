@@ -8,7 +8,7 @@ import {query} from './url.js';
 
 export class MediaProxy {
 	private serverMetadata: Misskey.entities.MetaDetailed;
-	private url: string;
+	private readonly url: string;
 
 	constructor(serverMetadata: Misskey.entities.MetaDetailed, url: string) {
 		this.serverMetadata = serverMetadata;

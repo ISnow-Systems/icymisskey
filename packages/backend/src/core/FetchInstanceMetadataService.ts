@@ -15,7 +15,6 @@ import {LoggerService} from '@/core/LoggerService.js';
 import {HttpRequestService} from '@/core/HttpRequestService.js';
 import {bindThis} from '@/decorators.js';
 import {FederatedInstanceService} from '@/core/FederatedInstanceService.js';
-import type {DOMWindow} from 'jsdom';
 
 type NodeInfo = {
 	openRegistrations?: unknown;
@@ -56,7 +55,7 @@ export class FetchInstanceMetadataService {
 		// TODO: マイグレーションなのであとで消す (2024.3.1)
 		this.redisClient.del(`fetchInstanceMetadata:mutex:${host}`);
 
-		return await this.redisClient.set(
+		return this.redisClient.set(
 			`fetchInstanceMetadata:mutex:v2:${host}`, '1',
 			'EX', 30, // 30秒したら自動でロック解除 https://github.com/misskey-dev/misskey/issues/13506#issuecomment-1975375395
 			'GET' // 古い値を返す（なかったらnull）

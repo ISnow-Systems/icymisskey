@@ -8,8 +8,8 @@ import type {Directive} from 'vue';
 import {popup} from '@/os.js';
 
 export class UserPreview {
-	private el;
-	private user;
+	private readonly el;
+	private readonly user;
 	private showTimer;
 	private hideTimer;
 	private checkTimer;

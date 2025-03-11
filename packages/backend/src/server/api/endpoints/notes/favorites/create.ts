@@ -85,7 +85,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			});
 
 			if (note.userHost == null && note.userId !== me.id) {
-				this.achievementService.create(note.userId, 'myNoteFavorited1');
+				await this.achievementService.create(note.userId, 'myNoteFavorited1');
 			}
 		});
 	}

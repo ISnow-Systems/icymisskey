@@ -72,31 +72,31 @@ async function change() {
 	if (canceled3) return;
 
 	if (newPassword !== newPassword2) {
-		os.alert({
-			type: 'error',
-			text: i18n.ts.retypedNotMatch,
-		});
+		await os.alert({
+      type: 'error',
+      text: i18n.ts.retypedNotMatch,
+    });
 		return;
 	}
 
 	const auth = await os.authenticateDialog();
 	if (auth.canceled) return;
 
-	os.apiWithDialog('i/change-password', {
-		currentPassword: auth.result.password,
-		token: auth.result.token,
-		newPassword,
-	});
+	await os.apiWithDialog('i/change-password', {
+    currentPassword: auth.result.password,
+    token: auth.result.token,
+    newPassword,
+  });
 }
 
 async function regenerateToken() {
 	const auth = await os.authenticateDialog();
 	if (auth.canceled) return;
 
-	misskeyApi('i/regenerate-token', {
-		password: auth.result.password,
-		token: auth.result.token,
-	});
+	await misskeyApi('i/regenerate-token', {
+    password: auth.result.password,
+    token: auth.result.token,
+  });
 }
 
 const headerActions = computed(() => []);

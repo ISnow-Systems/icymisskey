@@ -200,7 +200,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		this.queryService.generateBlockedUserQuery(query, me);
 		this.queryService.generateMutedUserRenotesQueryForNotes(query, me);
 
-		if (ps.includeMyRenotes === false) {
+		if (!ps.includeMyRenotes) {
 			query.andWhere(new Brackets(qb => {
 				qb.orWhere('note.userId != :meId', {meId: me.id});
 				qb.orWhere('note.renoteId IS NULL');
@@ -210,7 +210,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			}));
 		}
 
-		if (ps.includeRenotedMyNotes === false) {
+		if (!ps.includeRenotedMyNotes) {
 			query.andWhere(new Brackets(qb => {
 				qb.orWhere('note.renoteUserId != :meId', {meId: me.id});
 				qb.orWhere('note.renoteId IS NULL');
@@ -220,7 +220,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			}));
 		}
 
-		if (ps.includeLocalRenotes === false) {
+		if (!ps.includeLocalRenotes) {
 			query.andWhere(new Brackets(qb => {
 				qb.orWhere('note.renoteUserHost IS NOT NULL');
 				qb.orWhere('note.renoteId IS NULL');
@@ -234,7 +234,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			query.andWhere('note.fileIds != \'{}\'');
 		}
 
-		if (ps.withRenotes === false) {
+		if (!ps.withRenotes) {
 			query.andWhere('note.renoteId IS NULL');
 		}
 		//#endregion

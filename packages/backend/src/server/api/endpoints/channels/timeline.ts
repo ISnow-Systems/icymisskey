@@ -80,7 +80,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				throw new ApiError(meta.errors.noSuchChannel);
 			}
 
-			if (me) this.activeUsersChart.read(me);
+			if (me) await this.activeUsersChart.read(me);
 
 			if (!this.serverSettings.enableFanoutTimeline) {
 				return await this.noteEntityService.packMany(await this.getFromDb({untilId, sinceId, limit: ps.limit, channelId: channel.id}, me), me);

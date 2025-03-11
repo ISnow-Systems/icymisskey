@@ -66,12 +66,12 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			if (flash.userId !== me.id) {
 				const user = await this.usersRepository.findOneByOrFail({id: flash.userId});
-				this.moderationLogService.log(me, 'deleteFlash', {
-					flashId: flash.id,
-					flashUserId: flash.userId,
-					flashUserUsername: user.username,
-					flash,
-				});
+				await this.moderationLogService.log(me, 'deleteFlash', {
+                    flashId: flash.id,
+                    flashUserId: flash.userId,
+                    flashUserUsername: user.username,
+                    flash,
+                });
 			}
 		});
 	}

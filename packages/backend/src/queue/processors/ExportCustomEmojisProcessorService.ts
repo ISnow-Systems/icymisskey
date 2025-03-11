@@ -145,7 +145,7 @@ export class ExportCustomEmojisProcessorService {
 			});
 			archive.pipe(archiveStream);
 			archive.directory(path, false);
-			archive.finalize();
+			await archive.finalize();
 		});
 	}
 }

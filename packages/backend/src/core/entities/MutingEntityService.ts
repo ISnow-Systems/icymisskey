@@ -8,7 +8,6 @@ import {DI} from '@/di-symbols.js';
 import type {MutingsRepository} from '@/models/_.js';
 import {awaitAll} from '@/misc/prelude/await-all.js';
 import type {Packed} from '@/misc/json-schema.js';
-import type {} from '@/models/Blocking.js';
 import type {MiUser} from '@/models/User.js';
 import type {MiMuting} from '@/models/Muting.js';
 import {bindThis} from '@/decorators.js';
@@ -40,9 +39,9 @@ export class MutingEntityService {
 			createdAt: this.idService.parse(muting.id).date.toISOString(),
 			expiresAt: muting.expiresAt ? muting.expiresAt.toISOString() : null,
 			muteeId: muting.muteeId,
-			mutee: hints?.packedMutee ?? this.userEntityService.pack(muting.muteeId, me, {
-				schema: 'UserDetailedNotMe',
-			}),
+			mutee: hints?.packedMutee ?? await this.userEntityService.pack(muting.muteeId, me, {
+                schema: 'UserDetailedNotMe',
+            }),
 		});
 	}
 

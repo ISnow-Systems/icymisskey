@@ -69,7 +69,7 @@ export class ExportBlockingProcessorService {
 				});
 
 				if (blockings.length === 0) {
-					job.updateProgress(100);
+					await job.updateProgress(100);
 					break;
 				}
 
@@ -100,7 +100,7 @@ export class ExportBlockingProcessorService {
 					blockerId: user.id,
 				});
 
-				job.updateProgress(exportedCount / total);
+				await job.updateProgress(exportedCount / total);
 			}
 
 			stream.end();

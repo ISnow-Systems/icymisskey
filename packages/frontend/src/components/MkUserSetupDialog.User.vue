@@ -43,9 +43,9 @@ const isFollowing = ref(false);
 
 async function follow() {
 	isFollowing.value = true;
-	misskeyApi('following/create', {
-		userId: props.user.id,
-	});
+	await misskeyApi('following/create', {
+    userId: props.user.id,
+  });
 }
 </script>
 

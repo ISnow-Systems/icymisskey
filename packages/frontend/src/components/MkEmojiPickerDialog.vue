@@ -87,8 +87,6 @@ function opening() {
 
 <style lang="scss" module>
 .drawer {
-	border-radius: 24px;
-	border-bottom-right-radius: 0;
-	border-bottom-left-radius: 0;
+	border-radius: 24px 24px 0 0;
 }
 </style>

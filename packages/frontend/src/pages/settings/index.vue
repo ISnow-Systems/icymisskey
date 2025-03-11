@@ -198,7 +198,7 @@ const menuDef = computed<SuperMenuDef[]>(() => [{
 				text: i18n.ts.logoutConfirm,
 			});
 			if (canceled) return;
-			signout();
+			await signout();
 		},
 		danger: true,
 	}],

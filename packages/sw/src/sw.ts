@@ -29,7 +29,7 @@ globalThis.addEventListener('activate', ev => {
 });
 
 async function offlineContentHTML() {
-	const i18n = await (swLang.i18n ?? swLang.fetchLocale()) as Partial<I18n<Locale>>;
+	const i18n = await (swLang.i18n ?? await swLang.fetchLocale()) as Partial<I18n<Locale>>;
 	const messages = {
 		title: i18n.ts?._offlineScreen.title ?? 'Offline - Could not connect to server',
 		header: i18n.ts?._offlineScreen.header ?? 'Could not connect to server',
@@ -173,7 +173,7 @@ globalThis.addEventListener('notificationclick', (ev: ServiceWorkerGlobalScopeEv
 		}
 
 		if (client) {
-			client.focus();
+			await client.focus();
 		}
 		if (data.type === 'notification') {
 			await swos.sendMarkAllAsRead(loginId);
@@ -212,7 +212,7 @@ globalThis.addEventListener('message', (ev: ServiceWorkerGlobalScopeEventMap['me
 
 			if (otype === 'object') {
 				if (ev.data.msg === 'initialize') {
-					swLang.setLang(ev.data.lang);
+					await swLang.setLang(ev.data.lang);
 				}
 			}
 		}

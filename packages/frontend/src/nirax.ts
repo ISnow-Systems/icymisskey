@@ -194,10 +194,10 @@ export class Router extends EventEmitter<RouterEvent> implements IRouter {
 	public currentRef: ShallowRef<Resolved>;
 	public currentRoute: ShallowRef<RouteDef>;
 	public navHook: ((path: string, flag?: RouterFlag) => boolean) | null = null;
-	private routes: RouteDef[];
+	private readonly routes: RouteDef[];
 	private currentPath: string;
-	private isLoggedIn: boolean;
-	private notFoundPageComponent: Component;
+	private readonly isLoggedIn: boolean;
+	private readonly notFoundPageComponent: Component;
 	private currentKey = Date.now().toString();
 	private redirectCount = 0;
 
@@ -266,7 +266,7 @@ export class Router extends EventEmitter<RouterEvent> implements IRouter {
 										props.set(p.name, safeURIDecode(parts.join('/')));
 										parts = [];
 									}
-									break pathMatchLoop;
+									break;
 								} else {
 									if (p.startsWith) {
 										if (parts[0] == null || !parts[0].startsWith(p.startsWith)) continue forEachRouteLoop;
@@ -294,7 +294,7 @@ export class Router extends EventEmitter<RouterEvent> implements IRouter {
 									_parsedRoute,
 								};
 							} else {
-								continue forEachRouteLoop;
+								continue;
 							}
 						}
 
@@ -330,10 +330,10 @@ export class Router extends EventEmitter<RouterEvent> implements IRouter {
 									_parsedRoute,
 								};
 							} else {
-								continue forEachRouteLoop;
+
 							}
 						} else {
-							continue forEachRouteLoop;
+
 						}
 					}
 				}

@@ -249,7 +249,7 @@ function changeAvatar(ev) {
 		$i.avatarId = i.avatarId;
 		$i.avatarUrl = i.avatarUrl;
 		globalEvents.emit('requestClearPageCache');
-		claimAchievement('profileFilled');
+		await claimAchievement('profileFilled');
 	});
 }
 

@@ -69,13 +69,12 @@ const modelValue = computed({
 	}
 
 	&::-moz-range-track {
-		background: transparent;
 		border: 0;
 		border-radius: 99rem;
 		height: 5px;
 		transition: box-shadow .3s ease;
 		user-select: none;
-		background-color: var(--sliderBg);
+		background: var(--sliderBg);
 	}
 
 	&::-webkit-slider-thumb {

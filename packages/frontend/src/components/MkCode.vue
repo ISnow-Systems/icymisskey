@@ -42,7 +42,7 @@ const props = withDefaults(defineProps<{
 	forceShow: false,
 });
 
-const show = ref(props.forceShow === true ? true : !defaultStore.state.dataSaver.code);
+const show = ref(props.forceShow ? true : !defaultStore.state.dataSaver.code);
 
 const XCode = defineAsyncComponent(() => import('@/components/MkCode.core.vue'));
 

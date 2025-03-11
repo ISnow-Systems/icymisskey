@@ -320,7 +320,7 @@ async function resetPassword() {
 		const {password} = await misskeyApi('admin/reset-password', {
 			userId: user.value.id,
 		});
-		os.alert({
+		await await os.alert({
 			type: 'success',
 			text: i18n.tsx.newPasswordIs({password}),
 		});
@@ -348,7 +348,7 @@ async function unsetUserAvatar() {
 	if (confirm.canceled) return;
 	const process = async () => {
 		await misskeyApi('admin/unset-user-avatar', {userId: user.value.id});
-		os.success();
+		await await os.success();
 	};
 	await process().catch(err => {
 		os.alert({
@@ -367,7 +367,7 @@ async function unsetUserBanner() {
 	if (confirm.canceled) return;
 	const process = async () => {
 		await misskeyApi('admin/unset-user-banner', {userId: user.value.id});
-		os.success();
+		await await os.success();
 	};
 	await process().catch(err => {
 		os.alert({
@@ -386,7 +386,7 @@ async function deleteAllFiles() {
 	if (confirm.canceled) return;
 	const process = async () => {
 		await misskeyApi('admin/delete-all-files-of-a-user', {userId: user.value.id});
-		os.success();
+		await await os.success();
 	};
 	await process().catch(err => {
 		os.alert({
@@ -414,7 +414,7 @@ async function deleteAccount() {
 			userId: user.value.id,
 		});
 	} else {
-		os.alert({
+		await await os.alert({
 			type: 'error',
 			text: 'input not match',
 		});
@@ -459,15 +459,20 @@ async function assignRole() {
 }
 
 async function unassignRole(role, ev) {
-	os.popupMenu([{
-		text: i18n.ts.unassign,
-		icon: 'ti ti-x',
-		danger: true,
-		action: async () => {
-			await os.apiWithDialog('admin/roles/unassign', {roleId: role.id, userId: user.value.id});
-			refreshUser();
-		},
-	}], ev.currentTarget ?? ev.target);
+	await await os.popupMenu([
+		{
+			text: i18n.ts.unassign,
+			icon: 'ti ti-x',
+			danger: true,
+			action: async () => {
+				await os.apiWithDialog('admin/roles/unassign', {
+					roleId: role.id,
+					userId: user.value.id
+				});
+				refreshUser();
+			},
+		}
+	], ev.currentTarget ?? ev.target);
 }
 
 function toggleRoleItem(role) {

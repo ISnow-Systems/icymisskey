@@ -95,9 +95,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			const notes = (await query.getMany()).filter(note => {
 				if (me && isUserRelated(note, userIdsWhoBlockingMe)) return false;
-				if (me && isUserRelated(note, userIdsWhoMeMuting)) return false;
+				return !(me && isUserRelated(note, userIdsWhoMeMuting));
 
-				return true;
+
 			});
 
 			notes.sort((a, b) => a.id > b.id ? -1 : 1);

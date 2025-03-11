@@ -97,12 +97,12 @@ async function toggleReaction() {
 			return;
 		}
 
-		misskeyApi('notes/reactions/create', {
-			noteId: props.note.id,
-			reaction: props.reaction,
-		});
+		await misskeyApi('notes/reactions/create', {
+      noteId: props.note.id,
+      reaction: props.reaction,
+    });
 		if (props.note.text && props.note.text.length > 100 && (Date.now() - new Date(props.note.createdAt).getTime() < 1000 * 3)) {
-			claimAchievement('reactWithoutRead');
+			await claimAchievement('reactWithoutRead');
 		}
 	}
 }
@@ -110,19 +110,21 @@ async function toggleReaction() {
 async function menu(ev) {
 	if (!canGetInfo.value) return;
 
-	os.popupMenu([{
-		text: i18n.ts.info,
-		icon: 'ti ti-info-circle',
-		action: async () => {
-			const {dispose} = os.popup(MkCustomEmojiDetailedDialog, {
-				emoji: await misskeyApiGet('emoji', {
-					name: props.reaction.replace(/:/g, '').replace(/@\./, ''),
-				}),
-			}, {
-				closed: () => dispose(),
-			});
-		},
-	}], ev.currentTarget ?? ev.target);
+	await os.popupMenu([
+    {
+      text: i18n.ts.info,
+      icon: 'ti ti-info-circle',
+      action: async () => {
+        const {dispose} = os.popup(MkCustomEmojiDetailedDialog, {
+          emoji: await misskeyApiGet('emoji', {
+            name: props.reaction.replace(/:/g, '').replace(/@\./, ''),
+          }),
+        }, {
+          closed: () => dispose(),
+        });
+      },
+    }
+  ], ev.currentTarget ?? ev.target);
 }
 
 function anime() {

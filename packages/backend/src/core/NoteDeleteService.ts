@@ -55,6 +55,10 @@ export class NoteDeleteService {
 	 * 投稿を削除します。
 	 * @param user 投稿者
 	 * @param note 投稿
+	 * @param quiet
+	 * @param deleter
+	 * @param quiet
+	 * @param deleter
 	 */
 	async delete(user: { id: MiUser['id']; uri: MiUser['uri']; host: MiUser['host']; isBot: MiUser['isBot']; }, note: MiNote, quiet = false, deleter?: MiUser) {
 		const deletedAt = new Date();
@@ -84,7 +88,7 @@ export class NoteDeleteService {
 					? this.apRendererService.renderUndo(this.apRendererService.renderAnnounce(renote.uri ?? `${this.config.url}/notes/${renote.id}`, note), user)
 					: this.apRendererService.renderDelete(this.apRendererService.renderTombstone(`${this.config.url}/notes/${note.id}`), user));
 
-				this.deliverToConcerned(user, note, content);
+				await this.deliverToConcerned(user, note, content);
 			}
 
 			// also deliver delete activity to cascaded notes
@@ -93,11 +97,11 @@ export class NoteDeleteService {
 				if (!cascadingNote.user) continue;
 				if (!this.userEntityService.isLocalUser(cascadingNote.user)) continue;
 				const content = this.apRendererService.addContext(this.apRendererService.renderDelete(this.apRendererService.renderTombstone(`${this.config.url}/notes/${cascadingNote.id}`), cascadingNote.user));
-				this.deliverToConcerned(cascadingNote.user, cascadingNote, content);
+				await this.deliverToConcerned(cascadingNote.user, cascadingNote, content);
 			}
 			//#endregion
 
-			this.notesChart.update(note, false);
+			await this.notesChart.update(note, false);
 			if (this.meta.enableChartsForRemoteUser || (user.host == null)) {
 				this.perUserNotesChart.update(user, note, false);
 			}
@@ -105,9 +109,9 @@ export class NoteDeleteService {
 			if (this.meta.enableStatsForFederatedInstances) {
 				if (this.userEntityService.isRemoteUser(user)) {
 					this.federatedInstanceService.fetchOrRegister(user.host).then(async i => {
-						this.instancesRepository.decrement({id: i.id}, 'notesCount', 1);
+						await this.instancesRepository.decrement({id: i.id}, 'notesCount', 1);
 						if (this.meta.enableChartsForFederatedInstances) {
-							this.instanceChart.updateNote(i.host, note, false);
+							await this.instanceChart.updateNote(i.host, note, false);
 						}
 					});
 				}
@@ -115,9 +119,9 @@ export class NoteDeleteService {
 		}
 
 		for (const cascadingNote of cascadingNotes) {
-			this.searchService.unindexNote(cascadingNote);
+			await this.searchService.unindexNote(cascadingNote);
 		}
-		this.searchService.unindexNote(note);
+		await this.searchService.unindexNote(note);
 
 		await this.notesRepository.delete({
 			id: note.id,
@@ -126,13 +130,13 @@ export class NoteDeleteService {
 
 		if (deleter && (note.userId !== deleter.id)) {
 			const user = await this.usersRepository.findOneByOrFail({id: note.userId});
-			this.moderationLogService.log(deleter, 'deleteNote', {
-				noteId: note.id,
-				noteUserId: note.userId,
-				noteUserUsername: user.username,
-				noteUserHost: user.host,
-				note: note,
-			});
+			await this.moderationLogService.log(deleter, 'deleteNote', {
+                noteId: note.id,
+                noteUserId: note.userId,
+                noteUserUsername: user.username,
+                noteUserHost: user.host,
+                note: note,
+            });
 		}
 	}
 
@@ -187,11 +191,11 @@ export class NoteDeleteService {
 
 	@bindThis
 	private async deliverToConcerned(user: { id: MiLocalUser['id']; host: null; }, note: MiNote, content: any) {
-		this.apDeliverManagerService.deliverToFollowers(user, content);
-		this.relayService.deliverToRelays(user, content);
+		await this.apDeliverManagerService.deliverToFollowers(user, content);
+		await this.relayService.deliverToRelays(user, content);
 		const remoteUsers = await this.getMentionedRemoteUsers(note);
 		for (const remoteUser of remoteUsers) {
-			this.apDeliverManagerService.deliverToUser(user, content, remoteUser);
+			await this.apDeliverManagerService.deliverToUser(user, content, remoteUser);
 		}
 	}
 }

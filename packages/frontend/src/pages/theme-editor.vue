@@ -209,10 +209,10 @@ async function saveAs() {
 		ColdDeviceStorage.set('lightTheme', theme.value);
 	}
 	changed.value = false;
-	os.alert({
-		type: 'success',
-		text: i18n.tsx._theme.installed({name: theme.value.name}),
-	});
+	await await os.alert({
+    type: 'success',
+    text: i18n.tsx._theme.installed({name: theme.value.name}),
+  });
 }
 
 watch(theme, apply, {deep: true});

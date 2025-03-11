@@ -34,7 +34,7 @@ type Executor<T extends IEndpointMeta, Ps extends Schema> =
 export abstract class Endpoint<T extends IEndpointMeta, Ps extends Schema> {
 	public exec: (params: any, user: T['requireCredential'] extends true ? MiLocalUser : MiLocalUser | null, token: MiAccessToken | null, file?: File, ip?: string | null, headers?: Record<string, string> | null) => Promise<any>;
 
-	constructor(meta: T, paramDef: Ps, cb: Executor<T, Ps>) {
+	protected constructor(meta: T, paramDef: Ps, cb: Executor<T, Ps>) {
 		const validate = ajv.compile(paramDef);
 
 		this.exec = (params: any, user: T['requireCredential'] extends true ? MiLocalUser : MiLocalUser | null, token: MiAccessToken | null, file?: File, ip?: string | null, headers?: Record<string, string> | null) => {

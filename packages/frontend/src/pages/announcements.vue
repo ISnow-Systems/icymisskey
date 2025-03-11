@@ -97,7 +97,7 @@ async function read(target) {
 		a.isRead = true;
 		return a;
 	});
-	misskeyApi('i/read-announcement', {announcementId: target.id});
+	await misskeyApi('i/read-announcement', {announcementId: target.id});
 	updateAccountPartial({
 		unreadAnnouncements: $i!.unreadAnnouncements.filter(a => a.id !== target.id),
 	});

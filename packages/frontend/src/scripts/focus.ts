@@ -21,9 +21,9 @@ export const isFocusable = (input: MaybeHTMLElement | null | undefined): input i
 	if (style.display === 'none') return false;
 	if (style.visibility === 'hidden') return false;
 	if (style.opacity === '0') return false;
-	if (style.pointerEvents === 'none') return false;
+	return style.pointerEvents !== 'none';
 
-	return true;
+
 };
 
 export const focusPrev = (input: MaybeHTMLElement | null | undefined, self = false, scroll = true) => {

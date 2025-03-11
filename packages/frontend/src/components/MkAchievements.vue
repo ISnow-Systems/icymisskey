@@ -54,7 +54,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 <script lang="ts" setup>
 import * as Misskey from 'misskey-js';
 import {onMounted, ref, computed} from 'vue';
-import * as os from '@/os.js';
 import {misskeyApi} from '@/scripts/misskey-api.js';
 import {i18n} from '@/i18n.js';
 import {ACHIEVEMENT_TYPES, ACHIEVEMENT_BADGES, claimAchievement} from '@/scripts/achievements.js';
@@ -133,7 +132,7 @@ onMounted(() => {
 	pointer-events: none;
 	user-select: none;
 	filter: drop-shadow(0px 2px 2px #00000044);
-	box-shadow: 0 1px 0px #ffffff88 inset;
+	box-shadow: 0 1px 0 #ffffff88 inset;
 	overflow: clip;
 }
 
@@ -200,7 +199,7 @@ onMounted(() => {
 	width: 100%;
 	height: 100%;
 	border-radius: 100%;
-	box-shadow: 0 1px 0px #ffffff88 inset;
+	box-shadow: 0 1px 0 #ffffff88 inset;
 }
 
 .iconImg {

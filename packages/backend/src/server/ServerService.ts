@@ -139,7 +139,7 @@ export class ServerService implements OnApplicationShutdown {
 
 			if (emoji == null) {
 				if ('fallback' in request.query) {
-					return await reply.redirect('/static-assets/emoji-unknown.png');
+					return reply.redirect('/static-assets/emoji-unknown.png');
 				} else {
 					reply.code(404);
 					return;
@@ -160,7 +160,7 @@ export class ServerService implements OnApplicationShutdown {
 				if ('static' in request.query) url.searchParams.set('static', '1');
 			}
 
-			return await reply.redirect(
+			return reply.redirect(
 				url.toString(),
 				301,
 			);
@@ -255,7 +255,10 @@ export class ServerService implements OnApplicationShutdown {
 				}
 			});
 		} else {
-			fastify.listen({port: this.config.port, host: '0.0.0.0'});
+			await fastify.listen({
+				port: this.config.port,
+				host: '0.0.0.0'
+			});
 		}
 
 		await fastify.ready();

@@ -9,7 +9,7 @@ import {Inject, Injectable} from '@nestjs/common';
 import sharp from 'sharp';
 import {sharpBmp} from '@misskey-dev/sharp-read-bmp';
 import {IsNull} from 'typeorm';
-import {DeleteObjectCommandInput, PutObjectCommandInput, NoSuchKey} from '@aws-sdk/client-s3';
+import {DeleteObjectCommandInput, PutObjectCommandInput} from '@aws-sdk/client-s3';
 import {DI} from '@/di-symbols.js';
 import type {DriveFilesRepository, UsersRepository, DriveFoldersRepository, UserProfilesRepository, MiMeta} from '@/models/_.js';
 import type {Config} from '@/config.js';
@@ -449,13 +449,13 @@ export class DriveService {
 			});
 		}
 
-		this.driveChart.update(file, true);
+		await this.driveChart.update(file, true);
 		if (file.userHost == null) {
 			// ローカルユーザーのみ
-			this.perUserDriveChart.update(file, true);
+			await this.perUserDriveChart.update(file, true);
 		} else {
 			if (this.meta.enableChartsForFederatedInstances) {
-				this.instanceChart.updateDrive(file, true);
+				await this.instanceChart.updateDrive(file, true);
 			}
 		}
 
@@ -498,19 +498,19 @@ export class DriveService {
 			if (values.isSensitive !== undefined && values.isSensitive !== file.isSensitive) {
 				const user = file.userId ? await this.usersRepository.findOneByOrFail({id: file.userId}) : null;
 				if (values.isSensitive) {
-					this.moderationLogService.log(updater, 'markSensitiveDriveFile', {
-						fileId: file.id,
-						fileUserId: file.userId,
-						fileUserUsername: user?.username ?? null,
-						fileUserHost: user?.host ?? null,
-					});
+					await this.moderationLogService.log(updater, 'markSensitiveDriveFile', {
+                        fileId: file.id,
+                        fileUserId: file.userId,
+                        fileUserUsername: user?.username ?? null,
+                        fileUserHost: user?.host ?? null,
+                    });
 				} else {
-					this.moderationLogService.log(updater, 'unmarkSensitiveDriveFile', {
-						fileId: file.id,
-						fileUserId: file.userId,
-						fileUserUsername: user?.username ?? null,
-						fileUserHost: user?.host ?? null,
-					});
+					await this.moderationLogService.log(updater, 'unmarkSensitiveDriveFile', {
+                        fileId: file.id,
+                        fileUserId: file.userId,
+                        fileUserUsername: user?.username ?? null,
+                        fileUserHost: user?.host ?? null,
+                    });
 				}
 			}
 		}
@@ -531,18 +531,18 @@ export class DriveService {
 				this.internalStorageService.del(file.webpublicAccessKey!);
 			}
 		} else if (!file.isLink) {
-			this.queueService.createDeleteObjectStorageFileJob(file.accessKey!);
+			await this.queueService.createDeleteObjectStorageFileJob(file.accessKey!);
 
 			if (file.thumbnailUrl) {
-				this.queueService.createDeleteObjectStorageFileJob(file.thumbnailAccessKey!);
+				await this.queueService.createDeleteObjectStorageFileJob(file.thumbnailAccessKey!);
 			}
 
 			if (file.webpublicUrl) {
-				this.queueService.createDeleteObjectStorageFileJob(file.webpublicAccessKey!);
+				await this.queueService.createDeleteObjectStorageFileJob(file.webpublicAccessKey!);
 			}
 		}
 
-		this.deletePostProcess(file, isExpired, deleter);
+		await this.deletePostProcess(file, isExpired, deleter);
 	}
 
 	@bindThis
@@ -573,7 +573,7 @@ export class DriveService {
 			await Promise.all(promises);
 		}
 
-		this.deletePostProcess(file, isExpired, deleter);
+		await this.deletePostProcess(file, isExpired, deleter);
 	}
 
 	@bindThis
@@ -639,6 +639,7 @@ export class DriveService {
 
 	/***
 	 * Save file
+	 * @param file
 	 * @param path Path for original
 	 * @param name Name for original (should be extention corrected)
 	 * @param type Content-Type for original
@@ -686,7 +687,7 @@ export class DriveService {
 			//#region Uploads
 			this.registerLogger.info(`uploading original: ${key}`);
 			const uploads = [
-				this.upload(key, fs.createReadStream(path), type, null, name),
+				await this.upload(key, fs.createReadStream(path), type, null, name),
 			];
 
 			if (alts.webpublic) {
@@ -824,7 +825,7 @@ export class DriveService {
 		for (const fileId of exceedFileIds) {
 			const file = await this.driveFilesRepository.findOneBy({id: fileId});
 			if (file == null) continue;
-			this.deleteFile(file, true);
+			await this.deleteFile(file, true);
 		}
 	}
 
@@ -832,28 +833,28 @@ export class DriveService {
 	private async deletePostProcess(file: MiDriveFile, isExpired = false, deleter?: MiUser) {
 		// リモートファイル期限切れ削除後は直リンクにする
 		if (isExpired && file.userHost !== null && file.uri != null) {
-			this.driveFilesRepository.update(file.id, {
-				isLink: true,
-				url: file.uri,
-				thumbnailUrl: null,
-				webpublicUrl: null,
-				storedInternal: false,
-				// ローカルプロキシ用
-				accessKey: randomUUID(),
-				thumbnailAccessKey: 'thumbnail-' + randomUUID(),
-				webpublicAccessKey: 'webpublic-' + randomUUID(),
-			});
+			await this.driveFilesRepository.update(file.id, {
+                isLink: true,
+                url: file.uri,
+                thumbnailUrl: null,
+                webpublicUrl: null,
+                storedInternal: false,
+                // ローカルプロキシ用
+                accessKey: randomUUID(),
+                thumbnailAccessKey: 'thumbnail-' + randomUUID(),
+                webpublicAccessKey: 'webpublic-' + randomUUID(),
+            });
 		} else {
-			this.driveFilesRepository.delete(file.id);
+			await this.driveFilesRepository.delete(file.id);
 		}
 
-		this.driveChart.update(file, false);
+		await this.driveChart.update(file, false);
 		if (file.userHost == null) {
 			// ローカルユーザーのみ
-			this.perUserDriveChart.update(file, false);
+			await this.perUserDriveChart.update(file, false);
 		} else {
 			if (this.meta.enableChartsForFederatedInstances) {
-				this.instanceChart.updateDrive(file, false);
+				await this.instanceChart.updateDrive(file, false);
 			}
 		}
 
@@ -863,12 +864,12 @@ export class DriveService {
 
 		if (deleter && await this.roleService.isModerator(deleter) && (file.userId !== deleter.id)) {
 			const user = file.userId ? await this.usersRepository.findOneByOrFail({id: file.userId}) : null;
-			this.moderationLogService.log(deleter, 'deleteDriveFile', {
-				fileId: file.id,
-				fileUserId: file.userId,
-				fileUserUsername: user?.username ?? null,
-				fileUserHost: user?.host ?? null,
-			});
+			await this.moderationLogService.log(deleter, 'deleteDriveFile', {
+                fileId: file.id,
+                fileUserId: file.userId,
+                fileUserUsername: user?.username ?? null,
+                fileUserHost: user?.host ?? null,
+            });
 		}
 	}
 }

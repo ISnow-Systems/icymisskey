@@ -401,14 +401,14 @@ export class ClientServerService {
 			content += '</OpenSearchDescription>';
 
 			reply.header('Content-Type', 'application/opensearchdescription+xml');
-			return await reply.send(content);
+			return reply.send(content);
 		});
 
 		//#endregion
 
 		const renderBase = async (reply: FastifyReply, data: { [key: string]: any } = {}) => {
 			reply.header('Cache-Control', 'public, max-age=30');
-			return await reply.view('base', {
+			return reply.view('base', {
 				img: this.meta.bannerUrl,
 				url: this.config.url,
 				title: this.meta.name ?? 'IcyMisskey',
@@ -863,7 +863,7 @@ export class ClientServerService {
 		});
 
 		const override = (source: string, target: string, depth = 0) =>
-			[, ...target.split('/').filter(x => x), ...source.split('/').filter(x => x).splice(depth)].join('/');
+			[...target.split('/').filter(x => x), ...source.split('/').filter(x => x).splice(depth)].join('/');
 
 		fastify.get('/flush', async (request, reply) => {
 			return await reply.view('flush');

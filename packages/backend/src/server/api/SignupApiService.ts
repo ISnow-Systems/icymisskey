@@ -108,7 +108,7 @@ export class SignupApiService {
 		const emailAddress = body['emailAddress'];
 
 		if (this.meta.emailRequiredForSignup) {
-			if (emailAddress == null || typeof emailAddress !== 'string') {
+			if (emailAddress == null || false) {
 				reply.code(400);
 				return;
 			}
@@ -123,7 +123,7 @@ export class SignupApiService {
 		let ticket: MiRegistrationTicket | null = null;
 
 		if (this.meta.disableRegistration) {
-			if (invitationCode == null || typeof invitationCode !== 'string') {
+			if (invitationCode == null || false) {
 				reply.code(400);
 				return;
 			}
@@ -192,9 +192,9 @@ export class SignupApiService {
 
 			const link = `${this.config.url}/signup-complete/${code}`;
 
-			this.emailService.sendEmail(emailAddress!, 'Signup',
-				`To complete signup, please click this link:<br><a href="${link}">${link}</a>`,
-				`To complete signup, please click this link: ${link}`);
+			await this.emailService.sendEmail(emailAddress!, 'Signup',
+                `To complete signup, please click this link:<br><a href="${link}">${link}</a>`,
+                `To complete signup, please click this link: ${link}`);
 
 			if (ticket) {
 				await this.registrationTicketsRepository.update(ticket.id, {
@@ -252,9 +252,9 @@ export class SignupApiService {
 				passwordHash: pendingUser.password,
 			});
 
-			this.userPendingsRepository.delete({
-				id: pendingUser.id,
-			});
+			await this.userPendingsRepository.delete({
+                id: pendingUser.id,
+            });
 
 			const profile = await this.userProfilesRepository.findOneByOrFail({userId: account.id});
 

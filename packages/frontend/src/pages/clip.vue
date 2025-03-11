@@ -133,10 +133,10 @@ const headerActions = computed(() => clip.value && isOwned.value ? [{
 		});
 		if (canceled) return;
 
-		os.apiWithDialog('clips/update', {
-			clipId: clip.value.id,
-			...result,
-		});
+		await os.apiWithDialog('clips/update', {
+      clipId: clip.value.id,
+      ...result,
+    });
 
 		clipsCache.delete();
 	},
@@ -166,7 +166,7 @@ const headerActions = computed(() => clip.value && isOwned.value ? [{
 				icon: 'ti ti-share',
 				text: i18n.ts.share,
 				action: async () => {
-					navigator.share({
+					await navigator.share({
 						title: clip.value!.name,
 						text: clip.value!.description ?? '',
 						url: `${url}/clips/${clip.value!.id}`,

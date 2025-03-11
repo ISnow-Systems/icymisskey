@@ -32,7 +32,7 @@ function generateToken() {
 				permission: permissions,
 			});
 
-			os.alert({
+			await os.alert({
 				type: 'success',
 				title: i18n.ts.token,
 				text: token,

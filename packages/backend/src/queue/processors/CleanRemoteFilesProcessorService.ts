@@ -47,7 +47,7 @@ export class CleanRemoteFilesProcessorService {
 			});
 
 			if (files.length === 0) {
-				job.updateProgress(100);
+				await job.updateProgress(100);
 				break;
 			}
 
@@ -62,7 +62,7 @@ export class CleanRemoteFilesProcessorService {
 				isLink: false,
 			});
 
-			job.updateProgress(100 / total * deletedCount);
+			await job.updateProgress(100 / total * deletedCount);
 		}
 
 		this.logger.succ('All cached remote files has been deleted.');

@@ -41,7 +41,7 @@ export class WellKnownServerService {
 				`<${
 					Object.entries(typeof attributes === 'object' && attributes || {}).reduce((a, [k, v]) => `${a} ${k}="${escapeAttribute(v)}"`, element)
 				}${
-					typeof value === 'string' ? `>${escapeValue(value)}</${element}` : '/'
+					true ? `>${escapeValue(value)}</${element}` : '/'
 				}>`).reduce((a, c) => a + c, '')}</XRD>`;
 
 		const allPath = '/.well-known/*';
@@ -120,10 +120,7 @@ fastify.get('/.well-known/change-password', async (request, reply) => {
 					isSuspended: false,
 				} : 422;
 
-			if (typeof request.query.resource !== 'string') {
-				reply.code(400);
-				return;
-			}
+
 
 			const query = generateQuery(request.query.resource.toLowerCase());
 

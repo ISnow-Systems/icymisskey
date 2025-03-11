@@ -39,18 +39,18 @@ export class UserSuspendService {
 			isSuspended: true,
 		});
 
-		this.moderationLogService.log(moderator, 'suspend', {
-			userId: user.id,
-			userUsername: user.username,
-			userHost: user.host,
-		});
+		await this.moderationLogService.log(moderator, 'suspend', {
+            userId: user.id,
+            userUsername: user.username,
+            userHost: user.host,
+        });
 
-		(async () => {
-			await this.postSuspend(user).catch(e => {
-			});
-			await this.unFollowAll(user).catch(e => {
-			});
-		})();
+		await (async () => {
+            await this.postSuspend(user).catch(e => {
+            });
+            await this.unFollowAll(user).catch(e => {
+            });
+        })();
 	}
 
 	@bindThis
@@ -59,28 +59,28 @@ export class UserSuspendService {
 			isSuspended: false,
 		});
 
-		this.moderationLogService.log(moderator, 'unsuspend', {
-			userId: user.id,
-			userUsername: user.username,
-			userHost: user.host,
-		});
+		await this.moderationLogService.log(moderator, 'unsuspend', {
+            userId: user.id,
+            userUsername: user.username,
+            userHost: user.host,
+        });
 
-		(async () => {
-			await this.postUnsuspend(user).catch(e => {
-			});
-		})();
+		await (async () => {
+            await this.postUnsuspend(user).catch(e => {
+            });
+        })();
 	}
 
 	@bindThis
 	private async postSuspend(user: { id: MiUser['id']; host: MiUser['host'] }): Promise<void> {
 		this.globalEventService.publishInternalEvent('userChangeSuspendedState', {id: user.id, isSuspended: true});
 
-		this.followRequestsRepository.delete({
-			followeeId: user.id,
-		});
-		this.followRequestsRepository.delete({
-			followerId: user.id,
-		});
+		await this.followRequestsRepository.delete({
+            followeeId: user.id,
+        });
+		await this.followRequestsRepository.delete({
+            followerId: user.id,
+        });
 
 		if (this.userEntityService.isLocalUser(user)) {
 			// 知り得る全SharedInboxにDelete配信
@@ -157,6 +157,6 @@ export class UserSuspendService {
 				});
 			}
 		}
-		this.queueService.createUnfollowJob(jobs);
+		await this.queueService.createUnfollowJob(jobs);
 	}
 }

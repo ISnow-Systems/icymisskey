@@ -114,12 +114,7 @@ const matchPatterns = (ev: KeyboardEvent, action: Action) => {
 	const key = ev.key.toLowerCase();
 	return patterns.some(({which, ctrl, shift, alt}) => {
 		if (
-			options.allowRepeat === false &&
-			latestHotkey != null &&
-			latestHotkey.which.includes(key) &&
-			latestHotkey.ctrl === ctrl &&
-			latestHotkey.alt === alt &&
-			latestHotkey.shift === shift &&
+			!options.allowRepeat && latestHotkey != null && latestHotkey.which.includes(key) && latestHotkey.ctrl === ctrl && latestHotkey.alt === alt && latestHotkey.shift === shift &&
 			latestHotkey.callback === callback
 		) {
 			return false;
@@ -127,8 +122,8 @@ const matchPatterns = (ev: KeyboardEvent, action: Action) => {
 		if (!which.includes(key)) return false;
 		if (ctrl !== (ev.ctrlKey || ev.metaKey)) return false;
 		if (alt !== ev.altKey) return false;
-		if (shift !== ev.shiftKey) return false;
-		return true;
+		return shift === ev.shiftKey;
+
 	});
 };
 

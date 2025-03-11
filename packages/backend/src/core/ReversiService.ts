@@ -8,7 +8,7 @@ import * as Redis from 'ioredis';
 import {ModuleRef} from '@nestjs/core';
 import {reversiUpdateKeys} from 'misskey-js';
 import * as Reversi from 'misskey-reversi';
-import {IsNull, LessThan, MoreThan} from 'typeorm';
+import {LessThan, MoreThan} from 'typeorm';
 import type {
 	MiReversiGame,
 	ReversiGamesRepository,
@@ -202,7 +202,7 @@ export class ReversiService implements OnApplicationShutdown, OnModuleInit {
 				...game,
 				user1Ready: ready,
 			};
-			this.cacheGame(updatedGame);
+			await this.cacheGame(updatedGame);
 
 			this.globalEventService.publishReversiGameStream(game.id, 'changeReadyStates', {
 				user1: ready,
@@ -215,7 +215,7 @@ export class ReversiService implements OnApplicationShutdown, OnModuleInit {
 				...game,
 				user2Ready: ready,
 			};
-			this.cacheGame(updatedGame);
+			await this.cacheGame(updatedGame);
 
 			this.globalEventService.publishReversiGameStream(game.id, 'changeReadyStates', {
 				user1: updatedGame.user1Ready,
@@ -234,7 +234,7 @@ export class ReversiService implements OnApplicationShutdown, OnModuleInit {
 				if (freshGame == null || freshGame.isStarted || freshGame.isEnded) return;
 				if (!freshGame.user1Ready || !freshGame.user2Ready) return;
 
-				this.startGame(freshGame);
+				await this.startGame(freshGame);
 			}, 3000);
 		}
 	}
@@ -288,7 +288,7 @@ export class ReversiService implements OnApplicationShutdown, OnModuleInit {
 			...game,
 			[key]: value,
 		};
-		this.cacheGame(updatedGame);
+		await this.cacheGame(updatedGame);
 
 		this.globalEventService.publishReversiGameStream(game.id, 'updateSettings', {
 			userId: user.id,
@@ -306,9 +306,7 @@ export class ReversiService implements OnApplicationShutdown, OnModuleInit {
 		if ((game.user1Id !== user.id) && (game.user2Id !== user.id)) return;
 
 		const myColor =
-			((game.user1Id === user.id) && game.black === 1) || ((game.user2Id === user.id) && game.black === 2)
-				? true
-				: false;
+				  ((game.user1Id === user.id) && game.black === 1) || ((game.user2Id === user.id) && game.black === 2);
 
 		const engine = Reversi.Serializer.restoreGame({
 			map: game.map,
@@ -321,7 +319,7 @@ export class ReversiService implements OnApplicationShutdown, OnModuleInit {
 		if (engine.turn !== myColor) return;
 		if (!engine.canPut(myColor, pos)) return;
 
-		engine.putStone(pos);
+		await engine.putStone(pos);
 
 		const logs = Reversi.Serializer.deserializeLogs(game.logs);
 
@@ -343,7 +341,7 @@ export class ReversiService implements OnApplicationShutdown, OnModuleInit {
 			crc32,
 			logs: serializeLogs,
 		};
-		this.cacheGame(updatedGame);
+		await this.cacheGame(updatedGame);
 
 		this.globalEventService.publishReversiGameStream(game.id, 'log', {
 			...log,
@@ -411,7 +409,7 @@ export class ReversiService implements OnApplicationShutdown, OnModuleInit {
 		if ((game.user1Id !== user.id) && (game.user2Id !== user.id)) return;
 
 		await this.reversiGamesRepository.delete(game.id);
-		this.deleteGameCache(game.id);
+		await this.deleteGameCache(game.id);
 
 		this.globalEventService.publishReversiGameStream(game.id, 'canceled', {
 			userId: user.id,
@@ -454,7 +452,7 @@ export class ReversiService implements OnApplicationShutdown, OnModuleInit {
 			});
 			if (game == null) return null;
 
-			this.cacheGame(game);
+			await this.cacheGame(game);
 
 			return game;
 		}
@@ -535,7 +533,7 @@ export class ReversiService implements OnApplicationShutdown, OnModuleInit {
 			isLlotheo: false,
 			noIrregularRules: options.noIrregularRules,
 		}, {relations: ['user1', 'user2']});
-		this.cacheGame(game);
+		await this.cacheGame(game);
 
 		const packed = await this.reversiGameEntityService.packDetail(game);
 		this.globalEventService.publishReversiStream(parentId, 'matched', {game: packed});
@@ -576,7 +574,7 @@ export class ReversiService implements OnApplicationShutdown, OnModuleInit {
 		// キャッシュ効率化のためにユーザー情報は再利用
 		updatedGame.user1 = game.user1;
 		updatedGame.user2 = game.user2;
-		this.cacheGame(updatedGame);
+		await this.cacheGame(updatedGame);
 
 		//#region 盤面に最初から石がないなどして始まった瞬間に勝敗が決定する場合があるのでその処理
 		if (engine.isEnded) {
@@ -620,7 +618,7 @@ export class ReversiService implements OnApplicationShutdown, OnModuleInit {
 		// キャッシュ効率化のためにユーザー情報は再利用
 		updatedGame.user1 = game.user1;
 		updatedGame.user2 = game.user2;
-		this.cacheGame(updatedGame);
+		await this.cacheGame(updatedGame);
 
 		this.globalEventService.publishReversiGameStream(game.id, 'ended', {
 			winnerId: winnerId,

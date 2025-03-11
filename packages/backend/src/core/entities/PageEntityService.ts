@@ -8,7 +8,6 @@ import {DI} from '@/di-symbols.js';
 import type {DriveFilesRepository, PagesRepository, PageLikesRepository} from '@/models/_.js';
 import {awaitAll} from '@/misc/prelude/await-all.js';
 import type {Packed} from '@/misc/json-schema.js';
-import type {} from '@/models/Blocking.js';
 import type {MiUser} from '@/models/User.js';
 import type {MiPage} from '@/models/Page.js';
 import type {MiDriveFile} from '@/models/DriveFile.js';
@@ -80,9 +79,9 @@ export class PageEntityService {
 		};
 		migrate(page.content);
 		if (migrated) {
-			this.pagesRepository.update(page.id, {
-				content: page.content,
-			});
+			await this.pagesRepository.update(page.id, {
+                content: page.content,
+            });
 		}
 
 		return await awaitAll({
@@ -90,7 +89,7 @@ export class PageEntityService {
 			createdAt: this.idService.parse(page.id).date.toISOString(),
 			updatedAt: page.updatedAt.toISOString(),
 			userId: page.userId,
-			user: hint?.packedUser ?? this.userEntityService.pack(page.user ?? page.userId, me), // { schema: 'UserDetailed' } すると無限ループするので注意
+			user: hint?.packedUser ?? await this.userEntityService.pack(page.user ?? page.userId, me), // { schema: 'UserDetailed' } すると無限ループするので注意
 			content: page.content,
 			variables: page.variables,
 			title: page.title,

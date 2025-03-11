@@ -79,7 +79,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			);
 			if (checkMoving ? file.size > 32 * 1024 * 1024 : file.size > 64 * 1024) throw new ApiError(meta.errors.tooBigFile);
 
-			this.queueService.createImportUserListsJob(me, file.id);
+			await this.queueService.createImportUserListsJob(me, file.id);
 		});
 	}
 }

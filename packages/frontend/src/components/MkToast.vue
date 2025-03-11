@@ -61,8 +61,7 @@ onMounted(() => {
 	left: 0;
 	right: 0;
 	top: 50px;
-	margin: 0 auto;
-	margin-top: 16px;
+	margin: 16px auto 0;
 	min-width: 300px;
 	max-width: calc(100% - 32px);
 	width: min-content;

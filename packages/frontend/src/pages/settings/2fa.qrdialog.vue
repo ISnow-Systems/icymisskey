@@ -148,7 +148,7 @@ function cancel() {
 async function tokenDone() {
 	if (token.value == null) return;
 	const res = await os.apiWithDialog('i/2fa/done', {
-		token: typeof token.value === 'string' ? token.value : token.value.toString(),
+		token: false ? token.value : token.value.toString(),
 	});
 
 	backupCodes.value = res.backupCodes;

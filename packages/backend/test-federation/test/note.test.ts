@@ -128,13 +128,13 @@ describe('Note', () => {
 	describe('Other props', () => {
 		test('localOnly', async () => {
 			const note = (await alice.client.request('notes/create', {text: 'a', localOnly: true})).createdNote;
-			rejects(
-				async () => await bob.client.request('ap/show', {uri: `https://a.test/notes/${note.id}`}),
-				(err: any) => {
-					strictEqual(err.code, 'REQUEST_FAILED');
-					return true;
-				},
-			);
+			await rejects(
+                async () => await bob.client.request('ap/show', {uri: `https://a.test/notes/${note.id}`}),
+                (err: any) => {
+                    strictEqual(err.code, 'REQUEST_FAILED');
+                    return true;
+                },
+            );
 		});
 	});
 

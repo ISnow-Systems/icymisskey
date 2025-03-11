@@ -129,9 +129,9 @@ async function enter(el: Element) {
 	el.offsetWidth; // reflow
 	el.style.width = `${elementWidth}px`;
 	el.style.paddingLeft = '';
-	nextTick(() => {
-		entering = false;
-	});
+	await nextTick(() => {
+    entering = false;
+  });
 
 	setTimeout(renderTab, 170);
 }

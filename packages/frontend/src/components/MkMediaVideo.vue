@@ -275,8 +275,8 @@ const isHoverring = ref(false);
 const controlsShowing = computed(() => {
 	if (!oncePlayed.value) return true;
 	if (isHoverring.value) return true;
-	if (menuShowing.value) return true;
-	return false;
+	return !!menuShowing.value;
+
 });
 const isFullscreen = ref(false);
 let controlStateTimer: string | number;

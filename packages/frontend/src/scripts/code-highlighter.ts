@@ -29,7 +29,7 @@ export async function getTheme(mode: 'light' | 'dark', getName = false): Promise
 	}
 
 	if (theme.codeHighlighter) {
-		let _res: ThemeRegistration = {};
+		let _res: ThemeRegistration;
 		if (theme.codeHighlighter.base === '_none_') {
 			_res = deepClone(theme.codeHighlighter.overrides);
 		} else {
@@ -80,14 +80,14 @@ async function initHighlighter() {
 	ColdDeviceStorage.watch('lightTheme', async () => {
 		const newTheme = await getTheme('light');
 		if (newTheme.name && !highlighter.getLoadedThemes().includes(newTheme.name)) {
-			highlighter.loadTheme(newTheme);
+			await highlighter.loadTheme(newTheme);
 		}
 	});
 
 	ColdDeviceStorage.watch('darkTheme', async () => {
 		const newTheme = await getTheme('dark');
 		if (newTheme.name && !highlighter.getLoadedThemes().includes(newTheme.name)) {
-			highlighter.loadTheme(newTheme);
+			await highlighter.loadTheme(newTheme);
 		}
 	});
 

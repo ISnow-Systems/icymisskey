@@ -16,7 +16,7 @@ import {ref} from 'vue';
 import XColumn from './column.vue';
 import type {Column} from './deck-store.js';
 import MkNotes from '@/components/MkNotes.vue';
-import {i18n} from '../../i18n.js';
+import {i18n} from '@/i18n';
 
 defineProps<{
 	column: Column;

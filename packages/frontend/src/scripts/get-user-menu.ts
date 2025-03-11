@@ -112,9 +112,9 @@ export function getUserMenu(user: Misskey.entities.UserDetailed, router: IRouter
 	}
 
 	async function userInfoUpdate() {
-		os.apiWithDialog('federation/update-remote-user', {
-			userId: user.id,
-		});
+		await os.apiWithDialog('federation/update-remote-user', {
+            userId: user.id,
+        });
 	}
 
 	async function invalidateFollow() {
@@ -142,10 +142,10 @@ export function getUserMenu(user: Misskey.entities.UserDetailed, router: IRouter
 		});
 		if (canceled) return;
 
-		os.apiWithDialog('users/update-memo', {
-			memo: result.memo,
-			userId: user.id,
-		});
+		await os.apiWithDialog('users/update-memo', {
+            memo: result.memo,
+            userId: user.id,
+        });
 	}
 
 	const menuItems: MenuItem[] = [];
@@ -329,7 +329,11 @@ export function getUserMenu(user: Misskey.entities.UserDetailed, router: IRouter
 											: period === 'oneMonth' ? Date.now() + (1000 * 60 * 60 * 24 * 30)
 												: null;
 
-							os.apiWithDialog('admin/roles/assign', {roleId: r.id, userId: user.id, expiresAt});
+							await os.apiWithDialog('admin/roles/assign', {
+                                roleId: r.id,
+                                userId: user.id,
+                                expiresAt
+                            });
 						},
 					}));
 				},

@@ -104,7 +104,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			});
 
 			// Delete session
-			this.authSessionsRepository.delete(session.id);
+			await this.authSessionsRepository.delete(session.id);
 
 			return {
 				accessToken: accessToken.token,

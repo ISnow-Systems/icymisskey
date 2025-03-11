@@ -251,7 +251,7 @@ const style = computed(() => {
 			backgroundImage: `url(${props.user.bannerUrl})`,
 		};
 	}
-	;
+
 });
 
 const age = computed(() => {

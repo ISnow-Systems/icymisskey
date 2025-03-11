@@ -81,7 +81,12 @@ export class UserListService implements OnApplicationShutdown, OnModuleInit {
 		if (this.userEntityService.isRemoteUser(target)) {
 			const proxy = await this.proxyAccountService.fetch();
 			if (proxy) {
-				this.queueService.createFollowJob([{from: {id: proxy.id}, to: {id: target.id}}]);
+				await this.queueService.createFollowJob([
+                    {
+                        from: {id: proxy.id},
+                        to: {id: target.id}
+                    }
+                ]);
 			}
 		}
 	}

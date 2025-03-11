@@ -56,10 +56,10 @@ export class DropAndFusionGame extends EventEmitter<{
 	private STOCK_MAX = 4;
 	private TICK_DELTA = 1000 / 60; // 60fps
 	private tickCallbackQueue: { frame: number; callback: () => void; }[] = [];
-	private overflowCollider: Matter.Body;
+	private readonly overflowCollider: Matter.Body;
 	private isGameOver = false;
-	private gameMode: 'normal' | 'yen' | 'square' | 'sweets' | 'space';
-	private rng: () => number;
+	private readonly gameMode: 'normal' | 'yen' | 'square' | 'sweets' | 'space';
+	private readonly rng: () => number;
 	private logs: Log[] = [];
 	/**
 	 * フィールドに出ていて、かつ合体の対象となるアイテム
@@ -75,7 +75,7 @@ export class DropAndFusionGame extends EventEmitter<{
 	private latestFusionedAt = 0; // frame
 	private stock: { id: string; mono: Mono }[] = [];
 	private holding: { id: string; mono: Mono } | null = null;
-	private getMonoRenderOptions: null | ((mono: Mono) => Partial<Matter.IBodyRenderOptions>) = null;
+	private readonly getMonoRenderOptions: null | ((mono: Mono) => Partial<Matter.IBodyRenderOptions>) = null;
 
 	constructor(env: {
 		seed: string;
@@ -495,7 +495,7 @@ export class DropAndFusionGame extends EventEmitter<{
 					this.gameOver();
 					break;
 				}
-				continue;
+
 			}
 		}
 	}

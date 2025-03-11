@@ -6,7 +6,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 <template>
 	<!-- このコンポーネントの要素のclassは親から利用されるのでむやみに弄らないこと -->
 	<!-- フォルダの中にはカスタム絵文字だけ（Unicode絵文字もこっち） -->
-	<section v-if="!hasChildSection" v-panel style="border-radius: 6px; border-bottom: 0.5px solid var(--MI_THEME-divider);">
+	<section v-if="!hasChildSection" v-panel style="border-radius: 6px; border-bottom: 1px solid var(--MI_THEME-divider);">
 		<header class="_acrylic" @click="shown = !shown">
 			<i :class="shown ? 'ti ti-chevron-down' : 'ti ti-chevron-up'" class="toggle ti-fw"></i>
 			<slot></slot>
@@ -28,7 +28,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 		</div>
 	</section>
 	<!-- フォルダの中にはカスタム絵文字やフォルダがある -->
-	<section v-else v-panel style="border-radius: 6px; border-bottom: 0.5px solid var(--MI_THEME-divider);">
+	<section v-else v-panel style="border-radius: 6px; border-bottom: 1px solid var(--MI_THEME-divider);">
 		<header class="_acrylic" @click="shown = !shown">
 			<i :class="shown ? 'ti ti-chevron-down' : 'ti ti-chevron-up'" class="toggle ti-fw"></i>
 			<slot></slot>
@@ -87,7 +87,7 @@ const emit = defineEmits<{
 
 const emojis = computed(() => Array.isArray(props.emojis) ? props.emojis : props.emojis.value);
 
-const shown = ref(!!props.initialShown);
+const shown = ref(props.initialShown);
 
 /** @see MkEmojiPicker.vue */
 function computeButtonTitle(ev: MouseEvent): void {

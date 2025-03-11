@@ -60,7 +60,7 @@ export class ExportAntennasProcessorService {
 		};
 		try {
 			const antennas = await this.antennsRepository.findBy({userId: job.data.user.id});
-			write('[');
+			await write('[');
 			for (const [index, antenna] of antennas.entries()) {
 				let users: MiUser[] | undefined;
 				if (antenna.userListId !== null) {
@@ -69,26 +69,26 @@ export class ExportAntennasProcessorService {
 						id: In(memberships.map(j => j.userId)),
 					});
 				}
-				write(JSON.stringify({
-					name: antenna.name,
-					src: antenna.src,
-					keywords: antenna.keywords,
-					excludeKeywords: antenna.excludeKeywords,
-					users: antenna.users,
-					userListAccts: typeof users !== 'undefined' ? users.map((u) => {
-						return this.utilityService.getFullApAccount(u.username, u.host); // acct
-					}) : null,
-					caseSensitive: antenna.caseSensitive,
-					localOnly: antenna.localOnly,
-					excludeBots: antenna.excludeBots,
-					withReplies: antenna.withReplies,
-					withFile: antenna.withFile,
-				}));
+				await write(JSON.stringify({
+                    name: antenna.name,
+                    src: antenna.src,
+                    keywords: antenna.keywords,
+                    excludeKeywords: antenna.excludeKeywords,
+                    users: antenna.users,
+                    userListAccts: typeof users !== 'undefined' ? users.map((u) => {
+                        return this.utilityService.getFullApAccount(u.username, u.host); // acct
+                    }) : null,
+                    caseSensitive: antenna.caseSensitive,
+                    localOnly: antenna.localOnly,
+                    excludeBots: antenna.excludeBots,
+                    withReplies: antenna.withReplies,
+                    withFile: antenna.withFile,
+                }));
 				if (antennas.length - 1 !== index) {
-					write(', ');
+					await write(', ');
 				}
 			}
-			write(']');
+			await write(']');
 			stream.end();
 
 			const fileName = 'antennas-' + DateFormat(new Date(), 'yyyy-MM-dd-HH-mm-ss') + '.json';

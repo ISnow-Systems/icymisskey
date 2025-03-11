@@ -8,7 +8,6 @@ import {DI} from '@/di-symbols.js';
 import type {GalleryLikesRepository, GalleryPostsRepository} from '@/models/_.js';
 import {awaitAll} from '@/misc/prelude/await-all.js';
 import type {Packed} from '@/misc/json-schema.js';
-import type {} from '@/models/Blocking.js';
 import type {MiUser} from '@/models/User.js';
 import type {MiGalleryPost} from '@/models/GalleryPost.js';
 import {bindThis} from '@/decorators.js';
@@ -45,7 +44,7 @@ export class GalleryPostEntityService {
 			createdAt: this.idService.parse(post.id).date.toISOString(),
 			updatedAt: post.updatedAt.toISOString(),
 			userId: post.userId,
-			user: hint?.packedUser ?? this.userEntityService.pack(post.user ?? post.userId, me),
+			user: hint?.packedUser ?? await this.userEntityService.pack(post.user ?? post.userId, me),
 			title: post.title,
 			description: post.description,
 			fileIds: post.fileIds,

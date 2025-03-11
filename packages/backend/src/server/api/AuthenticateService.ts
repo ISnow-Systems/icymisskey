@@ -65,7 +65,7 @@ export class AuthenticateService implements OnApplicationShutdown {
 				throw new AuthenticationError('invalid signature');
 			}
 
-			this.accessTokensRepository.update(accessToken.id, {
+			await this.accessTokensRepository.update(accessToken.id, {
 				lastUsedAt: new Date(),
 			});
 

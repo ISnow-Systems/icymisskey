@@ -212,22 +212,22 @@ export class RoleService implements OnApplicationShutdown, OnModuleInit {
 		}
 
 		return {
-			gtlAvailable: calc('gtlAvailable', vs => vs.some(v => v === true)),
-			ltlAvailable: calc('ltlAvailable', vs => vs.some(v => v === true)),
-			canPublicNote: calc('canPublicNote', vs => vs.some(v => v === true)),
+			gtlAvailable: calc('gtlAvailable', vs => vs.some(v => v)),
+			ltlAvailable: calc('ltlAvailable', vs => vs.some(v => v)),
+			canPublicNote: calc('canPublicNote', vs => vs.some(v => v)),
 			mentionLimit: calc('mentionLimit', vs => Math.max(...vs)),
-			canInvite: calc('canInvite', vs => vs.some(v => v === true)),
+			canInvite: calc('canInvite', vs => vs.some(v => v)),
 			inviteLimit: calc('inviteLimit', vs => Math.max(...vs)),
 			inviteLimitCycle: calc('inviteLimitCycle', vs => Math.max(...vs)),
 			inviteExpirationTime: calc('inviteExpirationTime', vs => Math.max(...vs)),
-			canManageCustomEmojis: calc('canManageCustomEmojis', vs => vs.some(v => v === true)),
-			canManageAvatarDecorations: calc('canManageAvatarDecorations', vs => vs.some(v => v === true)),
-			canSearchNotes: calc('canSearchNotes', vs => vs.some(v => v === true)),
-			canUseTranslator: calc('canUseTranslator', vs => vs.some(v => v === true)),
-			canHideAds: calc('canHideAds', vs => vs.some(v => v === true)),
+			canManageCustomEmojis: calc('canManageCustomEmojis', vs => vs.some(v => v)),
+			canManageAvatarDecorations: calc('canManageAvatarDecorations', vs => vs.some(v => v)),
+			canSearchNotes: calc('canSearchNotes', vs => vs.some(v => v)),
+			canUseTranslator: calc('canUseTranslator', vs => vs.some(v => v)),
+			canHideAds: calc('canHideAds', vs => vs.some(v => v)),
 			driveCapacityMb: calc('driveCapacityMb', vs => Math.max(...vs)),
-			alwaysMarkNsfw: calc('alwaysMarkNsfw', vs => vs.some(v => v === true)),
-			canUpdateBioMedia: calc('canUpdateBioMedia', vs => vs.some(v => v === true)),
+			alwaysMarkNsfw: calc('alwaysMarkNsfw', vs => vs.some(v => v)),
+			canUpdateBioMedia: calc('canUpdateBioMedia', vs => vs.some(v => v)),
 			pinLimit: calc('pinLimit', vs => Math.max(...vs)),
 			antennaLimit: calc('antennaLimit', vs => Math.max(...vs)),
 			wordMuteLimit: calc('wordMuteLimit', vs => Math.max(...vs)),
@@ -238,11 +238,11 @@ export class RoleService implements OnApplicationShutdown, OnModuleInit {
 			userEachUserListsLimit: calc('userEachUserListsLimit', vs => Math.max(...vs)),
 			rateLimitFactor: calc('rateLimitFactor', vs => Math.max(...vs)),
 			avatarDecorationLimit: calc('avatarDecorationLimit', vs => Math.max(...vs)),
-			canImportAntennas: calc('canImportAntennas', vs => vs.some(v => v === true)),
-			canImportBlocking: calc('canImportBlocking', vs => vs.some(v => v === true)),
-			canImportFollowing: calc('canImportFollowing', vs => vs.some(v => v === true)),
-			canImportMuting: calc('canImportMuting', vs => vs.some(v => v === true)),
-			canImportUserLists: calc('canImportUserLists', vs => vs.some(v => v === true)),
+			canImportAntennas: calc('canImportAntennas', vs => vs.some(v => v)),
+			canImportBlocking: calc('canImportBlocking', vs => vs.some(v => v)),
+			canImportFollowing: calc('canImportFollowing', vs => vs.some(v => v)),
+			canImportMuting: calc('canImportMuting', vs => vs.some(v => v)),
+			canImportUserLists: calc('canImportUserLists', vs => vs.some(v => v)),
 		};
 	}
 
@@ -382,9 +382,9 @@ export class RoleService implements OnApplicationShutdown, OnModuleInit {
 			userId: userId,
 		});
 
-		this.rolesRepository.update(roleId, {
-			lastUsedAt: new Date(),
-		});
+		await this.rolesRepository.update(roleId, {
+            lastUsedAt: new Date(),
+        });
 
 		this.globalEventService.publishInternalEvent('userRoleAssigned', created);
 
@@ -397,14 +397,14 @@ export class RoleService implements OnApplicationShutdown, OnModuleInit {
 		}
 
 		if (moderator) {
-			this.moderationLogService.log(moderator, 'assignRole', {
-				roleId: roleId,
-				roleName: role.name,
-				userId: userId,
-				userUsername: user.username,
-				userHost: user.host,
-				expiresAt: expiresAt ? expiresAt.toISOString() : null,
-			});
+			await this.moderationLogService.log(moderator, 'assignRole', {
+                roleId: roleId,
+                roleName: role.name,
+                userId: userId,
+                userUsername: user.username,
+                userHost: user.host,
+                expiresAt: expiresAt ? expiresAt.toISOString() : null,
+            });
 		}
 	}
 
@@ -425,9 +425,9 @@ export class RoleService implements OnApplicationShutdown, OnModuleInit {
 
 		await this.roleAssignmentsRepository.delete(existing.id);
 
-		this.rolesRepository.update(roleId, {
-			lastUsedAt: now,
-		});
+		await this.rolesRepository.update(roleId, {
+            lastUsedAt: now,
+        });
 
 		this.globalEventService.publishInternalEvent('userRoleUnassigned', existing);
 
@@ -436,13 +436,13 @@ export class RoleService implements OnApplicationShutdown, OnModuleInit {
 				this.usersRepository.findOneByOrFail({id: userId}),
 				this.rolesRepository.findOneByOrFail({id: roleId}),
 			]);
-			this.moderationLogService.log(moderator, 'unassignRole', {
-				roleId: roleId,
-				roleName: role.name,
-				userId: userId,
-				userUsername: user.username,
-				userHost: user.host,
-			});
+			await this.moderationLogService.log(moderator, 'unassignRole', {
+                roleId: roleId,
+                roleName: role.name,
+                userId: userId,
+                userUsername: user.username,
+                userHost: user.host,
+            });
 		}
 	}
 
@@ -457,7 +457,7 @@ export class RoleService implements OnApplicationShutdown, OnModuleInit {
 			this.globalEventService.publishRoleTimelineStream(role.id, 'note', note);
 		}
 
-		redisPipeline.exec();
+		await redisPipeline.exec();
 	}
 
 	@bindThis
@@ -486,10 +486,10 @@ export class RoleService implements OnApplicationShutdown, OnModuleInit {
 		this.globalEventService.publishInternalEvent('roleCreated', created);
 
 		if (moderator) {
-			this.moderationLogService.log(moderator, 'createRole', {
-				roleId: created.id,
-				role: created,
-			});
+			await this.moderationLogService.log(moderator, 'createRole', {
+                roleId: created.id,
+                role: created,
+            });
 		}
 
 		return created;
@@ -507,11 +507,11 @@ export class RoleService implements OnApplicationShutdown, OnModuleInit {
 		this.globalEventService.publishInternalEvent('roleUpdated', updated);
 
 		if (moderator) {
-			this.moderationLogService.log(moderator, 'updateRole', {
-				roleId: role.id,
-				before: role,
-				after: updated,
-			});
+			await this.moderationLogService.log(moderator, 'updateRole', {
+                roleId: role.id,
+                before: role,
+                after: updated,
+            });
 		}
 	}
 
@@ -521,10 +521,10 @@ export class RoleService implements OnApplicationShutdown, OnModuleInit {
 		this.globalEventService.publishInternalEvent('roleDeleted', role);
 
 		if (moderator) {
-			this.moderationLogService.log(moderator, 'deleteRole', {
-				roleId: role.id,
-				role: role,
-			});
+			await this.moderationLogService.log(moderator, 'deleteRole', {
+                roleId: role.id,
+                role: role,
+            });
 		}
 	}
 

@@ -44,7 +44,7 @@ function getHighestZIndexElement(): { el: HTMLElement; zIndex: number; } | null 
 
 function releaseFocusTrap(el: HTMLElement): void {
 	focusTrapElements.delete(el);
-	if (el.inert === true) {
+	if (el.inert) {
 		el.inert = false;
 	}
 
@@ -63,16 +63,10 @@ function releaseFocusTrap(el: HTMLElement): void {
 				)
 			) {
 				siblingEl.inert = false;
-			} else if (
-				highestZIndexElement != null &&
-				siblingEl !== highestZIndexElement.el &&
-				!siblingEl.contains(highestZIndexElement.el) &&
-				!ignoreElements.includes(siblingEl.tagName.toLowerCase())
-			) {
-				siblingEl.inert = true;
-			} else {
-				siblingEl.inert = false;
-			}
+			} else siblingEl.inert = highestZIndexElement != null &&
+                                     siblingEl !== highestZIndexElement.el &&
+                                     !siblingEl.contains(highestZIndexElement.el) &&
+                                     !ignoreElements.includes(siblingEl.tagName.toLowerCase());
 		});
 		releaseFocusTrap(el.parentElement);
 	}
@@ -100,7 +94,7 @@ export function focusTrap(el: HTMLElement, hasInteractionWithOtherFocusTrappedEl
 		};
 	}
 
-	if (el.inert === true) {
+	if (el.inert) {
 		el.inert = false;
 	}
 
@@ -109,11 +103,7 @@ export function focusTrap(el: HTMLElement, hasInteractionWithOtherFocusTrappedEl
 			const siblingEl = getHTMLElementOrNull(siblingNode);
 			if (!siblingEl) return;
 			if (
-				siblingEl !== el &&
-				(
-					hasInteractionWithOtherFocusTrappedEls === false ||
-					(!focusTrapElements.has(siblingEl) && !containsFocusTrappedElements(siblingEl))
-				) &&
+				siblingEl !== el && (!hasInteractionWithOtherFocusTrappedEls || (!focusTrapElements.has(siblingEl) && !containsFocusTrappedElements(siblingEl))) &&
 				!ignoreElements.includes(siblingEl.tagName.toLowerCase())
 			) {
 				siblingEl.inert = true;

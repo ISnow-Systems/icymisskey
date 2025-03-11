@@ -70,7 +70,7 @@ export class ExportMutingProcessorService {
 				});
 
 				if (mutes.length === 0) {
-					job.updateProgress(100);
+					await job.updateProgress(100);
 					break;
 				}
 
@@ -101,7 +101,7 @@ export class ExportMutingProcessorService {
 					muterId: user.id,
 				});
 
-				job.updateProgress(exportedCount / total);
+				await job.updateProgress(exportedCount / total);
 			}
 
 			stream.end();

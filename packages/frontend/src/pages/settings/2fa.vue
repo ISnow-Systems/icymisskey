@@ -169,7 +169,7 @@ async function unregisterKey(key) {
 		token: auth.result.token,
 		credentialId: key.id,
 	});
-	os.success();
+	await os.success();
 }
 
 async function renameKey(key) {

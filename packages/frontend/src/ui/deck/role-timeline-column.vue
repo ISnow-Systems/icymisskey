@@ -14,7 +14,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script lang="ts" setup>
-import {computed, onMounted, ref, shallowRef, watch} from 'vue';
+import {onMounted, ref, shallowRef, watch} from 'vue';
 import XColumn from './column.vue';
 import {updateColumn} from './deck-store.js';
 import type {Column} from './deck-store.js';

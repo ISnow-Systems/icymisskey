@@ -64,7 +64,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			});
 
 			for (const note of renotes) {
-				this.noteDeleteService.delete(await this.usersRepository.findOneByOrFail({id: me.id}), note);
+				await this.noteDeleteService.delete(await this.usersRepository.findOneByOrFail({id: me.id}), note);
 			}
 		});
 	}

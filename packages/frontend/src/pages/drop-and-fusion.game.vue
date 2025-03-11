@@ -89,7 +89,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 					</div>
 					<div v-if="isGameOver && !replaying" :class="$style.gameOverLabel">
 						<div class="_gaps_s">
-							<img src="/client-assets/drop-and-fusion/gameover.png" style="width: 200px; max-width: 100%; display: block; margin: auto; margin-bottom: -5px;"/>
+							<img src="/client-assets/drop-and-fusion/gameover.png" style="width: 200px; max-width: 100%; display: block; margin: auto auto -5px;"/>
 							<div>{{ i18n.ts._bubbleGame._score.score }}:
 								<MkNumber :value="score"/>
 								{{ getScoreUnit(gameMode) }}
@@ -640,7 +640,7 @@ function loadMonoTextures() {
 		// Matter-js内にキャッシュがある場合はスキップ
 		if (renderer.textures[mono.img]) return;
 
-		let src = mono.img;
+		let src: string;
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (monoTextureUrls[mono.img]) {
 			src = monoTextureUrls[mono.img];
@@ -948,10 +948,10 @@ function getGameImageDriveFile() {
 
 async function share() {
 	const uploading = getGameImageDriveFile();
-	os.promiseDialog(uploading);
+	await os.promiseDialog(uploading);
 	const file = await uploading;
 	if (!file) return;
-	os.post({
+	await os.post({
 		initialText: `#BubbleGame (${props.gameMode})
 SCORE: ${score.value.toLocaleString()}${getScoreUnit(props.gameMode)}`,
 		initialFiles: [file],
@@ -1195,7 +1195,7 @@ onMounted(async () => {
 			if (err.code === 'NO_SUCH_KEY') {
 				// nop
 			} else {
-				os.alert({
+				await os.alert({
 					type: 'error',
 					text: i18n.ts.cannotLoad,
 				});

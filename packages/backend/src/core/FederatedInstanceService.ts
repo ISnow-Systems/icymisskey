@@ -7,7 +7,7 @@ import {Inject, Injectable, OnApplicationShutdown} from '@nestjs/common';
 import * as Redis from 'ioredis';
 import type {InstancesRepository} from '@/models/_.js';
 import type {MiInstance} from '@/models/Instance.js';
-import {MemoryKVCache, RedisKVCache} from '@/misc/cache.js';
+import {RedisKVCache} from '@/misc/cache.js';
 import {IdService} from '@/core/IdService.js';
 import {DI} from '@/di-symbols.js';
 import {UtilityService} from '@/core/UtilityService.js';
@@ -60,10 +60,10 @@ export class FederatedInstanceService implements OnApplicationShutdown {
 				firstRetrievedAt: new Date(),
 			});
 
-			this.federatedInstanceCache.set(host, i);
+			await this.federatedInstanceCache.set(host, i);
 			return i;
 		} else {
-			this.federatedInstanceCache.set(host, index);
+			await this.federatedInstanceCache.set(host, index);
 			return index;
 		}
 	}
@@ -78,10 +78,10 @@ export class FederatedInstanceService implements OnApplicationShutdown {
 		const index = await this.instancesRepository.findOneBy({host});
 
 		if (index == null) {
-			this.federatedInstanceCache.set(host, null);
+			await this.federatedInstanceCache.set(host, null);
 			return null;
 		} else {
-			this.federatedInstanceCache.set(host, index);
+			await this.federatedInstanceCache.set(host, index);
 			return index;
 		}
 	}
@@ -97,7 +97,7 @@ export class FederatedInstanceService implements OnApplicationShutdown {
 				return response.raw[0];
 			});
 
-		this.federatedInstanceCache.set(result.host, result);
+		await this.federatedInstanceCache.set(result.host, result);
 	}
 
 	@bindThis

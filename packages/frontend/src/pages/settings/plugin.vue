@@ -99,9 +99,9 @@ async function uninstall(plugin) {
 	await os.apiWithDialog('i/revoke-token', {
 		token: plugin.token,
 	});
-	nextTick(() => {
-		unisonReload();
-	});
+	await nextTick(() => {
+    unisonReload();
+  });
 }
 
 function copy(text) {
@@ -123,9 +123,9 @@ async function config(plugin) {
 	coldPlugins.find(p => p.id === plugin.id)!.configData = result;
 	ColdDeviceStorage.set('plugins', coldPlugins);
 
-	nextTick(() => {
-		location.reload();
-	});
+	await nextTick(() => {
+    location.reload();
+  });
 }
 
 function changeActive(plugin, active) {

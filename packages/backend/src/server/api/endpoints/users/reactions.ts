@@ -106,9 +106,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				.getMany()).filter(reaction => {
 				if (reaction.note?.userId === ps.userId) return true; // we can see reactions to note of requesting user
 				if (me && isUserRelated(reaction.note, userIdsWhoBlockingMe)) return false;
-				if (me && isUserRelated(reaction.note, userIdsWhoMeMuting)) return false;
+				return !(me && isUserRelated(reaction.note, userIdsWhoMeMuting));
 
-				return true;
+
 			});
 
 			return await this.noteReactionEntityService.packMany(reactions, me, {withNote: true});

@@ -8,7 +8,6 @@ import {DI} from '@/di-symbols.js';
 import type {ClipNotesRepository, ClipFavoritesRepository, ClipsRepository, MiUser} from '@/models/_.js';
 import {awaitAll} from '@/misc/prelude/await-all.js';
 import type {Packed} from '@/misc/json-schema.js';
-import type {} from '@/models/Blocking.js';
 import type {MiClip} from '@/models/Clip.js';
 import {bindThis} from '@/decorators.js';
 import {IdService} from '@/core/IdService.js';
@@ -44,7 +43,7 @@ export class ClipEntityService {
 			createdAt: this.idService.parse(clip.id).date.toISOString(),
 			lastClippedAt: clip.lastClippedAt ? clip.lastClippedAt.toISOString() : null,
 			userId: clip.userId,
-			user: hint?.packedUser ?? this.userEntityService.pack(clip.user ?? clip.userId),
+			user: hint?.packedUser ?? await this.userEntityService.pack(clip.user ?? clip.userId),
 			name: clip.name,
 			description: clip.description,
 			isPublic: clip.isPublic,

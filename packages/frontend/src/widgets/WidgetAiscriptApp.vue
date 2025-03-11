@@ -80,20 +80,20 @@ async function run() {
 	try {
 		ast = parser.parse(widgetProps.script);
 	} catch (err) {
-		os.alert({
-			type: 'error',
-			text: 'Syntax error :(',
-		});
+		await os.alert({
+      type: 'error',
+      text: 'Syntax error :(',
+    });
 		return;
 	}
 	try {
 		await aiscript.exec(ast);
 	} catch (err) {
-		os.alert({
-			type: 'error',
-			title: 'AiScript Error',
-			text: err.message,
-		});
+		await os.alert({
+      type: 'error',
+      title: 'AiScript Error',
+      text: err.message,
+    });
 	}
 }
 

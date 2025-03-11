@@ -17,7 +17,7 @@ import {parseUlid} from '@/misc/id/ulid.js';
 
 @Injectable()
 export class IdService {
-	private method: string;
+	private readonly method: string;
 
 	constructor(
 		@Inject(DI.config)

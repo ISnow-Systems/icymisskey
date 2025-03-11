@@ -157,11 +157,9 @@ const disableSubmitButton = computed(() => {
 	if (!url.value) {
 		return true;
 	}
-	if (!secret.value) {
-		return true;
-	}
+	return !secret.value;
 
-	return false;
+
 });
 
 async function onSubmitClicked() {

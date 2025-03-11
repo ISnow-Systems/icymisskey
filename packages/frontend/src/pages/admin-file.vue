@@ -114,7 +114,7 @@ async function del() {
 	});
 	if (canceled) return;
 
-	os.apiWithDialog('drive/files/delete', {
+	await os.apiWithDialog('drive/files/delete', {
 		fileId: file.value.id,
 	});
 }

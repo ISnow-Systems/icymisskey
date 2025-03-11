@@ -14,7 +14,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 <script lang="ts" setup>
 import {toUnicode} from 'punycode.js';
-import {} from 'vue';
 import tinycolor from 'tinycolor2';
 import {host as localHost} from '@@/js/config.js';
 

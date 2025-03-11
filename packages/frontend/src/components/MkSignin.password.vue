@@ -147,8 +147,7 @@ defineExpose({
 	margin: 0 auto 0 auto;
 	width: 64px;
 	height: 64px;
-	background: #ddd;
-	background-position: center;
+	background: #ddd center;
 	background-size: cover;
 	border-radius: 100%;
 }

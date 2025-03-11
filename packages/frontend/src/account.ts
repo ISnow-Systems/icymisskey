@@ -41,7 +41,7 @@ export function incNotesCount() {
 export async function signout() {
 	if (!$i) return;
 
-	waiting();
+	await waiting();
 	document.cookie.split(';').forEach((cookie) => {
 		const cookieName = cookie.split('=')[0].trim();
 		if (cookieName === 'token') {
@@ -81,7 +81,7 @@ export async function signout() {
 	}
 	//#endregion
 
-	if (accounts.length > 0) login(accounts[0].token);
+	if (accounts.length > 0) await login(accounts[0].token);
 	else unisonReload('/');
 }
 
@@ -228,7 +228,7 @@ export async function login(token: Account['token'], redirect?: string) {
 
 	if (redirect) {
 		// 他のタブは再読み込みするだけ
-		reloadChannel.postMessage(null);
+		await reloadChannel.postMessage(null);
 		// このページはredirectで指定された先に移動
 		location.href = redirect;
 		return;
@@ -344,7 +344,7 @@ export async function openAccountMenu(opts: {
 		menuItems.push(...accountItemPromises);
 	}
 
-	popupMenu(menuItems, ev.currentTarget ?? ev.target, {
+	await popupMenu(menuItems, ev.currentTarget ?? ev.target, {
 		align: 'left',
 	});
 }

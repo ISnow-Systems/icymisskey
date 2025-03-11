@@ -106,8 +106,8 @@ export function unwindCssModuleClassName(ast: estree.Node): void {
 				if (x.elements.length !== 2) return false;
 				if (x.elements[0]?.type !== 'Literal') return false;
 				if (x.elements[0].value !== '__cssModules') return false;
-				if (x.elements[1]?.type !== 'Identifier') return false;
-				return true;
+				return x.elements[1]?.type === 'Identifier';
+
 			});
 			if (!~__cssModulesIndex) return;
 			/* This region assumeed that the entered node looks like the following code.
@@ -124,8 +124,8 @@ export function unwindCssModuleClassName(ast: estree.Node): void {
 				if (x.declarations.length !== 1) return false;
 				if (x.declarations[0].id.type !== 'Identifier') return false;
 				if (x.declarations[0].id.name !== cssModuleForestName) return false;
-				if (x.declarations[0].init?.type !== 'ObjectExpression') return false;
-				return true;
+				return x.declarations[0].init?.type === 'ObjectExpression';
+
 			}) as unknown as estree.VariableDeclaration;
 			const moduleForest = new Map((cssModuleForestNode.declarations[0].init as estree.ObjectExpression).properties.flatMap((property) => {
 				if (property.type !== 'Property') return [];
@@ -147,8 +147,8 @@ export function unwindCssModuleClassName(ast: estree.Node): void {
 				if (x.type !== 'VariableDeclaration') return false;
 				if (x.declarations.length !== 1) return false;
 				if (x.declarations[0].id.type !== 'Identifier') return false;
-				if (x.declarations[0].id.name !== ident) return false;
-				return true;
+				return x.declarations[0].id.name === ident;
+
 			}) as unknown as estree.VariableDeclaration;
 			if (sfcMain.declarations[0].init?.type !== 'CallExpression') return;
 			if (sfcMain.declarations[0].init.callee.type !== 'Identifier') return;
@@ -158,13 +158,13 @@ export function unwindCssModuleClassName(ast: estree.Node): void {
 			const setup = sfcMain.declarations[0].init.arguments[0].properties.find((x) => {
 				if (x.type !== 'Property') return false;
 				if (x.key.type !== 'Identifier') return false;
-				if (x.key.name !== 'setup') return false;
-				return true;
+				return x.key.name === 'setup';
+
 			}) as unknown as estree.Property;
 			if (setup.value.type !== 'FunctionExpression') return;
 			const render = setup.value.body.body.find((x) => {
-				if (x.type !== 'ReturnStatement') return false;
-				return true;
+				return x.type === 'ReturnStatement';
+
 			}) as unknown as estree.ReturnStatement;
 			if (render.argument?.type !== 'ArrowFunctionExpression') return;
 			if (render.argument.params.length !== 2) return;
@@ -192,8 +192,8 @@ export function unwindCssModuleClassName(ast: estree.Node): void {
 					if (x.type !== 'VariableDeclaration') return false;
 					if (x.declarations.length !== 1) return false;
 					if (x.declarations[0].id.type !== 'Identifier') return false;
-					if (x.declarations[0].id.name !== value) return false;
-					return true;
+					return x.declarations[0].id.name === value;
+
 				}) as unknown as estree.VariableDeclaration;
 				if (cssModuleTreeNode.declarations[0].init?.type !== 'ObjectExpression') return;
 				const moduleTree = new Map(cssModuleTreeNode.declarations[0].init.properties.flatMap((property) => {
@@ -207,8 +207,8 @@ export function unwindCssModuleClassName(ast: estree.Node): void {
 						if (x.type !== 'VariableDeclaration') return false;
 						if (x.declarations.length !== 1) return false;
 						if (x.declarations[0].id.type !== 'Identifier') return false;
-						if (x.declarations[0].id.name !== labelledValue) return false;
-						return true;
+						return x.declarations[0].id.name === labelledValue;
+
 					}) as unknown as estree.VariableDeclaration;
 					if (actualValue.declarations[0].init?.type !== 'Literal') return [];
 					return [[actualKey, actualValue.declarations[0].init.value as string]];

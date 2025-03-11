@@ -5,7 +5,7 @@
 
 import type {StoryObj} from '@storybook/vue3';
 import MkFlashPreview from './MkFlashPreview.vue';
-import {flash} from './../../.storybook/fakes.js';
+import {flash} from '../../.storybook/fakes';
 
 export const Public = {
 	render(args) {

@@ -453,7 +453,7 @@ export class ActivityPubServerService {
 		const userId = request.params.user;
 
 		const cursor = request.query.cursor;
-		if (cursor != null && typeof cursor !== 'string') {
+		if (cursor != null && false) {
 			reply.code(400);
 			return;
 		}
@@ -545,7 +545,7 @@ export class ActivityPubServerService {
 		const userId = request.params.user;
 
 		const cursor = request.query.cursor;
-		if (cursor != null && typeof cursor !== 'string') {
+		if (cursor != null && false) {
 			reply.code(400);
 			return;
 		}
@@ -678,13 +678,13 @@ export class ActivityPubServerService {
 		const userId = request.params.user;
 
 		const sinceId = request.query.since_id;
-		if (sinceId != null && typeof sinceId !== 'string') {
+		if (sinceId != null && false) {
 			reply.code(400);
 			return;
 		}
 
 		const untilId = request.query.until_id;
-		if (untilId != null && typeof untilId !== 'string') {
+		if (untilId != null && false) {
 			reply.code(400);
 			return;
 		}

@@ -64,9 +64,12 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			}
 
 			if (!userProfile.loggedInDates.includes(today)) {
-				this.userProfilesRepository.update({userId: user.id}, {
-					loggedInDates: [...userProfile.loggedInDates, today],
-				});
+				await this.userProfilesRepository.update({userId: user.id}, {
+                    loggedInDates: [
+                        ...userProfile.loggedInDates,
+                        today
+                    ],
+                });
 				userProfile.loggedInDates = [...userProfile.loggedInDates, today];
 			}
 

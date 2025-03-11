@@ -305,7 +305,7 @@ const infoForm = useForm({
 		repositoryUrl: state.repositoryUrl,
 		impressumUrl: state.impressumUrl,
 	});
-	fetchInstance(true);
+	await fetchInstance(true);
 });
 
 const pinnedUsersForm = useForm({
@@ -314,7 +314,7 @@ const pinnedUsersForm = useForm({
 	await os.apiWithDialog('admin/update-meta', {
 		pinnedUsers: state.pinnedUsers.split('\n'),
 	});
-	fetchInstance(true);
+	await fetchInstance(true);
 });
 
 const filesForm = useForm({
@@ -325,7 +325,7 @@ const filesForm = useForm({
 		cacheRemoteFiles: state.cacheRemoteFiles,
 		cacheRemoteSensitiveFiles: state.cacheRemoteSensitiveFiles,
 	});
-	fetchInstance(true);
+	await fetchInstance(true);
 });
 
 const serviceWorkerForm = useForm({
@@ -338,7 +338,7 @@ const serviceWorkerForm = useForm({
 		swPublicKey: state.swPublicKey,
 		swPrivateKey: state.swPrivateKey,
 	});
-	fetchInstance(true);
+	await fetchInstance(true);
 });
 
 const adForm = useForm({
@@ -347,7 +347,7 @@ const adForm = useForm({
 	await os.apiWithDialog('admin/update-meta', {
 		notesPerOneAd: state.notesPerOneAd,
 	});
-	fetchInstance(true);
+	await fetchInstance(true);
 });
 
 const urlPreviewForm = useForm({
@@ -366,7 +366,7 @@ const urlPreviewForm = useForm({
 		urlPreviewUserAgent: state.urlPreviewUserAgent,
 		urlPreviewSummaryProxyUrl: state.urlPreviewSummaryProxyUrl,
 	});
-	fetchInstance(true);
+	await fetchInstance(true);
 });
 
 const federationForm = useForm({
@@ -377,7 +377,7 @@ const federationForm = useForm({
 		federation: state.federation,
 		federationHosts: state.federationHosts.split('\n'),
 	});
-	fetchInstance(true);
+	await fetchInstance(true);
 });
 
 function chooseProxyAccount() {

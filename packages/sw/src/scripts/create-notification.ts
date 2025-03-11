@@ -41,7 +41,7 @@ export async function createNotification<K extends keyof PushNotificationDataMap
 }
 
 async function composeNotification(data: PushNotificationDataMap[keyof PushNotificationDataMap]): Promise<[string, NotificationOptions] | null> {
-	const i18n = await (swLang.i18n ?? swLang.fetchLocale());
+	const i18n = await (swLang.i18n ?? await swLang.fetchLocale());
 	switch (data.type) {
 		/*
 		case 'driveFileCreated': // TODO (Server Side)
@@ -276,7 +276,7 @@ async function composeNotification(data: PushNotificationDataMap[keyof PushNotif
 
 export async function createEmptyNotification(): Promise<void> {
 	return new Promise<void>(async res => {
-		const i18n = await (swLang.i18n ?? swLang.fetchLocale());
+		const i18n = await (swLang.i18n ?? await swLang.fetchLocale());
 
 		await globalThis.registration.showNotification(
 			(new URL(origin)).host,

@@ -109,11 +109,11 @@ async function testEmail() {
 		minLength: 1,
 	});
 	if (canceled) return;
-	os.apiWithDialog('admin/send-email', {
-		to: destination,
-		subject: 'Test email',
-		text: 'Yo',
-	});
+	await os.apiWithDialog('admin/send-email', {
+    to: destination,
+    subject: 'Test email',
+    text: 'Yo',
+  });
 }
 
 function save() {

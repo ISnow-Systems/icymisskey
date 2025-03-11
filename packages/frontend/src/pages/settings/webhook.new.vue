@@ -70,12 +70,12 @@ async function create(): Promise<void> {
 	if (event_reaction.value) events.push('reaction');
 	if (event_mention.value) events.push('mention');
 
-	os.apiWithDialog('i/webhooks/create', {
-		name: name.value,
-		url: url.value,
-		secret: secret.value,
-		on: events,
-	});
+	await os.apiWithDialog('i/webhooks/create', {
+    name: name.value,
+    url: url.value,
+    secret: secret.value,
+    on: events,
+  });
 }
 
 const headerActions = computed(() => []);

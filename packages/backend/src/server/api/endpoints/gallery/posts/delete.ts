@@ -66,12 +66,12 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			if (post.userId !== me.id) {
 				const user = await this.usersRepository.findOneByOrFail({id: post.userId});
-				this.moderationLogService.log(me, 'deleteGalleryPost', {
-					postId: post.id,
-					postUserId: post.userId,
-					postUserUsername: user.username,
-					post,
-				});
+				await this.moderationLogService.log(me, 'deleteGalleryPost', {
+                    postId: post.id,
+                    postUserId: post.userId,
+                    postUserUsername: user.username,
+                    post,
+                });
 			}
 		});
 	}

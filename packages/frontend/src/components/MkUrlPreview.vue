@@ -16,7 +16,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 				:src="transformPlayerUrl(player.url)"
 				:style="{ border: 0 }"
 				sandbox="allow-popups allow-scripts allow-storage-access-by-user-activation allow-same-origin"
-				scrolling="no"
 			></iframe>
 			<span v-else>invalid url</span>
 		</div>
@@ -34,7 +33,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 				:style="{ position: 'relative', width: '100%', height: `${tweetHeight}px`, border: 0 }"
 				allow="fullscreen;web-share"
 				sandbox="allow-popups allow-popups-to-escape-sandbox allow-scripts allow-same-origin"
-				scrolling="no"
 			></iframe>
 		</div>
 		<div :class="$style.action">

@@ -82,9 +82,9 @@ async function detachAndDeleteMedia(file: Misskey.entities.DriveFile) {
 
 	if (canceled) return;
 
-	os.apiWithDialog('drive/files/delete', {
-		fileId: file.id,
-	});
+	await os.apiWithDialog('drive/files/delete', {
+    fileId: file.id,
+  });
 }
 
 function toggleSensitive(file) {

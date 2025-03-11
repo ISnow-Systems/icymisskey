@@ -14,4 +14,4 @@ export class forwardedReport1637320813000 {
 	async down(queryRunner) {
 		await queryRunner.query(`ALTER TABLE "abuse_user_report" DROP COLUMN "forwarded"`);
 	}
-};
+}

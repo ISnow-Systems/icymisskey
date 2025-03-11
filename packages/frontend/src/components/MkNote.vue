@@ -321,7 +321,7 @@ function checkMute(noteToCheck: Misskey.entities.Note, mutedWords: Array<string 
 
 	if (checkOnly) return false;
 
-	if (inTimeline && tl_withSensitive.value === false && noteToCheck.files?.some((v) => v.isSensitive)) {
+	if (inTimeline && !tl_withSensitive.value && noteToCheck.files?.some((v) => v.isSensitive)) {
 		return 'sensitiveMute';
 	}
 
@@ -694,7 +694,7 @@ function emitUpdReaction(emoji: string, delta: number) {
 			margin-bottom: 0 !important;
 			background: var(--MI_THEME-popup);
 			border-radius: 8px;
-			box-shadow: 0px 4px 32px var(--MI_THEME-shadow);
+			box-shadow: 0 4px 32px var(--MI_THEME-shadow);
 		}
 
 		.footerButton {

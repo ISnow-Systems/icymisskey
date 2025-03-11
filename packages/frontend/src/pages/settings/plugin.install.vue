@@ -35,17 +35,17 @@ async function install() {
 
 	try {
 		await installPlugin(code.value);
-		os.success();
+		await os.success();
 
-		nextTick(() => {
-			unisonReload();
-		});
+		await nextTick(() => {
+      unisonReload();
+    });
 	} catch (err) {
-		os.alert({
-			type: 'error',
-			title: 'Install failed',
-			text: err.toString() ?? null,
-		});
+		await os.alert({
+      type: 'error',
+      title: 'Install failed',
+      text: err.toString() ?? null,
+    });
 	}
 }
 

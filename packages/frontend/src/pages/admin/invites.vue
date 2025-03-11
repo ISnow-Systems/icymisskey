@@ -98,11 +98,11 @@ async function createWithOptions() {
 	};
 
 	const tickets = await misskeyApi('admin/invite/create', options);
-	os.alert({
-		type: 'success',
-		title: i18n.ts.inviteCodeCreated,
-		text: tickets.map(x => x.code).join('\n'),
-	});
+	await os.alert({
+    type: 'success',
+    title: i18n.ts.inviteCodeCreated,
+    text: tickets.map(x => x.code).join('\n'),
+  });
 
 	tickets.forEach(ticket => pagingComponent.value?.prepend(ticket));
 }

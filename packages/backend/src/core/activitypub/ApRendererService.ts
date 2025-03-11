@@ -355,7 +355,7 @@ export class ApRendererService {
 
 		const mentions = (JSON.parse(note.mentionedRemoteUsers) as IMentionedRemoteUsers).map(x => x.uri);
 
-		let to: string[] = [];
+		let to: string[];
 		let cc: string[] = [];
 
 		if (note.visibility === 'public') {

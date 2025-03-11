@@ -31,24 +31,24 @@ async function install(code: string): Promise<void> {
 	try {
 		const theme = parseThemeCode(code);
 		await installTheme(code);
-		os.alert({
-			type: 'success',
-			text: i18n.tsx._theme.installed({name: theme.name}),
-		});
+		await os.alert({
+      type: 'success',
+      text: i18n.tsx._theme.installed({name: theme.name}),
+    });
 	} catch (err) {
 		switch (err.message.toLowerCase()) {
 			case 'this theme is already installed':
-				os.alert({
-					type: 'info',
-					text: i18n.ts._theme.alreadyInstalled,
-				});
+				await os.alert({
+          type: 'info',
+          text: i18n.ts._theme.alreadyInstalled,
+        });
 				break;
 
 			default:
-				os.alert({
-					type: 'error',
-					text: i18n.ts._theme.invalid,
-				});
+				await os.alert({
+          type: 'error',
+          text: i18n.ts._theme.invalid,
+        });
 				break;
 		}
 		console.error(err);

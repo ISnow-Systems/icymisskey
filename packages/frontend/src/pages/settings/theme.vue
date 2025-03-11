@@ -117,7 +117,6 @@ import {fetchThemes, getThemes} from '@/theme-store.js';
 import {definePageMetadata} from '@/scripts/page-metadata.js';
 import {miLocalStorage} from '@/local-storage.js';
 import {reloadAsk} from '@/scripts/reload-ask.js';
-import * as os from '@/os.js';
 
 const installedThemes = ref(getThemes());
 const builtinThemes = getBuiltinThemesRef();

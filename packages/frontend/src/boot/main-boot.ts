@@ -9,7 +9,7 @@ import {common} from './common.js';
 import * as Misskey from 'misskey-js';
 import type {Component} from 'vue';
 import {i18n} from '@/i18n.js';
-import {alert, confirm, popup, post, toast} from '@/os.js';
+import {alert, confirm, popup, post} from '@/os.js';
 import {useStream} from '@/stream.js';
 import * as sound from '@/scripts/sound.js';
 import {$i, signout, updateAccountPartial} from '@/account.js';
@@ -60,8 +60,8 @@ export async function mainBoot() {
 		return createApp(rootComponent);
 	});
 
-	reactionPicker.init();
-	emojiPicker.init();
+	await reactionPicker.init();
+	await emojiPicker.init();
 
 	if (isClientUpdated && $i) {
 		const {dispose} = popup(defineAsyncComponent(() => import('@/components/MkUpdated.vue')), {}, {
@@ -106,7 +106,7 @@ export async function mainBoot() {
 		import('@/plugin.js').then(async ({install}) => {
 			// Workaround for https://bugs.webkit.org/show_bug.cgi?id=242740
 			await new Promise(r => setTimeout(r, 0));
-			install(plugin);
+			await install(plugin);
 		});
 	}
 
@@ -168,10 +168,10 @@ export async function mainBoot() {
 		stream.on('announcementCreated', onAnnouncementCreated);
 
 		if ($i.isDeleted) {
-			alert({
-				type: 'warning',
-				text: i18n.ts.accountDeletionInProgress,
-			});
+			await alert({
+                type: 'warning',
+                text: i18n.ts.accountDeletionInProgress,
+            });
 		}
 
 		const now = new Date();
@@ -182,79 +182,79 @@ export async function mainBoot() {
 			const bm = parseInt($i.birthday.split('-')[1]);
 			const bd = parseInt($i.birthday.split('-')[2]);
 			if (m === bm && d === bd) {
-				claimAchievement('loggedInOnBirthday');
+				await claimAchievement('loggedInOnBirthday');
 			}
 		}
 
 		if (m === 1 && d === 1) {
-			claimAchievement('loggedInOnNewYearsDay');
+			await claimAchievement('loggedInOnNewYearsDay');
 		}
 
-		if ($i.loggedInDays >= 3) claimAchievement('login3');
-		if ($i.loggedInDays >= 7) claimAchievement('login7');
-		if ($i.loggedInDays >= 15) claimAchievement('login15');
-		if ($i.loggedInDays >= 30) claimAchievement('login30');
-		if ($i.loggedInDays >= 60) claimAchievement('login60');
-		if ($i.loggedInDays >= 100) claimAchievement('login100');
-		if ($i.loggedInDays >= 200) claimAchievement('login200');
-		if ($i.loggedInDays >= 300) claimAchievement('login300');
-		if ($i.loggedInDays >= 400) claimAchievement('login400');
-		if ($i.loggedInDays >= 500) claimAchievement('login500');
-		if ($i.loggedInDays >= 600) claimAchievement('login600');
-		if ($i.loggedInDays >= 700) claimAchievement('login700');
-		if ($i.loggedInDays >= 800) claimAchievement('login800');
-		if ($i.loggedInDays >= 900) claimAchievement('login900');
-		if ($i.loggedInDays >= 1000) claimAchievement('login1000');
+		if ($i.loggedInDays >= 3) await claimAchievement('login3');
+		if ($i.loggedInDays >= 7) await claimAchievement('login7');
+		if ($i.loggedInDays >= 15) await claimAchievement('login15');
+		if ($i.loggedInDays >= 30) await claimAchievement('login30');
+		if ($i.loggedInDays >= 60) await claimAchievement('login60');
+		if ($i.loggedInDays >= 100) await claimAchievement('login100');
+		if ($i.loggedInDays >= 200) await claimAchievement('login200');
+		if ($i.loggedInDays >= 300) await claimAchievement('login300');
+		if ($i.loggedInDays >= 400) await claimAchievement('login400');
+		if ($i.loggedInDays >= 500) await claimAchievement('login500');
+		if ($i.loggedInDays >= 600) await claimAchievement('login600');
+		if ($i.loggedInDays >= 700) await claimAchievement('login700');
+		if ($i.loggedInDays >= 800) await claimAchievement('login800');
+		if ($i.loggedInDays >= 900) await claimAchievement('login900');
+		if ($i.loggedInDays >= 1000) await claimAchievement('login1000');
 
-		if ($i.notesCount > 0) claimAchievement('notes1');
-		if ($i.notesCount >= 10) claimAchievement('notes10');
-		if ($i.notesCount >= 100) claimAchievement('notes100');
-		if ($i.notesCount >= 500) claimAchievement('notes500');
-		if ($i.notesCount >= 1000) claimAchievement('notes1000');
-		if ($i.notesCount >= 5000) claimAchievement('notes5000');
-		if ($i.notesCount >= 10000) claimAchievement('notes10000');
-		if ($i.notesCount >= 20000) claimAchievement('notes20000');
-		if ($i.notesCount >= 30000) claimAchievement('notes30000');
-		if ($i.notesCount >= 40000) claimAchievement('notes40000');
-		if ($i.notesCount >= 50000) claimAchievement('notes50000');
-		if ($i.notesCount >= 60000) claimAchievement('notes60000');
-		if ($i.notesCount >= 70000) claimAchievement('notes70000');
-		if ($i.notesCount >= 80000) claimAchievement('notes80000');
-		if ($i.notesCount >= 90000) claimAchievement('notes90000');
-		if ($i.notesCount >= 100000) claimAchievement('notes100000');
+		if ($i.notesCount > 0) await claimAchievement('notes1');
+		if ($i.notesCount >= 10) await claimAchievement('notes10');
+		if ($i.notesCount >= 100) await claimAchievement('notes100');
+		if ($i.notesCount >= 500) await claimAchievement('notes500');
+		if ($i.notesCount >= 1000) await claimAchievement('notes1000');
+		if ($i.notesCount >= 5000) await claimAchievement('notes5000');
+		if ($i.notesCount >= 10000) await claimAchievement('notes10000');
+		if ($i.notesCount >= 20000) await claimAchievement('notes20000');
+		if ($i.notesCount >= 30000) await claimAchievement('notes30000');
+		if ($i.notesCount >= 40000) await claimAchievement('notes40000');
+		if ($i.notesCount >= 50000) await claimAchievement('notes50000');
+		if ($i.notesCount >= 60000) await claimAchievement('notes60000');
+		if ($i.notesCount >= 70000) await claimAchievement('notes70000');
+		if ($i.notesCount >= 80000) await claimAchievement('notes80000');
+		if ($i.notesCount >= 90000) await claimAchievement('notes90000');
+		if ($i.notesCount >= 100000) await claimAchievement('notes100000');
 
-		if ($i.followersCount > 0) claimAchievement('followers1');
-		if ($i.followersCount >= 10) claimAchievement('followers10');
-		if ($i.followersCount >= 50) claimAchievement('followers50');
-		if ($i.followersCount >= 100) claimAchievement('followers100');
-		if ($i.followersCount >= 300) claimAchievement('followers300');
-		if ($i.followersCount >= 500) claimAchievement('followers500');
-		if ($i.followersCount >= 1000) claimAchievement('followers1000');
+		if ($i.followersCount > 0) await claimAchievement('followers1');
+		if ($i.followersCount >= 10) await claimAchievement('followers10');
+		if ($i.followersCount >= 50) await claimAchievement('followers50');
+		if ($i.followersCount >= 100) await claimAchievement('followers100');
+		if ($i.followersCount >= 300) await claimAchievement('followers300');
+		if ($i.followersCount >= 500) await claimAchievement('followers500');
+		if ($i.followersCount >= 1000) await claimAchievement('followers1000');
 
 		const createdAt = new Date($i.createdAt);
 		const createdAtThreeYearsLater = new Date($i.createdAt);
 		createdAtThreeYearsLater.setFullYear(createdAtThreeYearsLater.getFullYear() + 3);
 		if (now >= createdAtThreeYearsLater) {
-			claimAchievement('passedSinceAccountCreated3');
-			claimAchievement('passedSinceAccountCreated2');
-			claimAchievement('passedSinceAccountCreated1');
+			await claimAchievement('passedSinceAccountCreated3');
+			await claimAchievement('passedSinceAccountCreated2');
+			await claimAchievement('passedSinceAccountCreated1');
 		} else {
 			const createdAtTwoYearsLater = new Date($i.createdAt);
 			createdAtTwoYearsLater.setFullYear(createdAtTwoYearsLater.getFullYear() + 2);
 			if (now >= createdAtTwoYearsLater) {
-				claimAchievement('passedSinceAccountCreated2');
-				claimAchievement('passedSinceAccountCreated1');
+				await claimAchievement('passedSinceAccountCreated2');
+				await claimAchievement('passedSinceAccountCreated1');
 			} else {
 				const createdAtOneYearLater = new Date($i.createdAt);
 				createdAtOneYearLater.setFullYear(createdAtOneYearLater.getFullYear() + 1);
 				if (now >= createdAtOneYearLater) {
-					claimAchievement('passedSinceAccountCreated1');
+					await claimAchievement('passedSinceAccountCreated1');
 				}
 			}
 		}
 
 		if (claimedAchievements.length >= 30) {
-			claimAchievement('collectAchievements30');
+			await claimAchievement('collectAchievements30');
 		}
 
 		if (!claimedAchievements.includes('justPlainLucky')) {
@@ -348,7 +348,7 @@ export async function mainBoot() {
 		if ('Notification' in window) {
 			// 許可を得ていなかったらリクエスト
 			if (Notification.permission === 'default') {
-				Notification.requestPermission();
+				await Notification.requestPermission();
 			}
 		}
 
@@ -428,5 +428,5 @@ export async function mainBoot() {
 	} as const satisfies Keymap;
 	document.addEventListener('keydown', makeHotkey(keymap), {passive: false});
 
-	initializeSw();
+	await initializeSw();
 }

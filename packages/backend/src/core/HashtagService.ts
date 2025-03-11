@@ -56,7 +56,7 @@ export class HashtagService {
 		tag = normalizeForSearch(tag);
 
 		// TODO: サンプリング
-		this.updateHashtagsRanking(tag, user.id);
+		await this.updateHashtagsRanking(tag, user.id);
 
 		const index = await this.hashtagsRepository.findOneBy({name: tag});
 
@@ -116,43 +116,43 @@ export class HashtagService {
 
 			if (Object.keys(set).length > 0) {
 				q.set(set);
-				q.execute();
+				await q.execute();
 			}
 		} else {
 			if (isUserAttached) {
-				this.hashtagsRepository.insert({
-					id: this.idService.gen(),
-					name: tag,
-					mentionedUserIds: [],
-					mentionedUsersCount: 0,
-					mentionedLocalUserIds: [],
-					mentionedLocalUsersCount: 0,
-					mentionedRemoteUserIds: [],
-					mentionedRemoteUsersCount: 0,
-					attachedUserIds: [user.id],
-					attachedUsersCount: 1,
-					attachedLocalUserIds: this.userEntityService.isLocalUser(user) ? [user.id] : [],
-					attachedLocalUsersCount: this.userEntityService.isLocalUser(user) ? 1 : 0,
-					attachedRemoteUserIds: this.userEntityService.isRemoteUser(user) ? [user.id] : [],
-					attachedRemoteUsersCount: this.userEntityService.isRemoteUser(user) ? 1 : 0,
-				} as MiHashtag);
+				await this.hashtagsRepository.insert({
+                    id: this.idService.gen(),
+                    name: tag,
+                    mentionedUserIds: [],
+                    mentionedUsersCount: 0,
+                    mentionedLocalUserIds: [],
+                    mentionedLocalUsersCount: 0,
+                    mentionedRemoteUserIds: [],
+                    mentionedRemoteUsersCount: 0,
+                    attachedUserIds: [user.id],
+                    attachedUsersCount: 1,
+                    attachedLocalUserIds: this.userEntityService.isLocalUser(user) ? [user.id] : [],
+                    attachedLocalUsersCount: this.userEntityService.isLocalUser(user) ? 1 : 0,
+                    attachedRemoteUserIds: this.userEntityService.isRemoteUser(user) ? [user.id] : [],
+                    attachedRemoteUsersCount: this.userEntityService.isRemoteUser(user) ? 1 : 0,
+                } as MiHashtag);
 			} else {
-				this.hashtagsRepository.insert({
-					id: this.idService.gen(),
-					name: tag,
-					mentionedUserIds: [user.id],
-					mentionedUsersCount: 1,
-					mentionedLocalUserIds: this.userEntityService.isLocalUser(user) ? [user.id] : [],
-					mentionedLocalUsersCount: this.userEntityService.isLocalUser(user) ? 1 : 0,
-					mentionedRemoteUserIds: this.userEntityService.isRemoteUser(user) ? [user.id] : [],
-					mentionedRemoteUsersCount: this.userEntityService.isRemoteUser(user) ? 1 : 0,
-					attachedUserIds: [],
-					attachedUsersCount: 0,
-					attachedLocalUserIds: [],
-					attachedLocalUsersCount: 0,
-					attachedRemoteUserIds: [],
-					attachedRemoteUsersCount: 0,
-				} as MiHashtag);
+				await this.hashtagsRepository.insert({
+                    id: this.idService.gen(),
+                    name: tag,
+                    mentionedUserIds: [user.id],
+                    mentionedUsersCount: 1,
+                    mentionedLocalUserIds: this.userEntityService.isLocalUser(user) ? [user.id] : [],
+                    mentionedLocalUsersCount: this.userEntityService.isLocalUser(user) ? 1 : 0,
+                    mentionedRemoteUserIds: this.userEntityService.isRemoteUser(user) ? [user.id] : [],
+                    mentionedRemoteUsersCount: this.userEntityService.isRemoteUser(user) ? 1 : 0,
+                    attachedUserIds: [],
+                    attachedUsersCount: 0,
+                    attachedLocalUserIds: [],
+                    attachedLocalUsersCount: 0,
+                    attachedRemoteUserIds: [],
+                    attachedRemoteUsersCount: 0,
+                } as MiHashtag);
 			}
 		}
 	}
@@ -171,7 +171,7 @@ export class HashtagService {
 		const exist = await this.redisClient.sismember(`hashtagUsers:${hashtag}`, userId);
 		if (exist === 1) return;
 
-		this.featuredService.updateHashtagsRanking(hashtag, 1);
+		await this.featuredService.updateHashtagsRanking(hashtag, 1);
 
 		const redisPipeline = this.redisClient.pipeline();
 
@@ -190,7 +190,7 @@ export class HashtagService {
 			'NX', // "NX -- Set expiry only when the key has no expiry" = 有効期限がないときだけ設定
 		);
 
-		redisPipeline.exec();
+		await redisPipeline.exec();
 	}
 
 	@bindThis

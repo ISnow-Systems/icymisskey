@@ -34,8 +34,8 @@ const isDirect = (recipe: IRecipe): recipe is IDirectRecipe =>
 	recipe.type === 'Direct';
 
 class DeliverManager {
-	private actor: ThinUser;
-	private activity: IActivity | null;
+	private readonly actor: ThinUser;
+	private readonly activity: IActivity | null;
 	private recipes: IRecipe[] = [];
 
 	/**

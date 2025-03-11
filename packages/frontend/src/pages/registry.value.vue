@@ -87,10 +87,10 @@ async function save() {
 	try {
 		JSON5.parse(valueForEditor.value);
 	} catch (err) {
-		os.alert({
-			type: 'error',
-			text: i18n.ts.invalidValue,
-		});
+		await os.alert({
+      type: 'error',
+      text: i18n.ts.invalidValue,
+    });
 		return;
 	}
 	os.confirm({

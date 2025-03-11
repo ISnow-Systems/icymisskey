@@ -332,7 +332,7 @@ export abstract class Connection<Channel extends AnyOf<Channels> = AnyOf<Channel
 	public outCount = 0; // for debug
 	protected stream: Stream;
 
-	constructor(stream: Stream, channel: string, name?: string) {
+	protected constructor(stream: Stream, channel: string, name?: string) {
 		super();
 
 		this.send = this.send.bind(this);

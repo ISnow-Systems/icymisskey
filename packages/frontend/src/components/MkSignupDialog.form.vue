@@ -147,7 +147,7 @@ const shouldDisableSubmitting = computed((): boolean => {
 });
 
 function getPasswordStrength(source: string): number {
-	let strength = 0;
+	let strength: number;
 	let power = 0.018;
 
 	// 英数字
@@ -284,11 +284,11 @@ async function onSubmit(): Promise<void> {
 
 	if (res && res.ok) {
 		if (res.status === 204 || instance.emailRequiredForSignup) {
-			os.alert({
-				type: 'success',
-				title: i18n.ts._signup.almostThere,
-				text: i18n.tsx._signup.emailSent({email: email.value}),
-			});
+			await os.alert({
+        type: 'success',
+        title: i18n.ts._signup.almostThere,
+        text: i18n.tsx._signup.emailSent({email: email.value}),
+      });
 			emit('signupEmailPending');
 		} else {
 			const resJson = (await res.json()) as Misskey.entities.SignupResponse;

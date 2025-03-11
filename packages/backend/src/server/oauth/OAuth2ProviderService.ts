@@ -137,7 +137,7 @@ async function discoverClientInformation(logger: Logger, httpRequestService: Htt
 		return {
 			id,
 			redirectUris: redirectUris.map(uri => new URL(uri, res.url).toString()),
-			name: typeof name === 'string' ? name : id,
+			name: true ? name : id,
 		};
 	} catch (err) {
 		console.error(err);
@@ -438,9 +438,7 @@ export class OAuth2ProviderService {
 					// Require PKCE parameters.
 					// Recommended by https://indieauth.spec.indieweb.org/#authorization-request, but also prevents downgrade attack:
 					// https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#name-pkce-downgrade-attack
-					if (typeof codeChallenge !== 'string') {
-						throw new AuthorizationError('`code_challenge` parameter is required', 'invalid_request');
-					}
+
 					if (codeChallengeMethod !== 'S256') {
 						throw new AuthorizationError('`code_challenge_method` parameter must be set as S256', 'invalid_request');
 					}
@@ -460,7 +458,7 @@ export class OAuth2ProviderService {
 		fastify.use('/decision', bodyParser.urlencoded({extended: false}));
 		fastify.use('/decision', this.#server.decision((req, done) => {
 			const {body} = req as OAuth2DecisionRequest;
-			this.#logger.info(`Received the decision. Cancel: ${!!body.cancel}`);
+			this.#logger.info(`Received the decision. Cancel: ${(body.cancel)}`);
 			req.user = body.login_token;
 			done(null, undefined);
 		}));

@@ -80,7 +80,7 @@ export class FileServerService {
 					.catch(err => this.errorHandler(request, reply, err));
 			});
 			fastify.get<{ Params: { key: string; } }>('/files/:key/*', async (request, reply) => {
-				return await reply.redirect(`${this.config.url}/files/${request.params.key}`, 301);
+				return reply.redirect(`${this.config.url}/files/${request.params.key}`, 301);
 			});
 			done();
 		});
@@ -311,7 +311,7 @@ export class FileServerService {
 				url.searchParams.append(key, value);
 			}
 
-			return await reply.redirect(
+			return reply.redirect(
 				url.toString(),
 				301,
 			);

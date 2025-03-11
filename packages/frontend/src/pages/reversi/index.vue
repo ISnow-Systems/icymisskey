@@ -204,7 +204,7 @@ async function matchUser() {
 
 	matchingUser.value = user;
 
-	matchHeatbeat();
+	await matchHeatbeat();
 }
 
 function matchAny(ev: MouseEvent) {
@@ -302,11 +302,11 @@ definePageMetadata(() => ({
 }
 
 .gamePreviewActive {
-	box-shadow: inset 0 0 8px 0px var(--MI_THEME-accent);
+	box-shadow: inset 0 0 8px 0 var(--MI_THEME-accent);
 }
 
 .gamePreviewWaiting {
-	box-shadow: inset 0 0 8px 0px var(--MI_THEME-warn);
+	box-shadow: inset 0 0 8px 0 var(--MI_THEME-warn);
 }
 
 .gamePreviewPlayers {

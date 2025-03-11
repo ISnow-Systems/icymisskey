@@ -103,7 +103,7 @@ export class AbuseReportService {
 				resolvedAs: ps.resolvedAs,
 			});
 
-			this.moderationLogService
+			await this.moderationLogService
 				.log(moderator, 'resolveAbuseReport', {
 					reportId: report.id,
 					report: report,
@@ -141,7 +141,7 @@ export class AbuseReportService {
 		const contextAssignedFlag = this.apRendererService.addContext(flag);
 		this.queueService.deliver(actor, contextAssignedFlag, targetUser.inbox, false);
 
-		this.moderationLogService
+		await this.moderationLogService
 			.log(moderator, 'forwardAbuseReport', {
 				reportId: report.id,
 				report: report,
@@ -163,7 +163,7 @@ export class AbuseReportService {
 		});
 
 		if (params.moderationNote != null && report.moderationNote !== params.moderationNote) {
-			this.moderationLogService.log(moderator, 'updateAbuseReportNote', {
+			await this.moderationLogService.log(moderator, 'updateAbuseReportNote', {
 				reportId: report.id,
 				report: report,
 				before: report.moderationNote,

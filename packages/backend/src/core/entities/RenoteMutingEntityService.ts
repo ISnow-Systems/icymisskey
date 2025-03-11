@@ -8,7 +8,6 @@ import {DI} from '@/di-symbols.js';
 import type {RenoteMutingsRepository} from '@/models/_.js';
 import {awaitAll} from '@/misc/prelude/await-all.js';
 import type {Packed} from '@/misc/json-schema.js';
-import type {} from '@/models/Blocking.js';
 import type {MiUser} from '@/models/User.js';
 import type {MiRenoteMuting} from '@/models/RenoteMuting.js';
 import {bindThis} from '@/decorators.js';
@@ -39,9 +38,9 @@ export class RenoteMutingEntityService {
 			id: muting.id,
 			createdAt: this.idService.parse(muting.id).date.toISOString(),
 			muteeId: muting.muteeId,
-			mutee: hints?.packedMutee ?? this.userEntityService.pack(muting.muteeId, me, {
-				schema: 'UserDetailedNotMe',
-			}),
+			mutee: hints?.packedMutee ?? await this.userEntityService.pack(muting.muteeId, me, {
+                schema: 'UserDetailedNotMe',
+            }),
 		});
 	}
 

@@ -123,7 +123,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script lang="ts" setup>
-import {ref, computed} from 'vue';
+import {computed} from 'vue';
 import XBotProtection from './bot-protection.vue';
 import XHeader from './_header_.vue';
 import MkFolder from '@/components/MkFolder.vue';
@@ -164,7 +164,7 @@ const sensitiveMediaDetectionForm = useForm({
 		setSensitiveFlagAutomatically: state.setSensitiveFlagAutomatically,
 		enableSensitiveMediaDetectionForVideos: state.enableSensitiveMediaDetectionForVideos,
 	});
-	fetchInstance(true);
+	await fetchInstance(true);
 });
 
 const ipLoggingForm = useForm({
@@ -173,7 +173,7 @@ const ipLoggingForm = useForm({
 	await os.apiWithDialog('admin/update-meta', {
 		enableIpLogging: state.enableIpLogging,
 	});
-	fetchInstance(true);
+	await fetchInstance(true);
 });
 
 const emailValidationForm = useForm({
@@ -192,7 +192,7 @@ const emailValidationForm = useForm({
 		truemailInstance: state.truemailInstance,
 		truemailAuthKey: state.truemailAuthKey,
 	});
-	fetchInstance(true);
+	await fetchInstance(true);
 });
 
 const bannedEmailDomainsForm = useForm({
@@ -201,7 +201,7 @@ const bannedEmailDomainsForm = useForm({
 	await os.apiWithDialog('admin/update-meta', {
 		bannedEmailDomains: state.bannedEmailDomains.split('\n'),
 	});
-	fetchInstance(true);
+	await fetchInstance(true);
 });
 
 const headerActions = computed(() => []);

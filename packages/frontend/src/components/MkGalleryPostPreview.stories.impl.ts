@@ -33,9 +33,9 @@ export const Default = {
 	async play({canvasElement}) {
 		const canvas = within(canvasElement);
 		const links = canvas.getAllByRole('link');
-		expect(links).toHaveLength(2);
-		expect(links[0]).toHaveAttribute('href', `/gallery/${galleryPost().id}`);
-		expect(links[1]).toHaveAttribute('href', `/@${galleryPost().user.username}@${galleryPost().user.host}`);
+		await expect(links).toHaveLength(2);
+		await expect(links[0]).toHaveAttribute('href', `/gallery/${galleryPost().id}`);
+		await expect(links[1]).toHaveAttribute('href', `/@${galleryPost().user.username}@${galleryPost().user.host}`);
 		const images = canvas.getAllByRole<HTMLImageElement>('img');
 		await waitFor(() => expect(Promise.all(images.map((image) => image.decode()))).resolves.toBeDefined());
 	},

@@ -63,8 +63,14 @@ export class ApQuestionService {
 
 	/**
 	 * Update votes of Question
-	 * @param uri URI of AP Question object
-	 * @returns true if updated
+	 * @param actor
+	 * @param resolver
+	 * @param value
+	 * @param actor
+	 * @param resolver
+	 * @param value
+	 * @param actor
+	 * @param resolver
 	 */
 	@bindThis
 	public async updateQuestion(value: string | IObject, actor?: MiRemoteUser, resolver?: Resolver): Promise<boolean> {

@@ -60,7 +60,7 @@ export class PushNotificationService implements OnApplicationShutdown {
 		private swSubscriptionsRepository: SwSubscriptionsRepository,
 	) {
 		this.subscriptionsCache = new RedisKVCache<MiSwSubscription[]>(this.redisClient, 'userSwSubscriptions', {
-			lifetime: 1000 * 60 * 60 * 1, // 1h
+			lifetime: 1000 * 60 * 60, // 1h
 			memoryCacheLifetime: 1000 * 60 * 3, // 3m
 			fetcher: (key) => this.swSubscriptionsRepository.findBy({userId: key}),
 			toRedisConverter: (value) => JSON.stringify(value),

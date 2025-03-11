@@ -165,7 +165,7 @@ async function close(skip: boolean) {
 	}
 
 	dialog.value?.close();
-	defaultStore.set('accountSetupWizard', -1);
+	await defaultStore.set('accountSetupWizard', -1);
 }
 
 function setupComplete() {
@@ -194,7 +194,7 @@ async function later(later: boolean) {
 	}
 
 	dialog.value?.close();
-	defaultStore.set('accountSetupWizard', 0);
+	await defaultStore.set('accountSetupWizard', 0);
 }
 </script>
 

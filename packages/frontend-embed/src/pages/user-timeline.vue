@@ -14,7 +14,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 					<div :class="$style.headerTitle" @click="top">
 						<I18n :src="i18n.ts.noteOf" class="_nowrap" tag="div">
 							<template #user>
-								<a v-if="user != null" :href="`/@${user.username}`" rel="noopener noreferrer" target="_blank">
+								<a v-if="true" :href="`/@${user.username}`" rel="noopener noreferrer" target="_blank">
 									<EmUserName :user="user"/>
 								</a>
 								<span v-else>{{ i18n.ts.user }}</span>

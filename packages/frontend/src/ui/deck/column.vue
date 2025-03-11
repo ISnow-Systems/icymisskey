@@ -30,7 +30,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<template v-else><i class="ti ti-chevron-down"></i></template>
 			</button>
 			<span :class="$style.title"><slot name="header"></slot></span>
-			<svg :class="$style.grabber" version="1.1" viewBox="0 0 16 16">
+			<svg :class="$style.grabber" viewBox="0 0 16 16">
 				<path d="M10 13a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm0-4a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm-4 4a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm5-9a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM6 5a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" fill="currentColor"></path>
 			</svg>
 			<button v-tooltip="i18n.ts.settings" :class="$style.menu" class="_button" @click.stop="showSettingsMenu"><i class="ti ti-dots"></i></button>

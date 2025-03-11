@@ -43,7 +43,7 @@ export class HealthServerService {
 				this.redisForTimelines.ping(),
 				this.redisForReactions.ping(),
 				this.db.query('SELECT 1'),
-				...(this.meilisearch ? [this.meilisearch.health()] : []),
+				...(this.meilisearch ? [await this.meilisearch.health()] : []),
 			]).then(() => 200, () => 503));
 			reply.header('Cache-Control', 'no-store');
 		});

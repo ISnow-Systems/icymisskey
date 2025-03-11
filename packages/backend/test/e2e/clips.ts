@@ -297,15 +297,15 @@ describe('クリップ', () => {
 
 	test('のID指定取得は他人のPrivateなクリップは取得できない', async () => {
 		const clip = await create({isPublic: false}, {user: bob});
-		failedApiCall({
-			endpoint: 'clips/show',
-			parameters: {clipId: clip.id},
-			user: alice,
-		}, {
-			status: 400,
-			code: 'NO_SUCH_CLIP',
-			id: 'c3c5fe33-d62c-44d2-9ea5-d997703f5c20',
-		});
+		await await failedApiCall({
+            endpoint: 'clips/show',
+            parameters: {clipId: clip.id},
+            user: alice,
+        }, {
+            status: 400,
+            code: 'NO_SUCH_CLIP',
+            id: 'c3c5fe33-d62c-44d2-9ea5-d997703f5c20',
+        });
 	});
 
 	test.each([
@@ -660,25 +660,25 @@ describe('クリップ', () => {
 		];
 
 		const addNote = async (parameters: Misskey.entities.ClipsAddNoteRequest, request: Partial<ApiRequest<'clips/add-note'>> = {}): Promise<void> => {
-			return successfulApiCall({
-				endpoint: 'clips/add-note',
-				parameters,
-				user: alice,
-				...request,
-			}, {
-				status: 204,
-			}) as any as void;
+			return await await successfulApiCall({
+                endpoint: 'clips/add-note',
+                parameters,
+                user: alice,
+                ...request,
+            }, {
+                status: 204,
+            }) as any as void;
 		};
 
 		const removeNote = async (parameters: Misskey.entities.ClipsRemoveNoteRequest, request: Partial<ApiRequest<'clips/remove-note'>> = {}): Promise<void> => {
-			return successfulApiCall({
-				endpoint: 'clips/remove-note',
-				parameters,
-				user: alice,
-				...request,
-			}, {
-				status: 204,
-			}) as any as void;
+			return await await successfulApiCall({
+                endpoint: 'clips/remove-note',
+                parameters,
+                user: alice,
+                ...request,
+            }, {
+                status: 204,
+            }) as any as void;
 		};
 
 		const notes = async (parameters: Misskey.entities.ClipsNotesRequest, request: Partial<ApiRequest<'clips/notes'>> = {}): Promise<Misskey.entities.Note[]> => {

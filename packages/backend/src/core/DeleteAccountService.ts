@@ -38,11 +38,11 @@ export class DeleteAccountService {
 		if (_user.isRoot) throw new Error('cannot delete a root account');
 
 		if (moderator != null) {
-			this.moderationLogService.log(moderator, 'deleteAccount', {
-				userId: user.id,
-				userUsername: _user.username,
-				userHost: user.host,
-			});
+			await this.moderationLogService.log(moderator, 'deleteAccount', {
+                userId: user.id,
+                userUsername: _user.username,
+                userHost: user.host,
+            });
 		}
 
 		// 物理削除する前にDelete activityを送信する
@@ -70,14 +70,14 @@ export class DeleteAccountService {
 				this.queueService.deliver(user, content, inbox, true);
 			}
 
-			this.queueService.createDeleteAccountJob(user, {
-				soft: false,
-			});
+			await this.queueService.createDeleteAccountJob(user, {
+                soft: false,
+            });
 		} else {
 			// リモートユーザーの削除は、完全にDBから物理削除してしまうと再度連合してきてアカウントが復活する可能性があるため、soft指定する
-			this.queueService.createDeleteAccountJob(user, {
-				soft: true,
-			});
+			await this.queueService.createDeleteAccountJob(user, {
+                soft: true,
+            });
 		}
 
 		await this.usersRepository.update(user.id, {

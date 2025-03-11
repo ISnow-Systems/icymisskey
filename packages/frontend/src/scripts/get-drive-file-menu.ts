@@ -80,9 +80,9 @@ async function deleteFile(file: Misskey.entities.DriveFile) {
 	});
 
 	if (canceled) return;
-	misskeyApi('drive/files/delete', {
-		fileId: file.id,
-	});
+	await misskeyApi('drive/files/delete', {
+        fileId: file.id,
+    });
 }
 
 export function getDriveFileMenu(file: Misskey.entities.DriveFile, folder?: Misskey.entities.DriveFolder | null): MenuItem[] {

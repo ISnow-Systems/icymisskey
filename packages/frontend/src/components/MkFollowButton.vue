@@ -135,19 +135,19 @@ async function onClick() {
 					return;
 				}
 
-				claimAchievement('following1');
+				await claimAchievement('following1');
 
 				if ($i.followingCount >= 10) {
-					claimAchievement('following10');
+					await claimAchievement('following10');
 				}
 				if ($i.followingCount >= 50) {
-					claimAchievement('following50');
+					await claimAchievement('following50');
 				}
 				if ($i.followingCount >= 100) {
-					claimAchievement('following100');
+					await claimAchievement('following100');
 				}
 				if ($i.followingCount >= 300) {
-					claimAchievement('following300');
+					await claimAchievement('following300');
 				}
 			}
 		}

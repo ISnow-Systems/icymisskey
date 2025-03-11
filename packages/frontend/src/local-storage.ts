@@ -18,16 +18,16 @@ export type Keys =
 	'lang' |
 	'drafts' |
 	'hashtags' |
-	'wallpaper' |
-	'theme' |
+	'wallpaper'
+	|
 	'colorScheme' |
 	'useSystemFont' |
 	'fontSize' |
 	'ui' |
 	'ui_temp' |
 	'locale' |
-	'localeVersion' |
-	'theme' |
+	'localeVersion'
+	|
 	'customCss' |
 	'message_drafts' |
 	'scratchpad' |

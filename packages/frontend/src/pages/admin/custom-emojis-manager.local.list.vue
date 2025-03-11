@@ -431,7 +431,7 @@ async function onPageChanged(pageNumber: number) {
 
 	currentPage.value = pageNumber;
 	await nextTick();
-	refreshCustomEmojis();
+	await refreshCustomEmojis();
 }
 
 function onGridEvent(event: GridEvent) {
@@ -562,7 +562,7 @@ const headerActions = computed(() => [{
 			}
 
 			searchQuery.value.limit = to;
-			refreshCustomEmojis();
+			await refreshCustomEmojis();
 		}
 
 		os.popupMenu([{

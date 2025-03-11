@@ -193,8 +193,8 @@ const iAmPlayer = computed(() => {
 const myColor = computed(() => {
 	if (!iAmPlayer.value) return null;
 	if (game.value.user1Id === $i.id && game.value.black === 1) return true;
-	if (game.value.user2Id === $i.id && game.value.black === 2) return true;
-	return false;
+	return game.value.user2Id === $i.id && game.value.black === 2;
+
 });
 
 const opColor = computed(() => {
@@ -324,10 +324,10 @@ async function onStreamLog(log) {
 	if (log.id == null || !appliedOps.includes(log.id)) {
 		switch (log.operation) {
 			case 'put': {
-				sound.playUrl('/client-assets/reversi/put.mp3', {
-					volume: 1,
-					playbackRate: 1,
-				});
+				await sound.playUrl('/client-assets/reversi/put.mp3', {
+          volume: 1,
+          playbackRate: 1,
+        });
 
 				if (log.player !== engine.value.turn) { // = desyncが発生している
 					const _game = await misskeyApi('reversi/show-game', {
@@ -412,9 +412,9 @@ async function surrender() {
 	});
 	if (canceled) return;
 
-	misskeyApi('reversi/surrender', {
-		gameId: game.value.id,
-	});
+	await misskeyApi('reversi/surrender', {
+    gameId: game.value.id,
+  });
 }
 
 function autoplay() {

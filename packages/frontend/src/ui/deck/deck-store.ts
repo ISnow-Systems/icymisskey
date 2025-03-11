@@ -101,15 +101,15 @@ export const loadDeck = async () => {
 				return;
 			}
 
-			deckStore.set('columns', []);
-			deckStore.set('layout', []);
+			await deckStore.set('columns', []);
+			await deckStore.set('layout', []);
 			return;
 		}
 		throw err;
 	}
 
-	deckStore.set('columns', deck.columns);
-	deckStore.set('layout', deck.layout);
+	await deckStore.set('columns', deck.columns);
+	await deckStore.set('layout', deck.layout);
 };
 
 export async function forceSaveDeck() {

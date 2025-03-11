@@ -39,11 +39,11 @@ export async function soundSettingsButton(soundSetting: Ref<SoundStore>): Promis
 			hidden: v => v.type !== '_driveFile_',
 			validate: async (file: Misskey.entities.DriveFile) => {
 				if (!file.type.startsWith('audio')) {
-					os.alert({
-						type: 'warning',
-						title: i18n.ts._soundSettings.driveFileTypeWarn,
-						text: i18n.ts._soundSettings.driveFileTypeWarnDescription,
-					});
+					await os.alert({
+                        type: 'warning',
+                        title: i18n.ts._soundSettings.driveFileTypeWarn,
+                        text: i18n.ts._soundSettings.driveFileTypeWarnDescription,
+                    });
 					return false;
 				}
 

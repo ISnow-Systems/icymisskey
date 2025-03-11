@@ -22,7 +22,7 @@ import type {OnApplicationShutdown} from '@nestjs/common';
 
 @Injectable()
 export class ChartManagementService implements OnApplicationShutdown {
-	private charts;
+	private readonly charts;
 	private saveIntervalId: NodeJS.Timeout;
 
 	constructor(

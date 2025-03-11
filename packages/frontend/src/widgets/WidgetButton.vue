@@ -70,19 +70,19 @@ const run = async () => {
 	try {
 		ast = parser.parse(widgetProps.script);
 	} catch (err) {
-		os.alert({
-			type: 'error',
-			text: 'Syntax error :(',
-		});
+		await os.alert({
+      type: 'error',
+      text: 'Syntax error :(',
+    });
 		return;
 	}
 	try {
 		await aiscript.exec(ast);
 	} catch (err) {
-		os.alert({
-			type: 'error',
-			text: err,
-		});
+		await os.alert({
+      type: 'error',
+      text: err,
+    });
 	}
 };
 

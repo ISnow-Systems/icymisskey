@@ -167,11 +167,11 @@ async function init() {
 		}
 		//#endregion
 	} catch (err: any) {
-		os.alert({
-			type: 'error',
-			title: err.message,
-			text: err.name,
-		});
+		await await os.alert({
+      type: 'error',
+      title: err.message,
+      text: err.name,
+    });
 	}
 
 	state.value = 'writing';

@@ -146,7 +146,7 @@ export function uploadFile(
 				resolve(driveFile);
 
 				uploads.value = uploads.value.filter(x => x.id !== id);
-			}) as (ev: ProgressEvent<EventTarget>) => any;
+			}) as (ev: ProgressEvent) => any;
 
 			xhr.upload.onprogress = ev => {
 				if (ev.lengthComputable) {

@@ -195,11 +195,11 @@ export class DriveFileEntityService {
 			thumbnailUrl: this.getThumbnailUrl(file),
 			comment: file.comment,
 			folderId: file.folderId,
-			folder: opts.detail && file.folderId ? this.driveFolderEntityService.pack(file.folderId, {
-				detail: true,
-			}) : null,
+			folder: opts.detail && file.folderId ? await this.driveFolderEntityService.pack(file.folderId, {
+                detail: true,
+            }) : null,
 			userId: opts.withUser ? file.userId : null,
-			user: (opts.withUser && file.userId) ? this.userEntityService.pack(file.userId) : null,
+			user: (opts.withUser && file.userId) ? await this.userEntityService.pack(file.userId) : null,
 		});
 	}
 
@@ -233,11 +233,11 @@ export class DriveFileEntityService {
 			thumbnailUrl: this.getThumbnailUrl(file),
 			comment: file.comment,
 			folderId: file.folderId,
-			folder: opts.detail && file.folderId ? this.driveFolderEntityService.pack(file.folderId, {
-				detail: true,
-			}) : null,
+			folder: opts.detail && file.folderId ? await this.driveFolderEntityService.pack(file.folderId, {
+                detail: true,
+            }) : null,
 			userId: file.userId,
-			user: (opts.withUser && file.userId) ? hint?.packedUser ?? this.userEntityService.pack(file.userId) : null,
+			user: (opts.withUser && file.userId) ? hint?.packedUser ?? await this.userEntityService.pack(file.userId) : null,
 		});
 	}
 

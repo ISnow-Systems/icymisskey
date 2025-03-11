@@ -86,7 +86,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				userId: me.id,
 			});
 
-			this.flashsRepository.increment({id: flash.id}, 'likedCount', 1);
+			await this.flashsRepository.increment({id: flash.id}, 'likedCount', 1);
 		});
 	}
 }

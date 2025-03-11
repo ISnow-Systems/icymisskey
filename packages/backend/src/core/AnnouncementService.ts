@@ -87,7 +87,7 @@ export class AnnouncementService {
 
 			if (moderator) {
 				const user = await this.usersRepository.findOneByOrFail({id: values.userId});
-				this.moderationLogService.log(moderator, 'createUserAnnouncement', {
+				await this.moderationLogService.log(moderator, 'createUserAnnouncement', {
 					announcementId: announcement.id,
 					announcement: announcement,
 					userId: values.userId,
@@ -101,7 +101,7 @@ export class AnnouncementService {
 			});
 
 			if (moderator) {
-				this.moderationLogService.log(moderator, 'createGlobalAnnouncement', {
+				await this.moderationLogService.log(moderator, 'createGlobalAnnouncement', {
 					announcementId: announcement.id,
 					announcement: announcement,
 				});
@@ -135,7 +135,7 @@ export class AnnouncementService {
 		if (moderator) {
 			if (announcement.userId) {
 				const user = await this.usersRepository.findOneByOrFail({id: announcement.userId});
-				this.moderationLogService.log(moderator, 'updateUserAnnouncement', {
+				await this.moderationLogService.log(moderator, 'updateUserAnnouncement', {
 					announcementId: announcement.id,
 					before: announcement,
 					after: after,
@@ -144,7 +144,7 @@ export class AnnouncementService {
 					userHost: user.host,
 				});
 			} else {
-				this.moderationLogService.log(moderator, 'updateGlobalAnnouncement', {
+				await this.moderationLogService.log(moderator, 'updateGlobalAnnouncement', {
 					announcementId: announcement.id,
 					before: announcement,
 					after: after,
@@ -160,7 +160,7 @@ export class AnnouncementService {
 		if (moderator) {
 			if (announcement.userId) {
 				const user = await this.usersRepository.findOneByOrFail({id: announcement.userId});
-				this.moderationLogService.log(moderator, 'deleteUserAnnouncement', {
+				await this.moderationLogService.log(moderator, 'deleteUserAnnouncement', {
 					announcementId: announcement.id,
 					announcement: announcement,
 					userId: announcement.userId,
@@ -168,7 +168,7 @@ export class AnnouncementService {
 					userHost: user.host,
 				});
 			} else {
-				this.moderationLogService.log(moderator, 'deleteGlobalAnnouncement', {
+				await this.moderationLogService.log(moderator, 'deleteGlobalAnnouncement', {
 					announcementId: announcement.id,
 					announcement: announcement,
 				});

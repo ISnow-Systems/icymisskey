@@ -220,7 +220,7 @@ const headerActions = computed(() => {
 					return;
 				}
 				copyToClipboard(`${url}/channels/${channel.value.id}`);
-				os.success();
+				await os.success();
 			},
 		});
 
@@ -234,7 +234,7 @@ const headerActions = computed(() => {
 						return;
 					}
 
-					navigator.share({
+					await navigator.share({
 						title: channel.value.name,
 						text: channel.value.description ?? undefined,
 						url: `${url}/channels/${channel.value.id}`,

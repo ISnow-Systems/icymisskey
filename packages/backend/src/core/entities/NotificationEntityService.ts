@@ -101,9 +101,9 @@ export class NotificationEntityService implements OnModuleInit {
 		const noteIfNeed = needsNote ? (
 			hint?.packedNotes != null
 				? hint.packedNotes.get(notification.noteId)
-				: this.noteEntityService.pack(notification.noteId, {id: meId}, {
-					detail: true,
-				})
+				: await this.noteEntityService.pack(notification.noteId, {id: meId}, {
+                    detail: true,
+                })
 		) : undefined;
 		// if the note has been deleted, don't show this notification
 		if (needsNote && !noteIfNeed) return null;
@@ -112,7 +112,7 @@ export class NotificationEntityService implements OnModuleInit {
 		const userIfNeed = needsUser ? (
 			hint?.packedUsers != null
 				? hint.packedUsers.get(notification.notifierId)
-				: this.userEntityService.pack(notification.notifierId, {id: meId})
+				: await this.userEntityService.pack(notification.notifierId, {id: meId})
 		) : undefined;
 		// if the user has been deleted, don't show this notification
 		if (needsUser && !userIfNeed) return null;
@@ -274,9 +274,9 @@ export class NotificationEntityService implements OnModuleInit {
 		if (notifier == null) return false;
 		if (notifier.host && userMutedInstances.has(notifier.host)) return false;
 
-		if (notifier.isSuspended) return false;
+		return !notifier.isSuspended;
 
-		return true;
+
 	}
 
 	/**

@@ -51,7 +51,7 @@ async function ok() {
 	}
 
 	modal.value?.close();
-	misskeyApi('i/read-announcement', {announcementId: props.announcement.id});
+	await misskeyApi('i/read-announcement', {announcementId: props.announcement.id});
 	updateAccountPartial({
 		unreadAnnouncements: $i!.unreadAnnouncements.filter(a => a.id !== props.announcement.id),
 	});

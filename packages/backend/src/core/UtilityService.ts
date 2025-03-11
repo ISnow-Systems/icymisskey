@@ -150,9 +150,9 @@ export class UtilityService {
 	public isFederationAllowedHost(host: string): boolean {
 		if (this.meta.federation === 'none') return false;
 		if (this.meta.federation === 'specified' && !this.meta.federationHosts.some(x => `.${host.toLowerCase()}`.endsWith(`.${x}`))) return false;
-		if (this.isBlockedHost(this.meta.blockedHosts, host)) return false;
+		return !this.isBlockedHost(this.meta.blockedHosts, host);
 
-		return true;
+
 	}
 
 	@bindThis

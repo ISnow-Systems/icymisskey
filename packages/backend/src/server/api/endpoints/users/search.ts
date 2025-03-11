@@ -57,7 +57,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			ps.query = ps.query.trim();
 			const isUsername = ps.query.startsWith('@') && !ps.query.includes(' ') && ps.query.indexOf('@', 1) === -1;
 
-			let users: MiUser[] = [];
+			let users: MiUser[];
 
 			const nameQuery = this.usersRepository.createQueryBuilder('user')
 				.where(new Brackets(qb => {

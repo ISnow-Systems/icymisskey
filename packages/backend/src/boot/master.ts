@@ -27,21 +27,21 @@ const meta = JSON.parse(fs.readFileSync(`${_dirname}/../../../../built/meta.json
 const logger = new Logger('core', 'cyan');
 const bootLogger = logger.createSubLogger('boot', 'magenta');
 
-const themeColor = chalk.hex('#86b300');
+const themeColor = chalk.hex('#00cfff').bgHex("#000000");
+const themeBgColor = chalk.hex("#ffffff").bgHex("#003f7f")
 
 function greet() {
 	if (!envOption.quiet) {
-		//#region Misskey logo
-		const v = `v${meta.version}`;
-		console.log(themeColor('  _____ _         _           '));
-		console.log(themeColor(' |     |_|___ ___| |_ ___ _ _ '));
-		console.log(themeColor(' | | | | |_ -|_ -| \'_| -_| | |'));
-		console.log(themeColor(' |_|_|_|_|___|___|_,_|___|_  |'));
-		console.log(' ' + chalk.gray(v) + themeColor('                        |___|\n'.substring(v.length)));
+		//#region IcyMisskey logo
+		const v = `Version ${meta.version}`;
+		const logo = Buffer.from("Ky0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0rCnwgLC0tLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfAp8IHwgIHwgLC0tLS4sLS0uICwtLS4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwKfCB8ICB8fCAuLS0nIFwgICcgIC8gICAgICBGb3JrLCBEZXZlbG9wZWQgYnkgICAgICAgICAgICAgICB8CnwgfCAgfFwgYC0tLiAgXCAgICcgICAgICAgICAgICAgICBJU25vdyBTeXN0ZW1zICAgICAgICAgICAgfAp8IGAtLScgYC0tLScuLScgIC8gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwKfCAgICAgICAgICAgYC0tLScgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8CnwgICAgICwtLS4gICAsLS0uLC0tLiAgICAgICAgICAgICAgLC0tLiAgICAgICAgICAgICAgICAgICAgfAp8ICAgICB8ICAgYC4nICAgfGAtLScgLC0tLS4gICwtLS0uIHwgIHwsLS4gLC0tLS4gLC0tLiAsLS0uIHwKfCAgICAgfCAgfCcuJ3wgIHwsLS0uKCAgLi0nICggIC4tJyB8ICAgICAvfCAuLS4gOiBcICAnICAvICB8CnwgICAgIHwgIHwgICB8ICB8fCAgfC4tJyAgYCkuLScgIGApfCAgXCAgXFwgICAtLS4gIFwgICAnICAgfAp8ICAgICBgLS0nICAgYC0tJ2AtLSdgLS0tLScgYC0tLS0nIGAtLSdgLS0nYC0tLS0nLi0nICAvICAgIHwKfCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGAtLS0nICAgICB8CistLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tKw", "base64").toString();
+		console.log(themeColor(" " + logo));
+		console.log(themeColor(" IcyMisskey ") + themeBgColor(v));
+		console.log(themeColor(" Fork and Development by ISnow Systems."));
 		//#endregion
 
-		console.log(' Misskey is an open-source decentralized microblogging platform.');
-		console.log(chalk.rgb(255, 136, 0)(' If you like Misskey, please donate to support development. https://www.patreon.com/syuilo'));
+		console.log(' IcyMisskey is an open-source decentralized microblogging platform.');
+		console.log('   forked from Misskey. Original development by syuilo');
 
 		console.log('');
 		console.log(chalkTemplate`--- ${os.hostname()} {gray (PID: ${process.pid.toString()})} ---`);
@@ -71,7 +71,7 @@ export async function masterMain() {
 		process.exit(1);
 	}
 
-	bootLogger.succ('Misskey initialized');
+	bootLogger.succ('IcyMisskey initialized');
 
 	if (config.sentryForBackend) {
 		Sentry.init({

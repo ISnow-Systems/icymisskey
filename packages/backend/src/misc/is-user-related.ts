@@ -16,9 +16,7 @@ export function isUserRelated(note: any, userIds: Set<string>, ignoreAuthor = fa
 		return true;
 	}
 
-	if (note.renote != null && note.renote.userId !== note.userId && userIds.has(note.renote.userId)) {
-		return true;
-	}
+	return note.renote != null && note.renote.userId !== note.userId && userIds.has(note.renote.userId);
 
-	return false;
+
 }

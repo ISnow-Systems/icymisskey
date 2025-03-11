@@ -99,9 +99,9 @@ export default abstract class Channel {
 		if (isUserRelated(note, this.userIdsWhoBlockingMe)) return true;
 
 		// 流れてきたNoteがリノートをミュートしてるユーザが行ったもの
-		if (isRenotePacked(note) && !isQuotePacked(note) && this.userIdsWhoMeMutingRenotes.has(note.user.id)) return true;
+		return isRenotePacked(note) && !isQuotePacked(note) && this.userIdsWhoMeMutingRenotes.has(note.user.id);
 
-		return false;
+
 	}
 }
 

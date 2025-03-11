@@ -124,7 +124,7 @@ export async function loadAudio(url: string, options?: { useCache?: boolean; }) 
 
 /**
  * 既定のスプライトを再生する
- * @param type スプライトの種類を指定
+ * @param operationType
  */
 export function playMisskeySfx(operationType: OperationType) {
 	const sound = defaultStore.state[`sound_${operationType}`];

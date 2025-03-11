@@ -118,31 +118,35 @@ function addUser() {
 }
 
 async function removeUser(item, ev) {
-	os.popupMenu([{
-		text: i18n.ts.remove,
-		icon: 'ti ti-x',
-		danger: true,
-		action: async () => {
-			if (!list.value) return;
-			misskeyApi('users/lists/pull', {
-				listId: list.value.id,
-				userId: item.userId,
-			}).then(() => {
-				paginationEl.value?.removeItem(item.id);
-			});
-		},
-	}], ev.currentTarget ?? ev.target);
+	await os.popupMenu([
+    {
+      text: i18n.ts.remove,
+      icon: 'ti ti-x',
+      danger: true,
+      action: async () => {
+        if (!list.value) return;
+        misskeyApi('users/lists/pull', {
+          listId: list.value.id,
+          userId: item.userId,
+        }).then(() => {
+          paginationEl.value?.removeItem(item.id);
+        });
+      },
+    }
+  ], ev.currentTarget ?? ev.target);
 }
 
 async function showMembershipMenu(item, ev) {
 	const withRepliesRef = ref(item.withReplies);
 
-	os.popupMenu([{
-		type: 'switch',
-		text: i18n.ts.showRepliesToOthersInTimeline,
-		icon: 'ti ti-messages',
-		ref: withRepliesRef,
-	}], ev.currentTarget ?? ev.target);
+	await os.popupMenu([
+    {
+      type: 'switch',
+      text: i18n.ts.showRepliesToOthersInTimeline,
+      icon: 'ti ti-messages',
+      ref: withRepliesRef,
+    }
+  ], ev.currentTarget ?? ev.target);
 
 	watch(withRepliesRef, withReplies => {
 		misskeyApi('users/lists/update-membership', {

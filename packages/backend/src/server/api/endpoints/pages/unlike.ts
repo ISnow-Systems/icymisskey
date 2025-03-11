@@ -67,7 +67,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			// Delete like
 			await this.pageLikesRepository.delete(exist.id);
 
-			this.pagesRepository.decrement({id: page.id}, 'likedCount', 1);
+			await this.pagesRepository.decrement({id: page.id}, 'likedCount', 1);
 		});
 	}
 }

@@ -69,11 +69,11 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			const updatedAd = await this.adsRepository.findOneByOrFail({id: ad.id});
 
-			this.moderationLogService.log(me, 'updateAd', {
-				adId: ad.id,
-				before: ad,
-				after: updatedAd,
-			});
+			await this.moderationLogService.log(me, 'updateAd', {
+                adId: ad.id,
+                before: ad,
+                after: updatedAd,
+            });
 		});
 	}
 }

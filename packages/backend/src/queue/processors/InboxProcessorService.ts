@@ -193,8 +193,8 @@ export class InboxProcessorService implements OnApplicationShutdown {
 			throw new Bull.UnrecoverableError('skip: activity id is not a string');
 		}
 
-		this.apRequestChart.inbox();
-		this.federationChart.inbox(authUser.user.host);
+		await this.apRequestChart.inbox();
+		await this.federationChart.inbox(authUser.user.host);
 
 		// Update instance stats
 		process.nextTick(async () => {
@@ -210,10 +210,10 @@ export class InboxProcessorService implements OnApplicationShutdown {
 			});
 
 			if (this.meta.enableChartsForFederatedInstances) {
-				this.instanceChart.requestReceived(i.host);
+				await this.instanceChart.requestReceived(i.host);
 			}
 
-			this.fetchInstanceMetadataService.fetchInstanceMetadata(i);
+			await this.fetchInstanceMetadataService.fetchInstanceMetadata(i);
 		});
 
 		// アクティビティを処理

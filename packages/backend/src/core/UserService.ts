@@ -38,19 +38,19 @@ export class UserService {
 				});
 			const wokeUp = result.isHibernated;
 			if (wokeUp) {
-				this.usersRepository.update(user.id, {
-					isHibernated: false,
-				});
-				this.followingsRepository.update({
-					followerId: user.id,
-				}, {
-					isFollowerHibernated: false,
-				});
+				await this.usersRepository.update(user.id, {
+                    isHibernated: false,
+                });
+				await this.followingsRepository.update({
+                    followerId: user.id,
+                }, {
+                    isFollowerHibernated: false,
+                });
 			}
 		} else {
-			this.usersRepository.update(user.id, {
-				lastActiveDate: new Date(),
-			});
+			await this.usersRepository.update(user.id, {
+                lastActiveDate: new Date(),
+            });
 		}
 	}
 

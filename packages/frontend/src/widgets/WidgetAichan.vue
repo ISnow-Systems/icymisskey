@@ -14,6 +14,7 @@ import {onMounted, onUnmounted, shallowRef} from 'vue';
 import {useWidgetPropsManager} from './widget.js';
 import type {WidgetComponentProps, WidgetComponentEmits, WidgetComponentExpose} from './widget.js';
 import type {GetFormResultType} from '@/scripts/form.js';
+import MkContainer from "@/components/MkContainer.vue";
 
 const name = 'ai';
 

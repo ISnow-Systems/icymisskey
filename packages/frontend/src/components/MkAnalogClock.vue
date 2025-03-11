@@ -49,10 +49,10 @@ SPDX-License-Identifier: AGPL-3.0-only
 			:stroke="sHandColor"
 			:stroke-width="thickness / 2"
 			:style="`transform: rotateZ(${sAngle}rad)`"
-			:x1="5 - (0 * (sHandLengthRatio * handsTailLength))"
-			:x2="5 + (0 * ((sHandLengthRatio * 5) - handsPadding))"
-			:y1="5 + (1 * (sHandLengthRatio * handsTailLength))"
-			:y2="5 - (1 * ((sHandLengthRatio * 5) - handsPadding))"
+			:x1="5 - (0)"
+			:x2="5 + (0)"
+			:y1="5 + ((sHandLengthRatio * handsTailLength))"
+			:y2="5 - (((sHandLengthRatio * 5) - handsPadding))"
 			stroke-linecap="round"
 		/>
 

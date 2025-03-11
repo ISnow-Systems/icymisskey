@@ -75,7 +75,7 @@ async function create() {
 	});
 	if (canceled) return;
 
-	os.apiWithDialog('clips/create', result);
+	await os.apiWithDialog('clips/create', result);
 
 	clipsCache.delete();
 

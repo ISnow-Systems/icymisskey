@@ -93,14 +93,11 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script lang="ts" setup>
-import {provide, ref, watch} from 'vue';
+import {ref, watch} from 'vue';
 import * as Misskey from 'misskey-js';
 import MkButton from '@/components/MkButton.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import MkKeyValue from '@/components/MkKeyValue.vue';
 import * as os from '@/os.js';
 import {i18n} from '@/i18n.js';
-import {dateString} from '@/filters/date.js';
 import MkFolder from '@/components/MkFolder.vue';
 import RouterView from '@/components/global/RouterView.vue';
 import {useRouterFactory} from '@/router/supplier';

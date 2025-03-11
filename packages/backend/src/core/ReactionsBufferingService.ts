@@ -154,13 +154,13 @@ export class ReactionsBufferingService implements OnApplicationShutdown {
 					`jsonb_set("reactions", '{${reaction}}', (COALESCE("reactions"->>'${reaction}', '0')::int + ${count})::text::jsonb)`)
 				.join(' || ');
 
-			this.notesRepository.createQueryBuilder().update()
-				.set({
-					reactions: () => sql,
-					reactionAndUserPairCache: buffered.pairs.map(x => x.join('/')),
-				})
-				.where('id = :id', {id: noteId})
-				.execute();
+			await this.notesRepository.createQueryBuilder().update()
+                .set({
+                    reactions: () => sql,
+                    reactionAndUserPairCache: buffered.pairs.map(x => x.join('/')),
+                })
+                .where('id = :id', {id: noteId})
+                .execute();
 		}
 	}
 
@@ -197,7 +197,7 @@ export class ReactionsBufferingService implements OnApplicationShutdown {
 				case 'metaUpdated': {
 					// リアクションバッファリングが有効→無効になったら即bake
 					if (body.before != null && body.before.enableReactionsBuffering && !body.after.enableReactionsBuffering) {
-						this.bake();
+						await this.bake();
 					}
 					break;
 				}

@@ -96,11 +96,11 @@ export class ChannelFollowingService implements OnModuleInit {
 			const {type, body} = obj.message as GlobalEvents['internal']['payload'];
 			switch (type) {
 				case 'followChannel': {
-					this.userFollowingChannelsCache.refresh(body.userId);
+					await this.userFollowingChannelsCache.refresh(body.userId);
 					break;
 				}
 				case 'unfollowChannel': {
-					this.userFollowingChannelsCache.delete(body.userId);
+					await this.userFollowingChannelsCache.delete(body.userId);
 					break;
 				}
 			}

@@ -72,8 +72,8 @@ export class UserBlockingService implements OnModuleInit {
 
 		await this.blockingsRepository.insert(blocking);
 
-		this.cacheService.userBlockingCache.refresh(blocker.id);
-		this.cacheService.userBlockedCache.refresh(blockee.id);
+		await this.cacheService.userBlockingCache.refresh(blocker.id);
+		await this.cacheService.userBlockedCache.refresh(blockee.id);
 
 		this.globalEventService.publishInternalEvent('blockingCreated', {
 			blockerId: blocker.id,
@@ -105,8 +105,8 @@ export class UserBlockingService implements OnModuleInit {
 
 		await this.blockingsRepository.delete(blocking.id);
 
-		this.cacheService.userBlockingCache.refresh(blocker.id);
-		this.cacheService.userBlockedCache.refresh(blockee.id);
+		await this.cacheService.userBlockingCache.refresh(blocker.id);
+		await this.cacheService.userBlockedCache.refresh(blockee.id);
 
 		this.globalEventService.publishInternalEvent('blockingDeleted', {
 			blockerId: blocker.id,
@@ -152,7 +152,7 @@ export class UserBlockingService implements OnModuleInit {
 				schema: 'UserDetailedNotMe',
 			}).then(async packed => {
 				this.globalEventService.publishMainStream(follower.id, 'unfollow', packed);
-				this.webhookService.enqueueUserWebhook(follower.id, 'unfollow', {user: packed});
+				await this.webhookService.enqueueUserWebhook(follower.id, 'unfollow', {user: packed});
 			});
 		}
 

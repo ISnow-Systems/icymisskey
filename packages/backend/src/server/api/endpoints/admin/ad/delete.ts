@@ -48,10 +48,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			await this.adsRepository.delete(ad.id);
 
-			this.moderationLogService.log(me, 'deleteAd', {
-				adId: ad.id,
-				ad: ad,
-			});
+			await this.moderationLogService.log(me, 'deleteAd', {
+                adId: ad.id,
+                ad: ad,
+            });
 		});
 	}
 }

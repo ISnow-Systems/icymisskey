@@ -71,7 +71,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 					break;
 			}
 
-			this.moderationLogService.log(me, 'promoteQueue');
+			await this.moderationLogService.log(me, 'promoteQueue');
 		});
 	}
 }

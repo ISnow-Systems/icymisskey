@@ -38,10 +38,7 @@ export class UrlPreviewService {
 		reply: FastifyReply,
 	): Promise<object | undefined> {
 		const url = request.query.url;
-		if (typeof url !== 'string') {
-			reply.code(400);
-			return;
-		}
+
 
 		const lang = request.query.lang;
 		if (Array.isArray(lang)) {

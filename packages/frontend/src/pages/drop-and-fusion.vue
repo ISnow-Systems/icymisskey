@@ -86,7 +86,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script lang="ts" setup>
-import {computed, ref, watch} from 'vue';
+import {ref, watch} from 'vue';
 import XGame from './drop-and-fusion.game.vue';
 import {definePageMetadata} from '@/scripts/page-metadata.js';
 import MkButton from '@/components/MkButton.vue';

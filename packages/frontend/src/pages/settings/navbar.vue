@@ -46,7 +46,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script lang="ts" setup>
-import {computed, defineAsyncComponent, ref, watch} from 'vue';
+import {computed, defineAsyncComponent, ref} from 'vue';
 import MkRadios from '@/components/MkRadios.vue';
 import MkButton from '@/components/MkButton.vue';
 import FormSlot from '@/components/form/slot.vue';
@@ -89,7 +89,7 @@ function removeItem(index: number) {
 }
 
 async function save() {
-	defaultStore.set('menu', items.value.map(x => x.type));
+	await defaultStore.set('menu', items.value.map(x => x.type));
 	await reloadAsk({reason: i18n.ts.reloadToApplySetting, unison: true});
 }
 

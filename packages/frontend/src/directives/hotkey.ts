@@ -8,7 +8,7 @@ import {makeHotkey} from '@/scripts/hotkey.js';
 
 export default {
 	mounted(el, binding) {
-		el._hotkey_global = binding.modifiers.global === true;
+		el._hotkey_global = binding.modifiers.global;
 
 		el._keyHandler = makeHotkey(binding.value);
 

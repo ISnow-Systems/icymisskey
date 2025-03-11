@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import {h, provide} from 'vue';
+import {h} from 'vue';
 import type {VNode, SetupContext} from 'vue';
 import * as mfm from 'mfm-js';
 import * as Misskey from 'misskey-js';

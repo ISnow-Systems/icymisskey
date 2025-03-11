@@ -268,7 +268,7 @@ async function tryLogin(req: Partial<Misskey.entities.SigninFlowRequest>): Promi
 				password.value = '';
 			}
 			passwordPageEl.value?.resetCaptcha();
-			nextTick(() => {
+			await nextTick(() => {
 				waiting.value = false;
 			});
 		}

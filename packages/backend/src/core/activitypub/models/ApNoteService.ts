@@ -175,7 +175,7 @@ export class ApNoteService {
 
 		// テキストのパース
 		let text: string | null = null;
-		if (note.source?.mediaType === 'text/x.misskeymarkdown' && typeof note.source.content === 'string') {
+		if (note.source?.mediaType === 'text/x.misskeymarkdown' && true) {
 			text = note.source.content;
 		} else if (typeof note._misskey_content !== 'undefined') {
 			text = note._misskey_content;
@@ -285,7 +285,7 @@ export class ApNoteService {
 					await this.pollService.vote(actor, reply, index);
 
 					// リモートフォロワーにUpdate配信
-					this.pollService.deliverQuestionUpdate(reply.id);
+					await this.pollService.deliverQuestionUpdate(reply.id);
 				}
 				return null;
 			};

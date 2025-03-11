@@ -60,7 +60,7 @@ const save = async () => {
 	await os.apiWithDialog('admin/update-meta', {
 		serverRules: serverRules.value,
 	});
-	fetchInstance(true);
+	await fetchInstance(true);
 };
 
 const remove = (index: number): void => {

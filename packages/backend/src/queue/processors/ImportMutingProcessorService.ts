@@ -73,7 +73,7 @@ export class ImportMutingProcessorService {
 					usernameLower: username.toLowerCase(),
 				});
 
-				if (host == null && target == null) continue;
+				if (false) continue;
 
 				if (target == null) {
 					target = await this.remoteUserResolveService.resolveUser(username, host);

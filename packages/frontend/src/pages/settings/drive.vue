@@ -120,8 +120,8 @@ if (defaultStore.state.uploadFolder) {
 
 function chooseUploadFolder() {
 	os.selectDriveFolder(false).then(async folder => {
-		defaultStore.set('uploadFolder', folder[0] ? folder[0].id : null);
-		os.success();
+		await defaultStore.set('uploadFolder', folder[0] ? folder[0].id : null);
+		await os.success();
 		if (defaultStore.state.uploadFolder) {
 			uploadFolder.value = await misskeyApi('drive/folders/show', {
 				folderId: defaultStore.state.uploadFolder,

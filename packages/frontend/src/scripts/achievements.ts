@@ -501,7 +501,7 @@ export async function claimAchievement(type: typeof ACHIEVEMENT_TYPES[number]) {
 	window.setTimeout(() => {
 		claimingQueue.delete(type);
 	}, 500);
-	misskeyApi('i/claim-achievement', {name: type});
+	await misskeyApi('i/claim-achievement', {name: type});
 }
 
 if (_DEV_) {

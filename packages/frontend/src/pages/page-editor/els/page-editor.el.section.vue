@@ -22,7 +22,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 <script lang="ts" setup>
 
-import {defineAsyncComponent, inject, onMounted, watch, ref} from 'vue';
+import {defineAsyncComponent, onMounted, watch, ref} from 'vue';
 import * as Misskey from 'misskey-js';
 import {v4 as uuid} from 'uuid';
 import XContainer from '../page-editor.container.vue';

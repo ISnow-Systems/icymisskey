@@ -152,7 +152,7 @@ async function updateRepliesAll(withReplies: boolean) {
 	});
 	if (canceled) return;
 
-	misskeyApi('following/update-all', {withReplies});
+	await misskeyApi('following/update-all', {withReplies});
 }
 
 const headerActions = computed(() => []);

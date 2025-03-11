@@ -236,7 +236,7 @@ export class FileInfoService {
 	public async checkSvg(path: string): Promise<boolean> {
 		try {
 			const size = await this.getFileSize(path);
-			if (size > 1 * 1024 * 1024) return false;
+			if (size > 1024 * 1024) return false;
 			const buffer = await fs.promises.readFile(path);
 			return isSvg(buffer.toString());
 		} catch {
@@ -339,7 +339,7 @@ export class FileInfoService {
 							results.push(judgePrediction(result));
 						}
 					} finally {
-						fs.promises.unlink(path);
+						await fs.promises.unlink(path);
 					}
 				}
 				sensitive = results.filter(x => x[0]).length >= Math.ceil(results.length * sensitiveThreshold);

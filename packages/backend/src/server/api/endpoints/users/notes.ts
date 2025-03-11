@@ -133,9 +133,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				noteFilter: note => {
 					if (note.channel?.isSensitive && !isSelf) return false;
 					if (note.visibility === 'specified' && (!me || (me.id !== note.userId && !note.visibleUserIds.some(v => v === me.id)))) return false;
-					if (note.visibility === 'followers' && !isFollowing && !isSelf) return false;
+					return !(note.visibility === 'followers' && !isFollowing && !isSelf);
 
-					return true;
+
 				},
 				dbFallback: async (untilId, sinceId, limit) => await this.getFromDb({
 					untilId,
@@ -191,7 +191,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			query.andWhere('note.fileIds != \'{}\'');
 		}
 
-		if (ps.withRenotes === false) {
+		if (!ps.withRenotes) {
 			query.andWhere(new Brackets(qb => {
 				qb.orWhere('note.userId != :userId', {userId: ps.userId});
 				qb.orWhere('note.renoteId IS NULL');

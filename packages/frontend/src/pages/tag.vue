@@ -46,11 +46,11 @@ const pagination = {
 const notes = ref<InstanceType<typeof MkNotes>>();
 
 async function post() {
-	defaultStore.set('postFormHashtags', props.tag);
-	defaultStore.set('postFormWithHashtags', true);
+	await defaultStore.set('postFormHashtags', props.tag);
+	await defaultStore.set('postFormWithHashtags', true);
 	await os.post();
-	defaultStore.set('postFormHashtags', '');
-	defaultStore.set('postFormWithHashtags', false);
+	await defaultStore.set('postFormHashtags', '');
+	await defaultStore.set('postFormWithHashtags', false);
 	notes.value?.pagingComponent?.reload();
 }
 

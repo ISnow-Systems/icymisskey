@@ -329,7 +329,7 @@ onMounted(() => {
 	}, {immediate: true});
 
 	watch([showing, () => props.manualShowing], ([showing, manualShowing]) => {
-		if (manualShowing === true || (manualShowing == null && showing === true)) {
+		if (manualShowing || (manualShowing == null && showing === true)) {
 			if (modalRootEl.value != null) {
 				const {release} = focusTrap(modalRootEl.value, props.hasInteractionWithOtherFocusTrappedEls);
 

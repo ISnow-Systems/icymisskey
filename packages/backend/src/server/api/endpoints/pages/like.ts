@@ -86,7 +86,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				userId: me.id,
 			});
 
-			this.pagesRepository.increment({id: page.id}, 'likedCount', 1);
+			await this.pagesRepository.increment({id: page.id}, 'likedCount', 1);
 		});
 	}
 }

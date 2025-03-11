@@ -190,7 +190,7 @@ const fttForm = useForm({
 		perUserHomeTimelineCacheMax: state.perUserHomeTimelineCacheMax,
 		perUserListTimelineCacheMax: state.perUserListTimelineCacheMax,
 	});
-	fetchInstance(true);
+	await fetchInstance(true);
 });
 
 const rbtForm = useForm({
@@ -199,7 +199,7 @@ const rbtForm = useForm({
 	await os.apiWithDialog('admin/update-meta', {
 		enableReactionsBuffering: state.enableReactionsBuffering,
 	});
-	fetchInstance(true);
+	await fetchInstance(true);
 });
 
 const headerActions = computed(() => []);

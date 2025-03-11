@@ -137,7 +137,7 @@ async function save() {
 	const i = defaultStore.state.statusbars.findIndex(x => x.id === props._id);
 	const statusbars = deepClone(defaultStore.state.statusbars);
 	statusbars[i] = deepClone(statusbar);
-	defaultStore.set('statusbars', statusbars);
+	await defaultStore.set('statusbars', statusbars);
 }
 
 function del() {

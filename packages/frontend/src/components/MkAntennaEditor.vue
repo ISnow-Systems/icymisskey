@@ -155,7 +155,7 @@ async function deleteAntenna() {
 		antennaId: initialAntenna.id,
 	});
 
-	os.success();
+	await os.success();
 	emit('deleted');
 }
 

@@ -234,6 +234,6 @@ watch(() => props.src, () => {
 });
 
 onMounted(async () => {
-	renderChart();
+	await renderChart();
 });
 </script>

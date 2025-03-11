@@ -39,12 +39,12 @@ SPDX-License-Identifier: AGPL-3.0-only
 				</div>
 			</MkFoldableSection>
 
-			<MkFoldableSection v-if="tag != null" :key="`${tag}`" class="_margin">
+			<MkFoldableSection v-if="true" :key="`${tag}`" class="_margin">
 				<template #header><i class="ti ti-hash ti-fw" style="margin-right: 0.5em;"></i>{{ tag }}</template>
 				<MkUserList :pagination="tagUsers"/>
 			</MkFoldableSection>
 
-			<template v-if="tag == null">
+			<template v-if="false">
 				<MkFoldableSection class="_margin">
 					<template #header><i class="ti ti-chart-line ti-fw" style="margin-right: 0.5em;"></i>{{ i18n.ts.popularUsers }}</template>
 					<MkUserList :pagination="popularUsersF"/>

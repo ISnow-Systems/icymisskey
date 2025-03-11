@@ -143,7 +143,7 @@ export class UserFollowingService implements OnModuleInit {
 			// すでにフォロー関係が存在している場合
 			if (this.userEntityService.isRemoteUser(follower) && this.userEntityService.isLocalUser(followee)) {
 				// リモート → ローカル: acceptを送り返しておしまい
-				this.deliverAccept(follower, followee, requestId);
+				await this.deliverAccept(follower, followee, requestId);
 				return;
 			}
 			if (this.userEntityService.isLocalUser(follower)) {
@@ -212,7 +212,7 @@ export class UserFollowingService implements OnModuleInit {
 		await this.insertFollowingDoc(followee, follower, silent, withReplies);
 
 		if (this.userEntityService.isRemoteUser(follower) && this.userEntityService.isLocalUser(followee)) {
-			this.deliverAccept(follower, followee, requestId);
+			await this.deliverAccept(follower, followee, requestId);
 		}
 	}
 
@@ -244,9 +244,9 @@ export class UserFollowingService implements OnModuleInit {
 
 		await this.followingsRepository.delete(following.id);
 
-		this.cacheService.userFollowingsCache.refresh(follower.id);
+		await this.cacheService.userFollowingsCache.refresh(follower.id);
 
-		this.decrementFollowing(following.follower, following.followee);
+		await this.decrementFollowing(following.follower, following.followee);
 
 		if (!silent && this.userEntityService.isLocalUser(follower)) {
 			// Publish unfollow event
@@ -254,7 +254,7 @@ export class UserFollowingService implements OnModuleInit {
 				schema: 'UserDetailedNotMe',
 			}).then(async packed => {
 				this.globalEventService.publishMainStream(follower.id, 'unfollow', packed);
-				this.webhookService.enqueueUserWebhook(follower.id, 'unfollow', {user: packed});
+				await this.webhookService.enqueueUserWebhook(follower.id, 'unfollow', {user: packed});
 			});
 		}
 
@@ -389,7 +389,7 @@ export class UserFollowingService implements OnModuleInit {
 		await this.insertFollowingDoc(followee, follower, false, request.withReplies);
 
 		if (this.userEntityService.isRemoteUser(follower) && this.userEntityService.isLocalUser(followee)) {
-			this.deliverAccept(follower, followee as MiPartialLocalUser, request.requestId ?? undefined);
+			await this.deliverAccept(follower, followee as MiPartialLocalUser, request.requestId ?? undefined);
 		}
 
 		this.userEntityService.pack(followee.id, followee, {
@@ -409,7 +409,7 @@ export class UserFollowingService implements OnModuleInit {
 
 		for (const request of requests) {
 			const follower = await this.usersRepository.findOneByOrFail({id: request.followerId});
-			this.acceptFollowRequest(user, follower);
+			await this.acceptFollowRequest(user, follower);
 		}
 	}
 
@@ -419,13 +419,13 @@ export class UserFollowingService implements OnModuleInit {
 	@bindThis
 	public async rejectFollowRequest(user: Local, follower: Both): Promise<void> {
 		if (this.userEntityService.isRemoteUser(follower)) {
-			this.deliverReject(user, follower);
+			await this.deliverReject(user, follower);
 		}
 
 		await this.removeFollowRequest(user, follower);
 
 		if (this.userEntityService.isLocalUser(follower)) {
-			this.publishUnfollow(user, follower);
+			await this.publishUnfollow(user, follower);
 		}
 	}
 
@@ -435,13 +435,13 @@ export class UserFollowingService implements OnModuleInit {
 	@bindThis
 	public async rejectFollow(user: Local, follower: Both): Promise<void> {
 		if (this.userEntityService.isRemoteUser(follower)) {
-			this.deliverReject(user, follower);
+			await this.deliverReject(user, follower);
 		}
 
 		await this.removeFollow(user, follower);
 
 		if (this.userEntityService.isLocalUser(follower)) {
-			this.publishUnfollow(user, follower);
+			await this.publishUnfollow(user, follower);
 		}
 	}
 
@@ -452,7 +452,7 @@ export class UserFollowingService implements OnModuleInit {
 	public async remoteReject(actor: Remote, follower: Local): Promise<void> {
 		await this.removeFollowRequest(actor, follower);
 		await this.removeFollow(actor, follower);
-		this.publishUnfollow(actor, follower);
+		await this.publishUnfollow(actor, follower);
 	}
 
 	@bindThis
@@ -500,7 +500,7 @@ export class UserFollowingService implements OnModuleInit {
 			}
 		});
 
-		this.cacheService.userFollowingsCache.refresh(follower.id);
+		await this.cacheService.userFollowingsCache.refresh(follower.id);
 
 		const requestExist = await this.followRequestsRepository.exists({
 			where: {
@@ -547,23 +547,23 @@ export class UserFollowingService implements OnModuleInit {
 			if (this.meta.enableStatsForFederatedInstances) {
 				if (this.userEntityService.isRemoteUser(follower) && this.userEntityService.isLocalUser(followee)) {
 					this.federatedInstanceService.fetchOrRegister(follower.host).then(async i => {
-						this.instancesRepository.increment({id: i.id}, 'followingCount', 1);
+						await this.instancesRepository.increment({id: i.id}, 'followingCount', 1);
 						if (this.meta.enableChartsForFederatedInstances) {
-							this.instanceChart.updateFollowing(i.host, true);
+							await this.instanceChart.updateFollowing(i.host, true);
 						}
 					});
 				} else if (this.userEntityService.isLocalUser(follower) && this.userEntityService.isRemoteUser(followee)) {
 					this.federatedInstanceService.fetchOrRegister(followee.host).then(async i => {
-						this.instancesRepository.increment({id: i.id}, 'followersCount', 1);
+						await this.instancesRepository.increment({id: i.id}, 'followersCount', 1);
 						if (this.meta.enableChartsForFederatedInstances) {
-							this.instanceChart.updateFollowers(i.host, true);
+							await this.instanceChart.updateFollowers(i.host, true);
 						}
 					});
 				}
 			}
 			//#endregion
 
-			this.perUserFollowingChart.update(follower, followee, true);
+			await this.perUserFollowingChart.update(follower, followee, true);
 		}
 
 		if (this.userEntityService.isLocalUser(follower) && !silent) {
@@ -572,7 +572,7 @@ export class UserFollowingService implements OnModuleInit {
 				schema: 'UserDetailedNotMe',
 			}).then(async packed => {
 				this.globalEventService.publishMainStream(follower.id, 'follow', packed);
-				this.webhookService.enqueueUserWebhook(follower.id, 'follow', {user: packed});
+				await this.webhookService.enqueueUserWebhook(follower.id, 'follow', {user: packed});
 			});
 		}
 
@@ -580,7 +580,7 @@ export class UserFollowingService implements OnModuleInit {
 		if (this.userEntityService.isLocalUser(followee)) {
 			this.userEntityService.pack(follower.id, followee).then(async packed => {
 				this.globalEventService.publishMainStream(followee.id, 'followed', packed);
-				this.webhookService.enqueueUserWebhook(followee.id, 'followed', {user: packed});
+				await this.webhookService.enqueueUserWebhook(followee.id, 'followed', {user: packed});
 			});
 
 			// 通知を作成
@@ -608,23 +608,23 @@ export class UserFollowingService implements OnModuleInit {
 			if (this.meta.enableStatsForFederatedInstances) {
 				if (this.userEntityService.isRemoteUser(follower) && this.userEntityService.isLocalUser(followee)) {
 					this.federatedInstanceService.fetchOrRegister(follower.host).then(async i => {
-						this.instancesRepository.decrement({id: i.id}, 'followingCount', 1);
+						await this.instancesRepository.decrement({id: i.id}, 'followingCount', 1);
 						if (this.meta.enableChartsForFederatedInstances) {
-							this.instanceChart.updateFollowing(i.host, false);
+							await this.instanceChart.updateFollowing(i.host, false);
 						}
 					});
 				} else if (this.userEntityService.isLocalUser(follower) && this.userEntityService.isRemoteUser(followee)) {
 					this.federatedInstanceService.fetchOrRegister(followee.host).then(async i => {
-						this.instancesRepository.decrement({id: i.id}, 'followersCount', 1);
+						await this.instancesRepository.decrement({id: i.id}, 'followersCount', 1);
 						if (this.meta.enableChartsForFederatedInstances) {
-							this.instanceChart.updateFollowers(i.host, false);
+							await this.instanceChart.updateFollowers(i.host, false);
 						}
 					});
 				}
 			}
 			//#endregion
 
-			this.perUserFollowingChart.update(follower, followee, false);
+			await this.perUserFollowingChart.update(follower, followee, false);
 		} else {
 			// Adjust following/followers counts
 			for (const user of [follower, followee]) {
@@ -697,7 +697,7 @@ export class UserFollowingService implements OnModuleInit {
 
 		await this.followingsRepository.delete(following.id);
 
-		this.decrementFollowing(following.follower, following.followee);
+		await this.decrementFollowing(following.follower, following.followee);
 	}
 
 	/**
@@ -724,6 +724,6 @@ export class UserFollowingService implements OnModuleInit {
 		});
 
 		this.globalEventService.publishMainStream(follower.id, 'unfollow', packedFollowee);
-		this.webhookService.enqueueUserWebhook(follower.id, 'unfollow', {user: packedFollowee});
+		await this.webhookService.enqueueUserWebhook(follower.id, 'unfollow', {user: packedFollowee});
 	}
 }

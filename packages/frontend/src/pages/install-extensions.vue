@@ -210,10 +210,10 @@ async function install() {
 			if (!data.value.meta) return;
 			try {
 				await installPlugin(data.value.raw, data.value.meta as AiScriptPluginMeta);
-				os.success();
-				nextTick(() => {
-					unisonReload('/');
-				});
+				await os.success();
+				await nextTick(() => {
+          unisonReload('/');
+        });
 			} catch (err) {
 				errorKV.value = {
 					title: i18n.ts._externalResourceInstaller._errors._pluginInstallFailed.title,
@@ -226,10 +226,10 @@ async function install() {
 		case 'theme':
 			if (!data.value.meta) return;
 			await installTheme(data.value.raw);
-			os.success();
-			nextTick(() => {
-				location.href = '/settings/theme';
-			});
+			await os.success();
+			await nextTick(() => {
+        location.href = '/settings/theme';
+      });
 	}
 }
 

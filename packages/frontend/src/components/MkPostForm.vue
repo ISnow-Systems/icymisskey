@@ -522,7 +522,7 @@ async function toggleLocalOnly() {
 
 	localOnly.value = !localOnly.value;
 	if (defaultStore.state.rememberNoteVisibility) {
-		defaultStore.set('localOnly', localOnly.value);
+		await defaultStore.set('localOnly', localOnly.value);
 	}
 }
 
@@ -737,7 +737,7 @@ function isAnnoying(text: string): boolean {
 
 async function post(ev?: MouseEvent) {
 	if (useCw.value && (cw.value == null || cw.value.trim() === '')) {
-		os.alert({
+		await os.alert({
 			type: 'error',
 			text: i18n.ts.cwNotationRequired,
 		});
@@ -963,7 +963,7 @@ function showActions(ev: MouseEvent) {
 					text.value = value;
 				}
 				if (key === 'cw') {
-					useCw.value = value !== null;
+					useCw.value = true;
 					cw.value = value;
 				}
 			});
@@ -1156,7 +1156,7 @@ defineExpose({
 
 .colorBar {
 	position: absolute;
-	top: 0px;
+	top: 0;
 	left: 12px;
 	width: 5px;
 	height: 100%;

@@ -281,7 +281,7 @@ export class AbuseReportNotificationService implements OnApplicationShutdown {
 
 		const created = await this.abuseReportNotificationRecipientRepository.findOneByOrFail({id: id});
 
-		this.moderationLogService
+		await this.moderationLogService
 			.log(updater, 'createAbuseReportNotificationRecipient', {
 				recipientId: id,
 				recipient: created,
@@ -318,7 +318,7 @@ export class AbuseReportNotificationService implements OnApplicationShutdown {
 
 		const afterEntity = await this.abuseReportNotificationRecipientRepository.findOneByOrFail({id: params.id});
 
-		this.moderationLogService
+		await this.moderationLogService
 			.log(updater, 'updateAbuseReportNotificationRecipient', {
 				recipientId: params.id,
 				before: beforeEntity,
@@ -340,7 +340,7 @@ export class AbuseReportNotificationService implements OnApplicationShutdown {
 
 		await this.abuseReportNotificationRecipientRepository.delete(id);
 
-		this.moderationLogService
+		await this.moderationLogService
 			.log(updater, 'deleteAbuseReportNotificationRecipient', {
 				recipientId: id,
 				recipient: entity,

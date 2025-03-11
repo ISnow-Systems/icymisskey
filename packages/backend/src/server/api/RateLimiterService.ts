@@ -15,7 +15,7 @@ import type {IEndpointMeta} from './endpoints.js';
 @Injectable()
 export class RateLimiterService {
 	private logger: Logger;
-	private disabled = false;
+	private readonly disabled = false;
 
 	constructor(
 		@Inject(DI.redis)

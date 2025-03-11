@@ -6,7 +6,6 @@
 import {setTimeout} from 'node:timers/promises';
 import * as Redis from 'ioredis';
 import {Inject, Injectable, OnApplicationShutdown} from '@nestjs/common';
-import {In} from 'typeorm';
 import {DI} from '@/di-symbols.js';
 import type {UsersRepository} from '@/models/_.js';
 import type {MiUser} from '@/models/User.js';
@@ -197,10 +196,10 @@ export class NotificationService implements OnApplicationShutdown {
 			if (latestReadNotificationId && (latestReadNotificationId >= (await redisIdPromise)!)) return;
 
 			this.globalEventService.publishMainStream(notifieeId, 'unreadNotification', packed);
-			this.pushNotificationService.pushNotification(notifieeId, 'notification', packed);
+			await this.pushNotificationService.pushNotification(notifieeId, 'notification', packed);
 
-			if (type === 'follow') this.emailNotificationFollow(notifieeId, await this.usersRepository.findOneByOrFail({id: notifierId!}));
-			if (type === 'receiveFollowRequest') this.emailNotificationReceiveFollowRequest(notifieeId, await this.usersRepository.findOneByOrFail({id: notifierId!}));
+			if (type === 'follow') await this.emailNotificationFollow(notifieeId, await this.usersRepository.findOneByOrFail({id: notifierId!}));
+			if (type === 'receiveFollowRequest') await this.emailNotificationReceiveFollowRequest(notifieeId, await this.usersRepository.findOneByOrFail({id: notifierId!}));
 		}, () => { /* aborted, ignore it */
 		});
 

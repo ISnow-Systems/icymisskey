@@ -124,7 +124,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script lang="ts" setup>
-import {computed, watch, ref, onMounted, shallowRef, onUnmounted} from 'vue';
+import {computed, watch, ref, onUnmounted} from 'vue';
 import * as Misskey from 'misskey-js';
 import * as Reversi from 'misskey-reversi';
 import {i18n} from '@/i18n.js';
@@ -160,13 +160,13 @@ const mapName = computed(() => {
 });
 const isReady = computed(() => {
 	if (game.value.user1Id === $i.id && game.value.user1Ready) return true;
-	if (game.value.user2Id === $i.id && game.value.user2Ready) return true;
-	return false;
+	return !!(game.value.user2Id === $i.id && game.value.user2Ready);
+
 });
 const isOpReady = computed(() => {
 	if (game.value.user1Id !== $i.id && game.value.user1Ready) return true;
-	if (game.value.user2Id !== $i.id && game.value.user2Ready) return true;
-	return false;
+	return !!(game.value.user2Id !== $i.id && game.value.user2Ready);
+
 });
 
 const opponentHasSettingsChanged = ref(false);

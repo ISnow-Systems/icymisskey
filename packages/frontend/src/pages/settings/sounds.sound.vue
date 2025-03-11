@@ -96,11 +96,11 @@ const friendlyFileName = computed<string>(() => {
 function selectSound(ev) {
 	selectFile(ev.currentTarget ?? ev.target, i18n.ts._soundSettings.driveFile).then(async (file) => {
 		if (!file.type.startsWith('audio')) {
-			os.alert({
-				type: 'warning',
-				title: i18n.ts._soundSettings.driveFileTypeWarn,
-				text: i18n.ts._soundSettings.driveFileTypeWarnDescription,
-			});
+			await os.alert({
+        type: 'warning',
+        title: i18n.ts._soundSettings.driveFileTypeWarn,
+        text: i18n.ts._soundSettings.driveFileTypeWarnDescription,
+      });
 			return;
 		}
 		const duration = await getSoundDuration(file.url);

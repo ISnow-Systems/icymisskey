@@ -23,7 +23,7 @@ import type {IObject, ICollection, IOrderedCollection} from './type.js';
 import {IdentifiableError} from '@/misc/identifiable-error.js';
 
 export class Resolver {
-	private history: Set<string>;
+	private readonly history: Set<string>;
 	private user?: MiLocalUser;
 	private logger: Logger;
 
@@ -152,53 +152,49 @@ export class Resolver {
 	}
 
 	@bindThis
-	private resolveLocal(url: string): Promise<IObject> {
+	private async resolveLocal(url: string): Promise<IObject> {
 		const parsed = this.apDbResolverService.parseUri(url);
 		if (!parsed.local) throw new IdentifiableError('02b40cd0-fa92-4b0c-acc9-fb2ada952ab8', 'resolveLocal: not local');
 
 		switch (parsed.type) {
 			case 'notes':
-				return this.notesRepository.findOneByOrFail({id: parsed.id})
-					.then(async note => {
-						if (parsed.rest === 'activity') {
-							// this refers to the create activity and not the note itself
-							return this.apRendererService.addContext(this.apRendererService.renderCreate(await this.apRendererService.renderNote(note), note));
-						} else {
-							return this.apRendererService.renderNote(note);
-						}
-					});
+				const note = await this.notesRepository.findOneByOrFail({id: parsed.id});
+				if (parsed.rest === 'activity') {
+					// this refers to the create activity and not the note itself
+					return this.apRendererService.addContext(this.apRendererService.renderCreate(await this.apRendererService.renderNote(note), note));
+				} else {
+					return this.apRendererService.renderNote(note);
+				}
 			case 'users':
-				return this.usersRepository.findOneByOrFail({id: parsed.id})
-					.then(user => this.apRendererService.renderPerson(user as MiLocalUser));
+				const user = await this.usersRepository.findOneByOrFail({id: parsed.id});
+				return await this.apRendererService.renderPerson(user as MiLocalUser);
 			case 'questions':
 				// Polls are indexed by the note they are attached to.
-				return Promise.all([
+				const [note_2, poll] = await Promise.all([
 					this.notesRepository.findOneByOrFail({id: parsed.id}),
 					this.pollsRepository.findOneByOrFail({noteId: parsed.id}),
-				])
-					.then(([note, poll]) => this.apRendererService.renderQuestion({id: note.userId}, note, poll));
+				]);
+				return this.apRendererService.renderQuestion({id: note_2.userId}, note_2, poll);
 			case 'likes':
-				return this.noteReactionsRepository.findOneByOrFail({id: parsed.id}).then(async reaction =>
-					this.apRendererService.addContext(await this.apRendererService.renderLike(reaction, {uri: null})));
+				const reaction = await this.noteReactionsRepository.findOneByOrFail({id: parsed.id});
+				return this.apRendererService.addContext(await this.apRendererService.renderLike(reaction, {uri: null}));
 			case 'follows':
-				return this.followRequestsRepository.findOneBy({id: parsed.id})
-					.then(async followRequest => {
-						if (followRequest == null) throw new IdentifiableError('a9d946e5-d276-47f8-95fb-f04230289bb0', 'resolveLocal: invalid follow request ID');
-						const [follower, followee] = await Promise.all([
-							this.usersRepository.findOneBy({
-								id: followRequest.followerId,
-								host: IsNull(),
-							}),
-							this.usersRepository.findOneBy({
-								id: followRequest.followeeId,
-								host: Not(IsNull()),
-							}),
-						]);
-						if (follower == null || followee == null) {
-							throw new IdentifiableError('06ae3170-1796-4d93-a697-2611ea6d83b6', 'resolveLocal: follower or followee does not exist');
-						}
-						return this.apRendererService.addContext(this.apRendererService.renderFollow(follower as MiLocalUser | MiRemoteUser, followee as MiLocalUser | MiRemoteUser, url));
-					});
+				const followRequest = await this.followRequestsRepository.findOneBy({id: parsed.id});
+				if (followRequest == null) throw new IdentifiableError('a9d946e5-d276-47f8-95fb-f04230289bb0', 'resolveLocal: invalid follow request ID');
+				const [follower, followee] = await Promise.all([
+					this.usersRepository.findOneBy({
+						id: followRequest.followerId,
+						host: IsNull(),
+					}),
+					this.usersRepository.findOneBy({
+						id: followRequest.followeeId,
+						host: Not(IsNull()),
+					}),
+				]);
+				if (follower == null || followee == null) {
+					throw new IdentifiableError('06ae3170-1796-4d93-a697-2611ea6d83b6', 'resolveLocal: follower or followee does not exist');
+				}
+				return this.apRendererService.addContext(this.apRendererService.renderFollow(follower as MiLocalUser | MiRemoteUser, followee as MiLocalUser | MiRemoteUser, url));
 			default:
 				throw new IdentifiableError('7a5d2fc0-94bc-4db6-b8b8-1bf24a2e23d0', `resolveLocal: type ${parsed.type} unhandled`);
 		}

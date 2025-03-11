@@ -59,25 +59,25 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			if (ps.isSuspended != null && isSuspendedBefore !== ps.isSuspended) {
 				if (ps.isSuspended) {
-					this.moderationLogService.log(me, 'suspendRemoteInstance', {
-						id: instance.id,
-						host: instance.host,
-					});
+					await this.moderationLogService.log(me, 'suspendRemoteInstance', {
+                        id: instance.id,
+                        host: instance.host,
+                    });
 				} else {
-					this.moderationLogService.log(me, 'unsuspendRemoteInstance', {
-						id: instance.id,
-						host: instance.host,
-					});
+					await this.moderationLogService.log(me, 'unsuspendRemoteInstance', {
+                        id: instance.id,
+                        host: instance.host,
+                    });
 				}
 			}
 
 			if (ps.moderationNote != null && instance.moderationNote !== ps.moderationNote) {
-				this.moderationLogService.log(me, 'updateRemoteInstanceNote', {
-					id: instance.id,
-					host: instance.host,
-					before: instance.moderationNote,
-					after: ps.moderationNote,
-				});
+				await this.moderationLogService.log(me, 'updateRemoteInstanceNote', {
+                    id: instance.id,
+                    host: instance.host,
+                    before: instance.moderationNote,
+                    after: ps.moderationNote,
+                });
 			}
 		});
 	}

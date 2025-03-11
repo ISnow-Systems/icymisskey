@@ -49,7 +49,6 @@ import type {CustomEmojiService} from '@/core/CustomEmojiService.js';
 import {AvatarDecorationService} from '@/core/AvatarDecorationService.js';
 import type {OnModuleInit} from '@nestjs/common';
 import type {NoteEntityService} from './NoteEntityService.js';
-import type {DriveFileEntityService} from './DriveFileEntityService.js';
 import type {PageEntityService} from './PageEntityService.js';
 
 const Ajv = _Ajv.default;
@@ -448,8 +447,8 @@ export class UserEntityService implements OnModuleInit {
 				(profile.followersVisibility === 'followers') && (relation && relation.isFollowing) ? user.followersCount :
 					null;
 
-		const isModerator = isMe && isDetailed ? this.roleService.isModerator(user) : null;
-		const isAdmin = isMe && isDetailed ? this.roleService.isAdministrator(user) : null;
+		const isModerator = isMe && isDetailed ? await this.roleService.isModerator(user) : null;
+		const isAdmin = isMe && isDetailed ? await this.roleService.isAdministrator(user) : null;
 		const unreadAnnouncements = isMe && isDetailed ?
 			(await this.announcementService.getUnreadAnnouncements(user)).map((announcement) => ({
 				createdAt: this.idService.parse(announcement.id).date.toISOString(),
@@ -475,7 +474,7 @@ export class UserEntityService implements OnModuleInit {
 			}))) : [],
 			isBot: user.isBot,
 			isCat: user.isCat,
-			requireSigninToViewContents: user.requireSigninToViewContents === false ? undefined : true,
+			requireSigninToViewContents: !user.requireSigninToViewContents ? undefined : true,
 			makeNotesFollowersOnlyBefore: user.makeNotesFollowersOnlyBefore ?? undefined,
 			makeNotesHiddenBefore: user.makeNotesHiddenBefore ?? undefined,
 			instance: user.host ? this.federatedInstanceService.federatedInstanceCache.fetch(user.host).then(instance => instance ? {
@@ -529,7 +528,7 @@ export class UserEntityService implements OnModuleInit {
 					detail: true,
 				}),
 				pinnedPageId: profile!.pinnedPageId,
-				pinnedPage: profile!.pinnedPageId ? this.pageEntityService.pack(profile!.pinnedPageId, me) : null,
+				pinnedPage: profile!.pinnedPageId ? await this.pageEntityService.pack(profile!.pinnedPageId, me) : null,
 				publicReactions: this.isLocalUser(user) ? profile!.publicReactions : false, // https://github.com/misskey-dev/misskey/issues/12964
 				followersVisibility: profile!.followersVisibility,
 				followingVisibility: profile!.followingVisibility,
@@ -603,16 +602,16 @@ export class UserEntityService implements OnModuleInit {
 				email: profile!.email,
 				emailVerified: profile!.emailVerified,
 				securityKeysList: profile!.twoFactorEnabled
-					? this.userSecurityKeysRepository.find({
-						where: {
-							userId: user.id,
-						},
-						select: {
-							id: true,
-							name: true,
-							lastUsed: true,
-						},
-					})
+					? await this.userSecurityKeysRepository.find({
+                        where: {
+                            userId: user.id,
+                        },
+                        select: {
+                            id: true,
+                            name: true,
+                            lastUsed: true,
+                        },
+                    })
 					: [],
 			} : {}),
 

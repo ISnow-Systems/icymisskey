@@ -84,7 +84,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				},
 			});
 
-			if (exist === true) {
+			if (exist) {
 				throw new ApiError(meta.errors.alreadyMuting);
 			}
 

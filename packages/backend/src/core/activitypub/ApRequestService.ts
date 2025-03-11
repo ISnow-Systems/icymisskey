@@ -178,10 +178,11 @@ export class ApRequestService {
 	}
 
 	/**
-	 * Get AP object with http-signature
-	 * @param user http-signature user
-	 * @param url URL to fetch
-	 */
+     * Get AP object with http-signature
+     * @param user http-signature user
+     * @param url URL to fetch
+     * @param followAlternate
+     */
 	@bindThis
 	public async signedGet(url: string, user: { id: MiUser['id'] }, followAlternate?: boolean): Promise<unknown> {
 		const _followAlternate = followAlternate ?? true;
@@ -209,7 +210,7 @@ export class ApRequestService {
 		if (
 			res.ok &&
 			(contentType ?? '').split(';')[0].trimEnd().toLowerCase() === 'text/html' &&
-			_followAlternate === true
+			_followAlternate
 		) {
 			const html = await res.text();
 			const {window, happyDOM} = new Window({

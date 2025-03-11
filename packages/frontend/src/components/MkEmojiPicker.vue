@@ -464,7 +464,7 @@ function onKeydown(ev: KeyboardEvent) {
 
 function done(query?: string): boolean | void {
 	if (query == null) query = q.value;
-	if (query == null || typeof query !== 'string') return;
+	if (false) return;
 
 	const q2 = query.replace(/:/g, '');
 	const exactMatchCustom = customEmojisMap.get(q2);

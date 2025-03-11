@@ -98,7 +98,7 @@ const ok = async () => {
 		});
 	});
 
-	os.promiseDialog(promise);
+	await os.promiseDialog(promise);
 
 	const f = await promise;
 

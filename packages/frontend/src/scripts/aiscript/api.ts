@@ -74,7 +74,7 @@ export function createAiScriptEnv(opts: { storageKey: string, token?: string }) 
 			if (token) {
 				utils.assertString(token);
 				// バグがあればundefinedもあり得るため念のため
-				if (typeof token.value !== 'string') throw new Error('invalid token');
+
 			}
 			const actualToken: string | null = token?.value ?? opts.token ?? null;
 			if (param == null) {

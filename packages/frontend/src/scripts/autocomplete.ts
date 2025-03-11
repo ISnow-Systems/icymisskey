@@ -18,7 +18,7 @@ export class Autocomplete {
 		q: Ref<any>;
 		close: () => void;
 	} | null;
-	private textarea: HTMLInputElement | HTMLTextAreaElement;
+	private readonly textarea: HTMLInputElement | HTMLTextAreaElement;
 	private currentType: string;
 	private textRef: Ref<string | number | null>;
 	private opening: boolean;
@@ -186,7 +186,7 @@ export class Autocomplete {
 			const _y = ref(y);
 			const _q = ref(q);
 
-			const {dispose} = await popup(defineAsyncComponent(() => import('@/components/MkAutocomplete.vue')), {
+			const {dispose} = popup(defineAsyncComponent(() => import('@/components/MkAutocomplete.vue')), {
 				textarea: this.textarea,
 				close: this.close,
 				type: type,

@@ -83,7 +83,7 @@ async function updated(type: keyof typeof sounds.value, sound) {
 		volume: sound.volume,
 	};
 
-	defaultStore.set(`sound_${type}`, v);
+	await defaultStore.set(`sound_${type}`, v);
 	sounds.value[type] = v;
 }
 

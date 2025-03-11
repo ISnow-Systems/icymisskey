@@ -130,11 +130,11 @@ async function specifyHostAndOpenRemote(options: OpenOnRemoteOptions): Promise<v
 	// ドメイン部分だけを取り出す
 	targetHost = extractDomain(targetHost ?? '');
 	if (targetHost == null) {
-		os.alert({
-			type: 'error',
-			title: i18n.ts.invalidValue,
-			text: i18n.ts.tryAgain,
-		});
+		await os.alert({
+      type: 'error',
+      title: i18n.ts.invalidValue,
+      text: i18n.ts.tryAgain,
+    });
 		return;
 	}
 	openRemote(options, targetHost);

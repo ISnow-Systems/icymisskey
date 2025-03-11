@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import {URLSearchParams} from 'node:url';
 import * as nodemailer from 'nodemailer';
 import juice from 'juice';
 import {Inject, Injectable} from '@nestjs/common';
@@ -128,7 +127,7 @@ export class EmailService {
 				<div>${html}</div>
 			</article>
 			<footer>
-				<a href="${emailSettingUrl}">${'Email setting'}</a>
+				<a href="${emailSettingUrl}">Email setting</a>
 			</footer>
 		</main>
 		<nav>

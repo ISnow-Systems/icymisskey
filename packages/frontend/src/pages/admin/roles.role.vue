@@ -151,15 +151,20 @@ async function assign() {
 }
 
 async function unassign(user, ev) {
-	os.popupMenu([{
-		text: i18n.ts.unassign,
-		icon: 'ti ti-x',
-		danger: true,
-		action: async () => {
-			await os.apiWithDialog('admin/roles/unassign', {roleId: role.id, userId: user.id});
-			//role.users = role.users.filter(u => u.id !== user.id);
-		},
-	}], ev.currentTarget ?? ev.target);
+	await os.popupMenu([
+    {
+      text: i18n.ts.unassign,
+      icon: 'ti ti-x',
+      danger: true,
+      action: async () => {
+        await os.apiWithDialog('admin/roles/unassign', {
+          roleId: role.id,
+          userId: user.id
+        });
+        //role.users = role.users.filter(u => u.id !== user.id);
+      },
+    }
+  ], ev.currentTarget ?? ev.target);
 }
 
 async function toggleItem(item) {

@@ -71,11 +71,11 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				password: hash,
 			});
 
-			this.moderationLogService.log(me, 'resetPassword', {
-				userId: user.id,
-				userUsername: user.username,
-				userHost: user.host,
-			});
+			await this.moderationLogService.log(me, 'resetPassword', {
+                userId: user.id,
+                userUsername: user.username,
+                userHost: user.host,
+            });
 
 			return {
 				password: passwd,

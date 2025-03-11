@@ -416,14 +416,14 @@ function selectPreset(ev: MouseEvent) {
 
 async function save() {
 	if (flash.value) {
-		os.apiWithDialog('flash/update', {
-			flashId: props.id,
-			title: title.value,
-			summary: summary.value,
-			permissions: permissions.value,
-			script: script.value,
-			visibility: visibility.value,
-		});
+		await os.apiWithDialog('flash/update', {
+      flashId: props.id,
+      title: title.value,
+      summary: summary.value,
+      permissions: permissions.value,
+      script: script.value,
+      visibility: visibility.value,
+    });
 	} else {
 		const created = await os.apiWithDialog('flash/create', {
 			title: title.value,

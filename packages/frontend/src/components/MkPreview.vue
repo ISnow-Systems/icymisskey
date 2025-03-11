@@ -39,7 +39,6 @@ import {ref} from 'vue';
 import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/MkInput.vue';
 import MkSwitch from '@/components/MkSwitch.vue';
-import MkTextarea from '@/components/MkTextarea.vue';
 import MkRadio from '@/components/MkRadio.vue';
 import * as os from '@/os.js';
 import * as config from '@@/js/config.js';
@@ -87,27 +86,33 @@ const selectUser = async () => {
 };
 
 const openMenu = async (ev: Event) => {
-	os.popupMenu([{
-		type: 'label',
-		text: 'Fruits',
-	}, {
-		text: 'Create some apples',
-		action: () => {
-		},
-	}, {
-		text: 'Read some oranges',
-		action: () => {
-		},
-	}, {
-		text: 'Update some melons',
-		action: () => {
-		},
-	}, {
-		text: 'Delete some bananas',
-		danger: true,
-		action: () => {
-		},
-	}], ev.currentTarget ?? ev.target);
+	await os.popupMenu([
+    {
+      type: 'label',
+      text: 'Fruits',
+    },
+    {
+      text: 'Create some apples',
+      action: () => {
+      },
+    },
+    {
+      text: 'Read some oranges',
+      action: () => {
+      },
+    },
+    {
+      text: 'Update some melons',
+      action: () => {
+      },
+    },
+    {
+      text: 'Delete some bananas',
+      danger: true,
+      action: () => {
+      },
+    }
+  ], ev.currentTarget ?? ev.target);
 };
 </script>
 

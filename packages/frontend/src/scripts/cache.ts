@@ -8,8 +8,8 @@ import {ref} from 'vue';
 export class Cache<T> {
 	public value = ref<T | undefined>();
 	private cachedAt: number | null = null;
-	private lifetime: number;
-	private fetcher: () => Promise<T>;
+	private readonly lifetime: number;
+	private readonly fetcher: () => Promise<T>;
 
 	constructor(lifetime: Cache<never>['lifetime'], fetcher: () => Promise<T>) {
 		this.lifetime = lifetime;

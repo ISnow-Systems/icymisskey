@@ -87,11 +87,11 @@ export class Storage<T extends StateDef> {
 			if (_DEV_) console.log(`set ${String(key)} start`);
 			switch (this.def[key].where) {
 				case 'device': {
-					this.pizzaxChannel.postMessage({
-						where: 'device',
-						key,
-						value: rawValue,
-					});
+					await this.pizzaxChannel.postMessage({
+                        where: 'device',
+                        key,
+                        value: rawValue,
+                    });
 					const deviceState = await get(this.deviceStateKeyName) || {};
 					deviceState[key] = rawValue;
 					await set(this.deviceStateKeyName, deviceState);
@@ -99,12 +99,12 @@ export class Storage<T extends StateDef> {
 				}
 				case 'deviceAccount': {
 					if ($i == null) break;
-					this.pizzaxChannel.postMessage({
-						where: 'deviceAccount',
-						key,
-						value: rawValue,
-						userId: $i.id,
-					});
+					await this.pizzaxChannel.postMessage({
+                        where: 'deviceAccount',
+                        key,
+                        value: rawValue,
+                        userId: $i.id,
+                    });
 					const deviceAccountState = await get(this.deviceAccountStateKeyName) || {};
 					deviceAccountState[key] = rawValue;
 					await set(this.deviceAccountStateKeyName, deviceAccountState);

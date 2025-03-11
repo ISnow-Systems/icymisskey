@@ -46,10 +46,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			const after = await this.metaService.fetch(true);
 
 			this.globalEventService.publishInternalEvent('policiesUpdated', after.policies);
-			this.moderationLogService.log(me, 'updateServerSettings', {
-				before: before.policies,
-				after: after.policies,
-			});
+			await this.moderationLogService.log(me, 'updateServerSettings', {
+                before: before.policies,
+                after: after.policies,
+            });
 		});
 	}
 }

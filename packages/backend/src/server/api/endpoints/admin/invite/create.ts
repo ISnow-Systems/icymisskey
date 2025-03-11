@@ -74,9 +74,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			const tickets = await Promise.all(ticketsPromises);
 
-			this.moderationLogService.log(me, 'createInvitation', {
-				invitations: tickets,
-			});
+			await this.moderationLogService.log(me, 'createInvitation', {
+                invitations: tickets,
+            });
 
 			return await this.inviteCodeEntityService.packMany(tickets, me);
 		});

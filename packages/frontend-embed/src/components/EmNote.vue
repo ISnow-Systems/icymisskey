@@ -58,7 +58,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 								v-if="appearNote.text"
 								:author="appearNote.user"
 								:emojiUrls="appearNote.emojis"
-								:enableEmojiMenu="!true"
+								:enableEmojiMenu="false"
 								:enableEmojiMenuReaction="true"
 								:nyaize="'respect'"
 								:parsedNodes="parsed"
@@ -209,7 +209,7 @@ const isDeleted = ref(false);
 			margin-bottom: 0 !important;
 			background: var(--MI_THEME-popup);
 			border-radius: 8px;
-			box-shadow: 0px 4px 32px var(--MI_THEME-shadow);
+			box-shadow: 0 4px 32px var(--MI_THEME-shadow);
 		}
 
 		.footerButton {

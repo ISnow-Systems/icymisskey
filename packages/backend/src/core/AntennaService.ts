@@ -56,7 +56,7 @@ export class AntennaService implements OnApplicationShutdown {
 			this.globalEventService.publishAntennaStream(antenna.id, 'note', note);
 		}
 
-		redisPipeline.exec();
+		await redisPipeline.exec();
 	}
 
 	@bindThis

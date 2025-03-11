@@ -87,7 +87,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			const mentions = await query.limit(ps.limit).getMany();
 
-			this.noteReadService.read(me.id, mentions);
+			await this.noteReadService.read(me.id, mentions);
 
 			return await this.noteEntityService.packMany(mentions, me);
 		});

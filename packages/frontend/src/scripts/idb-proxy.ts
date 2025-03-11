@@ -14,7 +14,7 @@ import {miLocalStorage} from '@/local-storage.js';
 
 const PREFIX = 'idbfallback::';
 
-let idbAvailable = typeof window !== 'undefined' ? !!(window.indexedDB && typeof window.indexedDB.open === 'function') : true;
+let idbAvailable = typeof window !== 'undefined' ? (window.indexedDB && typeof window.indexedDB.open === 'function') : true;
 
 // iframe.contentWindow.indexedDB.deleteDatabase() がchromeのバグで使用できないため、indexedDBを無効化している。
 // バグが治って再度有効化するのであれば、cypressのコマンド内のコメントアウトを外すこと

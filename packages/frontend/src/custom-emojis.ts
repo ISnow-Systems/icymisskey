@@ -56,8 +56,8 @@ export async function fetchCustomEmojis(force = false) {
 	}
 
 	customEmojis.value = res.emojis;
-	set('emojis', res.emojis);
-	set('lastEmojisFetchedAt', now);
+	await set('emojis', res.emojis);
+	await set('lastEmojisFetchedAt', now);
 }
 
 let cachedTags;

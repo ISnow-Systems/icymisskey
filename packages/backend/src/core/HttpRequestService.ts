@@ -123,19 +123,19 @@ export class HttpRequestService {
 	/**
 	 * Get http non-proxy agent (without local address filtering)
 	 */
-	private httpNative: http.Agent;
+    private readonly httpNative: http.Agent;
 	/**
 	 * Get https non-proxy agent (without local address filtering)
 	 */
-	private httpsNative: https.Agent;
+    private readonly httpsNative: https.Agent;
 	/**
 	 * Get http non-proxy agent
 	 */
-	private http: http.Agent;
+    private readonly http: http.Agent;
 	/**
 	 * Get https non-proxy agent
 	 */
-	private https: https.Agent;
+    private readonly https: https.Agent;
 
 	constructor(
 		@Inject(DI.config)
@@ -193,6 +193,7 @@ export class HttpRequestService {
 	 * Get agent by URL
 	 * @param url URL
 	 * @param bypassProxy Allways bypass proxy
+	 * @param isLocalAddressAllowed
 	 */
 	@bindThis
 	public getAgentByUrl(url: URL, bypassProxy = false, isLocalAddressAllowed = false): http.Agent | https.Agent {

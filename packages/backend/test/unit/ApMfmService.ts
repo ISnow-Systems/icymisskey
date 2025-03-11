@@ -9,7 +9,6 @@ import {Test} from '@nestjs/testing';
 import {CoreModule} from '@/core/CoreModule.js';
 import {ApMfmService} from '@/core/activitypub/ApMfmService.js';
 import {GlobalModule} from '@/GlobalModule.js';
-import {MiNote} from '@/models/Note.js';
 
 describe('ApMfmService', () => {
 	let apMfmService: ApMfmService;

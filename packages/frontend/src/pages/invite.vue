@@ -71,14 +71,14 @@ const resetCycle = computed<null | string>(() => {
 
 async function create() {
 	const ticket = await misskeyApi('invite/create');
-	os.alert({
-		type: 'success',
-		title: i18n.ts.inviteCodeCreated,
-		text: ticket.code,
-	});
+	await os.alert({
+    type: 'success',
+    title: i18n.ts.inviteCodeCreated,
+    text: ticket.code,
+  });
 
 	pagingComponent.value?.prepend(ticket);
-	update();
+	await update();
 }
 
 function deleted(id: string) {

@@ -135,7 +135,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			// Mark all as read
 			if (ps.markAsRead) {
-				this.notificationService.readAllNotification(me.id);
+				await this.notificationService.readAllNotification(me.id);
 			}
 
 			const noteIds = notifications
@@ -144,7 +144,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			if (noteIds.length > 0) {
 				const notes = await this.notesRepository.findBy({id: In(noteIds)});
-				this.noteReadService.read(me.id, notes);
+				await this.noteReadService.read(me.id, notes);
 			}
 
 			return await this.notificationEntityService.packMany(notifications, me.id);

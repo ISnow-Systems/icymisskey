@@ -170,7 +170,7 @@ async function renderChart() {
 }
 
 onMounted(async () => {
-	renderChart();
+	await renderChart();
 });
 </script>
 

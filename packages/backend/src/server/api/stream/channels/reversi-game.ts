@@ -3,9 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import {Inject, Injectable} from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import type {MiReversiGame} from '@/models/_.js';
-import {DI} from '@/di-symbols.js';
 import {bindThis} from '@/decorators.js';
 import {ReversiService} from '@/core/ReversiService.js';
 import {ReversiGameEntityService} from '@/core/entities/ReversiGameEntityService.js';
@@ -76,35 +75,35 @@ class ReversiGameChannel extends Channel {
 	private async updateSettings<K extends typeof reversiUpdateKeys[number]>(key: K, value: MiReversiGame[K]) {
 		if (this.user == null) return;
 
-		this.reversiService.updateSettings(this.gameId!, this.user, key, value);
+		await this.reversiService.updateSettings(this.gameId!, this.user, key, value);
 	}
 
 	@bindThis
 	private async ready(ready: boolean) {
 		if (this.user == null) return;
 
-		this.reversiService.gameReady(this.gameId!, this.user, ready);
+		await this.reversiService.gameReady(this.gameId!, this.user, ready);
 	}
 
 	@bindThis
 	private async cancelGame() {
 		if (this.user == null) return;
 
-		this.reversiService.cancelGame(this.gameId!, this.user);
+		await this.reversiService.cancelGame(this.gameId!, this.user);
 	}
 
 	@bindThis
 	private async putStone(pos: number, id: string) {
 		if (this.user == null) return;
 
-		this.reversiService.putStoneToGame(this.gameId!, this.user, pos, id);
+		await this.reversiService.putStoneToGame(this.gameId!, this.user, pos, id);
 	}
 
 	@bindThis
 	private async claimTimeIsUp() {
 		if (this.user == null) return;
 
-		this.reversiService.checkTimeout(this.gameId!);
+		await this.reversiService.checkTimeout(this.gameId!);
 	}
 }
 

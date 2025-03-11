@@ -81,7 +81,7 @@ export class AccountMoveService {
 		const srcPerson = await this.apRendererService.renderPerson(src);
 		const updateAct = this.apRendererService.addContext(this.apRendererService.renderUpdate(srcPerson, src));
 		await this.apDeliverManagerService.deliverToFollowers(src, updateAct);
-		this.relayService.deliverToRelays(src, updateAct);
+		await this.relayService.deliverToRelays(src, updateAct);
 
 		// Deliver Move activity to the followers of the old account
 		const moveAct = this.apRendererService.addContext(this.apRendererService.renderMove(src, dst));
@@ -95,7 +95,7 @@ export class AccountMoveService {
 		const followings = await this.followingsRepository.findBy({
 			followerId: src.id,
 		});
-		this.queueService.createDelayedUnfollowJob(followings.map(following => ({
+		await this.queueService.createDelayedUnfollowJob(followings.map(following => ({
 			from: {id: src.id},
 			to: {id: following.followeeId},
 		})), process.env.NODE_ENV === 'test' ? 10000 : 1000 * 60 * 60 * 24);
@@ -138,7 +138,7 @@ export class AccountMoveService {
 		}
 
 		// Should be queued because this can cause a number of follow per one move.
-		this.queueService.createFollowJob(followJobs);
+		await this.queueService.createFollowJob(followJobs);
 	}
 
 	@bindThis
@@ -155,7 +155,7 @@ export class AccountMoveService {
 			blockJobs.push({from: {id: blocking.blockerId}, to: {id: dst.id}});
 		}
 		// no need to unblock the old account because it may be still functional
-		this.queueService.createBlockJob(blockJobs);
+		await this.queueService.createBlockJob(blockJobs);
 	}
 
 	@bindThis
@@ -245,7 +245,12 @@ export class AccountMoveService {
 		if (this.userEntityService.isRemoteUser(dst)) {
 			const proxy = await this.proxyAccountService.fetch();
 			if (proxy) {
-				this.queueService.createFollowJob([{from: {id: proxy.id}, to: {id: dst.id}}]);
+				await this.queueService.createFollowJob([
+					{
+						from: {id: proxy.id},
+						to: {id: dst.id}
+					}
+				]);
 			}
 		}
 	}
@@ -324,9 +329,9 @@ export class AccountMoveService {
 		if (this.meta.enableStatsForFederatedInstances) {
 			if (this.userEntityService.isRemoteUser(oldAccount)) {
 				this.federatedInstanceService.fetchOrRegister(oldAccount.host).then(async i => {
-					this.instancesRepository.decrement({id: i.id}, 'followersCount', localFollowerIds.length);
+					await this.instancesRepository.decrement({id: i.id}, 'followersCount', localFollowerIds.length);
 					if (this.meta.enableChartsForFederatedInstances) {
-						this.instanceChart.updateFollowers(i.host, false);
+						await this.instanceChart.updateFollowers(i.host, false);
 					}
 				});
 			}
@@ -334,7 +339,10 @@ export class AccountMoveService {
 
 		// FIXME: expensive?
 		for (const followerId of localFollowerIds) {
-			this.perUserFollowingChart.update({id: followerId, host: null}, oldAccount, false);
+			await this.perUserFollowingChart.update({
+				id: followerId,
+				host: null
+			}, oldAccount, false);
 		}
 	}
 }

@@ -189,7 +189,7 @@ function clickAddAccount(ev: MouseEvent) {
 		action: () => {
 			getAccountWithSigninDialog().then(async (res) => {
 				if (res != null) {
-					os.success();
+					await os.success();
 					await init();
 					if (users.value.has(res.id)) {
 						selectedUser.value = res.id;
@@ -202,7 +202,7 @@ function clickAddAccount(ev: MouseEvent) {
 		action: () => {
 			getAccountWithSignupDialog().then(async (res) => {
 				if (res != null) {
-					os.success();
+					await os.success();
 					await init();
 					if (users.value.has(res.id)) {
 						selectedUser.value = res.id;

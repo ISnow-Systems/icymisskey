@@ -69,15 +69,15 @@ export async function getNoteClipMenu(props: {
 							if (props.currentClip?.id === clip.id) props.isDeleted.value = true;
 						}
 					} else if (err.id === 'f0dba960-ff73-4615-8df4-d6ac5d9dc118') {
-						os.alert({
-							type: 'error',
-							text: i18n.ts.clipNoteLimitExceeded,
-						});
+						await os.alert({
+                            type: 'error',
+                            text: i18n.ts.clipNoteLimitExceeded,
+                        });
 					} else {
-						os.alert({
-							type: 'error',
-							text: err.message + '\n' + err.id,
-						});
+						await os.alert({
+                            type: 'error',
+                            text: err.message + '\n' + err.id,
+                        });
 					}
 				},
 			).then(() => {
@@ -122,8 +122,11 @@ export async function getNoteClipMenu(props: {
 
 			clipsCache.delete();
 
-			claimAchievement('noteClipped1');
-			os.apiWithDialog('clips/add-note', {clipId: clip.id, noteId: appearNote.id});
+			await claimAchievement('noteClipped1');
+			await os.apiWithDialog('clips/add-note', {
+                clipId: clip.id,
+                noteId: appearNote.id
+            });
 		},
 	}];
 
@@ -250,7 +253,10 @@ export function getNoteMenu(props: {
 
 	async function unclip(): Promise<void> {
 		if (!props.currentClip) return;
-		os.apiWithDialog('clips/remove-note', {clipId: props.currentClip.id, noteId: appearNote.id});
+		await os.apiWithDialog('clips/remove-note', {
+            clipId: props.currentClip.id,
+            noteId: appearNote.id
+        });
 		props.isDeleted.value = true;
 	}
 
@@ -261,10 +267,10 @@ export function getNoteMenu(props: {
 
 		if (canceled || days == null) return;
 
-		os.apiWithDialog('admin/promo/create', {
-			noteId: appearNote.id,
-			expiresAt: Date.now() + (86400000 * days),
-		});
+		await os.apiWithDialog('admin/promo/create', {
+            noteId: appearNote.id,
+            expiresAt: Date.now() + (86400000 * days),
+        });
 	}
 
 	function share(): void {

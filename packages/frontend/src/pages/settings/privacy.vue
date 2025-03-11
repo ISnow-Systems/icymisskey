@@ -222,7 +222,7 @@ watch([makeNotesFollowersOnlyBefore, makeNotesHiddenBefore], () => {
 });
 
 async function update_requireSigninToViewContents(value: boolean) {
-	if (value === true && instance.federation !== 'none') {
+	if (value && instance.federation !== 'none') {
 		const {canceled} = await os.confirm({
 			type: 'warning',
 			text: i18n.ts.acknowledgeNotesAndEnable,

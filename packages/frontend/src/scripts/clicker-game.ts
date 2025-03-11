@@ -38,7 +38,7 @@ export async function load() {
 				achievements: [],
 				facilities: [],
 			};
-			save();
+			await save();
 			return;
 		}
 		throw err;
@@ -55,7 +55,7 @@ export async function load() {
 			achievements: [],
 			facilities: [],
 		};
-		save();
+		await save();
 	}
 }
 

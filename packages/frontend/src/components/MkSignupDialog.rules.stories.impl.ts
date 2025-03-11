@@ -41,15 +41,15 @@ export const Empty = {
 				continue;
 			}
 			const button = await within(group).findByRole('button');
-			userEvent.click(button);
+			await userEvent.click(button);
 			await waitFor(() => expect(group).toHaveAttribute('aria-expanded', 'true'));
 		}
 		const labels = await canvas.findAllByText(i18n.ts.agree);
 		for (const label of labels) {
-			expect(buttons.at(-1)).toBeDisabled();
+			await expect(buttons.at(-1)).toBeDisabled();
 			await waitFor(() => userEvent.click(label));
 		}
-		expect(buttons.at(-1)).toBeEnabled();
+		await expect(buttons.at(-1)).toBeEnabled();
 	},
 	args: {
 		// @ts-expect-error serverRules is for test

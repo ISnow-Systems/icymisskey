@@ -89,7 +89,7 @@ export class ExportFavoritesProcessorService {
 				}) as (MiNoteFavorite & { note: MiNote & { user: MiUser } })[];
 
 				if (favorites.length === 0) {
-					job.updateProgress(100);
+					await job.updateProgress(100);
 					break;
 				}
 
@@ -110,7 +110,7 @@ export class ExportFavoritesProcessorService {
 					userId: user.id,
 				});
 
-				job.updateProgress(exportedFavoritesCount / total);
+				await job.updateProgress(exportedFavoritesCount / total);
 			}
 
 			await write(']');

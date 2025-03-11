@@ -18,7 +18,7 @@
 
 	let forceError = localStorage.getItem('forceError');
 	if (forceError != null) {
-		renderError('FORCED_ERROR', 'This error is forced by having forceError in local storage.');
+		await renderError('FORCED_ERROR', 'This error is forced by having forceError in local storage.');
 		return;
 	}
 
@@ -56,13 +56,13 @@
 			},
 		});
 		if (metaRes.status !== 200) {
-			renderError('META_FETCH');
+			await renderError('META_FETCH');
 			return;
 		}
 		const meta = await metaRes.json();
 		const v = meta.version;
 		if (v == null) {
-			renderError('META_FETCH_V');
+			await renderError('META_FETCH_V');
 			return;
 		}
 
@@ -78,7 +78,7 @@
 			localStorage.setItem('locale', await localRes.text());
 			localStorage.setItem('localeVersion', v);
 		} else {
-			renderError('LOCALE_FETCH');
+			await renderError('LOCALE_FETCH');
 			return;
 		}
 	}
@@ -89,13 +89,13 @@
 		await import(`/embed_vite/${CLIENT_ENTRY}`)
 			.catch(async e => {
 				console.error(e);
-				renderError('APP_IMPORT');
+				await renderError('APP_IMPORT');
 			});
 	}
 
 	// タイミングによっては、この時点でDOMの構築が済んでいる場合とそうでない場合とがある
 	if (document.readyState !== 'loading') {
-		importAppScript();
+		await importAppScript();
 	} else {
 		window.addEventListener('DOMContentLoaded', () => {
 			importAppScript();
@@ -127,7 +127,7 @@
 		<button onclick="location.reload(!0)">
 			<div>${reload}</div>
 		</button>`;
-		addStyle(`
+		await addStyle(`
 		#misskey_app,
 		#splash {
 			display: none !important;

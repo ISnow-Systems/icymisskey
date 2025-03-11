@@ -63,7 +63,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 <script lang="ts" setup>
 import {onMounted, ref, computed, shallowRef} from 'vue';
 import * as Misskey from 'misskey-js';
-import {host as currentHost, hostname} from '@@/js/config.js';
+import {hostname} from '@@/js/config.js';
 import MkInput from '@/components/MkInput.vue';
 import FormSplit from '@/components/form/split.vue';
 import MkModalWindow from '@/components/MkModalWindow.vue';
@@ -131,7 +131,7 @@ async function ok() {
 	let recents = defaultStore.state.recentlyUsedUsers;
 	recents = recents.filter(x => x !== selected.value?.id);
 	recents.unshift(selected.value.id);
-	defaultStore.set('recentlyUsedUsers', recents.splice(0, 16));
+	await defaultStore.set('recentlyUsedUsers', recents.splice(0, 16));
 }
 
 function cancel() {

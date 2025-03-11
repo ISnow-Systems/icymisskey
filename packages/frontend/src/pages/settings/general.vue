@@ -434,7 +434,7 @@ async function setPinnedList() {
 	});
 	if (canceled) return;
 
-	defaultStore.set('pinnedUserLists', [list]);
+	await defaultStore.set('pinnedUserLists', [list]);
 }
 
 function removePinnedList() {

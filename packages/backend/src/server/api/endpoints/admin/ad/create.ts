@@ -62,10 +62,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				memo: ps.memo,
 			});
 
-			this.moderationLogService.log(me, 'createAd', {
-				adId: ad.id,
-				ad: ad,
-			});
+			await this.moderationLogService.log(me, 'createAd', {
+                adId: ad.id,
+                ad: ad,
+            });
 
 			return {
 				id: ad.id,

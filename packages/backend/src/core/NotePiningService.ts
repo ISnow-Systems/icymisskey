@@ -74,7 +74,7 @@ export class NotePiningService {
 
 		// Deliver to remote followers
 		if (this.userEntityService.isLocalUser(user) && !note.localOnly && ['public', 'home'].includes(note.visibility)) {
-			this.deliverPinnedChange(user.id, note.id, true);
+			await this.deliverPinnedChange(user.id, note.id, true);
 		}
 	}
 
@@ -95,14 +95,14 @@ export class NotePiningService {
 			throw new IdentifiableError('b302d4cf-c050-400a-bbb3-be208681f40c', 'No such note.');
 		}
 
-		this.userNotePiningsRepository.delete({
-			userId: user.id,
-			noteId: note.id,
-		});
+		await this.userNotePiningsRepository.delete({
+            userId: user.id,
+            noteId: note.id,
+        });
 
 		// Deliver to remote followers
 		if (this.userEntityService.isLocalUser(user) && !note.localOnly && ['public', 'home'].includes(note.visibility)) {
-			this.deliverPinnedChange(user.id, noteId, false);
+			await this.deliverPinnedChange(user.id, noteId, false);
 		}
 	}
 
@@ -117,7 +117,7 @@ export class NotePiningService {
 		const item = `${this.config.url}/notes/${noteId}`;
 		const content = this.apRendererService.addContext(isAddition ? this.apRendererService.renderAdd(user, target, item) : this.apRendererService.renderRemove(user, target, item));
 
-		this.apDeliverManagerService.deliverToFollowers(user, content);
-		this.relayService.deliverToRelays(user, content);
+		await this.apDeliverManagerService.deliverToFollowers(user, content);
+		await this.relayService.deliverToRelays(user, content);
 	}
 }

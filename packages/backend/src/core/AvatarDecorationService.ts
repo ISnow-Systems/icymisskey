@@ -42,7 +42,7 @@ export class AvatarDecorationService implements OnApplicationShutdown {
 		this.globalEventService.publishInternalEvent('avatarDecorationCreated', created);
 
 		if (moderator) {
-			this.moderationLogService.log(moderator, 'createAvatarDecoration', {
+			await this.moderationLogService.log(moderator, 'createAvatarDecoration', {
 				avatarDecorationId: created.id,
 				avatarDecoration: created,
 			});
@@ -65,7 +65,7 @@ export class AvatarDecorationService implements OnApplicationShutdown {
 		this.globalEventService.publishInternalEvent('avatarDecorationUpdated', updated);
 
 		if (moderator) {
-			this.moderationLogService.log(moderator, 'updateAvatarDecoration', {
+			await this.moderationLogService.log(moderator, 'updateAvatarDecoration', {
 				avatarDecorationId: avatarDecoration.id,
 				before: avatarDecoration,
 				after: updated,
@@ -81,7 +81,7 @@ export class AvatarDecorationService implements OnApplicationShutdown {
 		this.globalEventService.publishInternalEvent('avatarDecorationDeleted', avatarDecoration);
 
 		if (moderator) {
-			this.moderationLogService.log(moderator, 'deleteAvatarDecoration', {
+			await this.moderationLogService.log(moderator, 'deleteAvatarDecoration', {
 				avatarDecorationId: avatarDecoration.id,
 				avatarDecoration: avatarDecoration,
 			});

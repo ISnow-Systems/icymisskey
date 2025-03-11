@@ -259,7 +259,7 @@ export class NoteEntityService implements OnModuleInit {
 			id: note.id,
 			createdAt: this.idService.parse(note.id).date.toISOString(),
 			userId: note.userId,
-			user: packedUsers?.get(note.userId) ?? this.userEntityService.pack(note.user ?? note.userId, me),
+			user: packedUsers?.get(note.userId) ?? await this.userEntityService.pack(note.user ?? note.userId, me),
 			text: text,
 			cw: note.cw,
 			visibility: note.visibility,
@@ -272,10 +272,10 @@ export class NoteEntityService implements OnModuleInit {
 			reactions: reactions,
 			reactionEmojis: this.customEmojiService.populateEmojis(reactionEmojiNames, host),
 			reactionAndUserPairCache: opts.withReactionAndUserPairCache ? reactionAndUserPairCache : undefined,
-			emojis: host != null ? this.customEmojiService.populateEmojis(note.emojis, host) : undefined,
+			emojis: host != null ? await this.customEmojiService.populateEmojis(note.emojis, host) : undefined,
 			tags: note.tags.length > 0 ? note.tags : undefined,
 			fileIds: note.fileIds,
-			files: packedFiles != null ? this.packAttachedFiles(note.fileIds, packedFiles) : this.driveFileEntityService.packManyByIds(note.fileIds),
+			files: packedFiles != null ? await this.packAttachedFiles(note.fileIds, packedFiles) : await this.driveFileEntityService.packManyByIds(note.fileIds),
 			replyId: note.replyId,
 			renoteId: note.renoteId,
 			channelId: note.channelId ?? undefined,
@@ -294,21 +294,21 @@ export class NoteEntityService implements OnModuleInit {
 			...(opts.detail ? {
 				clippedCount: note.clippedCount,
 
-				reply: note.replyId ? this.pack(note.reply ?? note.replyId, me, {
-					detail: false,
-					skipHide: opts.skipHide,
-					withReactionAndUserPairCache: opts.withReactionAndUserPairCache,
-					_hint_: options?._hint_,
-				}) : undefined,
+				reply: note.replyId ? await this.pack(note.reply ?? note.replyId, me, {
+                    detail: false,
+                    skipHide: opts.skipHide,
+                    withReactionAndUserPairCache: opts.withReactionAndUserPairCache,
+                    _hint_: options?._hint_,
+                }) : undefined,
 
-				renote: note.renoteId ? this.pack(note.renote ?? note.renoteId, me, {
-					detail: true,
-					skipHide: opts.skipHide,
-					withReactionAndUserPairCache: opts.withReactionAndUserPairCache,
-					_hint_: options?._hint_,
-				}) : undefined,
+				renote: note.renoteId ? await this.pack(note.renote ?? note.renoteId, me, {
+                    detail: true,
+                    skipHide: opts.skipHide,
+                    withReactionAndUserPairCache: opts.withReactionAndUserPairCache,
+                    _hint_: options?._hint_,
+                }) : undefined,
 
-				poll: note.hasPoll ? this.populatePoll(note, meId) : undefined,
+				poll: note.hasPoll ? await this.populatePoll(note, meId) : undefined,
 
 				...(meId && Object.keys(reactions).length > 0 ? {
 					myReaction: this.populateMyReaction({

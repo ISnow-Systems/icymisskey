@@ -329,7 +329,7 @@ async function updateBaseRole() {
 	await os.apiWithDialog('admin/roles/update-default-policies', {
 		policies,
 	});
-	fetchInstance(true);
+	await fetchInstance(true);
 }
 
 function create() {

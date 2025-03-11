@@ -42,13 +42,13 @@ export class AbuseUserReportEntityService {
 			reporterId: report.reporterId,
 			targetUserId: report.targetUserId,
 			assigneeId: report.assigneeId,
-			reporter: hint?.packedReporter ?? this.userEntityService.pack(report.reporter ?? report.reporterId, null, {
+			reporter: hint?.packedReporter ?? await this.userEntityService.pack(report.reporter ?? report.reporterId, null, {
 				schema: 'UserDetailedNotMe',
 			}),
-			targetUser: hint?.packedTargetUser ?? this.userEntityService.pack(report.targetUser ?? report.targetUserId, null, {
+			targetUser: hint?.packedTargetUser ?? await this.userEntityService.pack(report.targetUser ?? report.targetUserId, null, {
 				schema: 'UserDetailedNotMe',
 			}),
-			assignee: report.assigneeId ? hint?.packedAssignee ?? this.userEntityService.pack(report.assignee ?? report.assigneeId, null, {
+			assignee: report.assigneeId ? hint?.packedAssignee ?? await this.userEntityService.pack(report.assignee ?? report.assigneeId, null, {
 				schema: 'UserDetailedNotMe',
 			}) : null,
 			forwarded: report.forwarded,

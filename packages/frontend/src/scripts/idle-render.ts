@@ -21,7 +21,7 @@ const cancelIdleCallback: typeof globalThis.cancelIdleCallback = globalThis.canc
 });
 
 class IdlingRenderScheduler {
-	#renderers: Set<FrameRequestCallback>;
+	private readonly #renderers: Set<FrameRequestCallback>;
 	#rafId: number;
 	#ricId: number;
 

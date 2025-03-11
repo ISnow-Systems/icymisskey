@@ -12,5 +12,5 @@ export async function subBoot() {
 		defineAsyncComponent(() => import('@/ui/minimum.vue')),
 	));
 
-	emojiPicker.init();
+	await emojiPicker.init();
 }

@@ -140,7 +140,7 @@ export class StreamingApiServerService {
 				this.usersService.updateLastActiveDate(user);
 			}, 1000 * 60 * 5) : null;
 			if (user) {
-				this.usersService.updateLastActiveDate(user);
+				await this.usersService.updateLastActiveDate(user);
 			}
 
 			connection.once('close', () => {

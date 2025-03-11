@@ -138,7 +138,7 @@ export function getJsonSchema<S extends Schema>(schema: S): ToJsonSchema<Unflatt
 export default abstract class Chart<T extends Schema> {
 	public schema: T;
 	private logger: Logger;
-	private name: string;
+	private readonly name: string;
 	private buffer: {
 		diff: Commit<T>;
 		group: string | null;
@@ -146,11 +146,11 @@ export default abstract class Chart<T extends Schema> {
 	// ↓にしたいけどfindOneとかで型エラーになる
 	//private repositoryForHour: Repository<RawRecord<T>> & MiRepository<RawRecord<T>>;
 	//private repositoryForDay: Repository<RawRecord<T>> & MiRepository<RawRecord<T>>;
-	private repositoryForHour: Repository<{ id: number; group?: string | null; date: number; }> & MiRepository<{ id: number; group?: string | null; date: number; }>;
-	private repositoryForDay: Repository<{ id: number; group?: string | null; date: number; }> & MiRepository<{ id: number; group?: string | null; date: number; }>;
-	private lock: (key: string) => Promise<() => void>;
+	private readonly repositoryForHour: Repository<{ id: number; group?: string | null; date: number; }> & MiRepository<{ id: number; group?: string | null; date: number; }>;
+	private readonly repositoryForDay: Repository<{ id: number; group?: string | null; date: number; }> & MiRepository<{ id: number; group?: string | null; date: number; }>;
+	private readonly lock: (key: string) => Promise<() => void>;
 
-	constructor(
+	protected constructor(
 		db: DataSource,
 		lock: (key: string) => Promise<() => void>,
 		logger: Logger,
