@@ -476,12 +476,12 @@ export class ApInboxService {
 
 		// type不明でもactorとobjectが同じならばそれはPersonに違いない
 		if (!formerType && actor.uri === uri) {
-			formerType = '[delete] Person';
+			formerType = 'Person';
 		}
 
 		// それでもなかったらおそらくNote
 		if (!formerType) {
-			formerType = '[delete] Note';
+			formerType = 'Note';
 		}
 
 		if (validPost.includes(formerType)) {
