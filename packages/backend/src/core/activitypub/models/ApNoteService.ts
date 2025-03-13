@@ -386,7 +386,7 @@ export class ApNoteService {
 			const name = tag.name.replaceAll(':', '');
 			tag.icon = toSingle(tag.icon);
 
-			const exists = existingEmojis.find(x => x.name === name);
+			let exists = existingEmojis.find(x => x.name === name);
 
 			if (exists) {
 				if ((exists.updatedAt == null)
@@ -412,22 +412,53 @@ export class ApNoteService {
 				}
 
 				return exists;
+			} else {
+				this.logger.info(`register emoji host=${host}, name=${name}`);
+				exists = existingEmojis.find(x => x.name === name);
+
+				if (exists) {
+					if ((exists.updatedAt == null)
+						|| (tag.id != null && exists.uri == null)
+						|| (new Date(tag.updated) > exists.updatedAt)
+						|| (tag.icon.url !== exists.originalUrl)
+					) {
+						await this.emojisRepository.update({
+							host,
+							name,
+						}, {
+							uri: tag.id,
+							originalUrl: tag.icon.url,
+							publicUrl: tag.icon.url,
+							updatedAt: new Date(),
+							// _misskey_license が存在しなければ `null`
+							license: (tag._misskey_license?.freeText ?? null)
+						});
+
+						const emoji = await this.emojisRepository.findOneBy({host, name});
+						if (emoji == null) throw new Error('emoji update failed');
+						return emoji;
+					}
+
+					return exists;
+				} else {
+					try {
+						return await this.emojisRepository.insertOne({
+							id: this.idService.gen(),
+							host,
+							name,
+							uri: tag.id,
+							originalUrl: tag.icon.url,
+							publicUrl: tag.icon.url,
+							updatedAt: new Date(),
+							aliases: [],
+							// _misskey_license が存在しなければ `null`
+							license: (tag._misskey_license?.freeText ?? null)
+						});
+					} catch (e) {
+						throw new Error('cannot insert emoji');
+					}
+				}
 			}
-
-			this.logger.info(`register emoji host=${host}, name=${name}`);
-
-			return await this.emojisRepository.insertOne({
-				id: this.idService.gen(),
-				host,
-				name,
-				uri: tag.id,
-				originalUrl: tag.icon.url,
-				publicUrl: tag.icon.url,
-				updatedAt: new Date(),
-				aliases: [],
-				// _misskey_license が存在しなければ `null`
-				license: (tag._misskey_license?.freeText ?? null)
-			});
 		}));
 	}
 }
